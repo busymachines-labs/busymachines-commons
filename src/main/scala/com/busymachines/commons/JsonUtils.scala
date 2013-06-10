@@ -1,0 +1,84 @@
+package com.busymachines.commons
+
+import spray.json.JsValue
+import spray.json.JsObject
+import spray.json.JsArray
+import spray.json.JsString
+import scala.collection.mutable
+import spray.json.JsNumber
+import com.busymachines.commons.domain.Id
+
+object JsonUtils {
+  def recurse(value : JsValue)(pf : PartialFunction[(String, JsValue), (String, JsValue)]) : JsValue = {
+    value match {
+      case JsObject(fields) =>
+        JsObject(fields.map {
+          field =>
+            pf.applyOrElse(field, (field : (String, JsValue)) => field) match {
+              case (name, value) =>
+                (name, recurse(value)(pf))
+            } 
+        })
+      case JsArray(elements) =>
+        JsArray(elements.map(recurse(_)(pf)))
+      case value => 
+        value
+    }
+  }
+  
+  def replaceWithGeneratedIds(value : JsValue) : JsValue = {
+    val idmap = mutable.Map[String, String]()
+    findIds(value, idmap)
+    println("IDMAP:"+idmap)
+    replaceIds(value, idmap)
+  }
+
+  private def findIds(value : JsValue, idmap : mutable.Map[String, String]) {
+    value match {
+      case JsObject(fields) =>
+        fields.get("id") match { 
+          case Some(JsNumber(id)) =>
+            idmap += (id.toString -> Id.generate[Any].toString)
+          case Some(JsString(id)) => 
+            idmap += (id -> Id.generate[Any].toString)
+          case _ =>
+        }
+        for ((field, value) <- fields)
+          findIds(value, idmap)
+      case JsArray(elements) =>
+        for (value <- elements)
+          findIds(value, idmap)
+      case value =>
+    }
+  } 
+  
+  private def replaceIds(value : JsValue, idmap : mutable.Map[String, String]) : JsValue = {
+    value match {
+      case JsObject(fields) =>
+        (fields.size, fields.get("id-ref")) match { 
+          case (1, Some(JsString(ref))) => 
+            JsString(idmap.get(ref).getOrElse {
+              throw new RuntimeException(s"Id not found: $ref")
+            })
+          case (1, Some(JsNumber(ref))) => 
+            JsString(idmap.get(ref.toString).getOrElse {
+              throw new RuntimeException(s"Id not found: $ref")
+            })
+          case _ => 
+            JsObject(fields.map {
+              case ("id", JsString(value)) =>
+                ("id", JsString(idmap.get(value.toString).getOrElse {
+                  throw new RuntimeException(s"Id not found: $value")
+                }))
+              case (field, value) =>
+                println("field:" + field + " " + value)
+                (field, replaceIds(value, idmap))
+            })
+        }
+      case JsArray(elements) =>
+        JsArray(elements.map(replaceIds(_, idmap)))
+      case value =>
+        value
+    }
+  }
+}
