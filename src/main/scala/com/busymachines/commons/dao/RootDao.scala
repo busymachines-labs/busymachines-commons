@@ -14,11 +14,6 @@ trait RootDao[T <: HasId[T]] extends Dao[T] {
 
   def retrieveAll(): Future[List[Versioned[T]]]
 
-  def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]]
-
-  def create(entity: T, refreshAfterMutation : Boolean = true): Future[Versioned[T]]
-
-  trait SearchCriteria
-  def search(criteria : SearchCriteria): Future[List[Versioned[T]]]
+  def create(entity: T, reindex : Boolean = true): Future[Versioned[T]]
 }
 

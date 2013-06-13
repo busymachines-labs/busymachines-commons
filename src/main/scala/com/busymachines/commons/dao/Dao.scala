@@ -3,6 +3,7 @@ package com.busymachines.commons.dao
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 /**
  * High-level abstraction for DAOs for CRUD operations.
@@ -11,7 +12,13 @@ import scala.concurrent.Future
  */
 trait Dao[T <: HasId[T]] {
   
+  val executionContext : ExecutionContext
+  
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]]
+  
+  def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]]
+
+  def search(criteria : SearchCriteria[T]): Future[List[Versioned[T]]]
 
   def modify(id: Id[T], reindex : Boolean = true)(f : T => T): Future[Versioned[T]]
   

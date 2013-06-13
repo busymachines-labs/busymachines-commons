@@ -1,39 +1,37 @@
-package com.busymachines.commons.elasticsearch
+package com.busymachines.commons.dao.elasticsearch
 
+import scala.annotation.implicitNotFound
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
-import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.client.Client
 import org.elasticsearch.index.query.FilterBuilder
+import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.QueryStringQueryBuilder
 import org.scalastuff.esclient.ESClient
+
+import com.busymachines.commons.Logging
+import com.busymachines.commons.dao.IdNotFoundException
+import com.busymachines.commons.dao.RootDao
+import com.busymachines.commons.dao.Versioned
+import com.busymachines.commons.dao.elasticsearch.implicits.richJsValue
+import com.busymachines.commons.domain.HasId
+import com.busymachines.commons.domain.Id
+
 import spray.json.JsonFormat
 import spray.json.pimpAny
 import spray.json.pimpString
-import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.action.index.IndexAction
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
-import org.elasticsearch.index.query.QueryBuilder
-import org.elasticsearch.index.query.QueryStringQueryBuilder
-import java.io.File
-import org.elasticsearch.common.io.stream.DataOutputStreamOutput
-import java.io.DataOutputStream
-import java.io.FileOutputStream
-import org.elasticsearch.index.query.FilterBuilders
-import com.busymachines.commons.domain.HasId
-import com.busymachines.commons.dao.RootDao
-import com.busymachines.commons.domain.Id
-import com.busymachines.commons.dao.Versioned
-import com.busymachines.commons.dao.NonExistentEntityException
-import com.busymachines.commons.Logging
-import com.busymachines.commons.elasticsearch.implicits._
 
 abstract class EsRootDao[T <: HasId[T] :JsonFormat](implicit ec: ExecutionContext) extends ESDao[T] with RootDao[T] with Logging {
 
   val indexName : String
   val client : Client
+  val mapping : Mapping
   
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] = 
     query(QueryBuilders.idsQuery(typeName).addIds(ids.map(id=>id.toString):_*))
@@ -46,12 +44,12 @@ abstract class EsRootDao[T <: HasId[T] :JsonFormat](implicit ec: ExecutionContex
       case Some(source) => 
         val json = source.asJson
         val version = json.getESVersion
-        Some(Versioned(json.withoutESIds.convertTo[T], version))
+        Some(Versioned(json.convertFromES(mapping).convertTo[T], version))
     }
   }
   
   def create(entity: T, refreshAfterMutation : Boolean): Future[Versioned[T]] = {
-    val json = entity.toJson.withESIds
+    val json = entity.toJson.convertToES(mapping)
     val request = new IndexRequest(indexName, typeName).
       id(entity.id.toString).
       create(true).
@@ -69,14 +67,14 @@ abstract class EsRootDao[T <: HasId[T] :JsonFormat](implicit ec: ExecutionContex
 
   def modify(id: Id[T], refreshAfterMutation : Boolean)(modify: T => T): Future[Versioned[T]] = {
     retrieve(id).flatMap {
-      case None => throw new NonExistentEntityException(id.toString, typeName)
+      case None => throw new IdNotFoundException(id.toString, typeName)
       case Some(Versioned(entity, version)) =>
         update(Versioned(modify(entity), version), refreshAfterMutation)
     }
   }
 
   def update(entity : Versioned[T], refreshAfterMutation : Boolean) : Future[Versioned[T]] = {
-    val newJson = entity.entity.toJson.withESVersion(entity.version).withESIds
+    val newJson = entity.entity.toJson.withESVersion(entity.version).convertToES(mapping)
     val request = new IndexRequest(indexName, typeName)
       .refresh(refreshAfterMutation)
       .id(entity.entity.id.toString)
@@ -96,7 +94,7 @@ abstract class EsRootDao[T <: HasId[T] :JsonFormat](implicit ec: ExecutionContex
     client.execute(request) map {
       response =>
         if (response.isNotFound) {
-          throw new NonExistentEntityException(id.toString, typeName)
+          throw new IdNotFoundException(id.toString, typeName)
         }
     }
   }
@@ -107,7 +105,7 @@ abstract class EsRootDao[T <: HasId[T] :JsonFormat](implicit ec: ExecutionContex
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
       val json = hit.sourceAsString.asJson
       val version = json.getESVersion
-      Versioned(json.withoutESIds.convertTo[T], version)
+      Versioned(json.convertFromES(mapping).convertTo[T], version)
     })
   }
   
@@ -118,7 +116,7 @@ abstract class EsRootDao[T <: HasId[T] :JsonFormat](implicit ec: ExecutionContex
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
       val json = hit.sourceAsString.asJson
       val version = json.getESVersion
-      Versioned(json.withoutESIds.convertTo[T], version)
+      Versioned(json.convertFromES(mapping).convertTo[T], version)
     })
   }
   

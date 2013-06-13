@@ -1,4 +1,4 @@
-package com.busymachines.commons.elasticsearch
+package com.busymachines.commons.dao.elasticsearch
 
 import org.elasticsearch.client.Client
 import spray.json.JsonFormat

@@ -14,5 +14,5 @@ trait NestedDao[P <: HasId[P], T <: HasId[T]] extends Dao[T] {
 
   def retrieveParent(id : Id[T]) : Future[Option[Versioned[P]]]
 
-  def create(parent : Id[P], entity: T, refreshAfterMutation : Boolean = true): Future[Versioned[T]]
+  def create(parent : Id[P], entity: T, reindex : Boolean = true): Future[Versioned[T]]
 }

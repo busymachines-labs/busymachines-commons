@@ -8,17 +8,13 @@ import scala.concurrent.duration.DurationInt
 import spray.json.JsObject
 import scala.concurrent.ExecutionContext
 
-package object implicits {
+package object implicits extends CommonImplicits
+
+trait CommonImplicits {
   implicit def toOption[A](a: A) = Option(a)
-  implicit class RichConfig(val config: Config) extends AnyVal {
-    def getOptionalInt(path: String) = ConfigUtils.getOptionalInt(config, path)
-    def mkString(sep: String) = ConfigUtils.mkString(config, sep)
-    def toSeq: Seq[String] = ConfigUtils.toSeq(config)
-  }
-  implicit class RichJsValue(val value: JsValue) extends AnyVal {
-    def generateIds: JsValue = JsonUtils.replaceWithGeneratedIds(value)
-  }
-  implicit class RichFuture(f : Future[_]) {
-    def mapAs[T](value : T)(implicit ec : ExecutionContext) = f.map(_ => value)
-  }
+  implicit def richConfig(config : Config) = new RichConfig(config)
+  implicit def richJsValue(value : JsValue) = new RichJsValue(value)
+  implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
+  implicit def richString(s : String) = new RichString(s)
+  implicit def richFunction[A, B](f : A => Option[B]) = new RichFunction(f)
 }

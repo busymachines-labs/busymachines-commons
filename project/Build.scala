@@ -23,7 +23,9 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "io.spray" %% "spray-json" % "1.2.5" withSources(),
     libraryDependencies += "org.scalastuff" %% "esclient" % "0.20.3" withSources(),
     libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources(),
-    libraryDependencies += "com.typesafe" % "config" % "1.0.0" withSources()
+    libraryDependencies += "com.typesafe" % "config" % "1.0.0" withSources(),
+    libraryDependencies += "joda-time" % "joda-time" % "2.2" withSources(),
+    libraryDependencies += "org.joda" % "joda-convert" % "1.3.1" withSources() // for class file error in joda-time
     ))
 
   def publishSettings = Seq(

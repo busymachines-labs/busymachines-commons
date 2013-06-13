@@ -8,7 +8,7 @@ import scala.collection.mutable
 import spray.json.JsNumber
 import com.busymachines.commons.domain.Id
 
-object JsonUtils {
+object RichJsValue {
   def recurse(value : JsValue)(pf : PartialFunction[(String, JsValue), (String, JsValue)]) : JsValue = {
     value match {
       case JsObject(fields) =>
@@ -25,11 +25,15 @@ object JsonUtils {
         value
     }
   }
+}
+
+class RichJsValue(val value : JsValue) extends AnyVal {
+  def recurse(pf : PartialFunction[(String, JsValue), (String, JsValue)]) : JsValue = 
+    RichJsValue.recurse(value)(pf) 
   
   def replaceWithGeneratedIds(value : JsValue) : JsValue = {
     val idmap = mutable.Map[String, String]()
     findIds(value, idmap)
-    println("IDMAP:"+idmap)
     replaceIds(value, idmap)
   }
 
