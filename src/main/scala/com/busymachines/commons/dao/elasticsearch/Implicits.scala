@@ -1,13 +1,15 @@
 package com.busymachines.commons.dao.elasticsearch
 
+import scala.annotation.implicitNotFound
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 import org.elasticsearch.action.update.UpdateRequest
-import org.elasticsearch.common.base.Charsets
-import org.elasticsearch.common.bytes.BytesArray
+import org.elasticsearch.client.Client
+import org.scalastuff.esclient.ESClient
 
 import com.busymachines.commons.dao.Versioned
+import com.busymachines.commons.domain.HasId
 
 import spray.json.JsValue
 
@@ -18,7 +20,7 @@ trait ESImplicits {
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
   implicit def richJsValue2(value : JsValue) = new RichJsValue2(value)
   implicit def richUpdateRequest(updateRequest : UpdateRequest) = new RichUpdateRequest(updateRequest)
-  
+  implicit def richEnity[A <: HasId[A]](entity : A) = new RichEntity[A](entity)
 
   implicit def stripVersionedFromFuture[T](f : Future[Versioned[T]])(implicit ec : ExecutionContext) = f.map(_.entity)
   implicit def stripVersionedFromFutureOption[T](f : Future[Option[Versioned[T]]])(implicit ec : ExecutionContext) = f.map(_.map(_.entity))

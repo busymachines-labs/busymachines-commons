@@ -2,10 +2,8 @@ package com.busymachines.commons.domain
 
 import java.util.Currency
 import java.util.Locale
-
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
-
 import spray.json.DefaultJsonProtocol
 import spray.json.JsObject
 import spray.json.JsString
@@ -14,6 +12,8 @@ import spray.json.JsonFormat
 import spray.json.RootJsonFormat
 import spray.json.deserializationError
 
+object CommonJsonFormats extends CommonJsonFormats 
+  
 trait CommonJsonFormats extends DefaultJsonProtocol {
 
   implicit object currencyJsonFormat extends RootJsonFormat[Currency] {
@@ -94,4 +94,5 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
 //  }
 //  
   implicit def idFormat[A] = stringJsonFormat[Id[A]]("Id", Id(_))
-}
+  implicit val mediaFormat = jsonFormat4(Media)
+ }

@@ -12,8 +12,6 @@ import scala.concurrent.ExecutionContext
  */
 trait Dao[T <: HasId[T]] {
   
-  val executionContext : ExecutionContext
-  
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]]
   
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]]

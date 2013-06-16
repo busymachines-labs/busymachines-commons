@@ -9,17 +9,17 @@ import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 import scala.util.Failure
 import scala.util.Success
-
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
+import scala.concurrent.ExecutionContext
 
 object Mutator {
-  def apply[T <: HasId[T] : ClassTag](dao : RootDao[T]) = new RootMutator[T](dao)
-  def apply[P <: HasId[P], T <: HasId[T] : ClassTag](dao : NestedDao[P, T]) = new NestedMutator[P, T](dao)
+  def apply[T <: HasId[T] : ClassTag](dao : RootDao[T])(implicit ec : ExecutionContext) = new RootMutator[T](dao)
+  def apply[P <: HasId[P], T <: HasId[T] : ClassTag](dao : NestedDao[P, T])(implicit ec : ExecutionContext) = new NestedMutator[P, T](dao)
 }
 
-abstract class Mutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classTag : ClassTag[T]) {
+abstract class Mutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classTag : ClassTag[T], ec : ExecutionContext) {
   
   protected val _changedEntities = mutable.Map[Id[T], Versioned[T]]()
   protected val _createdEntities = mutable.Map[Id[T], String]()
@@ -53,7 +53,6 @@ abstract class Mutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classTag 
         case Some(parentId) => createEntity(parentId, versionedEntity.entity)
         case None => dao.update(versionedEntity, false)
       })
-    implicit val ec = dao.executionContext
     val futures = for ((id, future) <- writes) yield {
       val promise = Promise[(Option[Versioned[T]], Option[(Id[T], Throwable)])]()
       future.onComplete {
@@ -81,7 +80,7 @@ abstract class Mutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classTag 
   protected def createEntity(parentId : String, entity : T) : Future[Versioned[T]]
 }  
 
-class RootMutator[T <: HasId[T] : ClassTag](dao : RootDao[T]) extends Mutator[T](dao){
+class RootMutator[T <: HasId[T] : ClassTag](dao : RootDao[T])(implicit ec : ExecutionContext) extends Mutator[T](dao){
   
   def getOrCreate(id: Id[T], create : => T, timeout : Duration): T = {
     _changedEntities.getOrElse(id, result(dao.retrieve(id), timeout) match {
@@ -94,7 +93,7 @@ class RootMutator[T <: HasId[T] : ClassTag](dao : RootDao[T]) extends Mutator[T]
     dao.create(entity, false)
 }
 
-class NestedMutator[P <: HasId[P], T <: HasId[T] : ClassTag](dao : NestedDao[P, T]) extends Mutator[T](dao){
+class NestedMutator[P <: HasId[P], T <: HasId[T] : ClassTag](dao : NestedDao[P, T])(implicit ec : ExecutionContext) extends Mutator[T](dao){
   
   def getOrCreate(id: Id[T], parent : Id[P], create : => T, timeout : Duration): T = {
     _changedEntities.getOrElse(id, result(dao.retrieve(id), timeout) match {

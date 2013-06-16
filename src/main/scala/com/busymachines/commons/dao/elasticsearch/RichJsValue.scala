@@ -1,10 +1,11 @@
 package com.busymachines.commons.dao.elasticsearch
 
 import com.busymachines.commons.RichJsValue.recurse
-
 import spray.json.JsObject
 import spray.json.JsString
 import spray.json.JsValue
+import spray.json.JsonWriter
+import spray.json.JsonReader
 
 class RichJsValue(val value : JsValue) extends AnyVal {
   def getESVersion: String = value match {
@@ -18,10 +19,18 @@ class RichJsValue(val value : JsValue) extends AnyVal {
     case value => value
   }
 
-  def convertToES(mapping : Mapping) : JsValue = 
-    convertToES(mapping.allProperties)
-    
-  def convertToES(properties : Mapping.Properties) : JsValue = {
+  def mapToES[A](mapping : Mapping[A]) : JsValue = 
+    RichJsValue.convertToES(value, mapping.allProperties)
+
+  def mapFromES[A](mapping : Mapping[A]) : JsValue = 
+    RichJsValue.convertFromES(value, mapping.allProperties)
+
+  def convertFromES[A](mapping : Mapping[A])(implicit reader : JsonReader[A]) : A = 
+    RichJsValue.convertFromES(value, mapping.allProperties).convertTo[A]
+}
+
+object RichJsValue {
+  private [elasticsearch] def convertToES(value: JsValue, properties : Mapping.Properties[_]) : JsValue = {
     value match {
       case JsObject(fields) =>
         JsObject(fields.map {
@@ -29,7 +38,7 @@ class RichJsValue(val value : JsValue) extends AnyVal {
             case Some(property) =>
               property.nestedProperties match {
                 case Some(properties) =>
-                  property.name -> new RichJsValue(field._2).convertToES(properties)
+                  property.name -> convertToES(field._2, properties)
                 case None =>
                   property.name -> field._2
               }
@@ -39,11 +48,8 @@ class RichJsValue(val value : JsValue) extends AnyVal {
       case value => value
     }
   }
-  
-  def convertFromES(mapping : Mapping) : JsValue = 
-    convertFromES(mapping.allProperties)
-    
-  def convertFromES(properties : Mapping.Properties) : JsValue = {
+ 
+  private [elasticsearch] def convertFromES(value : JsValue, properties : Mapping.Properties[_]) : JsValue = {
     value match {
       case JsObject(fields) =>
         JsObject(fields.map {
@@ -51,7 +57,7 @@ class RichJsValue(val value : JsValue) extends AnyVal {
             case Some(property) =>
               property.nestedProperties match {
                 case Some(properties) =>
-                  property.mappedName -> new RichJsValue(field._2).convertFromES(properties)
+                  property.mappedName -> convertFromES(field._2, properties)
                 case None =>
                   property.mappedName -> field._2
               }
@@ -60,8 +66,7 @@ class RichJsValue(val value : JsValue) extends AnyVal {
         })
       case value => value
     }
-  }
-}
+  }}
 
 class RichJsValue2(val value : JsValue) {
   

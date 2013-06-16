@@ -13,7 +13,7 @@ import com.busymachines.commons.domain.Id
 
 import spray.json.JsonFormat
 
-abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](implicit ec: ExecutionContext) extends ESDao[T] with NestedDao[P, T] {
+abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName : String)(implicit ec: ExecutionContext) extends ESDao[T](typeName) with NestedDao[P, T] {
 
   protected def parentDao : ESDao[P]
 
