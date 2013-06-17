@@ -1,0 +1,77 @@
+{
+  "apiVersion":"0.2",
+  "swaggerVersion":"1.1",
+  "basePath":"/v1",
+  "resourcePath":"/assetmodel",
+  "apis":[
+    {
+      "path":"/assetmodels",
+      "description":"Get asset models",
+      "operations":[
+        {
+          "httpMethod":"GET",
+          "summary":"Get asset models",
+          "responseClass":"List[AssetModel]",
+          "nickname":"checkAssetModels",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"onlyUsed",
+              "description":"If true, will return only asset models used by existing assets",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"locationId",
+              "description":"Return asset models which have at least one asset in the specified location",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+          ],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Return a list with all asset models defined in db."
+            },
+            {
+              "code":401,
+              "reason":"Because the user is not logged in, access to this resource is restricted."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "models":
+	 {
+	    "AssetModel":{
+	      "id":"AssetModel",
+	      "properties":{
+	        "id":{
+	          "type":"Int"
+	        },
+	        "type":{
+	          "type":"String"
+	        },
+	        "certified":{
+	          "type":"Boolean"
+	        },
+	        "make":{
+	          "type":"String"
+	        },
+	        "model":{
+	          "type":"String"
+	        }
+      	}
+	  }
+}
+}

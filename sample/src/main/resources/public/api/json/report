@@ -1,0 +1,278 @@
+{
+  "apiVersion":"0.2",
+  "swaggerVersion":"1.1",
+  "basePath":"/v1",
+  "resourcePath":"/reports",
+  "apis":[
+    {
+      "path":"/reports/vending",
+      "description":"Query reports",
+      "operations":[
+        {
+          "httpMethod":"GET",
+          "summary":"Query reports",
+          "responseClass":"List[ReportData]",
+          "nickname":"checkStatus",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"partyIds",
+              "description":"Selected parties' ids separated by commas.",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"int"
+            },{
+              "name":"locationIds",
+              "description":"Selected locations' ids separated by commas.",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"int"
+            },{
+              "name":"assetIds",
+              "description":"Selected assets' ids separated by commas.",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"int"
+            },{
+              "name":"period",
+              "description":"Selected period.",
+              "paramType":"query",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"int"
+            },{
+              "name":"periodFrom",
+              "description":"Customer period from.",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"periodTo",
+              "description":"Customer period to.",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"timestep",
+              "description":"Selected timestep.",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+          ],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"List with reports."
+            },
+            {
+              "code":404,
+              "reason":"User is not logged in."
+            }
+          ]
+        }
+      ]
+  },{
+    "path":"/reports",
+      "description":"Handle a specific asset by id",
+      "operations":[
+	    {
+          "httpMethod":"GET",
+          "summary":"List all archived reports",
+          "responseClass":"Report",
+          "nickname":"getReports",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"List with reports was succesfully fetched."
+            }
+	      	]
+	      },
+	      {
+          "httpMethod":"POST",
+          "summary":"Create (archive) a report (if report with this title exists, update that one)",
+          "responseClass":"",
+          "nickname":"createReport",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },
+            {
+              "name":"report",
+              "description":"Report fields",
+              "paramType":"body",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"Report"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Report was succesfully created."
+            }
+	      	]
+	      }
+  ]
+  },{
+    "path":"/reports/{title}",
+      "description":"Handle a specific asset by id",
+      "operations":[
+	    {
+          "httpMethod":"GET",
+          "summary":"Find a report by its title",
+          "responseClass":"Report",
+          "nickname":"getReport",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"title",
+              "description":"Report title.",
+              "paramType":"path",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Report found."
+            },
+            {
+              "code":400,
+              "reason":"Invalid report title."
+            }
+	      	]
+	      },{
+          "httpMethod":"DELETE",
+          "summary":"Delete a report by title",
+          "responseClass":"",
+          "nickname":"deleteReport",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"title",
+              "description":"Report title.",
+              "paramType":"path",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Report deleted."
+            }
+	      	]
+	      }
+  ]
+  }
+  ],
+  "models":
+ {
+    "ReportData":{
+      "id":"ReportData",
+      "properties":{
+        "customer":{
+          "type":"String"
+        },
+        "location":{
+          "type":"String"
+        },
+        "kind":{
+          "type":"String"
+        },
+        "machine":{
+          "type":"String"
+        },
+        "model":{
+          "type":"String"
+        },
+        "brand":{
+          "type":"String"
+        },
+        "costCenter":{
+          "type":"String"
+        },
+        "group":{
+          "type":"String"
+        },
+        "product":{
+          "type":"String"
+        },
+        "usage":{
+          "type":"Long"
+        },
+        "counter":{
+          "type":"Long"
+        },
+        "period":{
+          "type":"String"
+        },
+        "nested":{
+          "type":"List[ReportData]"
+        }
+      }
+  },"Report":{
+      "id":"Report",
+      "properties":{
+        "name":{
+          "type":"String"
+        },
+        "title":{
+          "type":"String"
+        },
+        "url":{
+          "type":"String"
+        },
+        "lru":{
+          "type":"DateTime"
+        },
+        "userId":{
+          "type":"Int"
+        }
+      }
+  }
+}
+}

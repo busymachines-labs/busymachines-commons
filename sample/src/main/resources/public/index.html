@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html ng-app="mdm">
+<head>
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1,maximum-scale=1">
+    <base href="/index.html" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" href="{{templates.header.FAVICON}}"/>
+    <title ng-bind="page.title">Kentivo Data Manager</title>
+    <!-- Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!--<link href="css/bootstrap-responsive-2.2.2.css" rel="stylesheet" type="text/css">-->
+
+
+	<!-- JQuery -->
+    <script type="text/javascript" src="lib/jquery/jquery-1.8.3.js"></script>
+
+
+	<!-- Bootstrap -->
+    <script type="text/javascript" src="lib/bootstrap-2.3.1/js/bootstrap.js"></script>
+    <link href="lib/bootstrap-2.3.1/css/bootstrap.css" rel="stylesheet" type="text/css">
+    
+	<!-- Angular -->
+    <script type="text/javascript" src="lib/angularjs-1.0.6/angular.js"></script>
+    <script type="text/javascript" src="lib/angularjs-1.0.6/angular-bootstrap.js"></script>
+    <script type="text/javascript" src="lib/angularjs-1.0.6/angular-resource.js"></script>
+<!--  	<script type="text/javascript">
+		function getURLParameter(name) {
+		    return decodeURI(
+		        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+		    );
+		}
+	    var url = '/lib/angularjs-1.0.6/i18n/angular-locale_' + getURLParameter('locale') + '.js';
+	    jQuery.getScript(url);
+	</script> 
+ -->
+     <!-- Libraries -->
+    <script type="text/javascript" src="lib/modernizr/modernizr.custom-2.6.2.min.js"></script>
+<!--     <script type="text/javascript" src="lib/jquery-ui/jquery-ui-1.10.1.custom.js"></script> -->
+    <!-- <script type="text/javascript" src="lib/jquery-ui/jquery.ui.touch-punch.js"></script> -->
+    <script type="text/javascript" src="lib/localize.js"></script>
+    <!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0EdiocB2QiaEaLqlBshlxGW6O-eR94MI&sensor=false"></script> -->
+    <!-- <script type="text/javascript" src="lib/d3/d3-3.0.js"></script> -->
+<!--     <script type="text/javascript" src="lib/moment/moment.min.js"></script> -->
+    <!-- <script type="text/javascript" src="lib/moment/langs.min.js"></script> -->
+    <!-- <script type="text/javascript" src="lib/angular-tree.js"></script> -->
+    <!-- <script type="text/javascript" src="lib/angular-i18n.js"></script> --> 
+
+
+    <!-- App -->
+    <link href="css/jquery-ui-1.10.1.custom.css" rel="stylesheet" type="text/css">
+    <link href="css/jquery.multiselect-1.5.css" rel="stylesheet" type="text/css">
+    <link href="css/jquery.multiselect.filter-1.5.css" rel="stylesheet" type="text/css">
+
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+    <link href="css/new-styles.css" rel="stylesheet" type="text/css">
+    <link href="dashboard/css/styles.css" rel="stylesheet" type="text/css">
+    <link href="stewart/css/styles.css" rel="stylesheet" type="text/css">
+    
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/services.js"></script>
+    <script type="text/javascript" src="js/controllers.js"></script>
+    <script type="text/javascript" src="js/directives.js"></script>
+    <!-- Dashboard -->
+    <script type="text/javascript" src="dashboard/dashboard.js"></script>
+    <!-- Data Stewart -->
+    <script type="text/javascript" src="stewart/js/config.js"></script>
+    <script type="text/javascript" src="stewart/js/controllers.js"></script>
+    <script type="text/javascript" src="stewart/js/services.js"></script>
+    <!-- Sources -->
+    <script type="text/javascript" src="sources/sources.js"></script>
+    
+    <!-- Start Angular -->
+   	<script type="text/javascript">
+	</script> 
+    
+</head>
+<body>
+    <!--<div ng-include src="'dashboard/login.html'"></div>-->
+    <div id="login-modal" class="hide" ng-controller="LoginCtrl" xs-login-modal>
+        <form class="form-login" name="loginForm" novalidate ng-submit="login()" onsubmit="return false;" action="/" method="post">
+            <fieldset>
+                <h2 data-i18n="_login_"></h2>
+                <input type="text" required class="input-block-level" placeholder="{{'_username_' | translate}}" ng-model="username" ng-change="updateValidity()" name="username" tabindex="1" xs-input-sync>
+                <p class="text-error" ng-show="loginForm.username.$dirty && loginForm.username.$invalid">
+                    <span ng-show="loginForm.username.$error.required" data-i18n="_username_required_"></span>
+                </p>
+                <input type="password" required class="input-block-level" placeholder="{{'_password_' | translate}}" ng-model="password" ng-change="updateValidity()" name="password" tabindex="2" xs-input-sync>
+                <p class="text-error" ng-show="loginForm.password.$dirty && loginForm.password.$invalid">
+                    <span ng-show="loginForm.password.$error.required" data-i18n="_password_required_"></span>
+                </p>
+                <p class="text-error" ng-show="invalidCredentials">
+                    <span data-i18n="_invalid_credentials_"></span>
+                </p>
+                <p><button type="button" ng-click="showForgotPassword($event)" class="hide btn btn-link" data-i18n="_forgot_password_"></button></p>
+                <p><button class="btn btn-primary btn-large" ng-disabled="loginForm.username.$invalid || loginForm.password.$invalid" type="submit" tabindex="3" data-i18n="_login_"></button></p>
+            </fieldset>
+        </form>
+    </div>
+
+    <div id="forgotPassword" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="myModalLabel">Password recovery</h3>
+        </div>
+        <form class="recover-password" name="recoverPasswordForm" novalidate ng-submit="recoverPassword()">
+            <div class="modal-body">
+                <input type="email" required class="input-block-level" placeholder="E-mail" ng-model="email" name="email">
+                <div ng-show="recoverPasswordForm.email.$dirty && recoverPasswordForm.email.$invalid">
+                    <span ng-show="recoverPasswordForm.email.$error.required">E-mail required.</span>
+                    <span ng-show="recoverPasswordForm.email.$error.email">E-mail invalid.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!--<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>-->
+                <button type="submit" class="btn btn-primary" ng-disabled="recoverPassword.$invalid">Recover</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="app-container" ng-view></div>
+</body>
+</html>

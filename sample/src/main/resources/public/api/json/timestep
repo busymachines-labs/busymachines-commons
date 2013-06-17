@@ -1,0 +1,51 @@
+{
+  "apiVersion":"0.2",
+  "swaggerVersion":"1.1",
+  "basePath":"/v1",
+  "resourcePath":"/timestep",
+  "apis":[
+    {
+      "path":"/timesteps",
+      "description":"Get timesteps",
+      "operations":[
+        {
+          "httpMethod":"GET",
+          "summary":"Get a list with all timesteps defined",
+          "responseClass":"List",
+          "nickname":"checkStatus",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+          ],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"List with timestpes."
+            },
+            {
+              "code":404,
+              "reason":"User is not logged in."
+            }
+          ]
+        }
+      ]
+  }
+  ],
+  "models":
+ {
+    "Response":{
+      "id":"Response",
+      "properties":{
+        "message":{
+          "type":"String"
+        }
+      }
+  }
+}
+}

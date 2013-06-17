@@ -1,0 +1,239 @@
+/* Base */
+body,
+html {
+  height: 100%;
+}
+body {
+  background-color: #f5f5f5;
+}
+.app-container {
+  height: auto;
+  position: relative;
+  min-height: 100%;
+}
+a:focus {
+  outline: none;
+}
+.green {
+  color: #D40050;
+}
+.grey {
+  color: #707070;
+}
+.darker-green {
+  color: #b2c81d;
+}
+.semi-bold {
+  font-weight: 600;
+}
+
+/* Header */
+.navbar-inner {
+  background: #ffffff none;
+  min-height: 40px;
+  padding-top: 10px;
+}
+.navbar-fixed-top .navbar-inner {
+  border-bottom: 1px solid #dcdcdc;
+  border-top: 4px solid #D40050;
+  box-shadow: none;
+}
+.navbar-static-top .navbar-inner {
+  border-bottom: 1px solid #dcdcdc;
+  border-top: 4px solid #D40050;
+  box-shadow: none;
+}
+.btn.btn-link.btn-user {
+  color: #707070;
+  font-size: 14px;
+  font-weight: bold;
+}
+.btn.btn-link.btn-user:hover {
+  color: #707070;
+}
+.navbar-user .btn-group {
+  margin-top: 0;
+  vertical-align: top;
+}
+.brand.logo {
+  background: transparent url("../img/bg.logo.png") 0 0 no-repeat scroll;
+  color: #707070;
+  font-size: 18px;
+  margin-left: 0;
+  padding-top: 5px;
+  padding-left: 30px;
+}
+.navbar.purple .navbar-inner {
+  border-top-color: #D40050;
+}
+.navbar.purple .brand.logo {
+  background: transparent url("../img/kentivo-small.png") 0 0 no-repeat scroll;
+  padding-left: 35px;
+}
+.navbar.purple .brand.logo .green {
+  color: #D40050;
+}
+.navbar.purple .brand.logo .darker-green {
+  color: #D40050;
+}
+/* Buttons */
+.btn-back {
+  background: transparent url("../img/bg.arrow-left.png") center center no-repeat scroll;
+  border: 2px solid #D40050;
+  border-radius: 15px;
+  display: inline-block;
+  float: left;
+  height: 26px;
+  margin-right: 20px;
+  width: 26px;
+}
+.xs-btn {
+  background-color: #ffffff;
+  border: 1px solid #D40050;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+  height: 28px;
+  margin-right: 10px;
+  width: 28px;
+}
+.xs-btn.purple {
+  border-color: #D40050;
+}
+.xs-btn.map-btn {
+  background: #D40050 url("../img/bg.map-pin.png") center center no-repeat scroll;
+  height: 30px;
+  width: 30px;
+}
+.xs-btn.map-btn.purple {
+  background-color: #D40050;
+}
+.spinner {
+  color: #707070;
+  margin: 100px auto;
+  text-align: center;
+  width: 117px;
+}
+/* Login modal */
+#login-modal {
+  background-color: #F5F5F5;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  margin-left: 0;
+  position: fixed;
+  border: none;
+  border-radius: 0;
+  z-index: 1040;
+}
+.form-login {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin: 100px auto 0 auto;
+  width: 300px;
+  padding: 30px 60px;
+}
+.form-login h2 {
+  color: #707070;
+  font-size: 30px;
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+.form-login input[type="text"],
+.form-login input[type="password"] {
+  font-size: 14px;
+  padding: 7px 9px;
+  height: 50px;
+}
+.form-login .btn.btn-link {
+  color: #818a00;
+  margin-bottom: 15px;
+}
+.form-login button[type="submit"] {
+  color: #314100;
+  border-radius: 4px;
+  border: none;
+  background-color: #b7be16;
+  background-image: none;
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-shadow: none;
+  width: 300px;
+}
+.form-login input[type="text"].ng-pristine:focus,
+.form-login input[type="password"].ng-pristine:focus {
+  color: #999999;
+  border-color: rgba(82, 168, 236, 0.8);
+  outline: 0;
+  outline: thin dotted \9;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+/* Footer */
+.footer {
+  margin-top: 30px;
+  padding-bottom: 30px;
+}
+.footer p {
+  font-size: 12px;
+  color: #707070;
+  font-weight: 300;
+  text-align: center;
+}
+
+.page-container {
+  padding: 76px 20px 0 20px;
+}
+
+.sheet-container {
+  padding: 20px;
+  background-color: #ffffff;
+}
+.sheet-header {
+  border-bottom: 1px solid #e5e5e5;
+  height: 40px;
+  padding-bottom: 10px;
+}
+.sheet-header.active {
+  border: none;
+}
+.sheet-header h3 {
+  color: #707070;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 30px;
+  margin-top: 0;
+  vertical-align: top;
+}
+.sheet-header .date {
+  color: #707070;
+  margin-right: 10px;
+  font-size: 18px;
+  font-weight: 300;
+  vertical-align: middle;
+}
+.sheet-header .btn {
+  vertical-align: middle;
+}
+.sheet-container .row-fluid {
+	margin-top: 30px;	
+}
+
+.sheet-container .table-container {
+	margin-top: 30px;	
+}
+
+table.clickable tbody tr {
+	cursor: pointer;
+}
+
+table.clickable tbody tr:hover td {
+  background-color: #c1d72e;
+  color: #ffffff;
+}

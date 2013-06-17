@@ -1,0 +1,178 @@
+{
+  "apiVersion":"0.2",
+  "swaggerVersion":"1.1",
+  "basePath":"/v1",
+  "resourcePath":"/readings",
+  "apis":[
+    {
+      "path":"/readings",
+      "description":"Query vending machine readings",
+      "operations":[
+        {
+          "httpMethod":"GET",
+          "summary":"Query reports",
+          "responseClass":"List[VendingMachineReadingAdminOutput]",
+          "nickname":"checkStatus",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"partyIds",
+              "description":"Selected parties' ids separated by commas.",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"int"
+            },{
+              "name":"periodFrom",
+              "description":"Customer period from.",
+              "paramType":"query",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"periodTo",
+              "description":"Customer period to.",
+              "paramType":"query",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+          ],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"List with readings."
+            },
+            {
+              "code":404,
+              "reason":"User is not logged in."
+            }
+          ]
+        },
+	      {
+          "httpMethod":"POST",
+          "summary":"Create vending machine reading for a specific asset",
+          "responseClass":"",
+          "nickname":"createReading",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },
+            {
+              "name":"reading",
+              "description":"Vending Machine Reading fields",
+              "paramType":"body",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"VendingMachineReading"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Vending Machine Reading was succesfully created."
+            }
+	      	]
+      }
+      ]
+    },
+    {
+    "path":"/readings/{readingId}",
+      "description":"Fetch a specific location by id",
+      "operations":[
+	      {
+          "httpMethod":"DELETE",
+          "summary":"Delete a specific vending machine reading by its id",
+          "responseClass":"None",
+          "nickname":"deleteReading",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"readingId",
+              "description":"Id of the vending machine reading to be deleted",
+              "paramType":"path",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Vending Machine Reading was succesfully deleted."
+            },
+            {
+              "code":400,
+              "reason":"Invalid vending machine reading id."
+            }
+	      	]
+	      }
+      ]
+  }
+  ],
+  "models":
+ {
+    "VendingMachineReadingAdminOutput":{
+      "id":"VendingMachineReadingAdminOutput",
+      "properties":{
+        "serialNumber":{
+          "type":"String"
+        },
+        "machineNumber":{
+          "type":"String"
+        },
+        "make":{
+          "type":"String"
+        },
+        "model":{
+          "type":"String"
+        },
+        "evadts":{
+          "type":"String"
+        },
+        "timestamp":{
+          "type":"String"
+        },
+        "id":{
+          "type":"Long"
+        },
+        "vendingMachineId":{
+          "type":"Long"
+        }
+      }
+  },"VendingMachineReading":{
+      "id":"VendingMachineReading",
+      "properties":{
+        "evadts":{
+          "type":"String"
+        },
+        "timestamp":{
+          "type":"String"
+        },
+        "id":{
+          "type":"Long"
+        },
+        "vendingMachineId":{
+          "type":"Long"
+        }
+      }
+  }
+}
+}

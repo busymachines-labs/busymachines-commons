@@ -1,0 +1,498 @@
+{
+  "apiVersion":"0.2",
+  "swaggerVersion":"1.1",
+  "basePath":"/v1",
+  "resourcePath":"/user",
+  "apis":[
+    {
+      "path":"/assets",
+      "description":"Get assets",
+      "operations":[
+        {
+          "httpMethod":"GET",
+          "summary":"Get assets",
+          "responseClass":"List[AssetsOutput]",
+          "nickname":"checkStatus",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"assetType",
+              "description":"Type of asset",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"brand",
+              "description":"Make of asset model",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"model",
+              "description":"Model of asset",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"oemSerialNumber",
+              "description":"Oem serial number of asset",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"customSerialNumber",
+              "description":"Custom serial number of asset",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"locationIds",
+              "description":"Filter by location ids (split ids by comma)",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"Int"
+            },{
+              "name":"usingPartyIds",
+              "description":"Filter by party ids (split ids by comma)",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"Int"
+            },{
+              "name":"building",
+              "description":"Filter by building field of specific location",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"search",
+              "description":"Filter by any text over multiple fields",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"isActive",
+              "description":"If true, return assets having activation date filled-in",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"boolean"
+            },{
+              "name":"swLat",
+              "description":"Filter by south west latitude",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"double"
+            },{
+              "name":"swLon",
+              "description":"Filter by south west longitude",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"double"
+            },{
+              "name":"neLat",
+              "description":"Filter by north est latitude",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"double"
+            },{
+              "name":"nwLon",
+              "description":"Filter by north west longitude",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"double"
+            },{
+              "name":"limit",
+              "description":"Return a specific number of assets",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"Int"
+            },{
+              "name":"offset",
+              "description":"Skip a specific number of assets",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"Int"
+            }
+          ],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Return a list of assets."
+            },
+            {
+              "code":401,
+              "reason":"Because the user is not logged in, access to this resource is restricted."
+            }
+          ]
+        }, 
+        {
+          "httpMethod":"POST",
+          "summary":"Create an asset",
+          "responseClass":"Response",
+          "nickname":"createAsset",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },
+            {
+              "name":"asset",
+              "description":"Asset fields",
+              "paramType":"body",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"Asset"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Asset was succesfully created."
+            },
+            {
+              "code":400,
+              "reason":"InvalidIdException."
+            },
+            {
+              "code":400,
+              "reason":"There is already the same oemSerialNumber mapped to the selected asset model."
+            },
+            {
+              "code":400,
+              "reason":"There is already the same customSerialNumber mapped to the selected asset model and party."
+            },
+            {
+              "code":401,
+              "reason":"NotAuthorizedException."
+            }
+      	]
+      }
+      ]        
+    },{
+    "path":"/assets/{assetId}",
+      "description":"Handle a specific asset by id",
+      "operations":[
+	    {
+          "httpMethod":"GET",
+          "summary":"Find an asset",
+          "responseClass":"AssetsOutput",
+          "nickname":"getAsset",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"assetId",
+              "description":"Id of the asset to be fetched",
+              "paramType":"path",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Asset was succesfully fetched."
+            },
+            {
+              "code":400,
+              "reason":"Invalid asset model id."
+            },{
+              "code":404,
+              "reason":"Asset NOT found."
+            }
+	      	]
+	      },
+	      {
+          "httpMethod":"PUT",
+          "summary":"Update an asset",
+          "responseClass":"AssetsOutput",
+          "nickname":"updateAsset",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"assetId",
+              "description":"Id of the asset to be updated",
+              "paramType":"path",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },
+            {
+              "name":"asset",
+              "description":"Asset fields",
+              "paramType":"body",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"Asset"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Asset was succesfully fetched."
+            },
+            {
+              "code":400,
+              "reason":"Invalid asset model id."
+            },
+            {
+              "code":400,
+              "reason":"Invalid asset id."
+            }
+	      	]
+	      },
+	      {
+          "httpMethod":"DELETE",
+          "summary":"Delete an asset",
+          "responseClass":"None",
+          "nickname":"deleteAsset",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"assetId",
+              "description":"Id of the asset to be deleted",
+              "paramType":"path",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Asset was succesfully deleted."
+            },
+            {
+              "code":400,
+              "reason":"Invalid asset model id."
+            }
+	      	]
+	      }
+  ]
+  }
+  ],
+  "models":
+	 {
+	    "AssetsOutput":{
+	      "id":"AssetsOutput",
+	      "properties":{
+	      	"id":{
+	          "type":"Int"
+	        },
+	        "assetModel":{
+	          "type":"AssetModel"
+	        },
+	        "oemSerialNumber":{
+	          "type":"String"
+	        },
+	        "customSerialNumber":{
+	          "type":"String"
+	        },
+	        "linkQualityValue":{
+	          "type":"Int"
+	        },
+	        "activationDate":{
+	          "type":"Date"
+	        },
+	        "location":{
+	          "type":"Location"
+	        },
+	        "specificLocation":{
+	            "type":"SpecificLocationOutput"
+	        }
+      	}
+	  },
+	  "Location":{
+	      "id": "Location",
+	      "properties":{
+	          "id":{
+	              "type": "Int"
+	          },
+	          "description":{
+	              "type":"String"
+	          },
+	          "partyId":{
+	              "type": "Int"
+	          },
+	          "address":{
+	              "type": "Address"
+	          },
+	          "contactPersonId":{
+	              "type": "Int"
+	          },
+	          "mainLocation":{
+	              "type": "Boolean"
+	          }
+	      }
+	  },
+	  "Address":{
+	      "id": "Address",
+	      "properties":{
+	          "id":{
+	              "type": "Int"
+	          },
+	          "street":{
+	              "type":"String"
+	          },
+	          "number":{
+	              "type":"String"
+	          },
+	          "zipcode":{
+	              "type":"String"
+	          },
+	          "city":{
+	              "type": "String"
+	          },
+	          "country":{
+	              "type": "String"
+	          },
+	          "geoLocation":{
+	              "type": "GeoLocation"
+	          }
+	  	}
+	},
+	  "GeoLocation":{
+	      "id": "GeoLocation",
+	      "properties":{
+	          "id":{
+	              "type": "Int"
+	          },
+	          "latitude":{
+	              "type":"Double"
+	          },
+	          "longitude":{
+	              "type":"Double"
+	          },
+	          "altitude":{
+	              "type":"Double"
+	          }
+	  	}
+	},
+	"SpecificLocation":{
+	    "id":"SpecificLocation",
+	    "properties":{
+	        "building":{
+	            "type": "String"
+	        },
+	        "floor":{
+	            "type": "String"
+	        },
+	        "room":{
+	            "type": "String"
+	        },
+	        "other":{
+	            "type": "String"
+	        },
+	        "assetId":{
+	            "type": "Int"
+	        }
+	    }
+	},
+	"assetModel":{
+	    "id":"AssetModel",
+	    "properties":{
+	        "id":{
+	              "type": "Int"
+	         },
+	        "type":{
+	            "type": "String"
+	        },
+	        "certified":{
+	            "type": "Boolean"
+	        },
+	        "make":{
+	            "type": "String"
+	        },
+	        "model":{
+	            "type": "String"
+	        }
+	    }
+	},
+	"Response":{
+      "id":"Response",
+      "properties":{
+        "message":{
+          "type":"String"
+        }
+      }
+    },
+	"Asset":{
+      "id":"Asset",
+      "properties":{
+        "id":{
+          "type": "Int"
+	    },
+	    "type":{
+          "type": "String"
+	    },
+        "oemSerialNumber":{
+          "type":"String"
+        },
+        "customSerialNumber":{
+          "type":"String"
+        },
+        "modelId":{
+          "type":"Int"
+        },
+        "locationId":{
+          "type":"Int"
+        },
+        "userPartyId":{
+          "type":"Int"
+        },
+        "ownerId":{
+          "type":"Int"
+        },
+        "specificLocations":{
+          "items":{
+            "type":"SpecificLocation"
+          },
+          "type":"Array"
+      }
+    }
+    }
+}
+}

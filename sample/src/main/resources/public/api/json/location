@@ -1,0 +1,258 @@
+{
+  "apiVersion":"0.2",
+  "swaggerVersion":"1.1",
+  "basePath":"/v1",
+  "resourcePath":"/location",
+  "apis":[
+    {
+      "path":"/locations",
+      "description":"Get locations",
+      "operations":[
+        {
+          "httpMethod":"GET",
+          "summary":"Get locations",
+          "responseClass":"List[Location]",
+          "nickname":"getLocations",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"partyId",
+              "description":"Filter by partyId",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"Int"
+            },{
+              "name":"swLat",
+              "description":"Filter by south west latitude",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"double"
+            },{
+              "name":"swLon",
+              "description":"Filter by south west longitude",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"double"
+            },{
+              "name":"neLat",
+              "description":"Filter by north est latitude",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"double"
+            },{
+              "name":"nwLon",
+              "description":"Filter by north west longitude",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"double"
+            },{
+              "name":"limit",
+              "description":"Return a specific number of locations",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"Int"
+            },{
+              "name":"offset",
+              "description":"Skip a specific number of locations",
+              "paramType":"query",
+              "required":false,
+              "allowMultiple":false,
+              "dataType":"Int"
+            }
+          ],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Return a list of locations."
+            },
+            {
+              "code":401,
+              "reason":"Because the user is not logged in, access to this resource is restricted."
+            }
+          ]
+        }, 
+        {
+          "httpMethod":"POST",
+          "summary":"Create a location",
+          "responseClass":"Response",
+          "nickname":"createLocation",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },
+            {
+              "name":"location",
+              "description":"Location fields",
+              "paramType":"body",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"Location"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Location was succesfully created."
+            }
+      	]
+      }
+      ]
+    },{
+    "path":"/locations/{locationId}",
+      "description":"Fetch a specific location by id",
+      "operations":[
+	    {
+          "httpMethod":"GET",
+          "summary":"Find a location",
+          "responseClass":"Location",
+          "nickname":"getLocation",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"locationId",
+              "description":"Id of the location to be fetched",
+              "paramType":"path",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Location was succesfully fetched."
+            },
+            {
+              "code":400,
+              "reason":"Invalid location model id."
+            }
+	      	]
+	      },{
+          "httpMethod":"DELETE",
+          "summary":"Delete a location",
+          "responseClass":"None",
+          "nickname":"deleteLocation",
+          "parameters":[
+             {
+              "name":"Auth-Token",
+              "description":"Token received when doing logged-in.",
+              "paramType":"header",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            },{
+              "name":"locationId",
+              "description":"Id of the location to be deleted",
+              "paramType":"path",
+              "required":true,
+              "allowMultiple":false,
+              "dataType":"string"
+            }
+        	],
+          "errorResponses":[
+            {
+              "code":200,
+              "reason":"Location was succesfully deleted."
+            },
+            {
+              "code":400,
+              "reason":"Invalid location model id."
+            }
+	      	]
+	      }
+  ]
+  }
+  ],
+  "models":
+	 {
+	    "Location":{
+	      "id":"Location",
+	      "properties":{
+	        "id":{
+	          "type":"Int"
+	        },
+	        "description":{
+	          "type":"String"
+	        },
+	        "partyId":{
+	          "type":"Int"
+	        },
+	        "address":{
+	            "type":"Address"
+	        },
+	        "contactPersonId":{
+	            "type":"Int"
+	        },
+	        "mainLocation":{
+	            "type":"Boolean"
+	        }
+      	}
+	  },
+	  "Address":{
+	      "id": "Address",
+	      "properties":{
+	          "id":{
+	              "type": "Int"
+	          },
+	          "street":{
+	              "type":"String"
+	          },
+	          "number":{
+	              "type":"String"
+	          },
+	          "zipcode":{
+	              "type":"String"
+	          },
+	          "city":{
+	              "type": "String"
+	          },
+	          "country":{
+	              "type": "String"
+	          },
+	          "geoLocation":{
+	              "type": "GeoLocation"
+	          }
+	  	}
+	},
+	  "GeoLocation":{
+	      "id": "GeoLocation",
+	      "properties":{
+	          "id":{
+	              "type": "Int"
+	          },
+	          "latitude":{
+	              "type":"Double"
+	          },
+	          "longitude":{
+	              "type":"Double"
+	          },
+	          "altitude":{
+	              "type":"Double"
+	          }
+	  	}
+	}
+}
+}

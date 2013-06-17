@@ -1,0 +1,43 @@
+{
+  "apiVersion":"0.2",
+  "swaggerVersion":"1.1",
+  "basePath":"http:/v1",
+  "apis":[
+    {
+      "path":"/json/user",
+      "description":"Users authentication."
+    },
+    {
+      "path":"/json/asset",
+      "description":"Handling assets."
+    },
+    {
+      "path":"/json/assetmodel",
+      "description":"Handling asset models."
+    },
+    {
+      "path":"/json/location",
+      "description":"Handling locations."
+    },
+    {
+      "path":"/json/party",
+      "description":"Handling parties."
+    },
+    {
+      "path":"/json/period",
+      "description":"Handling periods."
+    },
+    {
+      "path":"/json/reading",
+      "description":"Handling vending machine readings."
+    },
+    {
+      "path":"/json/timestep",
+      "description":"Handling timesteps."
+    },
+    {
+      "path":"/json/report",
+      "description":"Query reports."
+    }
+  ]
+}
