@@ -30,13 +30,14 @@ object BigSaasBuild extends Build {
   val jodaConvert = "org.joda" % "joda-convert" % "1.3.1" withSources() // for class file error in joda-time
   val uuid = "com.eaio.uuid" % "uuid" % "3.4" withSources()
   val jsr305 = "com.google.code.findbugs" % "jsr305" % "2.0.1" // for class file error in guava
+  val commons = "org.scalastuff" %% "busymachines-commons" % "0.0.1-SNAPSHOT" withSources() 
 
   def defaultSettings =
     Project.defaultSettings ++
     SbtOneJar.oneJarSettings ++
       Seq(
         sbtPlugin := false,
-        organization := "com.kentivo",
+        organization := "com.busymachines",
         version := "1.0.0-SNAPSHOT",
         scalaVersion := "2.10.1",
         publishMavenStyle := false,
@@ -46,8 +47,8 @@ object BigSaasBuild extends Build {
         EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
         EclipseKeys.withSource := true)
 
-  val mdm = Project(id = "mdm", base = file("."), settings = defaultSettings ++ Seq(
+  val sample = Project(id = "sample", base = file("."), settings = defaultSettings ++ Seq(
  mainClass in (Compile, run) := Some("com.kentivo.mdm.ui.UiServer"),
-    libraryDependencies ++= Seq(es, esclient, joda, jodaConvert, /*sprayCan, sprayClient, sprayRouting, sprayJson,*/ hazelcast, akkaActor, akkaRemote, sprayTest, config, grizzled, guava, uuid, logback, jsr305)))
+    libraryDependencies ++= Seq(commons)))
 
 }

@@ -46,6 +46,7 @@ import com.kentivo.mdm.db.HasValueForPropertyDaoFilter
 import com.kentivo.mdm.domain.Media
 import com.kentivo.mdm.db.MediaDao
 import com.kentivo.mdm.db.HasValueForProperty
+import com.busymachines.commons.dao.elasticsearch.MediaDao
 
 class IcecatAdapter(system: ActorSystem, itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: ExecutionContext) {
 

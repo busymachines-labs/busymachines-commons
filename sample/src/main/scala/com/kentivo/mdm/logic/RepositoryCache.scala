@@ -13,6 +13,8 @@ import scala.collection.concurrent.TrieMap
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import com.kentivo.mdm.db.ItemDaoFilter
+import com.busymachines.commons.domain.Id
+import com.busymachines.commons.dao.SearchCriteria
 
 class RepositoryCache(val repository : Repository, itemDao : ItemDao) extends RepositoryView {
   
@@ -31,7 +33,7 @@ class RepositoryCache(val repository : Repository, itemDao : ItemDao) extends Re
     result
   }
 
-  def searchItems(filters : ItemDaoFilter*) : Seq[Item] = {
+  def searchItems(criteria : SearchCriteria[Item]) : Seq[Item] = {
     _searchCache.getOrElseUpdate(filters.toSeq, {
       val items = Await.result(itemDao.searchItems(filters:_*), 10 seconds)
       val cachedItems = items.map(item => (item -> _itemCache.get(item.id)))

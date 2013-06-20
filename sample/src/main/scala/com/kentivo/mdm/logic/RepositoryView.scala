@@ -12,13 +12,15 @@ import java.util.Locale
 import scala.concurrent.Future
 import scala.collection.mutable
 import com.kentivo.mdm.db.ItemDaoFilter
+import com.busymachines.commons.domain.Id
+import com.busymachines.commons.dao.SearchCriteria
 
 trait RepositoryView {
 
   val repository: Repository
 
   def findItems(itemIds : Seq[Id[Item]]) : Seq[Item]
-  def searchItems(filters : ItemDaoFilter*) : Seq[Item]
+  def searchItems(criteria : SearchCriteria[Item]) : Seq[Item]
   
   def findItem(itemId : Id[Item]) : Option[Item] = 
     findItems(Seq(itemId)).headOption

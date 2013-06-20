@@ -1,6 +1,7 @@
 package com.kentivo.mdm.db
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.ExecutionContext.Implicits.global
 import org.elasticsearch.index.query.FilterBuilders.nestedFilter
 import org.elasticsearch.index.query.FilterBuilders.termFilter
 import com.busymachines.commons.dao.elasticsearch.ESSearchCriteria
@@ -8,19 +9,21 @@ import com.busymachines.commons.dao.elasticsearch.EsRootDao
 import com.busymachines.commons.dao.elasticsearch.Index
 import com.busymachines.commons.domain.Id
 import com.kentivo.mdm.domain.DomainJsonFormats
-import com.kentivo.mdm.domain.DomainJsonFormats._
+import com.kentivo.mdm.domain.DomainJsonFormats.itemFormat
 import com.kentivo.mdm.domain.Item
 import com.kentivo.mdm.domain.Property
-import spray.json.pimpString
+import spray.json._
 import com.busymachines.commons.dao.elasticsearch.Type
 
+class ItemDao2(index2 : Index)(implicit val ec2: ExecutionContext) extends EsRootDao[Item](index2, Type("item", ItemMapping))(scala.concurrent.ExecutionContext.Implicits.global)
 
 case class HasValueForProperty(propertyId : Id[Property], value : Option[String] = None, locale : Option[Option[String]] = None, unit : Option[Unit] = None) extends ESSearchCriteria.Delegate (
   ItemMapping.values / PropertyValueMapping.property === propertyId.toString
   && ItemMapping.values / PropertyValueMapping.property === propertyId.toString
 )
 
-class ItemDao(index : Index)(implicit ec: ExecutionContext) extends EsRootDao[Item](index, Type("item", ItemMapping))(ec) {
+
+class ItemDao(index : Index)(implicit ec: ExecutionContext) extends EsRootDao[Item](index=index, t=Type("item", ItemMapping))(ec = ec) {
 //
 ////  val (indexName, typeName) = es.indexAndTypeOf("item")
 //

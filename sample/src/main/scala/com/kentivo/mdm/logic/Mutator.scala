@@ -3,33 +3,34 @@ package com.kentivo.mdm.logic
 import com.kentivo.mdm.domain.Mutation
 import com.kentivo.mdm.domain.Item
 import com.busymachines.commons
-import scala.collection.mutable
 import com.kentivo.mdm.domain.Property
 import com.kentivo.mdm.domain.PropertyScope
 import java.util.Locale
-import com.kentivo.mdm.commons.HasId
 import scala.collection.concurrent.TrieMap
-import com.kentivo.mdm.db.ItemDaoFilter
 import com.kentivo.mdm.domain.PropertyValue
 import com.kentivo.mdm.domain.Unit
 import com.kentivo.mdm.db.ItemDao
 import scala.concurrent.ExecutionContext
+import com.busymachines.commons.domain.Id
+import com.busymachines.commons.dao.RootMutator
+import com.busymachines.commons.dao.SearchCriteria
+import scala.concurrent.duration.Duration
 
-class Mutator(val view: RepositoryView, val itemDao : ItemDao, val mutation: Mutation) extends RepositoryView {
+class Mutator(val view: RepositoryView, val itemDao : ItemDao, val mutation: Mutation)(implicit ec: ExecutionContext) extends RepositoryView {
 
-  private val _changedItems = mutable.Map[Id[Item], Item]()
-
-  def changedItems: scala.collection.Map[Id[Item], Item] = _changedItems
-
+  private val mutator = new RootMutator[Item](itemDao)
+  
   val repository = view.repository
 
   def newItem = Item(repository.id, mutation.id)
   
-  def findItems(itemIds : Seq[Id[Item]]) = 
-    itemIds.flatMap(id => _changedItems.get(id).map(Some(_)).getOrElse(view.findItem(id)))
-  
-  def searchItems(filters : ItemDaoFilter*) : Seq[Item] = {
-    val items = view.searchItems(filters:_*)
+  def findItems(itemIds : Seq[Id[Item]], timeout: Duration) = 
+    mutator.retrieve(itemIds, timeout)
+      itemIds.flatMap(id => _changedItems.get(id).map(Some(_)).getOrElse(view.findItem(id)))
+
+  def searchItems(criteria : SearchCriteria[Item], timeout : Duration) : Seq[Item] = 
+    mutator.search(criteria, timeout)
+    val items = view.searchItems(criteria)
     items.map(item => _changedItems.get(item.id).getOrElse(item))
   }
     
@@ -98,6 +99,7 @@ class Mutator(val view: RepositoryView, val itemDao : ItemDao, val mutation: Mut
   }
   
   def flush(implicit ec : ExecutionContext) {
+    mutator.write(10 seconds, true);
     itemDao.storeItems(changedItems.values.toSeq).map(_.filter(_._2 != None).map(_._1))
     _changedItems.clear
   }
