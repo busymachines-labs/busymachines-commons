@@ -24,18 +24,19 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
   
   protected val _changedEntities = mutable.Map[Id[T], Versioned[T]]()
   protected val _createdEntities = mutable.Map[Id[T], String]()
+  protected val _cache = new DaoCache(dao)
 
   val changedEntities: scala.collection.Map[Id[T], T] = 
     _changedEntities.mapValues(_.entity)
 
   def retrieve(id: Id[T], timeout : Duration): Option[T] = 
-    _changedEntities.get(id).map(Some(_)).getOrElse(result(dao.retrieve(id), timeout)).map(_.entity)
+    _changedEntities.get(id).map(Some(_)).getOrElse(_cache.retrieve(id, timeout)).map(_.entity)
 
   def retrieve(entityIds : Seq[Id[T]], timeout : Duration) : Seq[T] = 
-    entityIds.flatMap(id => _changedEntities.get(id).map(Some(_)).getOrElse(result(dao.retrieve(id), timeout))).map(_.entity)
+    entityIds.flatMap(id => _changedEntities.get(id).map(Some(_)).getOrElse(_cache.retrieve(id, timeout))).map(_.entity)
   
   def search(criteria: SearchCriteria[T], timeout : Duration) : List[T] = {
-    val entities = result(dao.search(criteria), timeout)
+    val entities = _cache.search(criteria, timeout)
     entities.map(entity => _changedEntities.get(entity.id).getOrElse(entity)).map(_.entity)
   }
     

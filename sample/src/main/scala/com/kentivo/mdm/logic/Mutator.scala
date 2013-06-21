@@ -24,9 +24,8 @@ class Mutator(val view: RepositoryView, val itemDao : ItemDao, val mutation: Mut
 
   def newItem = Item(repository.id, mutation.id)
   
-  def findItems(itemIds : Seq[Id[Item]], timeout: Duration) = 
+  def retrieve(itemIds : Seq[Id[Item]], timeout: Duration) = 
     mutator.retrieve(itemIds, timeout)
-      itemIds.flatMap(id => _changedItems.get(id).map(Some(_)).getOrElse(view.findItem(id)))
 
   def searchItems(criteria : SearchCriteria[Item], timeout : Duration) : Seq[Item] = 
     mutator.search(criteria, timeout)
@@ -35,6 +34,7 @@ class Mutator(val view: RepositoryView, val itemDao : ItemDao, val mutation: Mut
   }
     
   def getChangedItem(id: Id[Item]): Option[Item] =
+    mutator.changedEntities
     _changedItems.get(id)
 
   def getOrCreateItem(id: Id[Item]): Item = {
