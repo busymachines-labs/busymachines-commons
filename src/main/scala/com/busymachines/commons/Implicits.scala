@@ -12,9 +12,9 @@ package object implicits extends CommonImplicits
 
 trait CommonImplicits {
   implicit def toOption[A](a: A) = Option(a)
-  implicit def richConfig(config : Config) = new RichConfig(config)
-  implicit def richJsValue(value : JsValue) = new RichJsValue(value)
-  implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
-  implicit def richString(s : String) = new RichString(s)
-  implicit def richFunction[A, B](f : A => Option[B]) = new RichFunction(f)
+  implicit def RichConfig(config : Config) = new RichConfig(config)
+  implicit def RichJsValue(value : JsValue) = new RichJsValue(value)
+  implicit def RichSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
+  implicit def RichString(s : String) = new RichString(s)
+  implicit def RichFunction[A, B](f : A => Option[B]) = new RichFunction(f)
 }

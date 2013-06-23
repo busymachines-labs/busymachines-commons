@@ -5,8 +5,6 @@ import com.busymachines.commons.Logging
 import com.busymachines.commons.implicits._
 import com.kentivo.mdm.logic.IcecatAdapter
 import scala.concurrent.Future
-import com.kentivo.mdm.logic.RepositoryView
-import com.kentivo.mdm.logic.RepositoryCache
 import com.kentivo.mdm.domain.Repository
 
 object Main extends App with Logging {
@@ -22,6 +20,7 @@ object Main extends App with Logging {
 //  assembly.server.start
   
   import assembly.executionContext
-  val icecat = new IcecatAdapter(assembly.actorSystem, assembly.itemDao, assembly.mediaDao)
-  icecat.importCategories(Future { new RepositoryCache(Repository(), assembly.itemDao)})
+  import assembly.actorSystem
+  val icecat = new IcecatAdapter(assembly.itemDao, assembly.mediaDao)
+  icecat.importAll
 }

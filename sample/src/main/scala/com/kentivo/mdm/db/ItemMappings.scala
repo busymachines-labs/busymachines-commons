@@ -5,6 +5,11 @@ import com.busymachines.commons.dao.elasticsearch.Mapping
 import com.kentivo.mdm.domain.Item
 import com.kentivo.mdm.domain.Property
 import com.kentivo.mdm.domain.PropertyValue
+import com.kentivo.mdm.domain.Source
+import com.busymachines.commons.dao.elasticsearch.Index
+import org.elasticsearch.node.NodeBuilder.nodeBuilder
+
+class MdmIndex extends Index(nodeBuilder.client(true).node.client)
 
 object ItemMapping extends Mapping[Item] {
   val repository = "repository" as String & Stored & NotAnalyzed
@@ -15,11 +20,6 @@ object ItemMapping extends Mapping[Item] {
   val parent = "parents" as String & Stored & NotAnalyzed
   val properties = "properties" as Nested(PropertyMapping) & Stored 
   val values = "values" as Nested(PropertyValueMapping) & Stored 
-}
-
-class Bla {
-  val p1 = ItemMapping.properties === null
-  val p2 = ItemMapping.properties / PropertyMapping.id === "sdf"
 }
 
 object PropertyMapping extends Mapping[Property] {
@@ -44,5 +44,12 @@ object PropertyValueMapping extends Mapping[PropertyValue] {
   val value = "value" as String & Stored & Analyzed
   val locale = "locale" as String & Stored & NotAnalyzed
   val unit = "unit" as String & Stored & NotAnalyzed
+}
+
+object SourceMapping extends Mapping[Source] {
+  val id = "_id" -> "id" as String & Stored & NotAnalyzed
+  val name = "name" as String & Stored & Analyzed
+  val repository = "repository" as String & Stored & NotAnalyzed
+  val model = "model" as Nested(ItemMapping) & Stored 
 }
 

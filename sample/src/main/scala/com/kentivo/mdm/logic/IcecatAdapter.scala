@@ -1,54 +1,43 @@
 package com.kentivo.mdm.logic
 
-import scala.concurrent.Future
-import scala.concurrent.duration._
-import akka.actor.ActorSystem
-import akka.actor.Props
-import spray.can.client.HttpClient
-import spray.client.HttpConduit
-import spray.client.HttpConduit._
-import spray.http.HttpMethods.GET
-import spray.http.HttpRequest
-import spray.http.HttpResponse
-import spray.io.IOExtension
+import java.util.Locale
+
+import scala.Option.option2Iterable
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
-import scala.util.Success
-import scala.util.Failure
+import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
 import scala.io.Codec
-import spray.http.BasicHttpCredentials
 import scala.xml.NodeSeq
-import spray.httpx.unmarshalling.BasicUnmarshallers._
-import spray.httpx.unmarshalling.Unmarshaller
-import spray.httpx.unmarshalling.pimpHttpEntity
-import spray.http.MediaTypes._
-import spray.http.HttpBody
 import scala.xml.XML
-import spray.http.EmptyEntity
-import java.io.InputStreamReader
-import java.io.ByteArrayInputStream
+
+import org.joda.time.DateTime
+
+import com.busymachines.commons.dao.elasticsearch.MediaDao
+import com.busymachines.commons.domain.Id
+import com.busymachines.commons.domain.Media
+import com.busymachines.commons.implicits.RichString
+import com.kentivo.mdm.db.HasValueForProperty
 import com.kentivo.mdm.db.ItemDao
 import com.kentivo.mdm.domain.Item
-import com.kentivo.mdm.domain.MimeType
-import com.kentivo.mdm.domain.PropertyType
-import com.busymachines.commons.domain.Id
-import com.kentivo.mdm.domain.Party
-import scala.concurrent.Await
-import java.util.Locale
-import com.kentivo.mdm.domain.Property
-import com.kentivo.mdm.domain.PropertyValue
-import com.kentivo.mdm.domain.PropertyScope
-import com.busymachines.commons.domain.HasId
-import com.kentivo.mdm.domain.Repository
 import com.kentivo.mdm.domain.Mutation
-import com.kentivo.mdm.logic.implicits._
-import org.joda.time.DateTime
-import com.kentivo.mdm.db.HasValueForPropertyDaoFilter
-import com.kentivo.mdm.domain.Media
-import com.kentivo.mdm.db.MediaDao
-import com.kentivo.mdm.db.HasValueForProperty
-import com.busymachines.commons.dao.elasticsearch.MediaDao
+import com.kentivo.mdm.domain.Property
+import com.kentivo.mdm.domain.PropertyScope
+import com.kentivo.mdm.domain.PropertyType
+import com.kentivo.mdm.domain.Repository
+import com.kentivo.mdm.logic.implicits.RichItem
 
-class IcecatAdapter(system: ActorSystem, itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: ExecutionContext) {
+import akka.actor.ActorSystem
+import spray.client.pipelining.Post
+import spray.client.pipelining.addCredentials
+import spray.client.pipelining.pimpWithResponseTransformation
+import spray.client.pipelining.sendReceive
+import spray.client.pipelining.sendReceive$default$3
+import spray.client.pipelining.unmarshal
+import spray.http.BasicHttpCredentials
+import spray.http.HttpRequest
+
+class IcecatAdapter(itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: ExecutionContext, system: ActorSystem) {
 
   val repository = Id[Repository]("icecat-repo")
   val icecatRootItemId = Id[Item]("icecat-root")
@@ -59,25 +48,6 @@ class IcecatAdapter(system: ActorSystem, itemDao: ItemDao, mediaDao : MediaDao)(
   val categoryImageProperty = Id[Property]("icecat-category-image")
   val categoryThumbnailProperty = Id[Property]("icecat-category-thumbnail")
 
-  def toInt(s : String) : Option[Int] = 
-    try {
-      Some(Integer.parseInt(s.trim))
-    } catch {
-      case e: NumberFormatException => None
-    }
-    
-  implicit private class RichXml(xml : NodeSeq) {
-    def i18nValues(element : String) : Seq[(Locale, String)] =  
-      (for {
-        elt <- xml \ element
-        value = (elt \ "@Value").toString if value != ""
-        langid <- toInt((elt \ "@langid").toString)
-        locale = langIdMap.get(langid)
-      } yield (locale, value)).collect {
-        case (Some(locale), value) => (locale, value)
-      }
-  }
-
   lazy val langIdMap: Map[Int, Locale] = {
     val text = io.Source.fromInputStream(getClass.getResourceAsStream("/icecat/LanguageList.xml"))(Codec.UTF8).mkString
     val xml = XML.loadString(text)
@@ -86,52 +56,53 @@ class IcecatAdapter(system: ActorSystem, itemDao: ItemDao, mediaDao : MediaDao)(
     }
     localesById.toMap
   }
-
-  def importCategories(view : Future[RepositoryView]) = {
-    val ioBridge = IOExtension(system).ioBridge()
-    val httpClient = system.actorOf(Props(new HttpClient(ioBridge)))
-    val conduit = system.actorOf(
-      props = Props(new HttpConduit(httpClient, "data.icecat.biz", 80)),
-      name = "http-conduit")
-    val pipeline: HttpRequest => Future[HttpResponse] = (
-      addCredentials(BasicHttpCredentials("ruudditerwich", "tpacoh18")) ~> sendReceive(conduit))
-
-    // fetch categories
-    val response: Future[HttpResponse] = 
-      pipeline(HttpRequest(method = GET, uri = "/export/freeurls/categories.xml"))
-      
-    // wait for view and response
-    view.zip(response).onComplete {
-      case Success((view, response)) => response.entity.as[NodeSeq] match {
-        case Right(xml) => processResult(view, xml)
-        case Left(_) =>
+  
+  implicit class RichXml(xml : NodeSeq) {
+    def i18nValues(element : String) : Seq[(Locale, String)] =  
+      (for {
+        elt <- xml \ element
+        value = (elt \ "@Value").toString if value != ""
+        langid <- (elt \ "@langid").toString.toOptionInt
+        locale = langIdMap.get(langid)
+      } yield (locale, value)).collect {
+        case (Some(locale), value) => (locale, value)
       }
-      case Failure(error) => println("FAIL:" + error)
-    }
+  }
+  
+  def importAll = {
+    val repository = Repository()
+    readCategoriesXml.map(categoriesXml => processCategoriesXml(repository, categoriesXml))
+  }
+  
+  def readCategoriesXml: Future[NodeSeq] = {
+    val pipeline: HttpRequest => Future[NodeSeq] = (
+      addCredentials(BasicHttpCredentials("ruudditerwich", "tpacoh18")) ~> 
+      sendReceive ~> unmarshal[NodeSeq])
+      pipeline(Post("http://data.icecat.biz/export/freeurls/categories.xml"))
   }
 
-  def processResult(view : RepositoryView, xml: NodeSeq) = {
+  def processCategoriesXml(repository : Repository, xml: NodeSeq) = {
 
     var itemsToWrite = Map[Id[Item], Item]()
     
     val mutation = Mutation("Icecat Import", DateTime.now)
     
-    val mutator = new Mutator(view, itemDao, mutation)
+    val mutator = new Mutator(itemDao, repository, mutation)
 
     //http://data.icecat.biz/export/freeurls/categories.xml
     // http://data.icecat.biz/export/freexml/1495.xml
 
     // Get or create root item.
-    mutator.modifyItem(icecatRootItemId, _.copy(isCategory = true))
-    mutator.modifyProperty(icecatRootItemId, categoryIcecatIdProperty, _.copy(name = Map(Locale.ROOT -> "IcecatId"), scope = PropertyScope.Category))
-    mutator.modifyProperty(icecatRootItemId, categoryImageProperty, _.copy(name = Map(Locale.ROOT -> "Image"), `type` = PropertyType.Media, scope = PropertyScope.Category))
-    mutator.modifyProperty(icecatRootItemId, categoryThumbnailProperty, _.copy(name = Map(Locale.ROOT -> "Thumbnail"), `type` = PropertyType.Media, scope = PropertyScope.Category))
-    mutator.modifyProperty(icecatRootItemId, categoryNameProperty, _.copy(name = Map(Locale.ROOT -> "Name"), scope = PropertyScope.Category, multiLingual = true))
-    mutator.modifyProperty(icecatRootItemId, categoryDescriptionProperty, _.copy(name = Map(Locale.ROOT -> "Description"), scope = PropertyScope.Category, multiLingual = true))
-    mutator.modifyProperty(icecatRootItemId, categoryKeywordsProperty, _.copy(name = Map(Locale.ROOT -> "Keywords"), scope = PropertyScope.Category, multiLingual = true, multiValue = true))
+    mutator.modifyItem(icecatRootItemId)(_.copy(isCategory = true))
+    mutator.modifyProperty(icecatRootItemId, categoryIcecatIdProperty)(_.copy(name = Map(Locale.ROOT -> "IcecatId"), scope = PropertyScope.Category))
+    mutator.modifyProperty(icecatRootItemId, categoryImageProperty)(_.copy(name = Map(Locale.ROOT -> "Image"), `type` = PropertyType.Media, scope = PropertyScope.Category))
+    mutator.modifyProperty(icecatRootItemId, categoryThumbnailProperty)(_.copy(name = Map(Locale.ROOT -> "Thumbnail"), `type` = PropertyType.Media, scope = PropertyScope.Category))
+    mutator.modifyProperty(icecatRootItemId, categoryNameProperty)(_.copy(name = Map(Locale.ROOT -> "Name"), scope = PropertyScope.Category, multiLingual = true))
+    mutator.modifyProperty(icecatRootItemId, categoryDescriptionProperty)(_.copy(name = Map(Locale.ROOT -> "Description"), scope = PropertyScope.Category, multiLingual = true))
+    mutator.modifyProperty(icecatRootItemId, categoryKeywordsProperty)(_.copy(name = Map(Locale.ROOT -> "Keywords"), scope = PropertyScope.Category, multiLingual = true, multiValue = true))
 
     // Read all existing icecat categories
-    val categories = mutator.searchItems(HasValueForProperty(categoryIcecatIdProperty))
+    val categories = mutator.searchItems(HasValueForProperty(categoryIcecatIdProperty), 1 minute)
     
     val categoriesById : Map[String, Item] = 
       categories.flatMap(c => c.propertyValue(categoryIcecatIdProperty).map(_._3.value -> c)).toMap
@@ -148,7 +119,7 @@ class IcecatAdapter(system: ActorSystem, itemDao: ItemDao, mediaDao : MediaDao)(
         mutator.setValues(id, categoryNameProperty, catNode.i18nValues("Name"))
         mutator.setValues(id, categoryDescriptionProperty, catNode.i18nValues("Description"))
         mutator.setValues(id, categoryKeywordsProperty, catNode.i18nValues("Keywords"))
-        println("Item: " + mutator.findItem(id))
+        println("Item: " + mutator.retrieve(id))
         
         
 //        val category = categoriesById.getOrElse(id, mutator.newItem)
@@ -165,7 +136,7 @@ class IcecatAdapter(system: ActorSystem, itemDao: ItemDao, mediaDao : MediaDao)(
 //        }
     }
     
-    mutator.flush
+    mutator.write(1 minute)
 
     println("Write:" + itemsToWrite.mkString("\n"))
 

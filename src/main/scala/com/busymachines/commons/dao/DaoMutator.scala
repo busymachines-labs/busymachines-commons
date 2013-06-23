@@ -32,8 +32,8 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
   def retrieve(id: Id[T], timeout : Duration): Option[T] = 
     _changedEntities.get(id).map(Some(_)).getOrElse(_cache.retrieve(id, timeout)).map(_.entity)
 
-  def retrieve(entityIds : Seq[Id[T]], timeout : Duration) : Seq[T] = 
-    entityIds.flatMap(id => _changedEntities.get(id).map(Some(_)).getOrElse(_cache.retrieve(id, timeout))).map(_.entity)
+  def retrieve(ids : Seq[Id[T]], timeout : Duration) : Seq[T] = 
+    ids.flatMap(id => _changedEntities.get(id).map(Some(_)).getOrElse(_cache.retrieve(id, timeout))).map(_.entity)
   
   def search(criteria: SearchCriteria[T], timeout : Duration) : List[T] = {
     val entities = _cache.search(criteria, timeout)
@@ -48,6 +48,9 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
     }
     modified
   }
+  
+  def update(entity : T, timeout: Duration) =
+    modify(entity.id, timeout)(_ => entity)
   
   def write(timeout : Duration, reindex : Boolean = true) : Seq[Versioned[T]] = {
     val writes = for (versionedEntity <- _changedEntities.values) 

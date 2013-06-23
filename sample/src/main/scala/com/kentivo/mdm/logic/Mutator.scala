@@ -3,6 +3,7 @@ package com.kentivo.mdm.logic
 import com.kentivo.mdm.domain.Mutation
 import com.kentivo.mdm.domain.Item
 import com.busymachines.commons
+import com.busymachines.commons.implicits._
 import com.kentivo.mdm.domain.Property
 import com.kentivo.mdm.domain.PropertyScope
 import java.util.Locale
@@ -12,64 +13,53 @@ import com.kentivo.mdm.domain.Unit
 import com.kentivo.mdm.db.ItemDao
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.domain.Id
-import com.busymachines.commons.dao.RootMutator
 import com.busymachines.commons.dao.SearchCriteria
 import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
+import com.busymachines.commons.dao.RootDaoMutator
+import com.kentivo.mdm.domain.Repository
 
-class Mutator(val view: RepositoryView, val itemDao : ItemDao, val mutation: Mutation)(implicit ec: ExecutionContext) extends RepositoryView {
+class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: Mutation)(implicit ec: ExecutionContext) {
 
-  private val mutator = new RootMutator[Item](itemDao)
-  
-  val repository = view.repository
+  private val mutator = new RootDaoMutator[Item](itemDao)
+  private val timeout = 1 minute
 
   def newItem = Item(repository.id, mutation.id)
   
-  def retrieve(itemIds : Seq[Id[Item]], timeout: Duration) = 
-    mutator.retrieve(itemIds, timeout)
+  def retrieve(id : Id[Item]) = 
+    mutator.retrieve(id, timeout)
+
+  def retrieve(ids : Seq[Id[Item]]) = 
+    mutator.retrieve(ids, timeout)
 
   def searchItems(criteria : SearchCriteria[Item], timeout : Duration) : Seq[Item] = 
     mutator.search(criteria, timeout)
-    val items = view.searchItems(criteria)
-    items.map(item => _changedItems.get(item.id).getOrElse(item))
-  }
     
   def getChangedItem(id: Id[Item]): Option[Item] =
-    mutator.changedEntities
-    _changedItems.get(id)
+    mutator.changedEntities.get(id)
 
-  def getOrCreateItem(id: Id[Item]): Item = {
-    _changedItems.getOrElse(id, view.findItem(id) match {
-      case Some(item) => item
-      case None => Item(view.repository.id, mutation.id, id)
-    })
-  }
+  def getOrCreateItem(id: Id[Item]): Item = 
+    mutator.getOrCreate(id, Item(repository.id, mutation.id, id), timeout)
 
-  def modifyItem(itemId: Id[Item], modify: Item => Item): Item = {
-    val item = getOrCreateItem(itemId)
-    val modItem = modify(item)
-    if (item != modItem) {
-      _changedItems += (itemId -> modItem)
-    }
-    modItem
-  }
+  def modifyItem(itemId: Id[Item])(modify: Item => Item): Item = 
+    mutator.modify(itemId, timeout)(modify)
   
-  def modifyProperty(itemId: Id[Item], propertyId: Id[Property], modify: Property => Property): Property = {
+  def modifyProperty(itemId: Id[Item], propertyId: Id[Property])(modify: Property => Property): Property = {
     val item = getOrCreateItem(itemId)
-    val (properties, property, changed) = Mutator.modify[Property](item.properties, _.id == propertyId, Property(repository.id, mutation.id, propertyId), modify)
+    val (properties, property, changed) = item.properties.modify(_.id == propertyId, Property(repository.id, mutation.id, propertyId), modify)
     if (changed) {
-      val modItem = item.copy(properties = properties)
-      _changedItems += (itemId -> modItem)
+      mutator.update(item.copy(properties = properties), timeout)
     }
     property
   }
 
-  def modifyValues(itemId: Id[Item], propertyId: Id[Property], modify: List[PropertyValue] => List[PropertyValue]) : Item = {
+  def modifyValues(itemId: Id[Item], propertyId: Id[Property])(modify: List[PropertyValue] => List[PropertyValue]) : Item = {
     val item = getOrCreateItem(itemId)
     val (values, otherValues) = item.values.partition(_.property == propertyId)
     val newValues = otherValues ++ modify(values) 
     if (item.values != newValues) {
       val modItem = item.copy(values = newValues)
-      _changedItems += (itemId -> modItem)
+      mutator.update(item.copy(values = newValues), timeout)
       modItem
     } else {
       item
@@ -77,7 +67,7 @@ class Mutator(val view: RepositoryView, val itemDao : ItemDao, val mutation: Mut
   }
   
   def setValues(itemId: Id[Item], propertyId: Id[Property], values: Seq[(Locale, String)]) : Item =
-    modifyValues(itemId, propertyId, _ => values.toList.map { 
+    modifyValues(itemId, propertyId)(_ => values.toList.map { 
       case (locale, value) => PropertyValue(propertyId, mutation.id, value, Some(locale))
     })
   
@@ -85,45 +75,20 @@ class Mutator(val view: RepositoryView, val itemDao : ItemDao, val mutation: Mut
     val item = getOrCreateItem(itemId)
     val (newValues, _, changed) = value match {
       case Some(value) => 
-        Mutator.modify[PropertyValue](item.values, _.locale == locale, PropertyValue(propertyId, mutation.id, value, locale, unit))
+        item.values.modify(_.locale == locale, PropertyValue(propertyId, mutation.id, value, locale, unit))
       case None =>
         val newValues = item.values.filterNot(_.locale == locale)
         (newValues, Unit, item.values != newValues)
     }
     if (changed) {
       val modItem = item.copy(values = newValues)
-      _changedItems += (itemId -> modItem)
+      mutator.update(item.copy(values = newValues), timeout)
       modItem
     }
     else item
   }
   
-  def flush(implicit ec : ExecutionContext) {
-    mutator.write(10 seconds, true);
-    itemDao.storeItems(changedItems.values.toSeq).map(_.filter(_._2 != None).map(_._1))
-    _changedItems.clear
-  }
-}
-
-object Mutator {
-  def modify[A](seq: Seq[A], matches : A => Boolean, newA: => A, modify: A => A = (a : A) => a): (List[A], A, Boolean) = {
-    var found: Option[A] = None
-    var changed = false
-    val newSeq = seq.toList.map {
-      case a if matches(a) =>
-        val modA = modify(a)
-        found = Some(modA);
-        changed = a != modA
-        newA
-      case a =>
-        a
-    }
-    found match {
-      case Some(a) =>
-        (newSeq, a, changed)
-      case None =>
-        val modA = modify(newA)
-        (newSeq :+ modA, modA, true)
-    }
+  def write(timeout : Duration) {
+    mutator.write(timeout, true);
   }
 }

@@ -25,6 +25,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "io.spray" %% "spray-json" % "1.2.5" withSources(),
     libraryDependencies += "io.spray" % "spray-routing" % "1.2-M8" withSources(),
     libraryDependencies += "io.spray" % "spray-client" % "1.2-M8" withSources(),
+    libraryDependencies += "io.spray" % "spray-can" % "1.2-M8" withSources(),
     libraryDependencies += "org.scalastuff" %% "esclient" % "0.20.3" withSources(),
     libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources(),
     libraryDependencies += "com.typesafe" % "config" % "1.0.0" withSources(),

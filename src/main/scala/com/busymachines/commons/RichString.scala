@@ -11,4 +11,11 @@ class RichString(val s : String) extends AnyVal {
     digest.update(s.getBytes("UTF-8"))
     digest.digest
   }
+
+  def toOptionInt: Option[Int] = 
+    try {
+      Some(Integer.parseInt(s.trim))
+    } catch {
+      case e: NumberFormatException => None
+    }
 }

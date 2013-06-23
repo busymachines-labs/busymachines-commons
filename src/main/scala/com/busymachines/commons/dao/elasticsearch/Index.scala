@@ -9,7 +9,7 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import org.elasticsearch.client.Client
 import org.scalastuff.esclient.ESClient
-
+import org.elasticsearch.node.NodeBuilder.nodeBuilder
 abstract class Index(_client : Client) {
 
   private val _types = Buffer[Type[_]]()

@@ -13,6 +13,7 @@ import com.kentivo.mdm.domain.Item
 import java.util.Locale
 import com.kentivo.mdm.domain.Property
 import com.kentivo.mdm.domain.Mutation
+import com.busymachines.commons.domain.Id
 
 class SourceManager(sourceDao : SourceDao) {
 
@@ -26,7 +27,7 @@ class SourceManager(sourceDao : SourceDao) {
         Schedule(DateTime.now, Some(ScheduleRepeat.Yearly)),
         Schedule(DateTime.now, None)
         ),
-        types=List(
+        model=List(
             Item(repository = Id.generate, mutation = Id.generate, name=Map(new Locale("nl") -> "Klant", Locale.forLanguageTag("") -> "CUSTOMER", Locale.CANADA_FRENCH -> "Customer"),
                 properties=List(
                     Property(repository, mutation, name=Map(new Locale("nl") -> "Prijs", Locale.forLanguageTag("") -> "Price", Locale.CANADA_FRENCH -> "Prix")),

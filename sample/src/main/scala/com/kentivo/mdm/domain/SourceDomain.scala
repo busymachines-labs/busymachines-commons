@@ -10,7 +10,7 @@ case class Source(
   id: Id[Source] = Id.generate,
   name : String,
   repository: Id[Repository],
-  types: List[Item] = List.empty,
+  model: List[Item] = List.empty,
   mappings: List[Mapping] = List.empty,
   importSchedule : List[Schedule] = Nil,
   exportSchedule : List[Schedule] = Nil)

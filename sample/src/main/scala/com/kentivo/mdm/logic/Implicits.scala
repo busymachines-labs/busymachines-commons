@@ -1,11 +1,10 @@
 package com.kentivo.mdm.logic
 
-import com.kentivo.mdm.domain.Item
-import com.kentivo.mdm.domain.Item
 import com.busymachines.commons.domain.Id
+import com.google.common.io.BaseEncoding
+import com.kentivo.mdm.domain.Item
 import com.kentivo.mdm.domain.Property
 import com.kentivo.mdm.domain.PropertyValue
-import com.google.common.io.BaseEncoding
 
 trait Implicits {
 

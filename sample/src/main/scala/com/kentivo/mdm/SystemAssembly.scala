@@ -7,25 +7,25 @@ import com.kentivo.mdm.api.v1.AuthenticationApiV1
 import com.kentivo.mdm.api.v1.PartiesApiV1
 import com.kentivo.mdm.api.v1.SourceApiV1
 import com.kentivo.mdm.api.v1.UsersApiV1
-import com.kentivo.mdm.commons.ESSourceProvider
 import com.kentivo.mdm.db.SourceDao
 import com.kentivo.mdm.logic.SourceManager
 import com.kentivo.mdm.ui.Ui
 import akka.actor.ActorSystem
 import spray.routing.Directives._
 import com.kentivo.mdm.db.ItemDao
-import com.kentivo.mdm.db.MediaDao
+import com.busymachines.commons.dao.elasticsearch.MediaDao
+import com.kentivo.mdm.db.MdmIndex
 
 class SystemAssembly {
 
-  lazy val actorSystem = ActorSystem("KentivoMDM")
+  lazy implicit val actorSystem = ActorSystem("KentivoMDM")
   lazy implicit val executionContext = actorSystem.dispatcher
-  lazy val es = new ESSourceProvider
-  lazy val sourceDao = new SourceDao(es)
-  lazy val itemDao = new ItemDao(es)
-  lazy val mediaDao = new MediaDao(es)
+  lazy val index = new MdmIndex
+  lazy val sourceDao = new SourceDao(index)
+  lazy val itemDao = new ItemDao(index)
+  lazy val mediaDao = new MediaDao(index)
   lazy val sourceManager = new SourceManager(sourceDao)
-  lazy val server = new ApiServer(actorSystem)({ implicit context =>
+  lazy val server = new ApiServer(actorSystem)({  context =>
     lazy val authenticationApiV1 = new AuthenticationApiV1
     lazy val userApiV1 = new UsersApiV1
     lazy val partyApiV1 = new PartiesApiV1

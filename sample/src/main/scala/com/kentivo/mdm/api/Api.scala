@@ -36,7 +36,7 @@ class Api(authenticationApiV1: AuthenticationApiV1, partyApiV1: PartiesApiV1, us
 
   def showRequest(request: HttpRequest) = LogEntry("URL: " + request.uri + "\n CONTENT: " + request.entity, DebugLevel)
 
-  implicit val exceptionHandler = ExceptionHandler.fromPF {
+  implicit val exceptionHandler = ExceptionHandler {
     case e: NotAuthorizedException => ctx =>
       warn(s"Unauthorized request ${ctx.request} : ${e.message}", e)
       ctx.complete(StatusCodes.Unauthorized, Map("message" -> e.message))
