@@ -11,6 +11,7 @@ import spray.json.JsValue
 import spray.json.JsonFormat
 import spray.json.RootJsonFormat
 import spray.json.deserializationError
+import spray.json.JsObject
 
 object CommonJsonFormats extends CommonJsonFormats 
   
@@ -66,6 +67,14 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
           case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
         }
       case s => deserializationError("Couldn't convert '" + s + "' to a date-time")
+    }
+  }
+
+  implicit val stringMapFormat = new JsonFormat[Map[String, String]] {
+    def write(value: Map[String, String]) = JsObject(value.mapValues(JsString(_)).toList)
+    def read(value: JsValue): Map[String, String] = value match {
+      case JsObject(fields) => fields.map(t => (t._1, t._2.toString)).toMap
+      case s => deserializationError("Couldn't convert '" + s + "' to a string map")
     }
   }
 

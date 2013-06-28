@@ -9,10 +9,11 @@ import spray.http.StatusCodes
 import spray.routing.HttpService
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.domain.Id
-
-class SourceApiV1(sourceManager: SourceManager)(implicit val actorRefFactory: ActorRefFactory) extends ApiDirectives {
-    
-  val route = path("sources") {
+import spray.httpx.SprayJsonSupport._ 
+ 
+class SourceApiV1(sourceManager: SourceManager) extends ApiDirectives {
+  
+  def route(implicit actorRefFactory: ActorRefFactory) = path("sources") {
     authenticateUser { implicit user =>
       get {
         complete {

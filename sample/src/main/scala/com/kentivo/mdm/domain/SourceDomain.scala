@@ -1,6 +1,7 @@
 package com.kentivo.mdm.domain
 
 import com.busymachines.commons.domain.Id
+import com.busymachines.commons.domain.HasId
 
 /**
  * Constraint: Source properties must exist in source types.
@@ -13,7 +14,7 @@ case class Source(
   model: List[Item] = List.empty,
   mappings: List[Mapping] = List.empty,
   importSchedule : List[Schedule] = Nil,
-  exportSchedule : List[Schedule] = Nil)
+  exportSchedule : List[Schedule] = Nil) extends HasId[Source]
 
 case class Mapping(
   id: Id[Mapping] = Id.generate,

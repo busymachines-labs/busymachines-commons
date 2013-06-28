@@ -9,7 +9,11 @@ import com.kentivo.mdm.domain.Source
 import com.busymachines.commons.dao.elasticsearch.Index
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
 
-class MdmIndex extends Index(nodeBuilder.client(true).node.client)
+class MdmIndex extends Index(nodeBuilder.client(true).node.client) {
+  val name = "Kentivo"
+  val nrOfShards = 5
+  val nrOfReplicas = 2
+}
 
 object ItemMapping extends Mapping[Item] {
   val repository = "repository" as String & Stored & NotAnalyzed

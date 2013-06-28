@@ -6,8 +6,8 @@ import com.kentivo.mdm.logic.PartiesManager
 import akka.actor.ActorRefFactory
 import spray.http.StatusCodes
 
-class PartiesApiV1(implicit val actorRefFactory: ActorRefFactory) extends ApiDirectives {
-  val route =
+class PartiesApiV1 extends ApiDirectives {
+  def route(implicit actorRefFactory: ActorRefFactory) =
     path("parties") {
       authenticateUser { implicit user =>
         get {

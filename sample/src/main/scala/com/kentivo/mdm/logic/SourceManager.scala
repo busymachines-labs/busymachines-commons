@@ -17,6 +17,7 @@ import com.busymachines.commons.domain.Id
 
 class SourceManager(sourceDao : SourceDao) {
 
+  def findSources1(repository : Option[Id[Repository]])(implicit user: User): Future[Source] = null
   def findSources(repository : Option[Id[Repository]])(implicit user: User): Future[List[Source]] = {
     val repository = Id.generate[Repository]
     val mutation = Id.generate[Mutation]

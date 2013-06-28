@@ -25,14 +25,12 @@ class SystemAssembly {
   lazy val itemDao = new ItemDao(index)
   lazy val mediaDao = new MediaDao(index)
   lazy val sourceManager = new SourceManager(sourceDao)
-  lazy val server = new ApiServer(actorSystem)({  context =>
-    lazy val authenticationApiV1 = new AuthenticationApiV1
-    lazy val userApiV1 = new UsersApiV1
-    lazy val partyApiV1 = new PartiesApiV1
-    lazy val sourceApiV1 = new SourceApiV1(sourceManager)
-    lazy val apiDoc = new ApiDocV1
-    lazy val api = new Api(authenticationApiV1, partyApiV1, userApiV1, sourceApiV1, apiDoc)
-    lazy val ui = new Ui
-    api.route ~ ui.route
-  })
+  lazy val authenticationApiV1 = new AuthenticationApiV1
+  lazy val userApiV1 = new UsersApiV1
+  lazy val partyApiV1 = new PartiesApiV1
+  lazy val sourceApiV1 = new SourceApiV1(sourceManager)
+  lazy val apiDocV1 = new ApiDocV1
+  lazy val api = new ApiServer(actorSystem, authenticationApiV1, partyApiV1, userApiV1, sourceApiV1, apiDocV1)
+  lazy val ui = new Ui
+  api.route ~ ui.route
 }

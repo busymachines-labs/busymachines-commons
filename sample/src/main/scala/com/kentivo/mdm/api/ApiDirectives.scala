@@ -28,10 +28,11 @@ import com.busymachines.commons.Logging
  */
 trait ApiDirectives extends Directives with Logging with SprayJsonSupport with ApiJsonFormats with DomainJsonFormats with CustomMatchers { 
 
-  implicit def actorRefFactory: ActorRefFactory
-  implicit def executionContext: ExecutionContext = actorRefFactory.dispatcher
-  
-  val route : RequestContext => Unit 
+//  implicit def actorRefFactory: ActorRefFactory
+//  implicit def executionContext: ExecutionContext = actorRefFactory.dispatcher
+    implicit def executionContext(implicit actorRefFactory: ActorRefFactory) = actorRefFactory.dispatcher
+
+//  val route : RequestContext => Unit 
   
   val myAuthenticator: ContextAuthenticator[User] = { ctx => Future(doAuthenticate(ctx)) }
 
@@ -39,7 +40,7 @@ trait ApiDirectives extends Directives with Logging with SprayJsonSupport with A
     debug("--do auth: ")
     // Take authToken from header or queryParam.
     val tokenValue = ctx.request.headers.filter(header => header.name == AuthenticationApiV1.tokenKey.toLowerCase()).headOption.map(_.value).
-      getOrElse(ctx.request.queryParams.filter(param => param._1 == "authToken").headOption.map(_._2).getOrElse(""))
+      getOrElse(ctx.request.uri.query.filter(param => param._1 == "authToken").headOption.map(_._2).getOrElse(""))
     debug("--token value " + tokenValue)
     Authentication.isAuthenticated(new AuthenticationToken(tokenValue)) match {
       case Some(user) => Right(user)
