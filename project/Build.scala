@@ -1,5 +1,6 @@
 import sbt._
 import Keys._
+import com.typesafe.sbt.SbtSite.site
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
  
@@ -8,9 +9,7 @@ import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
  */
 object BusyMachinesCommonsBuild extends Build {
  
-  val es = "org.elasticsearch" % "elasticsearch" % "0.90.1" 
-          
-  lazy val project = Project(id = "busymachines-commons", base = file("."), settings = Project.defaultSettings ++ publishSettings ++ Seq(
+  lazy val project = Project(id = "busymachines-commons", base = file("."), settings = Project.defaultSettings ++ publishSettings ++ site.settings ++ site.sphinxSupport() ++ Seq(
     sbtPlugin := false,
     organization := "org.scalastuff",
     version := "0.0.1-SNAPSHOT",
@@ -20,7 +19,7 @@ object BusyMachinesCommonsBuild extends Build {
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
     resolvers += "spray repo" at "http://repo.spray.io",
-    libraryDependencies += es,
+    libraryDependencies +=  "org.elasticsearch" % "elasticsearch" % "0.90.1" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.0-RC1" withSources(),
     libraryDependencies += "io.spray" %% "spray-json" % "1.2.5" withSources(),
     libraryDependencies += "io.spray" % "spray-routing" % "1.2-M8" withSources(),
