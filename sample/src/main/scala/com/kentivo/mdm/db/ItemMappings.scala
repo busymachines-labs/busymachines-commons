@@ -8,6 +8,7 @@ import com.kentivo.mdm.domain.PropertyValue
 import com.kentivo.mdm.domain.Source
 import com.busymachines.commons.dao.elasticsearch.Index
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
+import java.util.Locale
 
 class MdmIndex extends Index(nodeBuilder.client(true).node.client) {
   val name = "kentivo.mdm"
@@ -20,7 +21,7 @@ object ItemMapping extends Mapping[Item] {
   val mutation = "mutation" as String & NotAnalyzed
   val id = "id" -> "_id" as String & NotAnalyzed
   val owner = "owner" as String & NotAnalyzed
-  val name = "name" as String & Analyzed
+  val name = "name" as Object[Map[Locale, String]] & Analyzed
   val parent = "parents" as String & NotAnalyzed
   val properties = "properties" as Nested(PropertyMapping) 
   val values = "values" as Nested(PropertyValueMapping) 
@@ -30,7 +31,7 @@ object PropertyMapping extends Mapping[Property] {
   val repository = "repository" as String & NotAnalyzed
   val mutation = "mutation" as String & NotAnalyzed
   val id = "id" -> "_id" as String & NotAnalyzed
-  val name = "name" as String & Analyzed
+  val name = "name" as Object[Map[Locale, String]] & Analyzed
   val scope = "scope" as String & NotAnalyzed
   val `type` = "type" as String & NotAnalyzed
   val defaultUnit = "defaultUnit" as String & NotAnalyzed

@@ -60,7 +60,9 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
     val writes = for (versionedEntity <- _changedEntities.values) 
       yield (versionedEntity.entity.id, _createdEntities.get(versionedEntity.entity.id) match {
         case Some(parentId) => createEntity(parentId, versionedEntity.entity)
-        case None => dao.update(versionedEntity, false)
+        case None => 
+          println("Updating entity: " + versionedEntity.entity.id)
+          dao.update(versionedEntity, false)
       })
     val futures = for ((id, future) <- writes) yield {
       val promise = Promise[(Option[Versioned[T]], Option[(Id[T], Throwable)])]()

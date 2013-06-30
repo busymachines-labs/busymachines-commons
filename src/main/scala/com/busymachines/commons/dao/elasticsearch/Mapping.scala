@@ -52,6 +52,7 @@ class Mapping[A] {
       Option("properties", allProperties))):_*))))
     
   val String = Options[String](Option("type", "string"))
+  def Object[T] = Options[T](Option("type", "object"))
   val Integer = Options[Int](Option("type", "integer"))
   val Boolean = Options[Boolean](Option("type", "boolean"))
   val Nested = Option("type", "nested")

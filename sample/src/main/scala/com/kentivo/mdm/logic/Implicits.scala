@@ -17,15 +17,11 @@ trait Implicits {
   }
   
   implicit class RichItem(item : Item) {
-    def property(property: Id[Property]): Option[(Item, Property)] =
-      item.properties.find(_.id == property).map(item -> _)
+    def property(property: Id[Property]): Option[Property] =
+      item.properties.find(_.id == property)
   
-    def propertyValue(property: Id[Property]): Option[(Item, Property, PropertyValue)] = {
-      this.property(property) flatMap {
-        case (item, property) =>
-          item.values.find(value => value.property == property).map((item, property, _))
-      }
-    }
+    def value(property: Id[Property]): Option[PropertyValue] = 
+      item.values.find(_.property == property)
   }
 }
 

@@ -112,19 +112,19 @@ class IcecatAdapter(itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: Executio
     println("Got existing categories: " + categories)
     
     val categoriesById : Map[String, Item] = 
-      categories.flatMap(c => c.propertyValue(categoryIcecatIdProperty).map(_._3.value -> c)).toMap
+      categories.flatMap(c => c.value(categoryIcecatIdProperty).map(_.value -> c)).toMap
       
       println("Icecat ids:" + categories.map(_.id))
     
     // Proces categories
     (xml \ "Response" \ "CategoriesList" \ "Category").foreach {
       catNode =>
-        println("Node:" + catNode)
-        val id = (catNode \ "@ID").toString
-        val item = categoriesById.getOrElse(id, mutator.createItem)
+        val icecatId = (catNode \ "@ID").toString
+        val item = categoriesById.getOrElse(icecatId, mutator.createItem)
         // TODO search by icecat id 
 //        mutator.setValue(item.id, categoryImageProperty, readAndStoreMedia(catNode \ "@LowPic").map(_.id.toString))
 //        mutator.setValue(item.id, categoryThumbnailProperty, readAndStoreMedia(catNode \ "@ThumbPic").map(_.id.toString))
+        mutator.setValue(item.id, categoryIcecatIdProperty, Some(icecatId))
         mutator.setValues(item.id, categoryNameProperty, catNode.i18nValues("Name"))
         mutator.setValues(item.id, categoryDescriptionProperty, catNode.i18nValues("Description"))
         mutator.setValues(item.id, categoryKeywordsProperty, catNode.i18nValues("Keywords"))
