@@ -15,6 +15,7 @@ import spray.routing.Directives._
 import com.kentivo.mdm.db.ItemDao
 import com.busymachines.commons.dao.elasticsearch.MediaDao
 import com.kentivo.mdm.db.MdmIndex
+import com.busymachines.commons.concurrent.SimpleExecutionContext
 
 class SystemAssembly {
 

@@ -10,50 +10,50 @@ import com.busymachines.commons.dao.elasticsearch.Index
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
 
 class MdmIndex extends Index(nodeBuilder.client(true).node.client) {
-  val name = "Kentivo"
+  val name = "kentivo.mdm"
   val nrOfShards = 5
-  val nrOfReplicas = 2
+  val nrOfReplicas = 1
 }
 
 object ItemMapping extends Mapping[Item] {
-  val repository = "repository" as String & Stored & NotAnalyzed
-  val mutation = "mutation" as String & Stored & NotAnalyzed
-  val id = "_id" -> "id" as String & Stored & NotAnalyzed
-  val owner = "owner" as String & Stored & NotAnalyzed
-  val name = "name" as String & Stored & Analyzed
-  val parent = "parents" as String & Stored & NotAnalyzed
-  val properties = "properties" as Nested(PropertyMapping) & Stored 
-  val values = "values" as Nested(PropertyValueMapping) & Stored 
+  val repository = "repository" as String & NotAnalyzed
+  val mutation = "mutation" as String & NotAnalyzed
+  val id = "id" -> "_id" as String & NotAnalyzed
+  val owner = "owner" as String & NotAnalyzed
+  val name = "name" as String & Analyzed
+  val parent = "parents" as String & NotAnalyzed
+  val properties = "properties" as Nested(PropertyMapping) 
+  val values = "values" as Nested(PropertyValueMapping) 
 }
 
 object PropertyMapping extends Mapping[Property] {
-  val repository = "repository" as String & Stored & NotAnalyzed
-  val mutation = "mutation" as String & Stored & NotAnalyzed
-  val id = "_id" -> "id" as String & Stored & NotAnalyzed
-  val name = "name" as String & Stored & Analyzed
-  val scope = "scope" as String & Stored & NotAnalyzed
-  val `type` = "type" as String & Stored & NotAnalyzed
-  val defaultUnit = "defaultUnit" as String & Stored & NotAnalyzed
-  val itemValueBase = "itemValueBase" as String & Stored & NotAnalyzed
-  val mandatory = "mandatory" as Boolean & Stored & NotAnalyzed
-  val multiValue = "multiValue" as Boolean & Stored & NotAnalyzed
-  val multiLingual = "multiLingual" as Boolean & Stored & NotAnalyzed
-  val groups = "groups" as String & Stored & NotAnalyzed
-  val rules = "rules" as String & Stored & NotAnalyzed
+  val repository = "repository" as String & NotAnalyzed
+  val mutation = "mutation" as String & NotAnalyzed
+  val id = "id" -> "_id" as String & NotAnalyzed
+  val name = "name" as String & Analyzed
+  val scope = "scope" as String & NotAnalyzed
+  val `type` = "type" as String & NotAnalyzed
+  val defaultUnit = "defaultUnit" as String & NotAnalyzed
+  val itemValueBase = "itemValueBase" as String & NotAnalyzed
+  val mandatory = "mandatory" as Boolean & NotAnalyzed
+  val multiValue = "multiValue" as Boolean & NotAnalyzed
+  val multiLingual = "multiLingual" as Boolean & NotAnalyzed
+  val groups = "groups" as String & NotAnalyzed
+  val rules = "rules" as String & NotAnalyzed
 }
 
 object PropertyValueMapping extends Mapping[PropertyValue] {
-  val property = "property" as String & Stored & NotAnalyzed
-  val mutation = "mutation" as String & Stored & NotAnalyzed
-  val value = "value" as String & Stored & Analyzed
-  val locale = "locale" as String & Stored & NotAnalyzed
-  val unit = "unit" as String & Stored & NotAnalyzed
+  val property = "property" as String & NotAnalyzed
+  val mutation = "mutation" as String & NotAnalyzed
+  val value = "value" as String & Analyzed
+  val locale = "locale" as String & NotAnalyzed
+  val unit = "unit" as String & NotAnalyzed
 }
 
 object SourceMapping extends Mapping[Source] {
-  val id = "_id" -> "id" as String & Stored & NotAnalyzed
-  val name = "name" as String & Stored & Analyzed
-  val repository = "repository" as String & Stored & NotAnalyzed
-  val model = "model" as Nested(ItemMapping) & Stored 
+  val id = "id" -> "_id" as String & NotAnalyzed
+  val name = "name" as String & Analyzed
+  val repository = "repository" as String & NotAnalyzed
+  val model = "model" as Nested(ItemMapping)
 }
 

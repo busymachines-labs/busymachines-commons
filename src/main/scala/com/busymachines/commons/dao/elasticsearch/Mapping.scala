@@ -26,6 +26,10 @@ object Mapping {
   
   case class Option(name : String, value : Any) 
   case class Options[T](options : Option*) {
+    options.groupBy(_.name).collect {
+      case (name, values) if values.size > 1 => 
+        throw new Exception("Incompatible options: " + values.mkString(", "))
+    }
     def & (option : Option) = Options[T]((options.toSeq ++ Seq(option)):_*)
   }
 }
@@ -41,39 +45,42 @@ class Mapping[A] {
   def mappingConfiguration(doctype : String): String = 
     print(mapping(doctype), "\n")
   
-  def mapping(doctype : String) = Properties[Any](List(Property[Any, A](doctype, doctype, Options[A](
-    (Seq(Option("_all", "{\"enabled\" : true}"),
-    Option("_source", "{\"enabled\" : true}"),
-    Stored) ++
-    Nested[A](allProperties).options):_*))))
+  def mapping(doctype : String) = Properties[Any](List(Property[Any, A](doctype, doctype, Options[A]((Seq(
+      Option("_all", Map("enabled" -> true)),
+      Option("_source", Map("enabled" -> true)),
+      Stored, 
+      Option("properties", allProperties))):_*))))
     
   val String = Options[String](Option("type", "string"))
   val Integer = Options[Int](Option("type", "integer"))
   val Boolean = Options[Boolean](Option("type", "boolean"))
   val Nested = Option("type", "nested")
-  val Stored = Option("store", "true")
-  val Analyzed = Option("index", "\"analyzed\"")
-  val NotAnalyzed = Option("index", "\"not_analyzed\"")
+  val Stored = Option("store", true)
+  val NotIndexed = Option("index", "no")
+  val Analyzed = Option("index", "analyzed")
+  val NotAnalyzed = Option("index", "not_analyzed")
   def Nested[T](properties : Properties[T]) : Options[T] = Options(Option("type", "nested"), Option("properties", properties))
   def Nested[T](mapping : Mapping[T]) : Options[T] = Nested(mapping._allProperties)
   
   implicit class RichName(name : String) extends RichMappedName(name, name)
   
   implicit class RichMappedName(name : (String, String)) {
-    def as[T](options : Options[T]) = add(Property[A, T](name._1, name._1, options))
+    def as[T](options : Options[T]) = add(Property[A, T](name._1, name._2, options))
     def add[T](property : Property[A, T]) = {
       _allProperties = Properties(_allProperties.properties :+ property)
       property
     }
     implicit def toProperty = Property(name._1, name._2, Options())
   }
-
   def print(obj : Any, indent : String) : String = obj match {
     case properties : Properties[A] => 
-      properties.properties.map(p => "\"" + p.name + "\": " + print(p.options, indent + "    ")).mkString(indent + "{" + indent + "  ", "," + indent + "  ", indent + "}")
+      properties.properties.map(p => "\"" + p.mappedName + "\": " + print(p.options, indent + "    ")).mkString(indent + "{" + indent + "  ", "," + indent + "  ", indent + "}")
     case options : Options[_] =>
       options.options.map(print(_, indent)).mkString("{", ", ", "}")
     case option : Option =>
       "\"" + option.name + "\": " + print(option.value, indent)
+    case s : String => "\"" + s.toString + "\""
+    case json : Map[_, _] => json.map(t => "\"" + t._1 + "\": " + print(t._2, indent)).mkString("{", ", ", "}")
+    case v => v.toString
   }
 }

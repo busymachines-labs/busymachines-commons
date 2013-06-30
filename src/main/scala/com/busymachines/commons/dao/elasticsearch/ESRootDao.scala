@@ -25,6 +25,7 @@ import spray.json.pimpAny
 import spray.json.pimpString
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import com.busymachines.commons.dao.SearchCriteria
+import org.elasticsearch.action.index.IndexAction
 
 class EsRootDao[T <: HasId[T] :JsonFormat](index : Index, t: Type[T])(implicit ec: ExecutionContext) extends ESDao[T](t.name) with RootDao[T] with Logging {
 
@@ -33,6 +34,7 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : Index, t: Type[T])(implicit e
 
   // Add mapping.
   val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
+  println(mappingConfiguration)
   client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
 
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] = 
@@ -55,9 +57,9 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : Index, t: Type[T])(implicit e
       case criteria : ESSearchCriteria[T] =>
         val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setFilter(criteria.toFilter).request
         client.execute(request).map(_.getHits.hits.toList.map { hit =>
-        val json = hit.sourceAsString.asJson
-        val version = json.getESVersion
-        Versioned(json.convertFromES(mapping), version)
+          val json = hit.sourceAsString.asJson
+          val version = json.getESVersion
+          Versioned(json.convertFromES(mapping), version)
         })
       case _ =>
         throw new Exception("Expected ElasticSearch search criteria")
@@ -66,15 +68,15 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : Index, t: Type[T])(implicit e
   
   def create(entity: T, refreshAfterMutation : Boolean): Future[Versioned[T]] = {
     val json = entity.convertToES(mapping)
-    val request = new IndexRequest(index.name, t.name).
-      id(entity.id.toString).
-      create(true).
-      source(json.toString).refresh(refreshAfterMutation)
+    val request = new IndexRequest(index.name, t.name)
+      .id(entity.id.toString)
+      .create(true)
+      .source(json.toString)
+      .refresh(refreshAfterMutation)
 
       debug(s"Create $t.name: $json")
       
 // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
-
 //      val response = client.execute(IndexAction.INSTANCE, request).get
 //      Future.successful(Versioned(entity, response.getVersion.toString))
       

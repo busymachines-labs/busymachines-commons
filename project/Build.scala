@@ -9,7 +9,12 @@ import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
  */
 object BusyMachinesCommonsBuild extends Build {
  
-  lazy val project = Project(id = "busymachines-commons", base = file("."), settings = Project.defaultSettings ++ publishSettings ++ site.settings ++ site.sphinxSupport() ++ Seq(
+  lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
+    Project.defaultSettings ++ 
+    publishSettings ++ 
+    site.settings ++ 
+    site.sphinxSupport() ++ site.includeScaladoc() ++
+    Seq(
     sbtPlugin := false,
     organization := "org.scalastuff",
     version := "0.0.1-SNAPSHOT",
@@ -27,6 +32,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "io.spray" % "spray-can" % "1.2-M8" withSources(),
     libraryDependencies += "org.scalastuff" %% "esclient" % "0.20.3" withSources(),
     libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources(),
+    libraryDependencies +=  "ch.qos.logback" % "logback-classic" % "1.0.13" withSources(),
     libraryDependencies += "com.typesafe" % "config" % "1.0.0" withSources(),
     libraryDependencies += "joda-time" % "joda-time" % "2.2" withSources(),
     libraryDependencies += "org.joda" % "joda-convert" % "1.3.1" withSources(), // for class file error in joda-time

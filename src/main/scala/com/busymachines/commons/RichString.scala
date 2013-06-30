@@ -6,12 +6,12 @@ import scala.collection.JavaConversions._
 import java.security.MessageDigest
 
 class RichString(val s : String) extends AnyVal {
-  def sha256Hash: Array[Byte] = {
-    val digest = MessageDigest.getInstance("SHA-256")
-    digest.update(s.getBytes("UTF-8"))
-    digest.digest
-  }
+  def sha256Hash: Array[Byte] = 
+    MessageDigest.getInstance("SHA-256").digest(s.getBytes("UTF-8"))
 
+  def md5 : Array[Byte] = 
+    MessageDigest.getInstance("MD5").digest(s.getBytes("UTF-8"))
+  
   def toOptionInt: Option[Int] = 
     try {
       Some(Integer.parseInt(s.trim))

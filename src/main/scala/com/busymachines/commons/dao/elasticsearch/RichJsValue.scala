@@ -34,13 +34,13 @@ object RichJsValue {
     value match {
       case JsObject(fields) =>
         JsObject(fields.map {
-          field => properties.propertiesByMappedName.get(field._1) match {
+          field => properties.propertiesByName.get(field._1) match {
             case Some(property) =>
               property.nestedProperties match {
                 case Some(properties) =>
                   property.name -> convertToES(field._2, properties)
                 case None =>
-                  property.name -> field._2
+                  property.mappedName -> field._2
               }
             case None => field
           }
@@ -53,13 +53,13 @@ object RichJsValue {
     value match {
       case JsObject(fields) =>
         JsObject(fields.map {
-          field => properties.propertiesByName.get(field._1) match {
+          field => properties.propertiesByMappedName.get(field._1) match {
             case Some(property) =>
               property.nestedProperties match {
                 case Some(properties) =>
-                  property.mappedName -> convertFromES(field._2, properties)
+                  property.name -> convertFromES(field._2, properties)
                 case None =>
-                  property.mappedName -> field._2
+                  property.name -> field._2
               }
             case None => field
           }

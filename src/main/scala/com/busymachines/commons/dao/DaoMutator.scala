@@ -10,10 +10,10 @@ import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 import scala.util.Failure
 import scala.util.Success
-
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
+import scala.concurrent.Await
 
 object DaoMutator {
   def apply[T <: HasId[T] : ClassTag](dao : RootDao[T])(implicit ec : ExecutionContext) = new RootDaoMutator[T](dao)
@@ -41,7 +41,11 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
   }
     
   def modify(id: Id[T], timeout : Duration)(f: T => T): T = {
-    val entity = retrieve(id, timeout).getOrElse(throw new IdNotFoundException(id.toString, classTag.runtimeClass.getSimpleName))
+    modify(id, throw new IdNotFoundException(id.toString, classTag.runtimeClass.getSimpleName), timeout)(f)
+  }
+
+  def modify(id: Id[T], create : => T, timeout : Duration)(f: T => T): T = {  
+    val entity = retrieve(id, timeout).getOrElse(create)
     val modified = f(entity)
     if (entity != modified) {
       _changedEntities += (id -> Versioned(modified, ""))
@@ -88,7 +92,7 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
 class RootDaoMutator[T <: HasId[T] : ClassTag](dao : RootDao[T])(implicit ec : ExecutionContext) extends DaoMutator[T](dao){
   
   def getOrCreate(id: Id[T], create : => T, timeout : Duration): T = {
-    _changedEntities.getOrElse(id, result(dao.retrieve(id), timeout) match {
+    _changedEntities.getOrElseUpdate(id, result(dao.retrieve(id), timeout) match {
       case Some(versionedInstance) => versionedInstance
       case None => Versioned(create, "")
     }).entity
@@ -101,7 +105,7 @@ class RootDaoMutator[T <: HasId[T] : ClassTag](dao : RootDao[T])(implicit ec : E
 class NestedDaoMutator[P <: HasId[P], T <: HasId[T] : ClassTag](dao : NestedDao[P, T])(implicit ec : ExecutionContext) extends DaoMutator[T](dao){
   
   def getOrCreate(id: Id[T], parent : Id[P], create : => T, timeout : Duration): T = {
-    _changedEntities.getOrElse(id, result(dao.retrieve(id), timeout) match {
+    _changedEntities.getOrElseUpdate(id, result(dao.retrieve(id), timeout) match {
       case Some(entity) => entity
       case None => Versioned(create, "")
     }).entity

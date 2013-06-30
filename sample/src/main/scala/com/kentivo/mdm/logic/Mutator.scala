@@ -23,8 +23,10 @@ class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: 
 
   private val mutator = new RootDaoMutator[Item](itemDao)
   private val timeout = 1 minute
+  
+  private def createItem(id : Id[Item]) = Item(repository.id, mutation.id, id)
 
-  def newItem = Item(repository.id, mutation.id)
+  def createItem = Item(repository.id, mutation.id)
   
   def retrieve(id : Id[Item]) = 
     mutator.retrieve(id, timeout)
@@ -42,7 +44,7 @@ class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: 
     mutator.getOrCreate(id, Item(repository.id, mutation.id, id), timeout)
 
   def modifyItem(itemId: Id[Item])(modify: Item => Item): Item = 
-    mutator.modify(itemId, timeout)(modify)
+    mutator.modify(itemId, createItem(itemId), timeout)(modify)
   
   def modifyProperty(itemId: Id[Item], propertyId: Id[Property])(modify: Property => Property): Property = {
     val item = getOrCreateItem(itemId)

@@ -28,16 +28,16 @@ case class HashedMedia(
 
 private[elasticsearch] 
 object MediaMapping extends Mapping[HashedMedia] {
-  val id = "_id" -> "id" as String & Stored & NotAnalyzed
-  val mimeType = "mimeType" as String & Stored & Analyzed
-  val name = "name" as String & Stored & Analyzed
-  val hash = "hash" as String & Stored & NotAnalyzed
-  val data = "data" as String & Stored & NotAnalyzed
+  val id = "id" -> "_id" as String & NotAnalyzed
+  val mimeType = "mimeType" as String & Analyzed
+  val name = "name" as String & Analyzed
+  val hash = "hash" as String & NotAnalyzed
+  val data = "data" as String & NotIndexed
 }
 
 class MediaDao(index: Index)(implicit ec: ExecutionContext) {
   
-  private val hasher = Hashing.md5()
+  private val hasher = Hashing.md5
   private val encoding = BaseEncoding.base64Url
   private implicit val hashMediaFormat = jsonFormat5(HashedMedia)
   private val dao = new EsRootDao[HashedMedia](index, Type[HashedMedia]("media", MediaMapping))
@@ -71,7 +71,8 @@ class MediaDao(index: Index)(implicit ec: ExecutionContext) {
       case Some(bytes) => 
         val name = url.substring(url.lastIndexOf('/') + 1)
         store(MimeType.fromResourceName(name), Some(name), bytes).map(Option(_))
-      case None => Future.successful(None)
+      case None => 
+        Future.successful(None)
     }
   }
   

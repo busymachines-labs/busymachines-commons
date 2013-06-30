@@ -14,6 +14,7 @@ object Id {
     case buffer =>
       new Id[A](new UUID(buffer.getLong(),buffer.getLong()))
   }
+  def static[A](id : String) = new Id[A](UUID.nameUUIDFromBytes(id.getBytes("UTF-8")))
 }
 
 case class Id[A](id: UUID) {
