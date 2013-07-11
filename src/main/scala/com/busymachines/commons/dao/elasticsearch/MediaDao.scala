@@ -81,9 +81,12 @@ class MediaDao(index: Index)(implicit ec: ExecutionContext) {
       if (url.toString.isEmpty()) None
       else {
         val bis = new BufferedInputStream(new URL(url.toString).openStream())
+        try {
         val bytes = Stream.continually(bis.read).takeWhile(-1 != _).map(_.toByte).toArray
-        bis.close
         Some(bytes)
+        } finally {
+          bis.close
+        }
       }
     }
     catch {

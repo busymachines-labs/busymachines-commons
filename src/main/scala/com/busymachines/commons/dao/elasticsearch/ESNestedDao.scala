@@ -42,14 +42,14 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
       case Some(Versioned(entity, _)) => 
         throw new IdAlreadyExistsException(entity.id.toString, typeName)
       case None =>
-	    parentDao.retrieve(id) flatMap {
-	      case Some(Versioned(parent, version)) =>
-	        val modifiedParent = createEntity(parent, entity)
-	        parentDao.update(Versioned(modifiedParent, version), refreshAfterMutation) map {
-	          case Versioned(parent, version) => Versioned(entity, version)
-	        }
-	      case None =>
-	        throw new IdNotFoundException(id.toString, parentDao.typeName)   
+	      parentDao.retrieve(id) flatMap {
+	    case Some(Versioned(parent, version)) =>
+	      val modifiedParent = createEntity(parent, entity)
+	      parentDao.update(Versioned(modifiedParent, version), refreshAfterMutation) map {
+	        case Versioned(parent, version) => Versioned(entity, version)
+	      }
+	    case None =>
+	      throw new IdNotFoundException(id.toString, parentDao.typeName)   
 	    }
 	  }
   }

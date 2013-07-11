@@ -12,12 +12,9 @@ import org.scalastuff.esclient.ESClient
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
 abstract class Index(_client : Client) {
 
-  private val _types = Buffer[Type[_]]()
-
   val name : String
   val nrOfShards : Int
   val nrOfReplicas : Int
-  lazy val types = _types.toSeq
   
   lazy val client = {
     initialize
@@ -35,10 +32,6 @@ abstract class Index(_client : Client) {
             "number_of_replicas" : $nrOfReplicas
           }
           """)).get()
-      for (tp <- types) {
-        val mapping = tp.mapping.mappingConfiguration(tp.name)
-        client.admin.indices.putMapping(new PutMappingRequest(name).`type`(tp.name).source(mapping)).get()
-      }
       Await.ready(indicesExistsReponse, 10 seconds)
     }
   }
