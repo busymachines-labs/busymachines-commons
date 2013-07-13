@@ -14,13 +14,14 @@ import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import scala.concurrent.Await
+import com.busymachines.commons.Logging
 
 object DaoMutator {
   def apply[T <: HasId[T] : ClassTag](dao : RootDao[T])(implicit ec : ExecutionContext) = new RootDaoMutator[T](dao)
   def apply[P <: HasId[P], T <: HasId[T] : ClassTag](dao : NestedDao[P, T])(implicit ec : ExecutionContext) = new NestedDaoMutator[P, T](dao)
 }
 
-abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classTag : ClassTag[T], ec : ExecutionContext) {
+abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classTag : ClassTag[T], ec : ExecutionContext) extends Logging {
   
   protected val _changedEntities = mutable.Map[Id[T], Versioned[T]]()
   protected val _createdEntities = mutable.Map[Id[T], String]()
@@ -61,7 +62,7 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
       yield (versionedEntity.entity.id, _createdEntities.get(versionedEntity.entity.id) match {
         case Some(parentId) => createEntity(parentId, versionedEntity.entity)
         case None => 
-          println("Updating entity: " + versionedEntity.entity.id)
+          debug(s"Updating entity: ${versionedEntity.entity.id}")
           dao.update(versionedEntity, false)
       })
     val futures = for ((id, future) <- writes) yield {

@@ -1,6 +1,7 @@
 package com.busymachines.commons.dao.elasticsearch
 
 import com.busymachines.commons.domain.HasId
+import com.busymachines.commons.Logging
 
 object Property {
   implicit def toPath[A, T](property : Property[A, T]) = Path[A, T](property :: Nil)
@@ -34,7 +35,7 @@ object Mapping {
   }
 }
 
-class Mapping[A] {
+class Mapping[A] extends Logging {
 
   import Mapping._
   

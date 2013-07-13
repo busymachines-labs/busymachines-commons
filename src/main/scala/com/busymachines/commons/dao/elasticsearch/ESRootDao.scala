@@ -34,7 +34,7 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : Index, t: Type[T])(implicit e
 
   // Add mapping.
   val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
-  println(mappingConfiguration)
+  debug(mappingConfiguration)
   client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
 
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] = 
