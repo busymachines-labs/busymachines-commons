@@ -21,14 +21,13 @@ object ESSearchCriteria {
     def toFilter = FilterBuilders.andFilter(children.map(_.toFilter):_*) 
   }
   case class Equals[A, T](path : Path[A, T], value : T) extends ESSearchCriteria[A] {
-    def toFilter = nested(path)(p => FilterBuilders.termFilter(p.name, value)) 
-  }
-  
-  def nested[A, T](path : Path[A, T])(f : Property[_, T] => FilterBuilder) : FilterBuilder = {
-    path.properties match {
-      case (property : Property[_, T]) :: Nil => f(property)
-      case property :: rest => FilterBuilders.nestedFilter(property.name, nested(Path(rest))(f))
-      case _ => FilterBuilders.matchAllFilter
+    def toFilter = 
+      path.properties match {
+        case p :: Nil => FilterBuilders.termFilter(p.mappedName, value)
+        case property :: rest =>
+          val names = path.properties.map(_.mappedName)
+          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.termFilter(names.mkString("."), value))
+        case _ => FilterBuilders.matchAllFilter
     }
   }
 }

@@ -26,6 +26,8 @@ import spray.json.pimpString
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import com.busymachines.commons.dao.SearchCriteria
 import org.elasticsearch.action.index.IndexAction
+import org.elasticsearch.common.io.stream.BytesStreamOutput
+import org.elasticsearch.action.search.SearchType
 
 class EsRootDao[T <: HasId[T] :JsonFormat](index : Index, t: Type[T])(implicit ec: ExecutionContext) extends ESDao[T](t.name) with RootDao[T] with Logging {
 
@@ -55,8 +57,8 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : Index, t: Type[T])(implicit e
   def search(criteria : SearchCriteria[T]): Future[List[Versioned[T]]] = {
     criteria match {
       case criteria : ESSearchCriteria[T] =>
-        val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setFilter(criteria.toFilter).request
-        client.execute(request).map(_.getHits.hits.toList.map { hit =>
+        val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setFilter(criteria.toFilter).setSearchType(SearchType.DFS_QUERY_AND_FETCH).setSize(999999)
+        client.execute(request.request).map(_.getHits.hits.toList.map { hit =>
           val json = hit.sourceAsString.asJson
           val version = json.getESVersion
           Versioned(json.convertFromES(mapping), version)

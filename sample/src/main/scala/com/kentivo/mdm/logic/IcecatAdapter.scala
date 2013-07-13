@@ -109,12 +109,13 @@ class IcecatAdapter(itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: Executio
 
     // Read all existing icecat categories
     val categories = mutator.searchItems(HasValueForProperty(categoryIcecatIdProperty), 1 minute)
-    println("Got existing categories: " + categories)
+//    println("Got existing categories: " + categories)
     
     val categoriesById : Map[String, Item] = 
       categories.flatMap(c => c.value(categoryIcecatIdProperty).map(_.value -> c)).toMap
       
-      println("Icecat ids:" + categories.map(_.id))
+      println("Icecat ids:" + categories.size)
+      println("Icecat ids:" + categoriesById.size)
     
     // Proces categories
     (xml \ "Response" \ "CategoriesList" \ "Category").foreach {
@@ -128,7 +129,7 @@ class IcecatAdapter(itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: Executio
         mutator.setValues(item.id, categoryNameProperty, catNode.i18nValues("Name"))
         mutator.setValues(item.id, categoryDescriptionProperty, catNode.i18nValues("Description"))
         mutator.setValues(item.id, categoryKeywordsProperty, catNode.i18nValues("Keywords"))
-        println("Item: " + mutator.retrieve(item.id))
+        println("Item: " + icecatId + ": " + mutator.retrieve(item.id))
         
         
 //        val category = categoriesById.getOrElse(id, mutator.newItem)

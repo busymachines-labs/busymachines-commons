@@ -13,7 +13,6 @@ import com.kentivo.mdm.domain.Property
 
 case class HasValueForProperty(propertyId : Id[Property], value : Option[String] = None, locale : Option[Option[String]] = None, unit : Option[Unit] = None) extends ESSearchCriteria.Delegate (
   ItemMapping.values / PropertyValueMapping.property === propertyId.toString
-  && ItemMapping.values / PropertyValueMapping.property === propertyId.toString
 )
 
 

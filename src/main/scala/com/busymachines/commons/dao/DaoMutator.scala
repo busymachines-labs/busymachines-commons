@@ -59,9 +59,9 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
   def write(timeout : Duration, reindex : Boolean = true) : Seq[Versioned[T]] = {
     val writes = for (versionedEntity <- _changedEntities.values) 
       yield (versionedEntity.entity.id, _createdEntities.get(versionedEntity.entity.id) match {
-        case Some(parentId) => createEntity(parentId, versionedEntity.entity)
+        case Some(parentId) => 
+          createEntity(parentId, versionedEntity.entity)
         case None => 
-          println("Updating entity: " + versionedEntity.entity.id)
           dao.update(versionedEntity, false)
       })
     val futures = for ((id, future) <- writes) yield {
