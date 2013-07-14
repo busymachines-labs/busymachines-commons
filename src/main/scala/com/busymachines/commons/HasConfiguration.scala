@@ -15,7 +15,8 @@ object HasConfiguration {
 }
 
 trait HasConfiguration {
+  val globalConfig = HasConfiguration.globalConfig
   val configBaseName = getClass.getPackage.getName
-  lazy val config = HasConfiguration.globalConfig.getConfig(configBaseName)
+  lazy val config = globalConfig.getConfig(configBaseName)
 
 }

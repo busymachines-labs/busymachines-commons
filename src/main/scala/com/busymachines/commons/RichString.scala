@@ -12,6 +12,9 @@ class RichString(val s : String) extends AnyVal {
   def md5 : Array[Byte] = 
     MessageDigest.getInstance("MD5").digest(s.getBytes("UTF-8"))
   
+  def decodeBase64 : Array[Byte] = 
+    RichByteArray.base64Encoding.decode(s)
+    
   def toOptionInt: Option[Int] = 
     try {
       Some(Integer.parseInt(s.trim))

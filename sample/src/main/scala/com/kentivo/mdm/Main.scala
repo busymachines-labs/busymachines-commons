@@ -23,4 +23,5 @@ object Main extends App with Logging {
   import assembly.actorSystem
   val icecat = new IcecatAdapter(assembly.itemDao, assembly.mediaDao)
   icecat.importAll
+//  icecat.importAll
 }
