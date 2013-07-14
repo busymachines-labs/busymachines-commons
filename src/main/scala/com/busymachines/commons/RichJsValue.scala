@@ -75,7 +75,6 @@ class RichJsValue(val value : JsValue) extends AnyVal {
                   throw new RuntimeException(s"Id not found: $value")
                 }))
               case (field, value) =>
-                println("field:" + field + " " + value)
                 (field, replaceIds(value, idmap))
             })
         }

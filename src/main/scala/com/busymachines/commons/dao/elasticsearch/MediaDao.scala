@@ -16,6 +16,7 @@ import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.MimeType
 import com.busymachines.commons.domain.Media
 import com.busymachines.commons.dao.Versioned
+import com.busymachines.commons.Logging
 
 private[elasticsearch] 
 case class HashedMedia(
@@ -35,7 +36,7 @@ object MediaMapping extends Mapping[HashedMedia] {
   val data = "data" as String & NotIndexed
 }
 
-class MediaDao(index: Index)(implicit ec: ExecutionContext) {
+class MediaDao(index: Index)(implicit ec: ExecutionContext) extends Logging {
   
   private val hasher = Hashing.md5
   private val encoding = BaseEncoding.base64Url
@@ -90,7 +91,7 @@ class MediaDao(index: Index)(implicit ec: ExecutionContext) {
       }
     }
     catch {
-      case t : Throwable => println(t); None
+      case t : Throwable => debug(t); None
     }
   }
 }
