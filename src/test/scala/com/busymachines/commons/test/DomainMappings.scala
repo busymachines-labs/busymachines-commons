@@ -19,5 +19,5 @@ object PropertyMapping extends Mapping[Property] {
 object ItemMapping extends Mapping[Item] {
   val id = "id" -> "_id" as String & NotAnalyzed  
   val name = "name" as String & NotAnalyzed
-  val properties = "properties" as Nested(PropertyMapping)
+  val properties = "item_properties" as Nested(PropertyMapping)
 }

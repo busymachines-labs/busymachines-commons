@@ -11,16 +11,15 @@ import scala.concurrent.duration.Duration
 /**
  * This cache has unbounded size and lifetime. Mainly exists for use inside mutator.
  */
-class DaoCache [T <: HasId[T]](val dao : Dao[T])(implicit ec : ExecutionContext) {
-  
+class DaoCache[T <: HasId[T]](val dao: Dao[T])(implicit ec: ExecutionContext) {
+
   private val _idCache = TrieMap[Id[T], Option[Versioned[T]]]()
   private val _searchCache = TrieMap[SearchCriteria[T], List[Versioned[T]]]()
-  
-  def retrieve(id: Id[T], timeout : Duration): Option[Versioned[T]] = 
+
+  def retrieve(id: Id[T], timeout: Duration): Option[Versioned[T]] =
     _idCache.getOrElseUpdate(id, Await.result(dao.retrieve(id), timeout))
-    
-  
-  def retrieve(ids: Seq[Id[T]], timeout : Duration): Seq[Versioned[T]] = {
+
+  def retrieve(ids: Seq[Id[T]], timeout: Duration): Seq[Versioned[T]] = {
     val cached = ids.map(id => id -> _idCache.get(id))
     val missingIds = cached.collect { case (id, None) => id }
     val retrieved = missingIds match {
@@ -30,10 +29,9 @@ class DaoCache [T <: HasId[T]](val dao : Dao[T])(implicit ec : ExecutionContext)
     val result = cached.collect { case (id, Some(v)) => (id -> v) } ++ retrieved.map(v => v.entity.id -> Some(v))
     _idCache ++= result
     result.collect { case (_, Some(v)) => v }
-  } 
-    
+  }
 
-  def search(criteria : SearchCriteria[T], timeout : Duration): List[Versioned[T]] =
+  def search(criteria: SearchCriteria[T], timeout: Duration): List[Versioned[T]] =
     _searchCache.getOrElseUpdate(criteria, Await.result(dao.search(criteria), timeout).map {
       case v @ Versioned(obj, version) => _idCache.getOrElseUpdate(obj.id, Some(v)) match {
         case Some(v) => v

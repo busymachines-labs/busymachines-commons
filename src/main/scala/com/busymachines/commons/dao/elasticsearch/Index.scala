@@ -23,7 +23,7 @@ abstract class Index(_client: Client) {
 
   def drop {
     val indicesExistsReponse = _client.execute(new IndicesExistsRequest(name))
-    val exists = Await.result(indicesExistsReponse, 10 seconds).isExists
+    val exists = Await.result(indicesExistsReponse, 30 seconds).isExists
     if (exists) {
       _client.admin().indices().delete(new DeleteIndexRequest(name)).get()
     }
@@ -31,7 +31,7 @@ abstract class Index(_client: Client) {
 
   def initialize {
     val indicesExistsReponse = _client.execute(new IndicesExistsRequest(name))
-    val exists = Await.result(indicesExistsReponse, 10 seconds).isExists
+    val exists = Await.result(indicesExistsReponse, 30 seconds).isExists
     if (!exists) {
       _client.admin.indices.create(new CreateIndexRequest(name).settings(
         s"""

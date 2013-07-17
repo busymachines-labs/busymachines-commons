@@ -12,7 +12,6 @@ import spray.json.JsonFormat
 import spray.json.RootJsonFormat
 import spray.json.deserializationError
 import spray.json.JsObject
-import com.busymachines.commons.domain.Media
 
 object CommonJsonFormats extends CommonJsonFormats 
   
