@@ -12,7 +12,7 @@ object BusyMachinesCommonsBuild extends Build {
  
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++ 
-    /*publishSettings ++ */
+    publishSettings ++ 
     site.settings ++ 
     site.sphinxSupport() ++ site.includeScaladoc() ++
     Seq(
