@@ -45,20 +45,25 @@ object BusyMachinesCommonsBuild extends Build {
 
   def publishSettings = Seq(
     licenses := Seq("The Apache Software Licence, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-    homepage := Some(url("https://github.com/scalastuff/busymachines-commons")),
+    homepage := Some(url("https://github.com/busymachines/busymachines-commons")),
     pomIncludeRepository := { _ => false },
     publishMavenStyle := true,
     publishArtifact in Test := false,
-    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+/*    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"), */
     pomExtra := <scm>
-                  <connection>scm:git:git@github.com:scalastuff/busymachines-commons.git</connection>
-                  <url>https://github.com/scalastuff/busymachines-commons</url>
+                  <connection>scm:git:git@github.com:busymachines/busymachines-commons.git</connection>
+                  <url>https://github.com/busymachines/busymachines-commons</url>
                 </scm>
                 <developers>
                   <developer>
                     <id>ruudditerwich</id>
                     <name>Ruud Diterwich</name>
                     <url>https://github.com/rditerwich</url>
+                  </developer>
+                  <developer>
+                    <id>paulsabou</id>
+                    <name>Paul Sabou</name>
+                    <url>https://github.com/paulsabou</url>
                   </developer>
                 </developers>,
     publishTo <<= version { (v: String) =>
