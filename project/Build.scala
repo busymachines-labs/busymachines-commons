@@ -12,7 +12,7 @@ object BusyMachinesCommonsBuild extends Build {
  
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++ 
-    publishSettings ++ 
+    /*publishSettings ++ */
     site.settings ++ 
     site.sphinxSupport() ++ site.includeScaladoc() ++
     Seq(
@@ -47,9 +47,9 @@ object BusyMachinesCommonsBuild extends Build {
     licenses := Seq("The Apache Software Licence, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     homepage := Some(url("https://github.com/busymachines/busymachines-commons")),
     pomIncludeRepository := { _ => false },
-    publishMavenStyle := false,
+    publishMavenStyle := true,
     publishArtifact in Test := false,
-/*    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"), */
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     pomExtra := <scm>
                   <connection>scm:git:git@github.com:busymachines/busymachines-commons.git</connection>
                   <url>https://github.com/busymachines/busymachines-commons</url>
@@ -65,16 +65,15 @@ object BusyMachinesCommonsBuild extends Build {
                     <name>Paul Sabou</name>
                     <url>https://github.com/paulsabou</url>
                   </developer>
-                </developers>
-/*
-                ,            
+                </developers>,
     publishTo <<= version { (v: String) =>
           val nexus = "https://oss.sonatype.org/"
           if (v.trim.endsWith("SNAPSHOT")) 
             Some("snapshots" at nexus + "content/repositories/snapshots") 
           else
             Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-        }*/)        
+        })
+                
 }
 
 
