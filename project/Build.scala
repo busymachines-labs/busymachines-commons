@@ -47,7 +47,7 @@ object BusyMachinesCommonsBuild extends Build {
     licenses := Seq("The Apache Software Licence, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     homepage := Some(url("https://github.com/busymachines/busymachines-commons")),
     pomIncludeRepository := { _ => false },
-    publishMavenStyle := true,
+    publishMavenStyle := false,
     publishArtifact in Test := false,
 /*    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"), */
     pomExtra := <scm>
