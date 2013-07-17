@@ -4,6 +4,7 @@ import com.typesafe.sbt.SbtSite.site
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
  
+
 /**
  * gpg --keyserver hkp://pool.sks-keyservers.net  --no-permission-warning --send-keys 331928A8
  */
@@ -24,6 +25,8 @@ object BusyMachinesCommonsBuild extends Build {
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
     resolvers += "spray repo" at "http://repo.spray.io",
+    resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
+    libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test" withSources(),
     libraryDependencies +=  "org.elasticsearch" % "elasticsearch" % "0.90.1" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.0-RC1" withSources(),
     libraryDependencies += "io.spray" %% "spray-json" % "1.2.5" withSources(),
