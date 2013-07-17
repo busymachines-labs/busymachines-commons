@@ -17,3 +17,5 @@ project/plugins/project/
 /.settings
 
 *.jar
+
+.DS_Store
