@@ -10,7 +10,7 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 
-class Index(_client: ElasticSearchClient, val name : String) {
+class Index(_client: ESClient, val name : String) {
 
   private val nrOfShards = _client.config.numberOfShards
   private val nrOfReplicas = _client.config.numberOfShards

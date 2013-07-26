@@ -3,7 +3,7 @@ package com.busymachines.commons.elasticsearch
 import com.busymachines.commons.implicits._
 import com.busymachines.commons.HasConfiguration
 
-class ElasticSearchConfiguration extends HasConfiguration {
+class ESConfiguration extends HasConfiguration {
   def clusterName = config.getStringOption("clusterName") getOrElse "elasticsearch"
   def hostNames = config.getStringSeq("hostNames") nonEmptyOrElse Seq("localhost")
   def numberOfShards = config.getIntOption("numberOfShards") getOrElse 1
