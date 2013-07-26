@@ -20,8 +20,13 @@ class RichConfig(config : Config) {
   def getIntOption(path : String) : Option[Int] = 
     getStringOption(path).map(_.toInt)
   
+  def getConfigOption(path : String) : Option[Config] =
+    if (config.hasPath(path)) Some(config.getConfig(path))
+    else None
+    
   def getStringSeq(path : String) : Seq[String] = 
-    config.getStringList(path).toSeq
+    if (config.hasPath(path)) config.getStringList(path).toSeq
+    else Nil
   
   def mkString(sep : String) = 
     toSeq.mkString(sep)

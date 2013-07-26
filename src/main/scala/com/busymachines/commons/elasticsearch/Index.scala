@@ -7,14 +7,13 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import org.elasticsearch.client.Client
-import org.scalastuff.esclient.ESClient
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
-abstract class Index(_client: Client) {
 
-  val name: String
-  val nrOfShards: Int
-  val nrOfReplicas: Int
+class Index(_client: ElasticSearchClient, val name : String) {
+
+  private val nrOfShards = _client.config.numberOfShards
+  private val nrOfReplicas = _client.config.numberOfShards
 
   lazy val client = {
     initialize

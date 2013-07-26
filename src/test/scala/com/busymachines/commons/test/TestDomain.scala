@@ -4,6 +4,7 @@ import com.busymachines.commons.domain.CommonJsonFormats
 import spray.json._
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
+import com.busymachines.commons.elasticsearch.Mapping
 
 case class Property(
   id: Id[Property] = Id.generate[Property],
@@ -15,9 +16,19 @@ case class Item(
   name: String,
   properties: List[Property] = Nil) extends HasId[Item]
 
-object DomainJsonFormats extends DomainJsonFormats
-
-trait DomainJsonFormats extends CommonJsonFormats {
+object DomainJsonFormats extends CommonJsonFormats {
   implicit val propertyFormat = jsonFormat3(Property)
   implicit val itemFormat = jsonFormat3(Item)
+}
+
+object PropertyMapping extends Mapping[Property] {
+  val id = "id" -> "_id" as String & NotAnalyzed  
+  val mandatory = "mandatory" as Boolean
+  val name = "name" as String & NotAnalyzed   
+}
+
+object ItemMapping extends Mapping[Item] {
+  val id = "id" -> "_id" as String & NotAnalyzed  
+  val name = "name" as String & NotAnalyzed
+  val properties = "item_properties" as Nested(PropertyMapping)
 }

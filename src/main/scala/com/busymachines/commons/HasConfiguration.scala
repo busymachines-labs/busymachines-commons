@@ -1,5 +1,6 @@
 package com.busymachines.commons
 
+import com.busymachines.commons.implicits._
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.Config
 import java.net.URL
@@ -16,7 +17,7 @@ object HasConfiguration {
 
 trait HasConfiguration {
   val globalConfig = HasConfiguration.globalConfig
-  val configBaseName = getClass.getPackage.getName
-  lazy val config = globalConfig.getConfig(configBaseName)
-
+  val configBaseName : Option[String] = None
+  val actualConfigBaseName = configBaseName getOrElse getClass.getPackage.getName
+  lazy val config = globalConfig.getConfigOption(actualConfigBaseName) getOrElse ConfigFactory.empty
 }

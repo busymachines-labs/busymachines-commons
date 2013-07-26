@@ -26,7 +26,7 @@ object BusyMachinesCommonsBuild extends Build {
     EclipseKeys.withSource := true,
     resolvers += "spray repo" at "http://repo.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
-    libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test" withSources(),
+    libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" withSources(),
     libraryDependencies +=  "org.elasticsearch" % "elasticsearch" % "0.90.1" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.0-RC1" withSources(),
     libraryDependencies += "io.spray" %% "spray-json" % "1.2.5" withSources(),
