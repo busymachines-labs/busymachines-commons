@@ -41,7 +41,7 @@ class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
   it should "create & search" in {
     val item = Item(name = "Sample item", properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item, true).await
-    assert(dao.search(new Delegate(ItemMapping.properties / PropertyMapping.name === "Property3")).await.size === 1)
+    assert(dao.search(ItemMapping.properties / PropertyMapping.name === "Property3").await.size === 1)
   }
 
 }
