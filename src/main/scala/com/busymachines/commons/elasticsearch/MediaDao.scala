@@ -28,7 +28,7 @@ case class HashedMedia(
 ) extends HasId[HashedMedia]
 
 private[elasticsearch] 
-object MediaMapping extends Mapping[HashedMedia] {
+object MediaMapping extends ESMapping[HashedMedia] {
   val id = "id" -> "_id" as String & NotAnalyzed
   val mimeType = "mimeType" as String & Analyzed
   val name = "name" as String & Analyzed
@@ -36,12 +36,12 @@ object MediaMapping extends Mapping[HashedMedia] {
   val data = "data" as String & NotIndexed
 }
 
-class MediaDao(index: Index)(implicit ec: ExecutionContext) extends Logging {
+class MediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends Logging {
   
   private val hasher = Hashing.md5
   private val encoding = BaseEncoding.base64Url
   private implicit val hashMediaFormat = jsonFormat5(HashedMedia)
-  private val dao = new EsRootDao[HashedMedia](index, Type[HashedMedia]("media", MediaMapping))
+  private val dao = new EsRootDao[HashedMedia](index, ESType[HashedMedia]("media", MediaMapping))
 
   def retrieve(id : Id[Media]) : Future[Option[Media]] = 
     dao.retrieve(Id[HashedMedia](id.toString)).map { _ map {

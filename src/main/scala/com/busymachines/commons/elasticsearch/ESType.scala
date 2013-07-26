@@ -1,6 +1,6 @@
 package com.busymachines.commons.elasticsearch
 
-case class Type[A] (
+case class ESType[A] (
   name : String,
-  mapping : Mapping[A]
+  mapping : ESMapping[A]
 )

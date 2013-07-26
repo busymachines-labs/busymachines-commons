@@ -4,7 +4,7 @@ import com.busymachines.commons.domain.CommonJsonFormats
 import spray.json._
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
-import com.busymachines.commons.elasticsearch.Mapping
+import com.busymachines.commons.elasticsearch.ESMapping
 
 case class Property(
   id: Id[Property] = Id.generate[Property],
@@ -21,13 +21,13 @@ object DomainJsonFormats extends CommonJsonFormats {
   implicit val itemFormat = jsonFormat3(Item)
 }
 
-object PropertyMapping extends Mapping[Property] {
+object PropertyMapping extends ESMapping[Property] {
   val id = "id" -> "_id" as String & NotAnalyzed  
   val mandatory = "mandatory" as Boolean
   val name = "name" as String & NotAnalyzed   
 }
 
-object ItemMapping extends Mapping[Item] {
+object ItemMapping extends ESMapping[Item] {
   val id = "id" -> "_id" as String & NotAnalyzed  
   val name = "name" as String & NotAnalyzed
   val properties = "item_properties" as Nested(PropertyMapping)

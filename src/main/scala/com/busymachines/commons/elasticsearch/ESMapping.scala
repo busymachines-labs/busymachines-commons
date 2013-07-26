@@ -3,24 +3,24 @@ package com.busymachines.commons.elasticsearch
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.Logging
 
-object Property {
-  implicit def toPath[A, T](property : Property[A, T]) = Path[A, T](property :: Nil)
+object ESProperty {
+  implicit def toPath[A, T](property : ESProperty[A, T]) = Path[A, T](property :: Nil)
 }
 
-case class Property[A, T](name : String, mappedName : String, options : Mapping.Options[T]) {
-  val nestedProperties = options.options.find(_.name == "properties").map(_.value.asInstanceOf[Mapping.Properties[A]])
+case class ESProperty[A, T](name : String, mappedName : String, options : ESMapping.Options[T]) {
+  val nestedProperties = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping.Properties[A]])
 }
 
-case class Path[A, T](properties : List[Property[_, _]]) {
-  def head : Property[A, _] = properties.head.asInstanceOf[Property[A, _]]
-  def last : Property[_, T] = properties.head.asInstanceOf[Property[_, T]]
-  def / [A2 <: T, V2](property : Property[A2, V2]) = Path[A, V2](properties :+ property)
+case class Path[A, T](properties : List[ESProperty[_, _]]) {
+  def head : ESProperty[A, _] = properties.head.asInstanceOf[ESProperty[A, _]]
+  def last : ESProperty[_, T] = properties.head.asInstanceOf[ESProperty[_, T]]
+  def / [A2 <: T, V2](property : ESProperty[A2, V2]) = Path[A, V2](properties :+ property)
   def === (value : T) = ESSearchCriteria.Equals(this, value)
 }
 
-object Mapping {
+object ESMapping {
 
-  case class Properties[A](properties : List[Property[A, _]]) {
+  case class Properties[A](properties : List[ESProperty[A, _]]) {
     lazy val propertiesByName = properties.groupBy(_.name).mapValues(_.head)
     lazy val propertiesByMappedName = properties.groupBy(_.mappedName).mapValues(_.head)
   }
@@ -35,9 +35,9 @@ object Mapping {
   }
 }
 
-class Mapping[A] extends Logging {
+class ESMapping[A] extends Logging {
 
-  import Mapping._
+  import ESMapping._
   
   protected var _allProperties : Properties[A] = Properties(Nil)
   
@@ -46,7 +46,7 @@ class Mapping[A] extends Logging {
   def mappingConfiguration(doctype : String): String = 
     print(mapping(doctype), "\n")
   
-  def mapping(doctype : String) = Properties[Any](List(Property[Any, A](doctype, doctype, Options[A]((Seq(
+  def mapping(doctype : String) = Properties[Any](List(ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
       Option("_all", Map("enabled" -> true)),
       Option("_source", Map("enabled" -> true)),
       Stored, 
@@ -62,17 +62,17 @@ class Mapping[A] extends Logging {
   val Analyzed = Option("index", "analyzed")
   val NotAnalyzed = Option("index", "not_analyzed")
   def Nested[T](properties : Properties[T]) : Options[T] = Options(Option("type", "nested"), Option("properties", properties))
-  def Nested[T](mapping : Mapping[T]) : Options[T] = Nested(mapping._allProperties)
+  def Nested[T](mapping : ESMapping[T]) : Options[T] = Nested(mapping._allProperties)
   
   implicit class RichName(name : String) extends RichMappedName(name, name)
   
   implicit class RichMappedName(name : (String, String)) {
-    def as[T](options : Options[T]) = add(Property[A, T](name._1, name._2, options))
-    def add[T](property : Property[A, T]) = {
+    def as[T](options : Options[T]) = add(ESProperty[A, T](name._1, name._2, options))
+    def add[T](property : ESProperty[A, T]) = {
       _allProperties = Properties(_allProperties.properties :+ property)
       property
     }
-    implicit def toProperty = Property(name._1, name._2, Options())
+    implicit def toProperty = ESProperty(name._1, name._2, Options())
   }
   def print(obj : Any, indent : String) : String = obj match {
     case properties : Properties[A] => 

@@ -7,15 +7,14 @@ import org.scalatest.FlatSpec
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.elasticsearch.ESSearchCriteria.Delegate
 import com.busymachines.commons.elasticsearch.EsRootDao
-import com.busymachines.commons.elasticsearch.Property.toPath
-import com.busymachines.commons.elasticsearch.Type
+import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.commons.implicits.richFuture
 import com.busymachines.commons.test.DomainJsonFormats.itemFormat
 import com.busymachines.commons.testing.EmptyESTestIndex
 
 class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
   
-  val dao = new EsRootDao[Item](esIndex, Type("item", ItemMapping))
+  val dao = new EsRootDao[Item](esIndex, ESType("item", ItemMapping))
   
   "ItemDao" should "create & retrieve" in {
     val item = Item(name = "Sample item", properties = Property(name = "Property1") :: Property(name = "Property2") :: Nil)

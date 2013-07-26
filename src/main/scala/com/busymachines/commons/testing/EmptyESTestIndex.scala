@@ -3,7 +3,7 @@ package com.busymachines.commons.testing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.Suite
 import com.busymachines.commons.elasticsearch.ESClient
-import com.busymachines.commons.elasticsearch.Index
+import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.elasticsearch.ESConfiguration
 
 trait EmptyESTestIndex extends BeforeAndAfterEach {
@@ -13,7 +13,7 @@ trait EmptyESTestIndex extends BeforeAndAfterEach {
   
   val esConfig = new ESConfiguration
   val esClient = new ESClient(esConfig)
-  val esIndex = new Index(esClient, getClass.getName.toLowerCase)
+  val esIndex = new ESIndex(esClient, getClass.getName.toLowerCase)
 
   override protected def beforeEach {
     super.beforeEach

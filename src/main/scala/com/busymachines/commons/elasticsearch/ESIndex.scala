@@ -1,6 +1,8 @@
 package com.busymachines.commons.elasticsearch
 
 import scala.collection.mutable.Buffer
+
+import scala.language.postfixOps
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
@@ -10,7 +12,7 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 
-class Index(_client: ESClient, val name : String) {
+class ESIndex(_client: ESClient, val name : String) {
 
   private val nrOfShards = _client.config.numberOfShards
   private val nrOfReplicas = _client.config.numberOfShards

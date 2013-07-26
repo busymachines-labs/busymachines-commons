@@ -19,18 +19,18 @@ class RichJsValue(val value : JsValue) extends AnyVal {
     case value => value
   }
 
-  def mapToES[A](mapping : Mapping[A]) : JsValue = 
+  def mapToES[A](mapping : ESMapping[A]) : JsValue = 
     RichJsValue.convertToES(value, mapping.allProperties)
 
-  def mapFromES[A](mapping : Mapping[A]) : JsValue = 
+  def mapFromES[A](mapping : ESMapping[A]) : JsValue = 
     RichJsValue.convertFromES(value, mapping.allProperties)
 
-  def convertFromES[A](mapping : Mapping[A])(implicit reader : JsonReader[A]) : A = 
+  def convertFromES[A](mapping : ESMapping[A])(implicit reader : JsonReader[A]) : A = 
     RichJsValue.convertFromES(value, mapping.allProperties).convertTo[A]
 }
 
 object RichJsValue {
-  private [elasticsearch] def convertToES(value: JsValue, properties : Mapping.Properties[_]) : JsValue = {
+  private [elasticsearch] def convertToES(value: JsValue, properties : ESMapping.Properties[_]) : JsValue = {
     value match {
       case JsObject(fields) =>
         JsObject(fields.map {
@@ -49,7 +49,7 @@ object RichJsValue {
     }
   }
  
-  private [elasticsearch] def convertFromES(value : JsValue, properties : Mapping.Properties[_]) : JsValue = {
+  private [elasticsearch] def convertFromES(value : JsValue, properties :ESMapping.Properties[_]) : JsValue = {
     value match {
       case JsObject(fields) =>
         JsObject(fields.map {
