@@ -6,7 +6,6 @@ import scala.concurrent.Future
 
 import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.client.Client
-import org.scalastuff.esclient.ESClient
 
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.domain.HasId

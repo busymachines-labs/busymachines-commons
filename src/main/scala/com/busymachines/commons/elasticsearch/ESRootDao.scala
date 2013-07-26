@@ -12,7 +12,6 @@ import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryStringQueryBuilder
-import org.scalastuff.esclient.ESClient
 import com.busymachines.commons.Logging
 import com.busymachines.commons.dao.IdNotFoundException
 import com.busymachines.commons.dao.RootDao
