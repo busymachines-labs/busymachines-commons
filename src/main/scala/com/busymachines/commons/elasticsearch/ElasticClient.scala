@@ -1,4 +1,4 @@
-package com.busymachines.commons.dao.elasticsearch
+package com.busymachines.commons.elasticsearch
 
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.ImmutableSettings

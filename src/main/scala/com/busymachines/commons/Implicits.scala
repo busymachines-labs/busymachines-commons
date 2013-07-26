@@ -10,6 +10,7 @@ import scala.concurrent.ExecutionContext
 import java.net.URL
 import scala.xml.factory.XMLLoader
 import scala.xml.Elem
+import com.busymachines.commons.testing.RichFuture
 
 package object implicits extends CommonImplicits
 

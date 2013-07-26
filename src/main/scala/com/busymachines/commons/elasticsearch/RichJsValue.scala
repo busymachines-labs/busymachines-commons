@@ -1,4 +1,4 @@
-package com.busymachines.commons.dao.elasticsearch
+package com.busymachines.commons.elasticsearch
 
 import com.busymachines.commons.RichJsValue.recurse
 import spray.json.JsObject

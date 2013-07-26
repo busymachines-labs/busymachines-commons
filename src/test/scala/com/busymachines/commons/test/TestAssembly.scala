@@ -5,8 +5,8 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.ImmutableSettings
 import com.busymachines.commons.HasConfiguration
-import com.busymachines.commons.dao.elasticsearch.EsConfiguration
-import com.busymachines.commons.dao.elasticsearch.ElasticClient
+import com.busymachines.commons.elasticsearch.EsConfiguration
+import com.busymachines.commons.elasticsearch.ElasticClient
 import com.busymachines.commons.dao.DaoCache
 import com.busymachines.commons.dao.DaoMutator
 

@@ -1,4 +1,4 @@
-package com.busymachines.commons.dao.elasticsearch
+package com.busymachines.commons.elasticsearch
 
 import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.common.bytes.BytesArray

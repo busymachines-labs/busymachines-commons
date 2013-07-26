@@ -11,7 +11,7 @@ import scala.io.Codec
 import scala.xml.NodeSeq
 import scala.xml.XML
 import org.joda.time.DateTime
-import com.busymachines.commons.dao.elasticsearch.MediaDao
+import com.busymachines.commons.elasticsearch.MediaDao
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.Media
 import com.busymachines.commons.implicits._

@@ -1,4 +1,4 @@
-package com.busymachines.commons.dao.elasticsearch
+package com.busymachines.commons.elasticsearch
 
 import scala.annotation.implicitNotFound
 import scala.concurrent.ExecutionContext
@@ -17,7 +17,7 @@ import com.busymachines.commons.Logging
 import com.busymachines.commons.dao.IdNotFoundException
 import com.busymachines.commons.dao.RootDao
 import com.busymachines.commons.dao.Versioned
-import com.busymachines.commons.dao.elasticsearch.implicits._
+import com.busymachines.commons.elasticsearch.implicits._
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import spray.json.JsonFormat

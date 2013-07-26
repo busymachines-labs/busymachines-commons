@@ -1,7 +1,7 @@
 package com.busymachines.commons.test
-import com.busymachines.commons.dao.elasticsearch.Index
+import com.busymachines.commons.elasticsearch.Index
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
-import com.busymachines.commons.dao.elasticsearch.Mapping
+import com.busymachines.commons.elasticsearch.Mapping
 import org.elasticsearch.client.Client
 
 class TestESIndex(client:Client) extends Index(client) {

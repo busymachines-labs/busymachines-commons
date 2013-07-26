@@ -1,4 +1,4 @@
-package com.busymachines.commons.dao.elasticsearch
+package com.busymachines.commons.elasticsearch
 
 import scala.collection.mutable.Buffer
 import scala.concurrent.Await

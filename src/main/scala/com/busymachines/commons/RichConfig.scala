@@ -6,12 +6,22 @@ import scala.collection.JavaConversions._
 
 class RichConfig(config : Config) {
 
-  def getOptionalInt(path : String) : Option[Int] = {
-    config.getString(path) match {
-      case value if value == "" => None
-      case value => Some(value.toInt)
+  def getStringOption(path : String) : Option[String] = {
+    if (config.hasPath(path)) {
+      config.getString(path) match {
+        case value if value == "" => None
+        case value => Some(value)
+      }
+    } else {
+      None
     }
   }
+  
+  def getIntOption(path : String) : Option[Int] = 
+    getStringOption(path).map(_.toInt)
+  
+  def getStringSeq(path : String) : Seq[String] = 
+    config.getStringList(path).toSeq
   
   def mkString(sep : String) = 
     toSeq.mkString(sep)

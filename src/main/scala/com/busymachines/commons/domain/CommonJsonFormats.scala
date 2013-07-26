@@ -77,12 +77,12 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
       case s => deserializationError("Couldn't convert '" + s + "' to a string map")
     }
   }
-/*
+
   implicit val localeJsonFormat = stringJsonFormat[Locale]("Locale", _ match {
     case "und" => Locale.ROOT 
     case tag => Locale.forLanguageTag(tag)
   }, _.toLanguageTag)
-*/
+
 //  implicit def localeMapJsonFormat[T: JsonFormat] = new JsonFormat[Map[Locale, T]] {
 //    def write(map: Map[Locale, T]) = map.toList match {
 //      case Nil =>

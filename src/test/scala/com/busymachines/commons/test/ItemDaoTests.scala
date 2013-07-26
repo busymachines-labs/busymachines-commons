@@ -2,10 +2,10 @@ package com.busymachines.commons.test
 import org.scalatest.FlatSpec
 import com.busymachines.commons.test.TestAssembly.itemDao
 import com.busymachines.commons.implicits._
-import com.busymachines.commons.dao.elasticsearch.ESSearchCriteria._
-import com.busymachines.commons.dao.elasticsearch.Path
-import com.busymachines.commons.dao.elasticsearch.ESSearchCriteria
-import com.busymachines.commons.dao.elasticsearch.implicits._
+import com.busymachines.commons.elasticsearch.ESSearchCriteria._
+import com.busymachines.commons.elasticsearch.Path
+import com.busymachines.commons.elasticsearch.ESSearchCriteria
+import com.busymachines.commons.elasticsearch.implicits._
 
 class ItemDaoTests extends FlatSpec with EmptyAurumElasticSearchStorage {
   "ItemDao" should "create & retrieve" in {

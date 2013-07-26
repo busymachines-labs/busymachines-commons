@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.testing
 
 import scala.concurrent.Await
 import scala.concurrent.Future

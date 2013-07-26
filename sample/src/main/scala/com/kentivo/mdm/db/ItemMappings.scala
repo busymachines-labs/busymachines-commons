@@ -1,12 +1,12 @@
 package com.kentivo.mdm.db
 
 import org.elasticsearch.client.Client
-import com.busymachines.commons.dao.elasticsearch.Mapping
+import com.busymachines.commons.elasticsearch.Mapping
 import com.kentivo.mdm.domain.Item
 import com.kentivo.mdm.domain.Property
 import com.kentivo.mdm.domain.PropertyValue
 import com.kentivo.mdm.domain.Source
-import com.busymachines.commons.dao.elasticsearch.Index
+import com.busymachines.commons.elasticsearch.Index
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
 import java.util.Locale
 

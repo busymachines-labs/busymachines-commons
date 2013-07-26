@@ -1,11 +1,11 @@
 package com.kentivo.mdm.db
 
 import scala.concurrent.ExecutionContext
-import com.busymachines.commons.dao.elasticsearch.EsRootDao
-import com.busymachines.commons.dao.elasticsearch.ESSearchCriteria
-import com.busymachines.commons.dao.elasticsearch.Index
-import com.busymachines.commons.dao.elasticsearch.Property.toPath
-import com.busymachines.commons.dao.elasticsearch.Type
+import com.busymachines.commons.elasticsearch.EsRootDao
+import com.busymachines.commons.elasticsearch.ESSearchCriteria
+import com.busymachines.commons.elasticsearch.Index
+import com.busymachines.commons.elasticsearch.Property.toPath
+import com.busymachines.commons.elasticsearch.Type
 import com.busymachines.commons.domain.Id
 import com.kentivo.mdm.domain.DomainJsonFormats.itemFormat
 import com.kentivo.mdm.domain.Item
