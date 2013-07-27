@@ -3,9 +3,9 @@ package com.kentivo.mdm.db
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.elasticsearch.EsRootDao
 import com.busymachines.commons.elasticsearch.ESSearchCriteria
-import com.busymachines.commons.elasticsearch.Index
-import com.busymachines.commons.elasticsearch.Property.toPath
-import com.busymachines.commons.elasticsearch.Type
+import com.busymachines.commons.elasticsearch.ESIndex
+import com.busymachines.commons.elasticsearch.ESProperty.toPath
+import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.commons.domain.Id
 import com.kentivo.mdm.domain.DomainJsonFormats.itemFormat
 import com.kentivo.mdm.domain.Item
@@ -16,4 +16,4 @@ case class HasValueForProperty(propertyId : Id[Property], value : Option[String]
 )
 
 
-class ItemDao(index : Index)(implicit ec: ExecutionContext) extends EsRootDao[Item](index, Type("item", ItemMapping))
+class ItemDao(index : ESIndex)(implicit ec: ExecutionContext) extends EsRootDao[Item](index, ESType("item", ItemMapping))

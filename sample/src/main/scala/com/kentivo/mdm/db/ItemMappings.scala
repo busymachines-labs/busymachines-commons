@@ -1,22 +1,17 @@
 package com.kentivo.mdm.db
 
 import org.elasticsearch.client.Client
-import com.busymachines.commons.elasticsearch.Mapping
+import com.busymachines.commons.elasticsearch.ESMapping
 import com.kentivo.mdm.domain.Item
 import com.kentivo.mdm.domain.Property
 import com.kentivo.mdm.domain.PropertyValue
 import com.kentivo.mdm.domain.Source
-import com.busymachines.commons.elasticsearch.Index
+import com.busymachines.commons.elasticsearch.ESIndex
 import org.elasticsearch.node.NodeBuilder.nodeBuilder
 import java.util.Locale
 
-class MdmIndex extends Index(nodeBuilder.client(true).node.client) {
-  val name = "kentivo.mdm"
-  val nrOfShards = 5
-  val nrOfReplicas = 1
-}
 
-object ItemMapping extends Mapping[Item] {
+object ItemMapping extends ESMapping[Item] {
   val repository = "repository" as String & NotAnalyzed
   val mutation = "mutation" as String & NotAnalyzed
   val id = "id" -> "_id" as String & NotAnalyzed
@@ -27,7 +22,7 @@ object ItemMapping extends Mapping[Item] {
   val values = "values" as Nested(PropertyValueMapping) 
 }
 
-object PropertyMapping extends Mapping[Property] {
+object PropertyMapping extends ESMapping[Property] {
   val repository = "repository" as String & NotAnalyzed
   val mutation = "mutation" as String & NotAnalyzed
   val id = "id" -> "_id" as String & NotAnalyzed
@@ -43,7 +38,7 @@ object PropertyMapping extends Mapping[Property] {
   val rules = "rules" as String & NotAnalyzed
 }
 
-object PropertyValueMapping extends Mapping[PropertyValue] {
+object PropertyValueMapping extends ESMapping[PropertyValue] {
   val property = "property" as String & NotAnalyzed
   val mutation = "mutation" as String & NotAnalyzed
   val value = "value" as String & Analyzed
@@ -51,7 +46,7 @@ object PropertyValueMapping extends Mapping[PropertyValue] {
   val unit = "unit" as String & NotAnalyzed
 }
 
-object SourceMapping extends Mapping[Source] {
+object SourceMapping extends ESMapping[Source] {
   val id = "id" -> "_id" as String & NotAnalyzed
   val name = "name" as String & Analyzed
   val repository = "repository" as String & NotAnalyzed

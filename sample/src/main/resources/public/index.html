@@ -13,17 +13,17 @@
 
 
 	<!-- JQuery -->
-    <script type="text/javascript" src="lib/jquery/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="lib/jquery/jquery-1.10.2.js"></script>
 
 
 	<!-- Bootstrap -->
-    <script type="text/javascript" src="lib/bootstrap-2.3.1/js/bootstrap.js"></script>
-    <link href="lib/bootstrap-2.3.1/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/bootstrap-3.0.0-RC1/js/bootstrap.js"></script>
+    <link href="lib/bootstrap-3.0.0-RC1/css/bootstrap.css" rel="stylesheet" type="text/css">
     
 	<!-- Angular -->
-    <script type="text/javascript" src="lib/angularjs-1.0.6/angular.js"></script>
-    <script type="text/javascript" src="lib/angularjs-1.0.6/angular-bootstrap.js"></script>
-    <script type="text/javascript" src="lib/angularjs-1.0.6/angular-resource.js"></script>
+    <script type="text/javascript" src="lib/angularjs-1.0.7/angular.js"></script>
+    <script type="text/javascript" src="lib/angularjs-1.0.7/angular-bootstrap.js"></script>
+    <script type="text/javascript" src="lib/angularjs-1.0.7/angular-resource.js"></script>
 <!--  	<script type="text/javascript">
 		function getURLParameter(name) {
 		    return decodeURI(
@@ -77,48 +77,6 @@
     
 </head>
 <body>
-    <!--<div ng-include src="'dashboard/login.html'"></div>-->
-    <div id="login-modal" class="hide" ng-controller="LoginCtrl" xs-login-modal>
-        <form class="form-login" name="loginForm" novalidate ng-submit="login()" onsubmit="return false;" action="/" method="post">
-            <fieldset>
-                <h2 data-i18n="_login_"></h2>
-                <input type="text" required class="input-block-level" placeholder="{{'_username_' | translate}}" ng-model="username" ng-change="updateValidity()" name="username" tabindex="1" xs-input-sync>
-                <p class="text-error" ng-show="loginForm.username.$dirty && loginForm.username.$invalid">
-                    <span ng-show="loginForm.username.$error.required" data-i18n="_username_required_"></span>
-                </p>
-                <input type="password" required class="input-block-level" placeholder="{{'_password_' | translate}}" ng-model="password" ng-change="updateValidity()" name="password" tabindex="2" xs-input-sync>
-                <p class="text-error" ng-show="loginForm.password.$dirty && loginForm.password.$invalid">
-                    <span ng-show="loginForm.password.$error.required" data-i18n="_password_required_"></span>
-                </p>
-                <p class="text-error" ng-show="invalidCredentials">
-                    <span data-i18n="_invalid_credentials_"></span>
-                </p>
-                <p><button type="button" ng-click="showForgotPassword($event)" class="hide btn btn-link" data-i18n="_forgot_password_"></button></p>
-                <p><button class="btn btn-primary btn-large" ng-disabled="loginForm.username.$invalid || loginForm.password.$invalid" type="submit" tabindex="3" data-i18n="_login_"></button></p>
-            </fieldset>
-        </form>
-    </div>
-
-    <div id="forgotPassword" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="myModalLabel">Password recovery</h3>
-        </div>
-        <form class="recover-password" name="recoverPasswordForm" novalidate ng-submit="recoverPassword()">
-            <div class="modal-body">
-                <input type="email" required class="input-block-level" placeholder="E-mail" ng-model="email" name="email">
-                <div ng-show="recoverPasswordForm.email.$dirty && recoverPasswordForm.email.$invalid">
-                    <span ng-show="recoverPasswordForm.email.$error.required">E-mail required.</span>
-                    <span ng-show="recoverPasswordForm.email.$error.email">E-mail invalid.</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <!--<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>-->
-                <button type="submit" class="btn btn-primary" ng-disabled="recoverPassword.$invalid">Recover</button>
-            </div>
-        </form>
-    </div>
-
-    <div class="app-container" ng-view></div>
+   <h1>Hello</h1>
 </body>
 </html>

@@ -16,12 +16,19 @@ import com.kentivo.mdm.db.ItemDao
 import com.busymachines.commons.elasticsearch.MediaDao
 import com.kentivo.mdm.db.MdmIndex
 import com.busymachines.commons.concurrent.SimpleExecutionContext
+import com.busymachines.commons.elasticsearch.ESConfiguration
+import com.busymachines.commons.elasticsearch.ESClient
+import com.busymachines.commons.elasticsearch.ESIndex
 
 class SystemAssembly {
 
   lazy implicit val actorSystem = ActorSystem("KentivoMDM")
   lazy implicit val executionContext = actorSystem.dispatcher
-  lazy val index = new MdmIndex
+
+  val esConfig = new ESConfiguration
+  val esClient = new ESClient(esConfig)
+  val index = new ESIndex(esClient, "kentivo.mdm") 
+
   lazy val sourceDao = new SourceDao(index)
   lazy val itemDao = new ItemDao(index)
   lazy val mediaDao = new MediaDao(index)

@@ -17,7 +17,7 @@ object Authentication extends Logging {
   lazy val config = ConfigFactory.load.getConfig("com.kentivo.mdm.authentication")
   val expiryTimeSec = config.getLong("expiryTimeSec")
   
-  val demoUser : Option[User] = config.getOptionalInt("demoUserId") flatMap { id =>
+  val demoUser : Option[User] = config.getIntOption("demoUserId") flatMap { id =>
     info(s"Using demo user id $id")
     None
   } 
