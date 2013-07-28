@@ -3,7 +3,6 @@ import Keys._
 import com.typesafe.sbt.SbtSite.site
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
- 
 
 /**
  * gpg --keyserver hkp://pool.sks-keyservers.net  --no-permission-warning --send-keys 331928A8
