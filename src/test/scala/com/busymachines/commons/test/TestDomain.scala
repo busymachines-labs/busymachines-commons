@@ -30,5 +30,5 @@ object PropertyMapping extends ESMapping[Property] {
 object ItemMapping extends ESMapping[Item] {
   val id = "id" -> "_id" as String & NotAnalyzed  
   val name = "name" as String & NotAnalyzed
-  val properties = "item_properties" as Nested(PropertyMapping)
+  val properties = "properties" -> "item_properties" as Nested(PropertyMapping)
 }
