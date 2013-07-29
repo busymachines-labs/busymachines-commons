@@ -38,7 +38,7 @@ object RichJsValue {
             case Some(property) =>
               property.nestedProperties match {
                 case Some(properties) =>
-                  property.name -> convertToES(field._2, properties)
+                  property.mappedName -> convertToES(field._2, properties)
                 case None =>
                   property.mappedName -> field._2
               }
