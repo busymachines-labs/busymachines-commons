@@ -38,10 +38,12 @@ class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
     assert(dao.retrieve(item.id).await === None)
   }
 
-  it should "create & search" in {
+  it should "create & search for simple nested object" in {
     val item = Item(name = "Sample item", properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item, true).await
     assert(dao.search(ItemMapping.properties / PropertyMapping.name === "Property3").await.size === 1)
   }
+  
+  
 
 }

@@ -9,29 +9,36 @@ import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
  */
 object BusyMachinesCommonsBuild extends Build {
  
-  lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
+  lazy val project = Project(id = "commons", base = file("."), settings = 
     Project.defaultSettings ++ 
-    publishSettings ++ 
+    publishSettings ++
     site.settings ++ 
     site.sphinxSupport() ++ site.includeScaladoc() ++
     Seq(
     sbtPlugin := false,
-    organization := "org.scalastuff",
+    publishMavenStyle := false,
+    exportJars := true,      
+    organization := "com.busymachines",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.10.2",
     scalacOptions += "-deprecation",
     scalacOptions += "-unchecked",
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
-    resolvers += "spray repo" at "http://repo.spray.io",
+    resolvers += "spray repo" at "http://nightlies.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" withSources(),
     libraryDependencies +=  "org.elasticsearch" % "elasticsearch" % "0.90.1" withSources(),
-    libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.0-RC1" withSources(),
-    libraryDependencies += "io.spray" %% "spray-json" % "1.2.5" withSources(),
-    libraryDependencies += "io.spray" % "spray-routing" % "1.2-M8" withSources(),
-    libraryDependencies += "io.spray" % "spray-client" % "1.2-M8" withSources(),
-    libraryDependencies += "io.spray" % "spray-can" % "1.2-M8" withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.0-RC2" withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.2.0-RC2" withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-contrib" % "2.2.0-RC2" withSources(),
+    libraryDependencies += "io.spray" % "spray-can" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" % "spray-routing" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" % "spray-client" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" %%  "spray-json" % "1.2.5" withSources(),
+    libraryDependencies += "io.spray" % "spray-servlet" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" % "spray-testkit" % "1.2-20130719" % "test" withSources(),
+    libraryDependencies += "io.spray" % "spray-caching" % "1.2-20130719" withSources(),
     libraryDependencies += "org.scalastuff" %% "esclient" % "0.20.3" withSources(),
     libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources(),
     libraryDependencies +=  "ch.qos.logback" % "logback-classic" % "1.0.13" withSources(),

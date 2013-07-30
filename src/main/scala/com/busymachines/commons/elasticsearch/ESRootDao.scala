@@ -28,7 +28,7 @@ import org.elasticsearch.action.index.IndexAction
 import org.elasticsearch.common.io.stream.BytesStreamOutput
 import org.elasticsearch.action.search.SearchType
 
-class EsRootDao[T <: HasId[T] :JsonFormat](index : ESIndex, t: ESType[T])(implicit ec: ExecutionContext) extends ESDao[T](t.name) with RootDao[T] with Logging {
+class EsRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implicit ec: ExecutionContext) extends ESDao[T](t.name) with RootDao[T] with Logging {
 
   val client = index.client
   val mapping = t.mapping
@@ -38,24 +38,23 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : ESIndex, t: ESType[T])(implic
   debug(mappingConfiguration)
   client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
 
-  def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] = 
-    query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id=>id.toString):_*))
-  
-  
+  def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
+    query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id => id.toString): _*))
+
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]] = {
     val request = new GetRequest(index.name, t.name, id.toString)
     client.execute(request).map(response => Option(response.getSourceAsString)) map {
       case None => None
-      case Some(source) => 
+      case Some(source) =>
         val json = source.asJson
         val version = json.getESVersion
         Some(Versioned(json.convertFromES(mapping), version))
     }
   }
-  
-  def search(criteria : SearchCriteria[T]): Future[List[Versioned[T]]] = {
+
+  def search(criteria: SearchCriteria[T]): Future[List[Versioned[T]]] = {
     criteria match {
-      case criteria : ESSearchCriteria[T] =>
+      case criteria: ESSearchCriteria[T] =>
         val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setFilter(criteria.toFilter).setSearchType(SearchType.DFS_QUERY_AND_FETCH).setSize(999999)
         client.execute(request.request).map(_.getHits.hits.toList.map { hit =>
           val json = hit.sourceAsString.asJson
@@ -66,8 +65,8 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : ESIndex, t: ESType[T])(implic
         throw new Exception("Expected ElasticSearch search criteria")
     }
   }
-  
-  def create(entity: T, refreshAfterMutation : Boolean): Future[Versioned[T]] = {
+
+  def create(entity: T, refreshAfterMutation: Boolean): Future[Versioned[T]] = {
     val json = entity.convertToES(mapping)
     val request = new IndexRequest(index.name, t.name)
       .id(entity.id.toString)
@@ -75,16 +74,16 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : ESIndex, t: ESType[T])(implic
       .source(json.toString)
       .refresh(refreshAfterMutation)
 
-      debug(s"Create $t.name: $json")
-      
-// Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
-//      val response = client.execute(IndexAction.INSTANCE, request).get
-//      Future.successful(Versioned(entity, response.getVersion.toString))
-      
+    debug(s"Create $t.name: $json")
+
+    // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
+    //      val response = client.execute(IndexAction.INSTANCE, request).get
+    //      Future.successful(Versioned(entity, response.getVersion.toString))
+
     client.execute(request).map(response => Versioned(entity, response.getVersion.toString))
   }
 
-  def modify(id: Id[T], refreshAfterMutation : Boolean)(modify: T => T): Future[Versioned[T]] = {
+  def modify(id: Id[T], refreshAfterMutation: Boolean)(modify: T => T): Future[Versioned[T]] = {
     retrieve(id).flatMap {
       case None => throw new IdNotFoundException(id.toString, t.name)
       case Some(Versioned(entity, version)) =>
@@ -92,22 +91,22 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : ESIndex, t: ESType[T])(implic
     }
   }
 
-  def update(entity : Versioned[T], refreshAfterMutation : Boolean) : Future[Versioned[T]] = {
+  def update(entity: Versioned[T], refreshAfterMutation: Boolean): Future[Versioned[T]] = {
     val newJson = entity.entity.convertToES(mapping).withESVersion(entity.version)
     val request = new IndexRequest(index.name, t.name)
       .refresh(refreshAfterMutation)
       .id(entity.entity.id.toString)
       .source(newJson.toString)
-      
-      debug(s"Update $t.name: $newJson")
-      
-// Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
-//      val response = client.execute(IndexAction.INSTANCE, request).get
-//      Future.successful(Versioned(entity, response.getVersion.toString))
+
+    debug(s"Update $t.name: $newJson")
+
+    // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
+    //      val response = client.execute(IndexAction.INSTANCE, request).get
+    //      Future.successful(Versioned(entity, response.getVersion.toString))
     client.execute(request).map(response => Versioned(entity.entity, response.getVersion.toString))
   }
-  
-  def delete(id: Id[T], refreshAfterMutation : Boolean): Future[Unit] = {
+
+  def delete(id: Id[T], refreshAfterMutation: Boolean): Future[Unit] = {
     val request = new DeleteRequest(index.name, t.name, id.toString).refresh(refreshAfterMutation)
 
     client.execute(request) map {
@@ -117,9 +116,8 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : ESIndex, t: ESType[T])(implic
         }
     }
   }
-  
 
-  def query(queryBuilder : QueryBuilder) : Future[List[Versioned[T]]] = {
+  def query(queryBuilder: QueryBuilder): Future[List[Versioned[T]]] = {
     val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).request
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
       val json = hit.sourceAsString.asJson
@@ -127,10 +125,10 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : ESIndex, t: ESType[T])(implic
       Versioned(json.convertFromES(mapping), version)
     })
   }
-  
-  def query(queryStr : String) : Future[List[Versioned[T]]] = query(new QueryStringQueryBuilder(queryStr))
 
-  protected def search(filter : FilterBuilder) : Future[List[Versioned[T]]] = {
+  def query(queryStr: String): Future[List[Versioned[T]]] = query(new QueryStringQueryBuilder(queryStr))
+
+  protected def search(filter: FilterBuilder): Future[List[Versioned[T]]] = {
     val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setFilter(filter).request
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
       val json = hit.sourceAsString.asJson
@@ -138,9 +136,8 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : ESIndex, t: ESType[T])(implic
       Versioned(json.convertFromES(mapping), version)
     })
   }
-  
 
-  protected def retrieve(filter : FilterBuilder, error : => String) : Future[Option[Versioned[T]]] = {
+  protected def retrieve(filter: FilterBuilder, error: => String): Future[Option[Versioned[T]]] = {
     search(filter).map(_ match {
       case Nil => None
       case entity :: Nil => Some(entity)
@@ -148,9 +145,9 @@ class EsRootDao[T <: HasId[T] :JsonFormat](index : ESIndex, t: ESType[T])(implic
     })
   }
 
- def retrieveAll : Future[List[Versioned[T]]] = retrieveAll(FilterBuilders.matchAllFilter())
+  def retrieveAll: Future[List[Versioned[T]]] = retrieveAll(FilterBuilders.matchAllFilter())
 
-  def retrieveAll(filter : FilterBuilder) : Future[List[Versioned[T]]] = {
+  def retrieveAll(filter: FilterBuilder): Future[List[Versioned[T]]] = {
     search(filter).map(_ match {
       case Nil => Nil
       case entities => entities
