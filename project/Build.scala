@@ -11,7 +11,7 @@ object BusyMachinesCommonsBuild extends Build {
  
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++ 
-    publishSettings ++ 
+    /*publishSettings ++*/ 
     site.settings ++ 
     site.sphinxSupport() ++ site.includeScaladoc() ++
     Seq(
@@ -23,15 +23,20 @@ object BusyMachinesCommonsBuild extends Build {
     scalacOptions += "-unchecked",
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
-    resolvers += "spray repo" at "http://repo.spray.io",
+    resolvers += "spray repo" at "http://nightlies.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" withSources(),
     libraryDependencies +=  "org.elasticsearch" % "elasticsearch" % "0.90.1" withSources(),
-    libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.0-RC1" withSources(),
-    libraryDependencies += "io.spray" %% "spray-json" % "1.2.5" withSources(),
-    libraryDependencies += "io.spray" % "spray-routing" % "1.2-M8" withSources(),
-    libraryDependencies += "io.spray" % "spray-client" % "1.2-M8" withSources(),
-    libraryDependencies += "io.spray" % "spray-can" % "1.2-M8" withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.0-RC2" withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.2.0-RC2" withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-contrib" % "2.2.0-RC2" withSources(),
+    libraryDependencies += "io.spray" % "spray-can" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" % "spray-routing" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" % "spray-client" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" %%  "spray-json" % "1.2.5" withSources(),
+    libraryDependencies += "io.spray" % "spray-servlet" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" % "spray-testkit" % "1.2-20130719" % "test" withSources(),
+    libraryDependencies += "io.spray" % "spray-caching" % "1.2-20130719" withSources(),
     libraryDependencies += "org.scalastuff" %% "esclient" % "0.20.3" withSources(),
     libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources(),
     libraryDependencies +=  "ch.qos.logback" % "logback-classic" % "1.0.13" withSources(),
@@ -41,7 +46,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "com.google.guava" % "guava" % "14.0.1" withSources(),
     libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1" // for class file error in guava
 ))
-
+/*
   def publishSettings = Seq(
     licenses := Seq("The Apache Software Licence, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     homepage := Some(url("https://github.com/busymachines/busymachines-commons")),
@@ -72,7 +77,7 @@ object BusyMachinesCommonsBuild extends Build {
           else
             Some("releases"  at nexus + "service/local/staging/deploy/maven2")
         })
-                
+*/                
 }
 
 
