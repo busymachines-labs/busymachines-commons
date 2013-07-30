@@ -2,6 +2,7 @@ package com.busymachines.commons.elasticsearch
 
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.Logging
+import org.joda.time.DateTime
 
 object ESProperty {
   implicit def toPath[A, T](property : ESProperty[A, T]) = Path[A, T](property :: Nil)
@@ -53,6 +54,7 @@ class ESMapping[A] extends Logging {
       Option("properties", allProperties))):_*))))
     
   val String = Options[String](Option("type", "string"))
+  val Date = Options[DateTime](Option("type", "date"))
   def Object[T] = Options[T](Option("type", "object"))
   val Integer = Options[Int](Option("type", "integer"))
   val Boolean = Options[Boolean](Option("type", "boolean"))
