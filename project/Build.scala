@@ -11,11 +11,13 @@ object BusyMachinesCommonsBuild extends Build {
  
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++ 
-    /*publishSettings ++*/ 
+    publishSettings ++
     site.settings ++ 
     site.sphinxSupport() ++ site.includeScaladoc() ++
     Seq(
     sbtPlugin := false,
+    publishMavenStyle := false,
+    exportJars := true,      
     organization := "org.scalastuff",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.10.2",
@@ -46,7 +48,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "com.google.guava" % "guava" % "14.0.1" withSources(),
     libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1" // for class file error in guava
 ))
-/*
+
   def publishSettings = Seq(
     licenses := Seq("The Apache Software Licence, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     homepage := Some(url("https://github.com/busymachines/busymachines-commons")),
@@ -77,7 +79,7 @@ object BusyMachinesCommonsBuild extends Build {
           else
             Some("releases"  at nexus + "service/local/staging/deploy/maven2")
         })
-*/                
+                
 }
 
 
