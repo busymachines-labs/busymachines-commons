@@ -6,6 +6,7 @@ import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.elasticsearch.ESMapping
 import org.joda.time.DateTime
+import com.busymachines.commons.domain.GeoPoint
 
 case class PropertyExternalReference(
   id: Id[PropertyExternalReference] = Id.generate[PropertyExternalReference],
@@ -19,6 +20,7 @@ case class Property(
 
 case class Item(
   id: Id[Item] = Id.generate[Item],
+  location:GeoPoint,
   validUntil: DateTime,
   name: String,
   properties: List[Property] = Nil) extends HasId[Item]
@@ -26,7 +28,7 @@ case class Item(
 object DomainJsonFormats extends CommonJsonFormats {
   implicit val propertyReferenceFormat = jsonFormat2(PropertyExternalReference)
   implicit val propertyFormat = jsonFormat4(Property)
-  implicit val itemFormat = jsonFormat4(Item)
+  implicit val itemFormat = jsonFormat5(Item)
 }
 
 object PropertyReferenceMapping extends ESMapping[PropertyExternalReference] {

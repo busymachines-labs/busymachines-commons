@@ -12,9 +12,10 @@ import spray.json.JsonFormat
 import spray.json.RootJsonFormat
 import spray.json.deserializationError
 import spray.json.JsObject
+import spray.json.JsNumber
 
-object CommonJsonFormats extends CommonJsonFormats 
-  
+object CommonJsonFormats extends CommonJsonFormats
+
 trait CommonJsonFormats extends DefaultJsonProtocol {
 
   implicit object currencyJsonFormat extends RootJsonFormat[Currency] {
@@ -38,13 +39,13 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
       case x => deserializationError(s"Expected any of ${enum.values.mkString(",")}, but got " + x)
     }
   }
-  
-  def singletonFormat[A](instance : A) = new JsonFormat[A] {
-    def write(value : A) = JsObject()
-    def read(value : JsValue) = instance
+
+  def singletonFormat[A](instance: A) = new JsonFormat[A] {
+    def write(value: A) = JsObject()
+    def read(value: JsValue) = instance
   }
 
-  def stringJsonFormat[A](type_ : String, fromStr: String => A, toStr: A => String = (a : A) => a.toString) = new JsonFormat[A] {
+  def stringJsonFormat[A](type_ : String, fromStr: String => A, toStr: A => String = (a: A) => a.toString) = new JsonFormat[A] {
     def write(value: A) = JsString(toStr(value))
     def read(value: JsValue): A = value match {
       case JsString(s) =>
@@ -70,6 +71,19 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     }
   }
 
+  implicit val geoPointFormat = new JsonFormat[GeoPoint] {
+    def write(value: GeoPoint) = JsObject(
+      "lat" -> JsNumber(value.lat),
+      "lon" -> JsNumber(value.lon))
+    def read(value: JsValue): GeoPoint = value match {
+      case JsObject(o) =>
+        GeoPoint(
+          lat = o.getOrElse("lat", deserializationError(s"Geopoint lacks lat field")).toString.toDouble,
+          lon = o.getOrElse("lon", deserializationError(s"Geopoint lacks lon field")).toString.toDouble)
+      case s => deserializationError("Couldn't convert '" + s + "' to a geo point")
+    }
+  }
+
   implicit val stringMapFormat = new JsonFormat[Map[String, String]] {
     def write(value: Map[String, String]) = JsObject(value.mapValues(JsString(_)).toList)
     def read(value: JsValue): Map[String, String] = value match {
@@ -79,29 +93,30 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   }
 
   implicit val localeJsonFormat = stringJsonFormat[Locale]("Locale", _ match {
-    case "und" => Locale.ROOT 
+    case "und" => Locale.ROOT
     case tag => Locale.forLanguageTag(tag)
   }, _.toLanguageTag)
 
-//  implicit def localeMapJsonFormat[T: JsonFormat] = new JsonFormat[Map[Locale, T]] {
-//    def write(map: Map[Locale, T]) = map.toList match {
-//      case Nil =>
-//        JsArray()
-//      case (locale, value) :: Nil =>
-//        if (locale.getCountry.isEmpty && locale.getLanguage.isEmpty && locale.getVariant.isEmpty)
-//          value.toJson
-//        else
-//          localeJsonFormat.write(locale, Some("value2", value.toJson))
-//      case entries =>
-//        JsArray(for ((locale, value) <- entries)
-//          yield localeJsonFormat.write(locale, Some("value2", value.toJson)))
-//    }
-//    def read(value: JsValue) = value match {
-//      case JsString(s) => Map.empty
-//      case _ => Map.empty
-//    }
-//  }
-//  
+  //  implicit def localeMapJsonFormat[T: JsonFormat] = new JsonFormat[Map[Locale, T]] {
+  //    def write(map: Map[Locale, T]) = map.toList match {
+  //      case Nil =>
+  //        JsArray()
+  //      case (locale, value) :: Nil =>
+  //        if (locale.getCountry.isEmpty && locale.getLanguage.isEmpty && locale.getVariant.isEmpty)
+  //          value.toJson
+  //        else
+  //          localeJsonFormat.write(locale, Some("value2", value.toJson))
+  //      case entries =>
+  //        JsArray(for ((locale, value) <- entries)
+  //          yield localeJsonFormat.write(locale, Some("value2", value.toJson)))
+  //    }
+  //    def read(value: JsValue) = value match {
+  //      case JsString(s) => Map.empty
+  //      case _ => Map.empty
+  //    }
+  //  }
+  //  
   implicit def idFormat[A] = stringJsonFormat[Id[A]]("Id", Id(_))
   implicit val mediaFormat = jsonFormat4(Media)
- }
+
+}
