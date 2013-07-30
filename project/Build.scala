@@ -9,7 +9,7 @@ import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
  */
 object BusyMachinesCommonsBuild extends Build {
  
-  lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
+  lazy val project = Project(id = "commons", base = file("."), settings = 
     Project.defaultSettings ++ 
     publishSettings ++
     site.settings ++ 
@@ -18,7 +18,7 @@ object BusyMachinesCommonsBuild extends Build {
     sbtPlugin := false,
     publishMavenStyle := false,
     exportJars := true,      
-    organization := "org.scalastuff",
+    organization := "com.busymachines",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.10.2",
     scalacOptions += "-deprecation",
