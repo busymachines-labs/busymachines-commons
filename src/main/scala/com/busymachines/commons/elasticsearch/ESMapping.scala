@@ -3,6 +3,7 @@ package com.busymachines.commons.elasticsearch
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.Logging
 import org.joda.time.DateTime
+import java.net.Inet4Address
 
 object ESProperty {
   implicit def toPath[A, T](property : ESProperty[A, T]) = Path[A, T](property :: Nil)
@@ -56,8 +57,15 @@ class ESMapping[A] extends Logging {
   val String = Options[String](Option("type", "string"))
   val Date = Options[DateTime](Option("type", "date"))
   def Object[T] = Options[T](Option("type", "object"))
-  val Integer = Options[Int](Option("type", "integer"))
+  val Float = Options[Float](Option("type", "float"))
+  val Double = Options[Double](Option("type", "double"))
+  val Integer = Options[Integer](Option("type", "integer"))
+  val Long = Options[Long](Option("type", "long"))
+  val Short = Options[Short](Option("type", "short"))
+  val Byte = Options[Short](Option("type", "byte"))
   val Boolean = Options[Boolean](Option("type", "boolean"))
+  val Binary = Options[Array[Byte]](Option("type", "binary"))
+  val Ipv4 = Options[Inet4Address](Option("type", "ip"))
   val Nested = Option("type", "nested")
   val Stored = Option("store", true)
   val NotIndexed = Option("index", "no")
