@@ -3,6 +3,7 @@ package com.busymachines.commons.test
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.FlatSpec
 import com.busymachines.commons.dao.Versioned.toEntity
+import com.busymachines.commons.domain.CommonJsonFormats._
 import com.busymachines.commons.elasticsearch.ESSearchCriteria.Delegate
 import com.busymachines.commons.elasticsearch.EsRootDao
 import com.busymachines.commons.elasticsearch.ESType

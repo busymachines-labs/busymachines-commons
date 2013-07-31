@@ -5,6 +5,7 @@ import com.busymachines.commons.Logging
 import org.joda.time.DateTime
 import java.net.Inet4Address
 import com.busymachines.commons.domain.GeoPoint
+import spray.json.JsonWriter
 
 object ESProperty {
   implicit def toPath[A, T](property : ESProperty[A, T]) = Path[A, T](property :: Nil)
@@ -12,13 +13,15 @@ object ESProperty {
 
 case class ESProperty[A, T](name : String, mappedName : String, options : ESMapping.Options[T]) {
   val nestedProperties = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping.Properties[A]])
+  // Needed to prevent other implicit === methods
+  def === [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Equals2(this, value)
 }
 
 case class Path[A, T](properties : List[ESProperty[_, _]]) {
   def head : ESProperty[A, _] = properties.head.asInstanceOf[ESProperty[A, _]]
   def last : ESProperty[_, T] = properties.head.asInstanceOf[ESProperty[_, T]]
   def / [A2 <: T, V2](property : ESProperty[A2, V2]) = Path[A, V2](properties :+ property)
-  def === (value : T) = ESSearchCriteria.Equals(this, value)
+  def === [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Equals2(this, value)
 }
 
 object ESMapping {

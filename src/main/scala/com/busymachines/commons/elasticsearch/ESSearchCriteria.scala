@@ -1,32 +1,16 @@
 package com.busymachines.commons.elasticsearch
 
-import com.busymachines.commons.dao.SearchCriteria
-import com.busymachines.commons.domain.HasId
 import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
+
+import com.busymachines.commons.dao.SearchCriteria
+
 import spray.json.JsonWriter
-import spray.json.JsValue
-import spray.json.JsString
 
 trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def toFilter : FilterBuilder
   def && (other : ESSearchCriteria[A]) = 
     ESSearchCriteria.And(other)
-}
- 
-object JsValueConverters {
-  implicit val stringConverter = new JsValueConverter[String] {
-    def convert(value : JsValue) : String = 
-    value match {
-    	case JsString(s) => s
-    	case other => other.toString
-    }
-  }
-}
-
-
-trait JsValueConverter[T] {
-    def convert(value : JsValue) : T
 }
 
 object ESSearchCriteria {
