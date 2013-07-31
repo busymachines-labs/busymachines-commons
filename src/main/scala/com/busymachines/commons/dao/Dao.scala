@@ -18,6 +18,8 @@ trait Dao[T <: HasId[T]] {
 
   def search(criteria : SearchCriteria[T]): Future[List[Versioned[T]]]
 
+  def searchSingle(criteria : SearchCriteria[T], f : SearchCriteria[T] => Unit): Future[Option[Versioned[T]]]
+
   def modify(id: Id[T], reindex : Boolean = true)(f : T => T): Future[Versioned[T]]
   
   def update(entity: Versioned[T], reindex : Boolean = true): Future[Versioned[T]]
