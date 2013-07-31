@@ -31,7 +31,7 @@ class RichJsValue(val value : JsValue) extends AnyVal {
   def recurse(pf : PartialFunction[(String, JsValue), (String, JsValue)]) : JsValue = 
     RichJsValue.recurse(value)(pf) 
   
-  def replaceWithGeneratedIds(value : JsValue) : JsValue = {
+  def replaceWithGeneratedIds : JsValue = {
     val idmap = mutable.Map[String, String]()
     findIds(value, idmap)
     replaceIds(value, idmap)
