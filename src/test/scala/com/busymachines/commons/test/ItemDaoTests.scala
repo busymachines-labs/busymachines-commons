@@ -9,14 +9,51 @@ import com.busymachines.commons.elasticsearch.EsRootDao
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.commons.implicits.richFuture
 import com.busymachines.commons.test.DomainJsonFormats.itemFormat
+import com.busymachines.commons.test.DomainJsonFormats.propertyFormat
 import com.busymachines.commons.testing.EmptyESTestIndex
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import com.busymachines.commons.domain.GeoPoint
+import com.busymachines.commons.elasticsearch.ESNestedDao
+import com.busymachines.commons.domain.Id
+import com.busymachines.commons.dao.SearchCriteria
+import scala.concurrent.Future
+import com.busymachines.commons.dao.Versioned
 
 class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
 
   val dao = new EsRootDao[Item](esIndex, ESType("item", ItemMapping))
+  val nestedDao = new ESNestedDao[Item, Property]("properties") {
+    def parentDao = dao
+
+    def findEntity(item: Item, id: Id[Property]): Option[Property] =
+      item.properties.find(_.id == id)
+
+    def createEntity(item: Item, property: Property): Item =
+    item.copy(properties = item.properties ++ List(property))
+
+    def modifyEntity(item: Item, id: Id[Property], found: Found, modify: Property => Property): Item =
+    item.copy(properties = item.properties.map {
+      case property if property.id == id => found(modify(property))
+      case property => property
+    })
+
+    def deleteEntity(item: Item, id: Id[Property], found: Found): Item =
+    item.copy(properties = item.properties.filter {
+      case property if property.id == id => found(property, false)
+      case property => true
+    })
+
+    def search(criteria: SearchCriteria[Property]): Future[List[Versioned[Property]]] =
+      ???
+
+    def retrieve(ids: Seq[Id[Property]]): Future[List[Versioned[Property]]] =
+      ???
+
+    def retrieveParent(id: Id[Property]): scala.concurrent.Future[Option[Versioned[Item]]] =
+      ???
+  }
+
   val now = DateTime.now(DateTimeZone.UTC)
   val geoPoint = GeoPoint(10, 10)
 
@@ -56,9 +93,11 @@ class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
   }
 
   it should "search by id" in {
-    val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val propertyId = Id.generate[Property]
+    val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(id = propertyId,name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item, true).await
     assert(dao.search(ItemMapping.id === item.id).await.size === 1)
+    assert(dao.searchSingle(ItemMapping.properties / PropertyMapping.id === propertyId).await.get.name === item.name)
   }
 
 }
