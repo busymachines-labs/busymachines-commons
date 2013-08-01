@@ -6,6 +6,7 @@ import spray.json.JsString
 import spray.json.JsValue
 import spray.json.JsonWriter
 import spray.json.JsonReader
+import spray.json.JsArray
 
 class RichJsValue(val value : JsValue) extends AnyVal {
   def getESVersion: String = value match {
@@ -20,17 +21,17 @@ class RichJsValue(val value : JsValue) extends AnyVal {
   }
 
   def mapToES[A](mapping : ESMapping[A]) : JsValue = 
-    RichJsValue.convertToES(value, mapping.allProperties)
+    RichJsValue.mapToES(value, mapping.allProperties)
 
   def mapFromES[A](mapping : ESMapping[A]) : JsValue = 
-    RichJsValue.convertFromES(value, mapping.allProperties)
+    RichJsValue.mapFromES(value, mapping.allProperties)
 
   def convertFromES[A](mapping : ESMapping[A])(implicit reader : JsonReader[A]) : A = 
-    RichJsValue.convertFromES(value, mapping.allProperties).convertTo[A]
+    RichJsValue.mapFromES(value, mapping.allProperties).convertTo[A]
 }
 
 object RichJsValue {
-  private [elasticsearch] def convertToES(value: JsValue, properties : ESMapping.Properties[_]) : JsValue = {
+  private [elasticsearch] def mapToES(value: JsValue, properties : ESMapping.Properties[_]) : JsValue = {
     value match {
       case JsObject(fields) =>
         JsObject(fields.map {
@@ -38,18 +39,20 @@ object RichJsValue {
             case Some(property) =>
               property.nestedProperties match {
                 case Some(properties) =>
-                  property.mappedName -> convertToES(field._2, properties)
+                  property.mappedName -> mapToES(field._2, properties)
                 case None =>
                   property.mappedName -> field._2
               }
             case None => field
           }
         })
+      case JsArray(elements) =>
+        JsArray(elements.map(mapToES(_, properties)))
       case value => value
     }
   }
  
-  private [elasticsearch] def convertFromES(value : JsValue, properties :ESMapping.Properties[_]) : JsValue = {
+  private [elasticsearch] def mapFromES(value : JsValue, properties :ESMapping.Properties[_]) : JsValue = {
     value match {
       case JsObject(fields) =>
         JsObject(fields.map {
@@ -57,13 +60,15 @@ object RichJsValue {
             case Some(property) =>
               property.nestedProperties match {
                 case Some(properties) =>
-                  property.name -> convertFromES(field._2, properties)
+                  property.name -> mapFromES(field._2, properties)
                 case None =>
                   property.name -> field._2
               }
             case None => field
           }
         })
+      case JsArray(elements) =>
+        JsArray(elements.map(mapFromES(_, properties)))
       case value => value
     }
   }}
