@@ -100,4 +100,13 @@ class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
     assert(dao.searchSingle(ItemMapping.properties / PropertyMapping.id === propertyId).await.get.name === item.name)
   }
 
+  it should "search by id using in" in {
+    val propertyId = Id.generate[Property]
+    val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(id = propertyId,name = "Property3") :: Property(name = "Property4") :: Nil)
+    dao.create(item, true).await
+    assert(dao.search(ItemMapping.id in item.id::Nil).await.size === 1)
+    assert(dao.searchSingle(ItemMapping.properties / PropertyMapping.id in propertyId::Nil).await.get.name === item.name)
+  }
+  
+  
 }

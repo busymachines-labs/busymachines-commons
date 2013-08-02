@@ -1,12 +1,12 @@
 package com.busymachines.commons.testing
 
 import org.scalatest.BeforeAndAfterEach
-
 import org.scalatest.Suite
 import com.busymachines.commons.elasticsearch.ESClient
 import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.elasticsearch.ESConfiguration
 import collection.mutable
+import org.scalatest.BeforeAndAfterAll
 
 object EmptyESTestIndex {
   private val usedIndexes = mutable.Map[String, Int]()

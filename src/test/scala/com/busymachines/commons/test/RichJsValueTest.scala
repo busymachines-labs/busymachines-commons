@@ -52,13 +52,13 @@ class RichJsValueTest extends FlatSpec with CommonJsonFormats {
   it should "map fields for nested objects according to the mapping" in {
     val entity = Item(id = itemId, name = "item1", properties =
       Property(id = peopertyId1, mandatory = true, name = "p1") :: Property(id = peopertyId2, mandatory = false, name = "p2") :: Nil).toJson.mapToES(ItemMapping)
-    assert(entity.toString === """{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2090","name":"item1","item_properties":[{"id":"64e9d0ee-3954-4d73-acfe-8237e01e2091","mandatory":true,"name":"p1","tagCounts":{}},{"id":"64e9d0ee-3954-4d73-acfe-8237e01e2092","mandatory":false,"name":"p2","tagCounts":{}}]}""")
+      assert(entity.toString === """{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2090","name":"item1","item_properties":[{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2091","mandatory":true,"name":"p1","tag_counts":{}},{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2092","mandatory":false,"name":"p2","tag_counts":{}}]}""")
   }
 
   it should "map fields for nested objects with map type value according to the mapping" in {
     val entity = Item(id = itemId, name = "item1", properties =
       Property(id = peopertyId1, mandatory = true, name = "p1", tagCounts = Map("p11" -> "1", "p12" -> "2")) :: Property(id = peopertyId2, mandatory = false, name = "p2", tagCounts = Map("p21" -> "1", "p22" -> "2")) :: Nil).toJson.mapToES(ItemMapping)
-    assert(entity.toString === """{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2090","name":"item1","item_properties":[{"id":"64e9d0ee-3954-4d73-acfe-8237e01e2091","mandatory":true,"name":"p1","tagCounts":{"p11":"1","p12":"2"}},{"id":"64e9d0ee-3954-4d73-acfe-8237e01e2092","mandatory":false,"name":"p2","tagCounts":{"p21":"1","p22":"2"}}]}""")
+      assert(entity.toString === """{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2090","name":"item1","item_properties":[{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2091","mandatory":true,"name":"p1","tag_counts":{"p11":"1","p12":"2"}},{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2092","mandatory":false,"name":"p2","tag_counts":{"p21":"1","p22":"2"}}]}""")
   }
 
 }
