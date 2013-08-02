@@ -8,7 +8,7 @@ import spray.revolver.RevolverPlugin._
 
 object GhreportsBuild extends Build {
 
-  val commons = "org.scalastuff" %% "busymachines-commons" % "0.0.1-SNAPSHOT" withSources() 
+  val commons = "com.busymachines" %% "commons" % "0.0.1-SNAPSHOT" withSources() changing()
 
   def defaultSettings =
     Project.defaultSettings ++

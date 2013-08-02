@@ -10,7 +10,10 @@ class RichString(val s : String) extends AnyVal {
     MessageDigest.getInstance("SHA-256").digest(s.getBytes("UTF-8"))
 
   def md5 : Array[Byte] = 
-    MessageDigest.getInstance("MD5").digest(s.getBytes("UTF-8"))
+    RichByteArray.md5.hashBytes(s.getBytes("UTF-8")).asBytes()
+
+  def crc32 = 
+    RichByteArray.crc32.hashBytes(s.getBytes("UTF-8")).asInt()
   
   def decodeBase64 : Array[Byte] = 
     RichByteArray.base64Encoding.decode(s)
