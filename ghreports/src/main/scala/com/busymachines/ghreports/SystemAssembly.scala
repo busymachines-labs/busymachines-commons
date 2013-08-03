@@ -2,8 +2,8 @@ package com.busymachines.ghreports
 
 import akka.actor.ActorSystem
 import spray.routing.Directives._
-import com.busymachines.commons.spray.HttpServer
-import com.busymachines.commons.spray.StandardUiService
+import com.busymachines.commons.http.HttpServer
+import com.busymachines.commons.http.StandardUiService
 
 class SystemAssembly {
 
