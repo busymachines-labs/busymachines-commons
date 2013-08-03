@@ -14,7 +14,7 @@ object GhreportsBuild extends Build {
     Project.defaultSettings ++
     SbtOneJar.oneJarSettings ++
     lessSettings ++ 
-    Revolver.settings ++ 
+//    Revolver.settings ++ 
       Seq(
 //          LessKeys.filter in (Compile, LessKeys.less) := "public/less/ghreports.less",
         sbtPlugin := false,
@@ -30,6 +30,8 @@ object GhreportsBuild extends Build {
   val ghreports = Project(id = "ghreports", base = file("."), settings = defaultSettings ++ Seq(
  mainClass in (Compile, run) := Some("com.busymachines.ghreports.Main"),
  mainClass in Revolver.reStart := Some("com.busymachines.ghreports.Main"),
+ javaOptions in run += "-Dcom.busymachines.commons.ui.devmode=true",
+ fork in run := true, 
  javaOptions in Revolver.reStart += "-Xmx1g",
     libraryDependencies ++= Seq(commons)))
 

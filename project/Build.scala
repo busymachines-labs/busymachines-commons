@@ -37,6 +37,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "io.spray" % "spray-client" % "1.2-20130719" withSources(),
     libraryDependencies += "io.spray" %%  "spray-json" % "1.2.5" withSources(),
     libraryDependencies += "io.spray" % "spray-servlet" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" % "spray-routing" % "1.2-20130719" withSources(),
     libraryDependencies += "io.spray" % "spray-testkit" % "1.2-20130719" % "test" withSources(),
     libraryDependencies += "io.spray" % "spray-caching" % "1.2-20130719" withSources(),
     libraryDependencies += "org.scalastuff" %% "esclient" % "0.20.3" withSources(),

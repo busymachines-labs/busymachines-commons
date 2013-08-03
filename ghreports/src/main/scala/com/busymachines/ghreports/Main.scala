@@ -18,5 +18,5 @@ object Main extends App with Logging {
 
   // Start UI server
   val assembly = new SystemAssembly
-  assembly.ui.start
+  assembly.server.start
 }
