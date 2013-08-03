@@ -25,12 +25,12 @@ trait EmptyESTestIndex extends BeforeAndAfterEach {
   val esConfig = new ESConfiguration
   val esClient = new ESClient(esConfig)
   val esIndexBaseName = getClass.getName.toLowerCase
-  val esIndex = new ESIndex(esClient, EmptyESTestIndex.getNextName(esIndexBaseName))
-  esIndex.drop
+  val esIndex = new ESIndex(esClient, /* EmptyESTestIndex.getNextName(esIndexBaseName) */ esConfig.indexName)
 
   override protected def beforeEach {
-//    esIndex.drop
-//    Thread.sleep(1000)
-//    esIndex.initialize
+    println("dropping index -----------------------")
+    esIndex.drop
+   // Thread.sleep(1000)
+    esIndex.initialize
   }
 }

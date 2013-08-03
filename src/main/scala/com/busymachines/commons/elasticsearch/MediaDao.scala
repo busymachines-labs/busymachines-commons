@@ -43,6 +43,9 @@ class MediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends Logging {
   private implicit val hashMediaFormat = jsonFormat5(HashedMedia)
   private val dao = new EsRootDao[HashedMedia](index, ESType[HashedMedia]("media", MediaMapping))
 
+  def delete(id : Id[Media]) : Future[Unit] = 
+    dao.delete(Id[HashedMedia](id.toString))  
+
   def retrieve(id : Id[Media]) : Future[Option[Media]] = 
     dao.retrieve(Id[HashedMedia](id.toString)).map { _ map {
       case Versioned(HashedMedia(id, mimeType, name, hash, data), version) =>
