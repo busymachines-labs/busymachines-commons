@@ -9,6 +9,6 @@ class SystemAssembly {
 
   lazy implicit val actorSystem = ActorSystem("ghreports")
   lazy implicit val executionContext = actorSystem.dispatcher
-  lazy val ui = new StandardUiService
+  lazy val ui = new StandardUiService()
   lazy val server = new HttpServer(ui)
 }

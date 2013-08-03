@@ -15,12 +15,10 @@ import spray.routing.Route
 import spray.routing.RoutingSettings
 import spray.routing.directives.LogEntry
 
-class HttpServer(routes : Route*)(implicit actorSystem: ActorSystem) extends Logging {
+class HttpServer(route : Route, interface : String = "localhost", port : Int = 8080)(implicit actorSystem: ActorSystem) extends Logging {
   
-  val interface = "localhost"
-  val port = 8080
-  
-  val route = routes.reduce((route1, route2) => route1 ~ route2)
+  def this(routes : Route*)(implicit actorSystem: ActorSystem) = 
+    this(routes.reduce((r1, r2) => r1 ~ r2), "localhost", 8080)
   
   class Actor extends HttpServiceActor {
     def receive = runRoute(logRequest(showRequest _) {route})
