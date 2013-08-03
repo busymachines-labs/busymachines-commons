@@ -1,19 +1,14 @@
-package com.busymachines.commons.spray
+package com.busymachines.commons.http
 
 import java.io.File
-
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.DurationInt
 import scala.io.Source
 import scala.language.postfixOps
-
 import org.parboiled.common.FileUtils
-
 import com.busymachines.commons.implicits.richByteArray
 import com.busymachines.commons.implicits.richFunction
 import com.busymachines.commons.implicits.richString
-import com.busymachines.commons.ui.UiConfig
-
 import akka.actor.ActorRefFactory
 import spray.http.CacheDirectives.`max-age`
 import spray.http.CacheDirectives.`no-cache`
@@ -31,6 +26,7 @@ import spray.routing.directives.CachingDirectives.routeCache
 import spray.routing.directives.CompletionMagnet.fromObject
 import spray.routing.directives.ContentTypeResolver
 import spray.util.actorSystem
+import com.busymachines.commons.CommonConfig
 
 class StandardUiService(resourceRoot: String = "public", rootDocument: String = "index.html")(implicit val actorRefFactory: ActorRefFactory) extends CommonHttpService {
 
@@ -39,7 +35,7 @@ class StandardUiService(resourceRoot: String = "public", rootDocument: String = 
   private val cacheTimeSecs = cacheTime.toSeconds
   private val theCache = routeCache(timeToLive = cacheTime)
 
-  if (UiConfig.devmode)
+  if (CommonConfig.devmode)
     info("Starting UI Routing is devmode")
 
   val route =
@@ -119,7 +115,7 @@ class StandardUiService(resourceRoot: String = "public", rootDocument: String = 
     val path = resolve(basePath, relativePath)
     def readFromClassPath = Option(classLoader.getResource(resourceRoot + "/" + path)).map(resource => FileUtils.readAllBytes(resource.openStream))
     def readFromSourceRoots = resourceSourceRoots.collectFirst((f: File) => Option(FileUtils.readAllBytes(new File(f, path))))
-    if (UiConfig.devmode)
+    if (CommonConfig.devmode)
       readFromSourceRoots orElse readFromClassPath
     else
       readFromClassPath

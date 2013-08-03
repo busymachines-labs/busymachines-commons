@@ -1,4 +1,4 @@
-package com.busymachines.commons.spray
+package com.busymachines.commons.http
 
 import com.busymachines.commons.Logging
 import spray.routing.HttpService
