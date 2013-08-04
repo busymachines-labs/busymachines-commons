@@ -4,13 +4,14 @@ import com.busymachines.commons.Logging
 import spray.routing.HttpService
 import spray.routing.RequestContext
 import spray.routing.Route
+import akka.actor.ActorRefFactory
 
-trait CommonHttpService extends HttpService with Route with Logging {
+abstract class CommonHttpService(implicit val actorRefFactory : ActorRefFactory) extends HttpService with CommonDirectives with Route with Logging {
 
   implicit def executionContext = actorRefFactory.dispatcher
   
   def apply(request: RequestContext) =
     route(request)
 
-  val route : Route
+  def route : Route
 }

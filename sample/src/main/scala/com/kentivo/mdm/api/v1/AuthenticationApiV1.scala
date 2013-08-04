@@ -9,6 +9,7 @@ import akka.actor.ActorRefFactory
 import akka.actor.ActorSystem
 import akka.actor.ActorContext
 import spray.routing.RequestContext
+import com.busymachines.commons.http.CommonHttpService
 
 case class AuthenticationUser(
   password: String,
@@ -21,8 +22,8 @@ object AuthenticationApiV1 {
 /**
  * Handling authentication before using API.
  */
-class AuthenticationApiV1 extends ApiDirectives {
-  def route(implicit actorRefFactory: ActorRefFactory) : RequestContext => Unit =
+class AuthenticationApiV1(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
+  def route : RequestContext => Unit =
     path("users" / PathElement / "authentication") { userName =>
       // Check if user is authenticated.
       get {

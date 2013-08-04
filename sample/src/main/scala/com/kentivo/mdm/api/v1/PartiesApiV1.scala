@@ -2,14 +2,17 @@ package com.kentivo.mdm.api.v1
 import com.kentivo.mdm.api.ApiDirectives
 import com.kentivo.mdm.domain.Party
 import com.kentivo.mdm.logic.PartiesManager
-
 import akka.actor.ActorRefFactory
 import spray.http.StatusCodes
+import com.busymachines.commons.http.CommonHttpService
+import com.kentivo.mdm.domain.User
+import com.busymachines.commons.http.AbstractAuthenticator
+import com.kentivo.mdm.api.UserAuthenticator
 
-class PartiesApiV1 extends ApiDirectives {
-  def route(implicit actorRefFactory: ActorRefFactory) =
+class PartiesApiV1(authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
+  val route =
     path("parties") {
-      authenticateUser { implicit user =>
+      authenticate(authenticator) { implicit user =>
         get {
           complete {
             PartiesManager.list
@@ -26,8 +29,8 @@ class PartiesApiV1 extends ApiDirectives {
       }
     } ~
       get {
-        path("parties" / IdMatcher) { entityId =>
-          authenticateUser { implicit user =>
+        path("parties" / MatchId[Party]) { entityId =>
+          authenticate(authenticator) { implicit user =>
             complete {
               PartiesManager.find(entityId)
             }
@@ -35,8 +38,8 @@ class PartiesApiV1 extends ApiDirectives {
         }
       } ~
       delete {
-        path("parties" / IdMatcher) { entityId =>
-          authenticateUser { implicit user =>
+        path("parties" / MatchId[Party]) { entityId =>
+          authenticate(authenticator) { implicit user =>
             PartiesManager.delete(entityId)
             respondWithStatus(StatusCodes.OK) {
               complete {

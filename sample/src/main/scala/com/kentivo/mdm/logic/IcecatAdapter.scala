@@ -28,7 +28,7 @@ import akka.actor.ActorSystem
 import spray.client.pipelining.Get
 import spray.client.pipelining.Post
 import spray.client.pipelining.addCredentials
-import spray.client.pipelining.pimpWithResponseTransformation
+import spray.client.pipelining._
 import spray.client.pipelining.sendReceive
 import spray.client.pipelining.sendReceive$default$3
 import spray.client.pipelining.unmarshal
@@ -67,7 +67,7 @@ class IcecatAdapter(itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: Executio
       (for {
         elt <- xml \ element
         value = (elt \ "@Value").toString if value != ""
-        langid <- (elt \ "@langid").toString.toOptionInt
+        langid <- (elt \ "@langid").toString.toIntOption
         locale = langIdMap.get(langid)
       } yield (locale, value)).collect {
         case (Some(locale), value) => (locale, value)

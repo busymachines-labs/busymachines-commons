@@ -3,6 +3,7 @@ package com.kentivo.mdm.domain
 import com.busymachines.commons.domain.Id
 import java.util.Locale
 import org.joda.time.DateTime
+import com.busymachines.commons.domain.Unit
 
 case class ItemRule(
   id: Id[ItemRule])

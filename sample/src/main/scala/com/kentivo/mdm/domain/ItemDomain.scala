@@ -7,6 +7,7 @@ import scala.concurrent.duration.Deadline
 import com.busymachines.commons.domain.HasId
 import org.joda.time.DateTime
 import com.busymachines.commons.domain.Id
+import com.busymachines.commons.domain.Unit
 
 case class Repository(
 

@@ -9,12 +9,18 @@ import spray.http.StatusCodes
 import spray.routing.HttpService
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.domain.Id
-import spray.httpx.SprayJsonSupport._ 
+import spray.httpx.SprayJsonSupport._
+import com.busymachines.commons.http.CommonHttpService
+import com.busymachines.commons.domain.CommonJsonFormats._
+import com.kentivo.mdm.domain.DomainJsonFormats._
+import com.busymachines.commons.http.AbstractAuthenticator
+import com.kentivo.mdm.domain.User
+import com.kentivo.mdm.api.UserAuthenticator
  
-class SourceApiV1(sourceManager: SourceManager) extends ApiDirectives {
+class SourceApiV1(sourceManager: SourceManager, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
   
-  def route(implicit actorRefFactory: ActorRefFactory) = path("sources") {
-    authenticateUser { implicit user =>
+  val route = path("sources") {
+    authenticate(authenticator) { implicit user =>
       get {
         complete {
           sourceManager.findSources(None)
@@ -29,7 +35,7 @@ class SourceApiV1(sourceManager: SourceManager) extends ApiDirectives {
     }
   } ~
     path("sources" / PathElement) { entityId =>
-      authenticateUser { implicit user =>
+      authenticate(authenticator) { implicit user =>
         put {
           entity(as[Source]) { source =>
             sourceManager.update(Id(entityId), source)

@@ -9,7 +9,7 @@ import com.kentivo.mdm.domain.PropertyScope
 import java.util.Locale
 import scala.collection.concurrent.TrieMap
 import com.kentivo.mdm.domain.PropertyValue
-import com.kentivo.mdm.domain.Unit
+import com.busymachines.commons.domain.Unit
 import com.kentivo.mdm.db.ItemDao
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.domain.Id

@@ -1,13 +1,13 @@
 package com.kentivo.mdm.api.v1
 
 import com.kentivo.mdm.api.ApiDirectives
-
 import akka.actor.ActorRefFactory
+import com.busymachines.commons.http.CommonHttpService
 
 /**
  * Define routes for swagger documentation.
  */
-class ApiDocV1(implicit val actorRefFactory: ActorRefFactory) extends ApiDirectives {
+class ApiDocV1(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
   val route = {
     path("api.html" / Rest) { path =>
       getFromResource("api/public/html/restApiDoc.html")

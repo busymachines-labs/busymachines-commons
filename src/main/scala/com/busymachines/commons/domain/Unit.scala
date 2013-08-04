@@ -1,4 +1,4 @@
-package com.kentivo.mdm.domain
+package com.busymachines.commons.domain
 
 case class Unit(factors : List[UnitFactor]) {
   def symbol = factors.mkString("·")

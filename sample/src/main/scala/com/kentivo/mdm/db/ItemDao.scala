@@ -7,12 +7,12 @@ import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.elasticsearch.ESProperty.toPath
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.commons.domain.Id
-import com.kentivo.mdm.domain.DomainJsonFormats.itemFormat
+import com.kentivo.mdm.domain.DomainJsonFormats._
 import com.kentivo.mdm.domain.Item
 import com.kentivo.mdm.domain.Property
 
 case class HasValueForProperty(propertyId : Id[Property], value : Option[String] = None, locale : Option[Option[String]] = None, unit : Option[Unit] = None) extends ESSearchCriteria.Delegate (
-  ItemMapping.values / PropertyValueMapping.property === propertyId.toString
+  ItemMapping.values / PropertyValueMapping.property === propertyId
 )
 
 

@@ -2,6 +2,7 @@ package com.kentivo.mdm.domain
 
 import com.busymachines.commons.domain.CommonJsonFormats
 import spray.json._
+import com.busymachines.commons.domain.Unit
 
 object DomainJsonFormats extends DomainJsonFormats 
 trait DomainJsonFormats extends CommonJsonFormats {

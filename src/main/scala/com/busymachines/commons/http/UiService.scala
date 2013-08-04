@@ -28,7 +28,7 @@ import spray.routing.directives.ContentTypeResolver
 import spray.util.actorSystem
 import com.busymachines.commons.CommonConfig
 
-class StandardUiService(resourceRoot: String = "public", rootDocument: String = "index.html")(implicit val actorRefFactory: ActorRefFactory) extends CommonHttpService {
+class UiService(resourceRoot: String = "public", rootDocument: String = "index.html")(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService {
 
   private val pattern = """(['\"])([/a-zA-Z_0-9 \.]*)-\?\?\?.([a-zA-Z_0-9]*)(['\"])""".r
   private val cacheTime: Duration = 7 days
