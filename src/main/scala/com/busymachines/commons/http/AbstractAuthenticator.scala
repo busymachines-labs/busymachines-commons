@@ -1,19 +1,18 @@
 package com.busymachines.commons.http
 
-import spray.routing.Route
-import scala.concurrent.duration._
-import spray.caching.LruCache
-import spray.routing.HttpService._
-import spray.routing.AuthorizationFailedRejection
-import spray.routing.authentication.HttpAuthenticator
 import scala.concurrent.ExecutionContext
-import spray.http.HttpRequest
+import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.language.postfixOps
+
+import spray.caching.LruCache
 import spray.http.HttpCredentials
-import spray.routing.RequestContext
+import spray.http.HttpRequest
 import spray.routing.AuthenticationFailedRejection
 import spray.routing.AuthenticationFailedRejection.CredentialsMissing
 import spray.routing.AuthenticationFailedRejection.CredentialsRejected
-import scala.concurrent.Future
+import spray.routing.RequestContext
+import spray.routing.authentication.HttpAuthenticator
 
 class AbstractAuthenticator[A](implicit val executionContext: ExecutionContext) extends HttpAuthenticator[A] {
 
