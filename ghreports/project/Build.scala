@@ -16,7 +16,7 @@ object GhreportsBuild extends Build {
     lessSettings ++ 
 //    Revolver.settings ++ 
       Seq(
-//          LessKeys.filter in (Compile, LessKeys.less) := "public/less/ghreports.less",
+        LessKeys.filter in (Compile, LessKeys.less) := "ghreports.less",
         sbtPlugin := false,
         organization := "com.busymachines",
         version := "1.0.0-SNAPSHOT",
