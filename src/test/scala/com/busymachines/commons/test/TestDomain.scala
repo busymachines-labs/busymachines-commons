@@ -7,6 +7,7 @@ import com.busymachines.commons.domain.Id
 import com.busymachines.commons.elasticsearch.ESMapping
 import org.joda.time.DateTime
 import com.busymachines.commons.domain.GeoPoint
+import com.busymachines.commons.domain.GeoPoint
 
 case class PropertyExternalReference(
   id: Id[PropertyExternalReference] = Id.generate[PropertyExternalReference],
@@ -45,6 +46,7 @@ object PropertyMapping extends ESMapping[Property] {
 
 object ItemMapping extends ESMapping[Item] {
   val id = "id" -> "_id" as String & NotAnalyzed
+  val location = "location" as GeoPoint
   val name = "name" as String & NotAnalyzed
   val validUntil = "validUntil" as Date & NotAnalyzed
   val properties = "properties" -> "item_properties" as Nested(PropertyMapping)
