@@ -37,6 +37,7 @@ class ESIndex(_client: ESClient, val name : String) {
   }
 
   def initialize {
+    println("init")
     val indicesExistsReponse = _client.execute(new IndicesExistsRequest(name))
     val exists = Await.result(indicesExistsReponse, 30 seconds).isExists
     if (!exists) {
@@ -44,12 +45,13 @@ class ESIndex(_client: ESClient, val name : String) {
         s"""
            {
             "number_of_shards" : $nrOfShards,
-            "number_of_replicas" : $nrOfReplicas
+            "number_of_replicas" : $nrOfReplicas,
+            "index.mapper.dynamic": false            
           }
           """)).get()
       Await.ready(indicesExistsReponse, 10 seconds)
     }
-    initialized.set(false)
+    initialized.set(true)
     // call initialize handlers
     for ((handler, _) <- initializeHandlers) 
     	handler()
