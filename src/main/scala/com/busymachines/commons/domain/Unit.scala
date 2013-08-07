@@ -1,7 +1,7 @@
 package com.busymachines.commons.domain
 
 case class Unit(factors : List[UnitFactor]) {
-  def symbol = factors.mkString("·")
+  def symbol = factors.mkString("\u22C5")
 }
 
 case class UnitFactor(prefix : UnitPrefix.Prefix, baseUnit : BaseUnit.Unit, exponent : Integer) {
@@ -28,12 +28,12 @@ object BaseUnit extends Enumeration {
   val Coulomb = Unit("coulomb", "C")
   val Volt = Unit("volt", "V")
   val Farad = Unit("farad", "F")
-  val Ohm = Unit("ohm", "Ω")
+  val Ohm = Unit("ohm", "\u2126")
   val Siemens = Unit("siemens", "S")
   val Weber = Unit("weber", "Wb")
   val Tesla = Unit("tesla", "T")
   val Henry = Unit("henry", "H")
-  val Celcius = Unit("celcius", "°C")
+  val Celcius = Unit("celcius", "\u00B0C")
   val Lumen = Unit("lumen", "lm")
   val Lux = Unit("lux", "lx")
   val Becquerel = Unit("becquerel", "Bq")
@@ -44,7 +44,7 @@ object BaseUnit extends Enumeration {
   val Minute = Unit("minute", "min")
   val Hour = Unit("hour", "h")
   val Day = Unit("day", "d")
-  val AngleDegree = Unit("angle-degree", "°")
+  val AngleDegree = Unit("angle-degree", "\u00B0")
   val AngleMinute = Unit("angle-minute", "'")
   val AngleSecond = Unit("angle-second", "\"")
   val Hectare = Unit("hectare", "ha")
@@ -77,7 +77,7 @@ object UnitPrefix extends Enumeration {
   val Deci = Prefix("deci", "d", 10^(-1))
   val Centi = Prefix("centi", "c", 10^(-2))
   val Milli = Prefix("milli", "m", 10^(-3))
-  val Micro = Prefix("micro", "µ", 10^(-6))
+  val Micro = Prefix("micro", "\u00B5", 10^(-6))
   val Nano = Prefix("nano", "n", 10^(-9))
   val Pico = Prefix("pico", "p", 10^(-12))
   val Femto = Prefix("femto", "f", 10^(-15))
