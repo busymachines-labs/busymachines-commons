@@ -28,9 +28,7 @@ trait EmptyESTestIndex extends BeforeAndAfterEach {
   val esIndex = new ESIndex(esClient, /* EmptyESTestIndex.getNextName(esIndexBaseName) */ esConfig.indexName)
 
   override protected def beforeEach {
-    println("before each")
     esIndex.drop
-    println("before init")
     esIndex.initialize
   }
 }
