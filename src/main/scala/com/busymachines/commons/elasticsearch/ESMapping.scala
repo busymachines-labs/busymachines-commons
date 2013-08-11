@@ -78,6 +78,7 @@ class ESMapping[A] extends Logging {
   val NotIndexed = Option("index", "no")
   val Analyzed = Option("index", "analyzed")
   val NotAnalyzed = Option("index", "not_analyzed")
+  val IncludeInAll = Option("include_in_all","true")
   def Nested[T](properties : Properties[T]) : Options[T] = Options(Option("type", "nested"), Option("properties", properties))
   def Nested[T](mapping : ESMapping[T]) : Options[T] = Nested(mapping._allProperties)
   
