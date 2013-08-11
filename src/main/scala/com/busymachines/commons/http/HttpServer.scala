@@ -25,10 +25,11 @@ class HttpServer(routes : Route*)(implicit actorSystem: ActorSystem) extends Log
   val exceptionHandler : ExceptionHandler = ExceptionHandler.default
   val routingSettings = RoutingSettings(actorSystem)
 
-  val route = routes.reduce((r1, r2) => r1 ~ r2)
+  def route = routes.reduce((r1, r2) => r1 ~ r2)
 
   class Actor extends HttpServiceActor {
-    def receive = runRoute(logRequest(showRequest _) { route })
+    val theRoute = route
+    def receive = runRoute(logRequest(showRequest _) { theRoute })
     def showRequest(request: HttpRequest) = LogEntry("URL: " + request.uri + "\n CONTENT: " + request.entity, DebugLevel)
 
   }

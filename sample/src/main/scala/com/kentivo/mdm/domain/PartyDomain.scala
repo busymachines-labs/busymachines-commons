@@ -4,9 +4,15 @@ import com.busymachines.commons
 import com.busymachines.commons.implicits._
 import scala.util.Random
 import com.busymachines.commons.domain.Id
+import com.busymachines.commons.domain.HasId
 
 case class Party (
+  
   id : Id[Party] = Id.generate,
+  
+  /**
+   * Owner party manages this party.
+   */
   owner : Option[Id[Party]] = None, 
   
   /**
@@ -34,7 +40,7 @@ case class Party (
   users : List[User] = Nil,
   
   userRoles : List[UserRole] = Nil
-)
+) extends HasId[Party]
 
 case class RelatedParty (
   relatedParty : Id[Party],
@@ -59,7 +65,7 @@ case class User (
   phoneNumbers : List[PhoneNumber] = Nil,
   emailAddresses : List[Email] = Nil,
   roles : List[Id[UserRole]] = Nil
-)
+) extends HasId[User]
   
 case class Address (
   kind : Option[AddressKind.Value] = None,
@@ -74,7 +80,7 @@ object AddressKind extends Enumeration {
   val Work = Value("work")
   val Invoice = Value("invoice")
   val Delivery = Value("delivery")
-  val Other = Value("other")
+  def Other(tag : String) = Value(tag)
 }
 
 case class PhoneNumber (
@@ -84,8 +90,7 @@ case class PhoneNumber (
 object PhoneNumberKind extends Enumeration {
   val Home = Value("home")
   val Work = Value("work")
-  val Other = Value("other")
-  def other(tag : String) = Value(tag)
+  def Other(tag : String) = Value(tag)
 }
 
 case class Email (

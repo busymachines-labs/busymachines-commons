@@ -1,6 +1,6 @@
 package com.kentivo.mdm.logic
 
-
+import scala.language.postfixOps
 import java.util.Locale
 import scala.Option.option2Iterable
 import scala.concurrent.Await
@@ -75,7 +75,7 @@ class IcecatAdapter(itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: Executio
   }
   
   def importAll : Future[Unit] = {
-    val repository = Repository()
+    val repository = Repository(Id.generate, Id.generate)
     for {
       categoriesXml <- readCategoriesXml
       categories = processCategoriesXml(repository, categoriesXml)

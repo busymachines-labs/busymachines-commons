@@ -1,5 +1,6 @@
 package com.kentivo.mdm.logic
 
+import scala.language.postfixOps
 import com.kentivo.mdm.domain.Mutation
 import com.kentivo.mdm.domain.Item
 import com.busymachines.commons
@@ -24,9 +25,9 @@ class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: 
   private val mutator = new RootDaoMutator[Item](itemDao)
   private val timeout = 1 minute
   
-  private def createItem(id : Id[Item]) = Item(repository.id, mutation.id, id)
+  private def createItem(id : Id[Item]) = Item(id, repository.id, mutation.id)
 
-  def createItem = Item(repository.id, mutation.id)
+  def createItem = Item(Id.generate, repository.id, mutation.id)
   
   def retrieve(id : Id[Item]) = 
     mutator.retrieve(id, timeout)
@@ -41,14 +42,14 @@ class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: 
     mutator.changedEntities.get(id)
 
   def getOrCreateItem(id: Id[Item]): Item = 
-    mutator.getOrCreate(id, Item(repository.id, mutation.id, id), timeout)
+    mutator.getOrCreate(id, createItem(id), timeout)
 
   def modifyItem(itemId: Id[Item])(modify: Item => Item): Item = 
     mutator.modify(itemId, createItem(itemId), timeout)(modify)
   
   def modifyProperty(itemId: Id[Item], propertyId: Id[Property])(modify: Property => Property): Property = {
     val item = getOrCreateItem(itemId)
-    val (properties, property, changed) = item.properties.modify(_.id == propertyId, Property(repository.id, mutation.id, propertyId), modify)
+    val (properties, property, changed) = item.properties.modify(_.id == propertyId, Property(propertyId, mutation.id), modify)
     if (changed) {
       mutator.update(item.copy(properties = properties), timeout)
     }

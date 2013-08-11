@@ -41,7 +41,7 @@ class MediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends Logging {
   private val hasher = Hashing.md5
   private val encoding = BaseEncoding.base64Url
   private implicit val hashMediaFormat = jsonFormat5(HashedMedia)
-  private val dao = new EsRootDao[HashedMedia](index, ESType[HashedMedia]("media", MediaMapping))
+  private val dao = new ESRootDao[HashedMedia](index, ESType[HashedMedia]("media", MediaMapping))
 
   def delete(id : Id[Media]) : Future[Unit] = 
     dao.delete(Id[HashedMedia](id.toString))  

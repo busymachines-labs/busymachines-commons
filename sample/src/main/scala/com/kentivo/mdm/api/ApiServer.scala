@@ -30,11 +30,12 @@ import spray.routing.directives.LogEntry
 import spray.routing.directives.LoggingMagnet.forMessageFromFullShow
 import spray.util.LoggingContext
 import com.busymachines.commons.http.HttpServer
+import com.busymachines.commons.http.UiService
 
 /**
  * Create a server for API project using spray-can.
  */
-class ApiServer(authenticationApiV1: AuthenticationApiV1, partyApiV1: PartiesApiV1, userApiV1: UsersApiV1, sourceApiV1: SourceApiV1, apiDocV1: ApiDocV1)(implicit actorSystem: ActorSystem) extends HttpServer with DefaultJsonProtocol {
+class ApiServer(authenticationApiV1: AuthenticationApiV1, partyApiV1: PartiesApiV1, userApiV1: UsersApiV1, sourceApiV1: SourceApiV1, apiDocV1: ApiDocV1, ui : UiService)(implicit actorSystem: ActorSystem) extends HttpServer with DefaultJsonProtocol {
 
   override val route =
     pathPrefix("v1") {
@@ -43,7 +44,7 @@ class ApiServer(authenticationApiV1: AuthenticationApiV1, partyApiV1: PartiesApi
         userApiV1 ~
         sourceApiV1 ~
         apiDocV1
-    }
+    } ~ ui
 
   override val exceptionHandler =
     ExceptionHandler {

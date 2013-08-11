@@ -5,7 +5,7 @@ import org.scalatest.FlatSpec
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.CommonJsonFormats._
 import com.busymachines.commons.elasticsearch.ESSearchCriteria.Delegate
-import com.busymachines.commons.elasticsearch.EsRootDao
+import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.commons.implicits.richFuture
 import com.busymachines.commons.test.DomainJsonFormats.itemFormat
@@ -22,7 +22,7 @@ import com.busymachines.commons.dao.Versioned
 
 class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
 
-  val dao = new EsRootDao[Item](esIndex, ESType("item", ItemMapping))
+  val dao = new ESRootDao[Item](esIndex, ESType("item", ItemMapping))
   val nestedDao = new ESNestedDao[Item, Property]("properties") {
     def parentDao = dao
 

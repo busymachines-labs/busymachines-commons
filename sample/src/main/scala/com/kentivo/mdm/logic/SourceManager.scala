@@ -31,9 +31,9 @@ class SourceManager(sourceDao : SourceDao) {
         model=List(
             Item(repository = Id.generate, mutation = Id.generate, name=Map(new Locale("nl") -> "Klant", Locale.forLanguageTag("") -> "CUSTOMER", Locale.CANADA_FRENCH -> "Customer"),
                 properties=List(
-                    Property(repository, mutation, name=Map(new Locale("nl") -> "Prijs", Locale.forLanguageTag("") -> "Price", Locale.CANADA_FRENCH -> "Prix")),
-                    Property(repository, mutation, multiLingual = true, name=Map(Locale.forLanguageTag("") -> "Description")),
-                    Property(repository, mutation, multiValue = true, name=Map(Locale.forLanguageTag("") -> "Related Products"))))))))
+                    Property(mutation = mutation, name=Map(new Locale("nl") -> "Prijs", Locale.forLanguageTag("") -> "Price", Locale.CANADA_FRENCH -> "Prix")),
+                    Property(mutation = mutation, multiLingual = true, name=Map(Locale.forLanguageTag("") -> "Description")),
+                    Property(mutation = mutation, multiValue = true, name=Map(Locale.forLanguageTag("") -> "Related Products"))))))))
 //    sourceDao.findSources(repository)
   }
 

@@ -1,16 +1,24 @@
+
 import sbt._
+
 import Keys._
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
-import com.github.retronym.SbtOneJar
- 
+//import com.github.retronym.SbtOneJar
+import less.Plugin._
+import com.busymachines.WebPlugin._
+
 object SampleBuild extends Build {
 
-  val commons = "com.busymachines" %% "commons" % "0.0.1-SNAPSHOT" withSources() 
+  val commons = "com.busymachines" %% "commons" % "0.0.1-SNAPSHOT" withSources() changing()
 
   def defaultSettings =
     Project.defaultSettings ++
-    SbtOneJar.oneJarSettings ++
+//    SbtOneJar.oneJarSettings ++
+    lessSettings ++ 
+//    yuiCompressor.Plugin.yuiSettings ++ 
+//    sbtclosure.SbtClosurePlugin.closureSettings ++
+    webSettings ++
       Seq(
         sbtPlugin := false,
         organization := "com.busymachines",
@@ -19,6 +27,7 @@ object SampleBuild extends Build {
         publishMavenStyle := false,
         scalacOptions += "-deprecation",
         scalacOptions += "-unchecked",
+//        sourceDirectory in (Compile, sbtclosure.SbtClosurePlugin.ClosureKeys.closure) := file("src/main/resources/public"),
         EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
         EclipseKeys.withSource := true)
 

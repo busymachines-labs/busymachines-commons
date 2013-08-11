@@ -28,7 +28,7 @@ import org.elasticsearch.action.index.IndexAction
 import org.elasticsearch.common.io.stream.BytesStreamOutput
 import org.elasticsearch.action.search.SearchType
 
-class EsRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implicit ec: ExecutionContext) extends ESDao[T](t.name) with RootDao[T] with Logging {
+class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implicit ec: ExecutionContext) extends ESDao[T](t.name) with RootDao[T] with Logging {
 
   val client = index.client
   val mapping = t.mapping

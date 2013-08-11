@@ -15,8 +15,8 @@ import com.kentivo.mdm.api.v1.UsersApiV1
 import com.kentivo.mdm.db.ItemDao
 import com.kentivo.mdm.db.SourceDao
 import com.kentivo.mdm.logic.SourceManager
-
 import akka.actor.ActorSystem
+import com.busymachines.commons.http.HttpServer
 
 class SystemAssembly {
 
@@ -37,6 +37,6 @@ class SystemAssembly {
   lazy val partyApiV1 = new PartiesApiV1(authenticator)
   lazy val sourceApiV1 = new SourceApiV1(sourceManager, authenticator)
   lazy val apiDocV1 = new ApiDocV1
-  lazy val api = new ApiServer(authenticationApiV1, partyApiV1, userApiV1, sourceApiV1, apiDocV1)
   lazy val ui = new UiService
+  lazy val server = new ApiServer(authenticationApiV1, partyApiV1, userApiV1, sourceApiV1, apiDocV1, ui)
 }

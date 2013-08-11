@@ -13,7 +13,7 @@ trait DomainJsonFormats extends CommonJsonFormats {
   implicit val phoneNumberFormat = jsonFormat2(PhoneNumber)
   implicit val emailKindFormat = enumFormat(EmailKind)
   implicit val emailFormat = jsonFormat2(Email)
-  implicit val userFormatFormat = jsonFormat9(User)
+  implicit val userFormat = jsonFormat9(User)
   implicit val userRoleFormat = jsonFormat3(UserRole)
   implicit val relatedPartyFormat = jsonFormat3(RelatedParty)
   implicit val partyFormat = jsonFormat9(Party)
@@ -30,7 +30,7 @@ trait DomainJsonFormats extends CommonJsonFormats {
   implicit val propertyType = enumFormat(PropertyType)
   implicit val propertyScope = enumFormat(PropertyScope)
   implicit val propertyValue = jsonFormat5(PropertyValue)
-  implicit val propertyGroup = jsonFormat2(PropertyGroup)
+  implicit val propertyGroup = jsonFormat3(PropertyGroup)
   implicit val property = jsonFormat13(Property)
   implicit val itemFormat = jsonFormat12(Item)
 
