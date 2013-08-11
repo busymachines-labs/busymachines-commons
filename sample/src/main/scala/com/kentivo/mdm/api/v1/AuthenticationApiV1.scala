@@ -24,7 +24,7 @@ object AuthenticationApiV1 {
  */
 class AuthenticationApiV1(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
   def route : RequestContext => Unit =
-    path("users" / PathElement / "authentication") { userName =>
+    path("users" / Segment / "authentication") { userName =>
       // Check if user is authenticated.
       get {
         headerValueByName(AuthenticationApiV1.tokenKey) { tokenValue =>

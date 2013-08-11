@@ -1,6 +1,8 @@
 package com.kentivo.mdm.db
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+
 import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.commons.elasticsearch.ESNestedDao
@@ -9,8 +11,13 @@ import com.kentivo.mdm.domain.Party
 import com.busymachines.commons.elasticsearch.ESNestedDao
 import com.kentivo.mdm.domain.User
 import com.busymachines.commons.domain.Id
+import com.busymachines.commons.dao.Versioned
 
 class UserDao(val parentDao : PartyDao)(implicit ec: ExecutionContext) extends ESNestedDao[Party, User]("user") {
+    
+  def retrieveParent(id : Id[User]) : Future[Option[Versioned[Party]]] = 
+    parentDao.findByUserId(id)
+  
   protected def findEntity(party: Party, id: Id[User]): Option[User] = 
     party.users.find(_.id == id)
     

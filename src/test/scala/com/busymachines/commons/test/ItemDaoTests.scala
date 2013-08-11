@@ -44,12 +44,6 @@ class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
       case property => true
     })
 
-    def search(criteria: SearchCriteria[Property]): Future[List[Versioned[Property]]] =
-      ???
-
-    def retrieve(ids: Seq[Id[Property]]): Future[List[Versioned[Property]]] =
-      ???
-
     def retrieveParent(id: Id[Property]): scala.concurrent.Future[Option[Versioned[Item]]] =
       ???
   }

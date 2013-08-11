@@ -8,6 +8,7 @@ import com.busymachines.commons.dao.IdAlreadyExistsException
 import com.busymachines.commons.dao.IdNotFoundException
 import com.busymachines.commons.dao.NestedDao
 import com.busymachines.commons.dao.Versioned
+import com.busymachines.commons.dao.SearchCriteria
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 
@@ -26,7 +27,7 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
     var entity : Option[T] = None
     def apply(t : T) : T = { entity = Some(t); t }
   }
-  
+
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]] = {
     retrieveParent(id) map {
       case Some(Versioned(parent, version)) =>
@@ -34,6 +35,19 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
       case None =>
         None
     }
+  }
+
+  def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] = {
+    Future.sequence {
+      ids.toList.map { id =>
+        retrieveParent(id) map {
+          case Some(Versioned(parent, version)) =>
+            findEntity(parent, id).map(Versioned(_, version)).toList
+          case None =>
+            Nil
+        }
+      }
+    }.map(_.flatten)
   }
 
   def create(id : Id[P], entity: T, refreshAfterMutation : Boolean): Future[Versioned[T]] = {
@@ -98,4 +112,7 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
         }
     }
   }
+
+  def search(criteria: SearchCriteria[T]): Future[List[Versioned[T]]] =
+    ???
 }

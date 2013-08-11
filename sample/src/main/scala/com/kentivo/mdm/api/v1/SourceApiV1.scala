@@ -34,7 +34,7 @@ class SourceApiV1(sourceManager: SourceManager, authenticator : UserAuthenticato
       }
     }
   } ~
-    path("sources" / PathElement) { entityId =>
+    path("sources" / Segment) { entityId =>
       authenticate(authenticator) { implicit user =>
         put {
           entity(as[Source]) { source =>
