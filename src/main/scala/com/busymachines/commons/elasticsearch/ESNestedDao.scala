@@ -25,7 +25,6 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
   protected class Found {
     var entity : Option[T] = None
     def apply(t : T) : T = { entity = Some(t); t }
-    def apply[A](t : T, a : A) : A = { entity = Some(t); a }
   }
   
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]] = {

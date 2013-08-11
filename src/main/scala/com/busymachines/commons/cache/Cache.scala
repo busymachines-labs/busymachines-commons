@@ -1,5 +1,6 @@
 package com.busymachines.commons.cache
 
+import scala.language.postfixOps
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import spray.caching.{ Cache => SprayCache }

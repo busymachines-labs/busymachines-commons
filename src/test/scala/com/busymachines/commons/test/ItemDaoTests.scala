@@ -40,7 +40,7 @@ class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
 
     def deleteEntity(item: Item, id: Id[Property], found: Found): Item =
     item.copy(properties = item.properties.filter {
-      case property if property.id == id => found(property, false)
+      case property if property.id == id => found(property); false
       case property => true
     })
 
