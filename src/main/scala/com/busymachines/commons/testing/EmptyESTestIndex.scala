@@ -13,10 +13,10 @@ object EmptyESTestIndex {
     usedIndexes(baseName) = i + 1
     baseName + (if (i > 0) i else "")
   }
+  lazy val client = new ESClient(new ESConfiguration) 
 }
 
-class EmptyESTestIndex(name : String) extends ESIndex(
-    new ESClient(new ESConfiguration), EmptyESTestIndex.getNextName("test-" + name)) {
+class EmptyESTestIndex(name : String) extends ESIndex(EmptyESTestIndex.client, EmptyESTestIndex.getNextName("test-" + name)) {
   
   def this(c : Class[_]) = this(c.getName.toLowerCase)
 
