@@ -17,10 +17,9 @@ class PartyService(partyDao : PartyDao, loginDao : LoginDao)(implicit ec : Execu
   private val partyCache = LruCache[Option[Party]](2000, 50, 7 days, 8 hours)
 
   
-  def authenticate(email : String, password : String) = {
+  def authenticate(email : String, password : String)  = {
     loginDao.findByEmail(email).map {
       case Some(Versioned(login, version)) =>
-      case None =>
     }
   }
   

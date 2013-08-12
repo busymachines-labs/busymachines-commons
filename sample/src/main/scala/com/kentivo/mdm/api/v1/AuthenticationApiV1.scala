@@ -14,7 +14,8 @@ import com.kentivo.mdm.logic.AuthenticationData
 import scala.concurrent.duration._
 import com.kentivo.mdm.domain.User
 
-case class AuthenticationUser(
+case class Credentials(
+  email: String,
   password: String,
   partyName: Option[String])
 
@@ -26,17 +27,28 @@ object AuthenticationApiV1 {
  * Handling authentication before using API.
  */
 class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
+  
+  implicit val credentialsFormat = jsonFormat3(Credentials)
+  
   def route: RequestContext => Unit =
+    path("users" / "authentication") { 
+      post {
+       entity(as[Credentials]) { 
+         case Credentials(email, password, _) =>
+           authenticator.authenticateUser(email, password).map {
+             case Some()
+           }
+       }
+      }
+    } ~
     path("users" / MatchId[User] / "authentication") { userId =>
       // Check if user is authenticated.
       get {
         authenticator.isAuthenticated(1.minute) {
-          _ match {
-            case Some(auth) if auth.userId == userId =>
-              complete("OK")
-            case _ =>
-              reject
-          }
+          case Some(auth) if auth.userId == userId =>
+            complete("OK")
+          case _ =>
+            reject
         }
       } ~
         // Log in a specific user. Password will be in the body, in json format.  

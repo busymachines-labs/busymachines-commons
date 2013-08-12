@@ -25,7 +25,7 @@ import spray.routing.Route
 /**
  * Base trait for individual API service traits.
  */
-trait ApiDirectives extends Directives with Logging with SprayJsonSupport with ApiJsonFormats with DomainJsonFormats with CommonJsonFormats  { 
+trait ApiDirectives extends Directives with Logging with SprayJsonSupport with DomainJsonFormats with CommonJsonFormats  { 
 
 //  implicit def actorRefFactory: ActorRefFactory
 //  implicit def executionContext: ExecutionContext = actorRefFactory.dispatcher

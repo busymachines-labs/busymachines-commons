@@ -7,8 +7,10 @@ import scala.concurrent.duration._
 import com.busymachines.commons.domain.Id
 import com.kentivo.mdm.domain.Party
 import com.kentivo.mdm.logic.AuthenticationData
+import com.kentivo.mdm.logic.PartyService
 
-class UserAuthenticator(implicit executionContext: ExecutionContext) extends AbstractAuthenticator[AuthenticationData] {
+class UserAuthenticator(partyService : PartyService)(implicit executionContext: ExecutionContext) extends AbstractAuthenticator[AuthenticationData] {
 
-  def authenticateUser(email: String, password: String)
+  def authenticateUser(email: String, password: String) = 
+    partyService.authenticate(email, password)
 } 
