@@ -20,8 +20,9 @@ import com.busymachines.commons.dao.SearchCriteria
 import scala.concurrent.Future
 import com.busymachines.commons.dao.Versioned
 
-class ItemDaoTests extends FlatSpec with EmptyESTestIndex {
+class ItemDaoTests extends FlatSpec {
 
+  val esIndex = new EmptyESTestIndex(getClass)
   val dao = new ESRootDao[Item](esIndex, ESType("item", ItemMapping))
   val nestedDao = new ESNestedDao[Item, Property]("properties") {
     def parentDao = dao

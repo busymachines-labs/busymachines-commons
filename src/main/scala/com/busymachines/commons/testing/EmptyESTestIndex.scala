@@ -1,15 +1,13 @@
 package com.busymachines.commons.testing
 
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.Suite
+import scala.collection.concurrent
+
 import com.busymachines.commons.elasticsearch.ESClient
-import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.elasticsearch.ESConfiguration
-import collection.mutable
-import org.scalatest.BeforeAndAfterAll
+import com.busymachines.commons.elasticsearch.ESIndex
 
 object EmptyESTestIndex {
-  private val usedIndexes = mutable.Map[String, Int]()
+  private val usedIndexes = concurrent.TrieMap[String, Int]()
   def getNextName(baseName: String): String = {
     val i = usedIndexes.get(baseName).getOrElse(0)
     usedIndexes(baseName) = i + 1
@@ -17,18 +15,11 @@ object EmptyESTestIndex {
   }
 }
 
-trait EmptyESTestIndex extends BeforeAndAfterEach {
+class EmptyESTestIndex(name : String) extends ESIndex(
+    new ESClient(new ESConfiguration), EmptyESTestIndex.getNextName("test-" + name)) {
+  
+  def this(c : Class[_]) = this(c.getName.toLowerCase)
 
-  // This trait can only be used on a test class.
-  suite: Suite =>
-
-  val esConfig = new ESConfiguration
-  val esClient = new ESClient(esConfig)
-  val esIndexBaseName = getClass.getName.toLowerCase
-  val esIndex = new ESIndex(esClient, /* EmptyESTestIndex.getNextName(esIndexBaseName) */ esConfig.indexName)
-
-  override protected def beforeEach {
-    esIndex.drop
-    esIndex.initialize
-  }
+  drop
+  initialize
 }
