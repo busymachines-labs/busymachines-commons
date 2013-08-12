@@ -11,6 +11,15 @@ object JsValueConverter {
     	case other => other.toString
     }
   }
+
+  implicit val booleanConverter = new JsValueConverter[Boolean] {
+    def convert(value : JsValue) : Boolean = 
+    value match {
+    	case JsString(s) => s toBoolean
+    	case other => false
+    }
+  }
+
   // TODO: other ES types
 }
 

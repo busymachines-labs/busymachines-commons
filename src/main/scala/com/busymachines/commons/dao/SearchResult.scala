@@ -6,4 +6,4 @@ object SearchResult {
   implicit def toResult[T <: HasId[T]](result: SearchResult[T]) = result.result
 }
 
-case class SearchResult[T <: HasId[T]](result : List[Versioned[T]], totalCount : Option[Long] = None, facets : Map[FacetField, FacetField.Value] = Map.empty)
+case class SearchResult[T <: HasId[T]](result : List[Versioned[T]], totalCount : Option[Long] = None, facets : Option[Map[FacetField, FacetField.Value]] = None)
