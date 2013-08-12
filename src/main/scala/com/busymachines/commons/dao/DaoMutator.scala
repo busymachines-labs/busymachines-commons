@@ -36,8 +36,8 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
   def retrieve(ids : Seq[Id[T]], timeout : Duration) : Seq[T] = 
     ids.flatMap(id => _changedEntities.get(id).map(Some(_)).getOrElse(_cache.retrieve(id, timeout))).map(_.entity)
   
-  def search(criteria: SearchCriteria[T], timeout : Duration) : List[T] = {
-    val entities = _cache.search(criteria, timeout)
+  def search(criteria: SearchCriteria[T], page : Page, timeout : Duration) : List[T] = {
+    val entities = _cache.search(criteria, page, timeout)
     entities.map(entity => _changedEntities.get(entity.id).getOrElse(entity)).map(_.entity)
   }
     

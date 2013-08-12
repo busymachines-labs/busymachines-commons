@@ -27,6 +27,13 @@ import com.busymachines.commons.dao.SearchCriteria
 import org.elasticsearch.action.index.IndexAction
 import org.elasticsearch.common.io.stream.BytesStreamOutput
 import org.elasticsearch.action.search.SearchType
+import com.busymachines.commons.dao.SearchResult
+import com.busymachines.commons.dao.FacetField
+import com.busymachines.commons.dao.Page
+
+object ESRootDao {
+  implicit def toResults[T <: HasId[T]](f : Future[SearchResult[T]])(implicit ec : ExecutionContext) = f.map(_.result)
+}
 
 class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implicit ec: ExecutionContext) extends ESDao[T](t.name) with RootDao[T] with Logging {
 
@@ -54,15 +61,22 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
     }
   }
 
-  def search(criteria: SearchCriteria[T]): Future[List[Versioned[T]]] = {
+  def search(criteria: SearchCriteria[T], page : Page = Page.first, facets : Seq[FacetField] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
-        val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setFilter(criteria.toFilter).setSearchType(SearchType.DFS_QUERY_AND_FETCH).setSize(999999)
-        client.execute(request.request).map(_.getHits.hits.toList.map { hit =>
-          val json = hit.sourceAsString.asJson
-          val version = json.getESVersion
-          Versioned(json.convertFromES(mapping), version)
-        })
+        val request = 
+          client.javaClient.prepareSearch(index.name)
+            .setTypes(t.name)
+            .setFilter(criteria.toFilter)
+            .setSearchType(SearchType.DFS_QUERY_AND_FETCH)
+            .setFrom(page.from)
+            .setSize(page.size)
+        client.execute(request.request).map { result =>
+          SearchResult(result.getHits.hits.toList.map { hit =>
+            val json = hit.sourceAsString.asJson
+            val version = json.getESVersion
+            Versioned(json.convertFromES(mapping), version)
+        }, Some(result.getHits.getTotalHits))}
       case _ =>
         throw new Exception("Expected ElasticSearch search criteria")
     }
@@ -130,7 +144,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
 
   def query(queryStr: String): Future[List[Versioned[T]]] = query(new QueryStringQueryBuilder(queryStr))
 
-  protected def search(filter: FilterBuilder): Future[List[Versioned[T]]] = {
+  protected def doSearch(filter: FilterBuilder): Future[List[Versioned[T]]] = {
     val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setFilter(filter).request
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
       val json = hit.sourceAsString.asJson
@@ -140,7 +154,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
   }
 
   protected def retrieve(filter: FilterBuilder, error: => String): Future[Option[Versioned[T]]] = {
-    search(filter).map(_ match {
+    doSearch(filter).map(_ match {
       case Nil => None
       case entity :: Nil => Some(entity)
       case entities => throw new Exception(error)
@@ -150,9 +164,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
   def retrieveAll: Future[List[Versioned[T]]] = retrieveAll(FilterBuilders.matchAllFilter())
 
   def retrieveAll(filter: FilterBuilder): Future[List[Versioned[T]]] = {
-    search(filter).map(_ match {
+    doSearch(filter).map(_ match {
       case Nil => Nil
       case entities => entities
     })
   }
+  
+  implicit def toResults(f : Future[SearchResult[T]]) = ESRootDao.toResults(f)
 }

@@ -1,7 +1,7 @@
 package com.busymachines.commons.dao
 
-import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
+import com.busymachines.commons.domain.HasId
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
@@ -16,7 +16,7 @@ trait Dao[T <: HasId[T]] {
   
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]]
 
-  def search(criteria : SearchCriteria[T]): Future[List[Versioned[T]]]
+  def search(criteria : SearchCriteria[T], page : Page = Page.first, facets: Seq[FacetField] = Seq.empty): Future[SearchResult[T]]
 
   def searchSingle(criteria : SearchCriteria[T], f : SearchCriteria[T] => Unit): Future[Option[Versioned[T]]]
 
