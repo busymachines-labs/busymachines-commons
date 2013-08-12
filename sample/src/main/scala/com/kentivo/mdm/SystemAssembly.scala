@@ -19,6 +19,7 @@ import akka.actor.ActorSystem
 import com.busymachines.commons.http.HttpServer
 import com.kentivo.mdm.logic.PartyService
 import com.kentivo.mdm.db.PartyDao
+import com.kentivo.mdm.db.LoginDao
 
 class SystemAssembly {
 
@@ -34,7 +35,8 @@ class SystemAssembly {
   lazy val sourceDao = new SourceDao(index)
   lazy val itemDao = new ItemDao(index)
   lazy val mediaDao = new MediaDao(index)
-  lazy val partyService = new PartyService(partyDao)
+  lazy val loginDao = new LoginDao(index)
+  lazy val partyService = new PartyService(partyDao, loginDao)
   lazy val sourceManager = new SourceManager(sourceDao)
   lazy val authenticationApiV1 = new AuthenticationApiV1(authenticator)
   lazy val userApiV1 = new UsersApiV1(partyService, authenticator)

@@ -14,6 +14,9 @@ import spray.routing.RequestContext
 import spray.routing.authentication.HttpAuthenticator
 import java.math.BigInteger
 import java.security.SecureRandom
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import spray.routing.Route
 
 class AbstractAuthenticator[A](implicit val executionContext: ExecutionContext) extends HttpAuthenticator[A] {
 
@@ -29,7 +32,7 @@ class AbstractAuthenticator[A](implicit val executionContext: ExecutionContext) 
   override def apply(ctx: RequestContext) = {
        ctx.request.headers.find(_.is(tokenKey)).map(_.value) match {
         case Some(token) =>
-          authenticate(token, ctx) map {
+          authenticateToken(token, ctx) map {
             case Some(a) => Right(a)
             case None =>
             Left(AuthenticationFailedRejection(CredentialsRejected, this))
@@ -42,16 +45,14 @@ class AbstractAuthenticator[A](implicit val executionContext: ExecutionContext) 
   def authenticate(credentials: Option[HttpCredentials], ctx: RequestContext) : Future[Option[A]] = {
     throw new Exception
   }
-//  
-//  def isAuthenticated[B](output : A => B) : RequestContext => Unit = { ctx => 
-//    ctx.request.headers.find(_.is(tokenKey)).map(_.value) match {
-////      case Some(data) => complete(output(data))
-////      case None => 
-//    }
-//    
-//  }
   
-  def authenticate(token: String, ctx: RequestContext) : Future[Option[A]] = {
+  def isAuthenticated(timeout : Duration = 1.minute)(f : Option[A] => Route) : Route = { ctx => 
+    import spray.routing.HttpService._
+    val auth = ctx.request.headers.find(_.is(tokenKey)).map(_.value).map(authenticateToken(_, ctx))
+    f(auth.flatMap(auth => Await.result(auth, timeout)))
+  }
+  
+  def authenticateToken(token: String, ctx: RequestContext) : Future[Option[A]] = {
     cache.get(token) match {
       case Some(a) => a.map(Some(_))
       case None => Future.successful(None)

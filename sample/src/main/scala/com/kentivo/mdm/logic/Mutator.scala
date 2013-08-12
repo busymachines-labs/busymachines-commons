@@ -19,6 +19,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.duration._
 import com.busymachines.commons.dao.RootDaoMutator
 import com.kentivo.mdm.domain.Repository
+import com.busymachines.commons.dao.Page
 
 class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: Mutation)(implicit ec: ExecutionContext) {
 
@@ -35,8 +36,8 @@ class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: 
   def retrieve(ids : Seq[Id[Item]]) = 
     mutator.retrieve(ids, timeout)
 
-  def searchItems(criteria : SearchCriteria[Item], timeout : Duration) : Seq[Item] = 
-    mutator.search(criteria, timeout)
+  def searchItems(criteria : SearchCriteria[Item], page : Page, timeout : Duration) : Seq[Item] = 
+    mutator.search(criteria, page, timeout)
     
   def getChangedItem(id: Id[Item]): Option[Item] =
     mutator.changedEntities.get(id)

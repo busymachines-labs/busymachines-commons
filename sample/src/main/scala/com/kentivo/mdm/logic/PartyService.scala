@@ -3,17 +3,26 @@ package com.kentivo.mdm.logic
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import com.busymachines.commons.domain.Id
+import com.busymachines.commons.dao.Versioned
 import com.kentivo.mdm.domain.Party
 import com.kentivo.mdm.domain.User
 import spray.caching.LruCache
 import com.kentivo.mdm.db.PartyDao
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
+import com.kentivo.mdm.db.LoginDao
 
-class PartyService(partyDao : PartyDao)(implicit ec : ExecutionContext) {
+class PartyService(partyDao : PartyDao, loginDao : LoginDao)(implicit ec : ExecutionContext) {
 
   private val partyCache = LruCache[Option[Party]](2000, 50, 7 days, 8 hours)
 
+  
+  def authenticate(email : String, password : String) = {
+    loginDao.findByEmail(email).map {
+      case Some(Versioned(login, version)) =>
+      case None =>
+    }
+  }
   
   def list(implicit auth: AuthenticationData): List[Party] = {
     Nil

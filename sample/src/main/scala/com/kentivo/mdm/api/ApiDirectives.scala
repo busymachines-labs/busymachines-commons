@@ -3,7 +3,6 @@ package com.kentivo.mdm.api
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import com.kentivo.mdm.api.v1.AuthenticationApiV1
-import com.kentivo.mdm.logic.Authentication
 import com.kentivo.mdm.logic.AuthenticationToken
 import spray.httpx.SprayJsonSupport
 import spray.routing.authentication.Authentication
@@ -11,11 +10,9 @@ import spray.routing.AuthenticationFailedRejection
 import spray.routing.Directives
 import spray.routing.HttpService
 import spray.routing.RequestContext
-import com.kentivo.mdm.logic.Authentication
 import spray.routing.authentication.ContextAuthenticator
 import spray.routing.directives.AuthMagnet.fromContextAuthenticator
 import com.kentivo.mdm.domain.User
-import com.kentivo.mdm.logic.Authentication
 import com.kentivo.mdm.domain.DomainJsonFormats
 import akka.actor.ActorRefFactory
 import akka.actor.ActorSystem

@@ -40,6 +40,7 @@ import scala.xml.pull.EvElemStart
 import java.net.URL
 import com.busymachines.commons.RichSource
 import com.busymachines.commons.Logging
+import com.busymachines.commons.dao.Page
 
 class IcecatAdapter(itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: ExecutionContext, system: ActorSystem) extends Logging {
 
@@ -117,7 +118,7 @@ class IcecatAdapter(itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: Executio
         println("Start searching")
 
     // Read all existing icecat categories
-    val categories = mutator.searchItems(HasValueForProperty(categoryIcecatIdProperty), 1 minute)
+    val categories = mutator.searchItems(HasValueForProperty(categoryIcecatIdProperty), Page.all, 1 minute)
 //    println("Got existing categories: " + categories)
     
     val categoriesById : Map[String, Item] = 

@@ -1,7 +1,6 @@
 package com.kentivo.mdm.api.v1
 
 import com.kentivo.mdm.api.ApiDirectives
-import com.kentivo.mdm.logic.Authentication
 import com.kentivo.mdm.logic.AuthenticationToken
 import spray.http.HttpHeaders.RawHeader
 import spray.http.StatusCodes
@@ -11,6 +10,9 @@ import akka.actor.ActorContext
 import spray.routing.RequestContext
 import com.busymachines.commons.http.CommonHttpService
 import com.kentivo.mdm.api.UserAuthenticator
+import com.kentivo.mdm.logic.AuthenticationData
+import scala.concurrent.duration._
+import com.kentivo.mdm.domain.User
 
 case class AuthenticationUser(
   password: String,
@@ -23,36 +25,24 @@ object AuthenticationApiV1 {
 /**
  * Handling authentication before using API.
  */
-class AuthenticationApiV1(authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
-  def route : RequestContext => Unit =
-    path("users" / Segment / "authentication") { userId =>
+class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
+  def route: RequestContext => Unit =
+    path("users" / MatchId[User] / "authentication") { userId =>
       // Check if user is authenticated.
       get {
-        headerValueByName(AuthenticationApiV1.tokenKey) { tokenValue =>
-          Authentication.isAuthenticated(new AuthenticationToken(tokenValue)) match {
-            case Some(user) => {
-              val message = "User %s is logged in".format(userName)
-              debug(message)
-              complete {
-                Map("message" -> message)
-              }
-            }
-            case None => {
-              val message = "User %s is not logged in".format(userName)
-              debug(message)
-              respondWithStatus(StatusCodes.NotFound) {
-                complete {
-                  Map("message" -> message)
-                }
-              }
-            }
+        authenticator.isAuthenticated(1.minute) {
+          _ match {
+            case Some(auth) if auth.userId == userId =>
+              complete("OK")
+            case _ =>
+              reject
           }
         }
       } ~
         // Log in a specific user. Password will be in the body, in json format.  
         post {
           entity(as[AuthenticationUser]) { authenticationUser =>
-            Authentication.authenticate(userName, authenticationUser.password, authenticationUser.partyName) match {
+            authenticator.authenticateUser(userName, authenticationUser.password, authenticationUser.partyName) match {
               case Some(AuthenticationToken(token)) => {
                 val message = "User %s has been succesfully logged in".format(userName)
                 debug(message)
