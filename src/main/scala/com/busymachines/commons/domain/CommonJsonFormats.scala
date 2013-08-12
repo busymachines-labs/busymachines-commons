@@ -13,6 +13,11 @@ import spray.json.RootJsonFormat
 import spray.json.deserializationError
 import spray.json.JsObject
 import spray.json.JsNumber
+import com.busymachines.commons.dao.SearchResult
+import com.busymachines.commons.dao.FacetField
+import spray.json.JsonWriter
+import com.busymachines.commons.dao.Versioned
+import com.busymachines.commons.dao.Page
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -116,7 +121,18 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   //    }
   //  }
   //  
+    
   implicit def idFormat[A] = stringJsonFormat[Id[A]]("Id", Id(_))
   implicit val mediaFormat = jsonFormat4(Media)
+  
+  implicit val facetFieldJsonFormat = new JsonWriter[FacetField] {
+    def write(c: FacetField) = JsString(c.toString)
+  	}
+
+  implicit val facetFieldValueJsonFormat = new JsonWriter[FacetField.Value] {
+    def write(c: FacetField.Value) = JsString(c.toString)
+  	}
+  
+//  implicit val searchResultFormat = jsonFormat3(SearchResult)
 
 }
