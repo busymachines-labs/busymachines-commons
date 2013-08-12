@@ -10,6 +10,7 @@ import akka.actor.ActorSystem
 import akka.actor.ActorContext
 import spray.routing.RequestContext
 import com.busymachines.commons.http.CommonHttpService
+import com.kentivo.mdm.api.UserAuthenticator
 
 case class AuthenticationUser(
   password: String,
@@ -22,9 +23,9 @@ object AuthenticationApiV1 {
 /**
  * Handling authentication before using API.
  */
-class AuthenticationApiV1(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
+class AuthenticationApiV1(authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
   def route : RequestContext => Unit =
-    path("users" / Segment / "authentication") { userName =>
+    path("users" / Segment / "authentication") { userId =>
       // Check if user is authenticated.
       get {
         headerValueByName(AuthenticationApiV1.tokenKey) { tokenValue =>

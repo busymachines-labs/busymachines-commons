@@ -17,8 +17,8 @@ import com.busymachines.commons.domain.Id
 
 class SourceManager(sourceDao : SourceDao) {
 
-  def findSources1(repository : Option[Id[Repository]])(implicit user: User): Future[Source] = null
-  def findSources(repository : Option[Id[Repository]])(implicit user: User): Future[List[Source]] = {
+  def findSources1(repository : Option[Id[Repository]])(implicit auth: AuthenticationData): Future[Source] = null
+  def findSources(repository : Option[Id[Repository]])(implicit auth: AuthenticationData): Future[List[Source]] = {
     val repository = Id.generate[Repository]
     val mutation = Id.generate[Mutation]
     Future.successful(List(Source(name="Sample Source", repository = Id.generate, importSchedule=List(
@@ -40,13 +40,13 @@ class SourceManager(sourceDao : SourceDao) {
   /**
    * Create a source based on specific fields received.
    */
-  def create(source: Source)(implicit user: User): Int = {
+  def create(source: Source)(implicit auth: AuthenticationData): Int = {
     0
   }
   /**
    * Create a source based on specific fields received.
    */
-  def update(id : Id[Source], source: Source)(implicit user: User): Int = {
+  def update(id : Id[Source], source: Source)(implicit auth: AuthenticationData): Int = {
     0
   }
 

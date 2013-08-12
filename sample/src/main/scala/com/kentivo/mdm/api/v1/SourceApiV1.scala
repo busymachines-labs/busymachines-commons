@@ -20,7 +20,7 @@ import com.kentivo.mdm.api.UserAuthenticator
 class SourceApiV1(sourceManager: SourceManager, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
   
   val route = path("sources") {
-    authenticate(authenticator) { implicit user =>
+    authenticate(authenticator) { implicit auth =>
       get {
         complete {
           sourceManager.findSources(None)

@@ -4,7 +4,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
-
 import spray.caching.LruCache
 import spray.http.HttpCredentials
 import spray.http.HttpRequest
@@ -13,13 +12,16 @@ import spray.routing.AuthenticationFailedRejection.CredentialsMissing
 import spray.routing.AuthenticationFailedRejection.CredentialsRejected
 import spray.routing.RequestContext
 import spray.routing.authentication.HttpAuthenticator
+import java.math.BigInteger
+import java.security.SecureRandom
 
 class AbstractAuthenticator[A](implicit val executionContext: ExecutionContext) extends HttpAuthenticator[A] {
 
   val maxCapacity = 1000000
   val expiration = 1 day
   val idleTime = 1 hour
-
+  val secureRandom = new SecureRandom
+  
   private val cache = LruCache[A](maxCapacity, 50, expiration, idleTime)
 
   val tokenKey = "Auth-Token"
@@ -40,6 +42,14 @@ class AbstractAuthenticator[A](implicit val executionContext: ExecutionContext) 
   def authenticate(credentials: Option[HttpCredentials], ctx: RequestContext) : Future[Option[A]] = {
     throw new Exception
   }
+//  
+//  def isAuthenticated[B](output : A => B) : RequestContext => Unit = { ctx => 
+//    ctx.request.headers.find(_.is(tokenKey)).map(_.value) match {
+////      case Some(data) => complete(output(data))
+////      case None => 
+//    }
+//    
+//  }
   
   def authenticate(token: String, ctx: RequestContext) : Future[Option[A]] = {
     cache.get(token) match {
@@ -49,4 +59,7 @@ class AbstractAuthenticator[A](implicit val executionContext: ExecutionContext) 
   }
   
   def getChallengeHeaders(httpRequest: HttpRequest) = Nil
+  
+  def generateToken = 
+    new BigInteger(130, secureRandom).toString(32)
 }
