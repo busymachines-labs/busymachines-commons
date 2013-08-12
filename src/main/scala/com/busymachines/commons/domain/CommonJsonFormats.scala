@@ -128,7 +128,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   implicit def idFormat[A] = stringJsonFormat[Id[A]]("Id", Id(_))
   implicit val mediaFormat = jsonFormat4(Media)
   
-  implicit val facetFieldJsonFormat = new JsonFormat[FacetField] {
+  implicit val facetFieldFormat = new JsonFormat[FacetField] {
     def read(value: JsValue) = ???
     def write(c: FacetField) = JsString(c.toString)
 	}
@@ -136,10 +136,4 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   
   implicit def versionedFormat[T <: HasId[T]](implicit tFormat : JsonFormat[T]) = jsonFormat2(Versioned[T])
   implicit def searchResultFormat[T <: HasId[T]](implicit tFormat : JsonFormat[T]) = jsonFormat3(SearchResult[T])
-
-  implicit val facetFieldFormat = new JsonWriter[FacetField] {
-    def write(value: FacetField) = JsString(value.toString)
-  }
-
-
 }
