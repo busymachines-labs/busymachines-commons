@@ -2,8 +2,6 @@ package com.busymachines.commons.dao
 
 object Page {
   val first = new Page(0, 10)
-  @deprecated
-  def optional(from: Option[Int], size: Option[Int]) = apply(from, size)
   def apply(from: Option[Int], size: Option[Int]) =
     (from, size) match {
       case (None, None) => first
