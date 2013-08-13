@@ -22,6 +22,7 @@ import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.dao.FacetFieldValue
 import spray.json.JsArray
+import spray.json.RootJsonWriter
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -136,7 +137,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   
   implicit def versionedFormat[T <: HasId[T]](implicit tFormat : JsonFormat[T]) = jsonFormat2(Versioned[T])
   
-  class SearchResultFormat[T <: HasId[T]](fieldName : String)(implicit tFormat : JsonFormat[T]) extends JsonWriter[SearchResult[T]] {
+  class SearchResultFormat[T <: HasId[T]](fieldName : String)(implicit tFormat : JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
     def write(result: SearchResult[T]) = {
       val jsonResult = JsArray(result.result.map(_.entity).map(tFormat.write(_)))
       result.totalCount match {
