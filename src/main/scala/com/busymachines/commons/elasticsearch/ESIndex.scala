@@ -14,8 +14,10 @@ import scala.collection.concurrent.TrieMap
 import java.util.concurrent.atomic.AtomicBoolean
 import com.busymachines.commons.event.EventBus
 import com.busymachines.commons.event.BusEvent
+import com.busymachines.commons.event.LocalEventBus
+import akka.actor.ActorSystem
 
-class ESIndex(_client: ESClient, val name : String,eventBus:EventBus[BusEvent]) {
+class ESIndex(_client: ESClient, val name : String,eventBus:EventBus) {
 
   type InitializeHandler = () => Unit
   
@@ -24,7 +26,10 @@ class ESIndex(_client: ESClient, val name : String,eventBus:EventBus[BusEvent]) 
   private val initializeHandlers = TrieMap[InitializeHandler, Unit]()
   private var initialized = new AtomicBoolean(false)
   
-  lazy val bus = eventBus
+  lazy val bus:EventBus = eventBus match {
+    case null =>  new LocalEventBus(ActorSystem("bm")).asInstanceOf[EventBus] 
+    case _ => eventBus
+  }
   
   lazy val client = {
     initialize

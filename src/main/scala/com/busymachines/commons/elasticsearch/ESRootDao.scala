@@ -31,16 +31,17 @@ import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.event.DaoMutationEvent
+import scala.reflect.runtime.universe._
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
 }
 
-class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implicit ec: ExecutionContext) extends ESDao[T](t.name) with RootDao[T] with Logging {
+class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implicit ec: ExecutionContext, tag: TypeTag[T]) extends ESDao[T](t.name) with RootDao[T] with Logging {
 
   val client = index.client
   val mapping = t.mapping
-  //val busEndpoint = index.bus.createEndpoint
+  val busEndpoint = index.bus.createEndpoint
   // Add mapping.
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
@@ -52,15 +53,13 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
     Future.successful()
 
   protected def postMutate(entity: T): Future[Unit] =
-    Future.successful()
-    /*
     busEndpoint.publish(DaoMutationEvent(
-        entityType = getClass.toString,
-        indexName = index.name,
-        typeName = "",
-        id = entity.id
-        ))
-	*/
+      entityType = tag.tpe.baseClasses(0).getClass.getCanonicalName,
+      indexName = index.name,
+      typeName = t.name,
+      id = entity.id))
+  
+
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
     query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id => id.toString): _*))
 

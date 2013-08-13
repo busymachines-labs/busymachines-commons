@@ -6,20 +6,20 @@ import akka.actor.Props
 import com.busymachines.commons.Logging
 import scala.concurrent.Future
 
-class LocalEventBus[E <: BusEvent](actorSystem: ActorSystem) extends EventBus[E] with Logging {
-  def createEndpoint: EventBusEndpoint[E] = {
-    val endPoint = new DefaultBusEndpoint[E](this)
+class LocalEventBus(actorSystem: ActorSystem) extends EventBus with Logging {
+  def createEndpoint: EventBusEndpoint = {
+    val endPoint = new DefaultBusEndpoint(this)
     this.subscribe(endPoint)
     endPoint
   }
 
-  def subscribe(endPoint: EventBusEndpoint[E]): ActorRef = {
-    val actorRef = actorSystem.actorOf(Props(classOf[EventBusEndpointActor[E]], endPoint))
+  def subscribe(endPoint: EventBusEndpoint): ActorRef = {
+    val actorRef = actorSystem.actorOf(Props(classOf[EventBusEndpointActor], endPoint))
     actorSystem.eventStream.subscribe(actorRef, classOf[BusEvent])
     actorRef
   }
   
-  def publish(event: E):Future[Unit] = {
+  def publish(event: BusEvent):Future[Unit] = {
     debug(s"Published event $event")
     actorSystem.eventStream.publish(event)
     Future.successful()

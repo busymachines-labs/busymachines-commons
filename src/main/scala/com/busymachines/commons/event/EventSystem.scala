@@ -7,35 +7,35 @@ import com.busymachines.commons.domain.Id
 
 trait BusEvent
 
-trait EventBus[E<:BusEvent] {
-  def createEndpoint: EventBusEndpoint[E]
-  def subscribe(endPoint: EventBusEndpoint[E]): ActorRef
-  def publish(event: E):Future[Unit]
+trait EventBus {
+  def createEndpoint: EventBusEndpoint
+  def subscribe(endPoint: EventBusEndpoint): ActorRef
+  def publish(event: BusEvent):Future[Unit]
 }
 
-trait EventBusEndpoint[E<:BusEvent] {
-  def onReceive(f: E => Any)
-  def publish(event: E):Future[Unit]
-  def receive(event: E)
+trait EventBusEndpoint {
+  def onReceive(f: BusEvent => Any)
+  def publish(event: BusEvent):Future[Unit]
+  def receive(event: BusEvent)
 }
 
-class EventBusEndpointActor[E <: BusEvent](e: EventBusEndpoint[E]) extends Actor {
+class EventBusEndpointActor(e: EventBusEndpoint) extends Actor {
   def receive = {
-    case event: BusEvent => e.receive(event.asInstanceOf[E])
+    case event: BusEvent => e.receive(event.asInstanceOf[BusEvent])
   }
 }
 
-class DefaultBusEndpoint[E<:BusEvent](eventBus: EventBus[E]) extends EventBusEndpoint[E] {
+class DefaultBusEndpoint(eventBus: EventBus) extends EventBusEndpoint {
 
-  private val onReceiveCompletions = scala.collection.mutable.ListBuffer[E => Any]()
+  private val onReceiveCompletions = scala.collection.mutable.ListBuffer[BusEvent => Any]()
 
-  def publish(event: E) =
+  def publish(event: BusEvent) =
     eventBus.publish(event)
 
-  def onReceive(f: E => Any) =
+  def onReceive(f: BusEvent => Any) =
     onReceiveCompletions += f
 
-  def receive(event: E) =
+  def receive(event: BusEvent) =
     onReceiveCompletions.map(completion => completion(event))
 }
 

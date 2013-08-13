@@ -12,7 +12,7 @@ class EventBusEndpointTests extends FlatSpec  {
     var enpointReceived2 = false
 
     val actorSystem = ActorSystem("aurum")
-    val localEventBus = new LocalEventBus[BusEvent](actorSystem)
+    val localEventBus = new LocalEventBus(actorSystem)
 
     val endpoint = localEventBus.createEndpoint
 
