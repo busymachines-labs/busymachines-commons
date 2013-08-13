@@ -21,6 +21,7 @@ import spray.json.JsonWriter
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.dao.FacetFieldValue
+import spray.json.JsArray
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -128,12 +129,20 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   implicit def idFormat[A] = stringJsonFormat[Id[A]]("Id", Id(_))
   implicit val mediaFormat = jsonFormat4(Media)
   
-  implicit val facetFieldFormat = new JsonFormat[FacetField] {
-    def read(value: JsValue) = ???
+  implicit val facetFieldFormat = new JsonWriter[FacetField] {
     def write(c: FacetField) = JsString(c.toString)
-	}
+  }
   implicit val facetFieldValueFormat = jsonFormat2(FacetFieldValue)
   
   implicit def versionedFormat[T <: HasId[T]](implicit tFormat : JsonFormat[T]) = jsonFormat2(Versioned[T])
-  implicit def searchResultFormat[T <: HasId[T]](implicit tFormat : JsonFormat[T]) = jsonFormat3(SearchResult[T])
+  
+  class SearchResultFormat[T <: HasId[T]](fieldName : String)(implicit tFormat : JsonFormat[T]) extends JsonWriter[SearchResult[T]] {
+    def write(result: SearchResult[T]) = {
+      val jsonResult = JsArray(result.result.map(_.entity).map(tFormat.write(_)))
+      result.totalCount match {
+        case Some(totalCount) => JsObject(fieldName -> jsonResult, "totalCount" -> JsNumber(totalCount))
+        case None => JsObject(fieldName -> jsonResult)
+      }
+    } 
+  }
 }
