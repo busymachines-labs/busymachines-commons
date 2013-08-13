@@ -11,6 +11,7 @@ import akka.actor.ActorSystem
 import akka.actor.ActorRef
 import akka.actor.Props
 import akka.contrib.pattern.DistributedPubSubMediator
+import scala.concurrent.Future
 
 class DistributedEventBus[E <:BusEvent](actorSystem: ActorSystem, topic: String = "all") extends EventBus[E] {
 
@@ -35,8 +36,9 @@ class DistributedEventBus[E <:BusEvent](actorSystem: ActorSystem, topic: String 
     actorRef
   }
 
-  def publish(event: E) = {
+  def publish(event: E):Future[Unit] = {
     publisher ! event
+    Future.successful()
   }
 }
 

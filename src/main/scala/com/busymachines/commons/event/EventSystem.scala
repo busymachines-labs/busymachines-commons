@@ -2,18 +2,20 @@ package com.busymachines.commons.event
 
 import akka.actor.ActorRef
 import akka.actor.Actor
+import scala.concurrent.Future
+import com.busymachines.commons.domain.Id
 
 trait BusEvent
 
-trait EventBus[E] {
+trait EventBus[E<:BusEvent] {
   def createEndpoint: EventBusEndpoint[E]
   def subscribe(endPoint: EventBusEndpoint[E]): ActorRef
-  def publish(event: E)
+  def publish(event: E):Future[Unit]
 }
 
-trait EventBusEndpoint[E] {
+trait EventBusEndpoint[E<:BusEvent] {
   def onReceive(f: E => Any)
-  def publish(event: E)
+  def publish(event: E):Future[Unit]
   def receive(event: E)
 }
 
@@ -23,7 +25,7 @@ class EventBusEndpointActor[E <: BusEvent](e: EventBusEndpoint[E]) extends Actor
   }
 }
 
-class DefaultBusEndpoint[E](eventBus: EventBus[E]) extends EventBusEndpoint[E] {
+class DefaultBusEndpoint[E<:BusEvent](eventBus: EventBus[E]) extends EventBusEndpoint[E] {
 
   private val onReceiveCompletions = scala.collection.mutable.ListBuffer[E => Any]()
 
@@ -36,3 +38,5 @@ class DefaultBusEndpoint[E](eventBus: EventBus[E]) extends EventBusEndpoint[E] {
   def receive(event: E) =
     onReceiveCompletions.map(completion => completion(event))
 }
+
+case class DaoMutationEvent(entityType:String,indexName:String,typeName:String,id:Id[_]) extends BusEvent

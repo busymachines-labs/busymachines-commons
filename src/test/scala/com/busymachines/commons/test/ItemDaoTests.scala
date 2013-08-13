@@ -20,8 +20,9 @@ import com.busymachines.commons.dao.SearchCriteria
 import scala.concurrent.Future
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Page
+import com.busymachines.commons.Logging
 
-class ItemDaoTests extends FlatSpec {
+class ItemDaoTests extends FlatSpec with Logging {
 
   val esIndex = new EmptyESTestIndex(getClass)
   val dao = new ESRootDao[Item](esIndex, ESType("item", ItemMapping))

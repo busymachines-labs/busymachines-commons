@@ -12,8 +12,10 @@ import org.elasticsearch.node.NodeBuilder.nodeBuilder
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import scala.collection.concurrent.TrieMap
 import java.util.concurrent.atomic.AtomicBoolean
+import com.busymachines.commons.event.EventBus
+import com.busymachines.commons.event.BusEvent
 
-class ESIndex(_client: ESClient, val name : String) {
+class ESIndex(_client: ESClient, val name : String,eventBus:EventBus[BusEvent]) {
 
   type InitializeHandler = () => Unit
   
@@ -21,6 +23,8 @@ class ESIndex(_client: ESClient, val name : String) {
   private val nrOfReplicas = _client.config.numberOfShards
   private val initializeHandlers = TrieMap[InitializeHandler, Unit]()
   private var initialized = new AtomicBoolean(false)
+  
+  lazy val bus = eventBus
   
   lazy val client = {
     initialize

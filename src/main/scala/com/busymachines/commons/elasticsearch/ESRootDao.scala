@@ -30,23 +30,37 @@ import org.elasticsearch.action.search.SearchType
 import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.Page
+import com.busymachines.commons.event.DaoMutationEvent
 
 object ESRootDao {
-  implicit def toResults[T <: HasId[T]](f : Future[SearchResult[T]])(implicit ec : ExecutionContext) = f.map(_.result)
+  implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
 }
 
 class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implicit ec: ExecutionContext) extends ESDao[T](t.name) with RootDao[T] with Logging {
 
   val client = index.client
   val mapping = t.mapping
-
+  //val busEndpoint = index.bus.createEndpoint
   // Add mapping.
   index.onInitialize { () =>
-	  val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
-	  debug(mappingConfiguration)
-	  client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
+    val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
+    debug(mappingConfiguration)
+    client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
   }
 
+  protected def preMutate(entity: T): Future[Unit] =
+    Future.successful()
+
+  protected def postMutate(entity: T): Future[Unit] =
+    Future.successful()
+    /*
+    busEndpoint.publish(DaoMutationEvent(
+        entityType = getClass.toString,
+        indexName = index.name,
+        typeName = "",
+        id = entity.id
+        ))
+	*/
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
     query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id => id.toString): _*))
 
@@ -61,10 +75,10 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
     }
   }
 
-  def search(criteria: SearchCriteria[T], page : Page = Page.first, facets : Seq[FacetField] = Seq.empty): Future[SearchResult[T]] = {
+  def search(criteria: SearchCriteria[T], page: Page = Page.first, facets: Seq[FacetField] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
-        val request = 
+        val request =
           client.javaClient.prepareSearch(index.name)
             .setTypes(t.name)
             .setFilter(criteria.toFilter)
@@ -76,7 +90,8 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
             val json = hit.sourceAsString.asJson
             val version = json.getESVersion
             Versioned(json.convertFromES(mapping), version)
-        }, Some(result.getHits.getTotalHits))}
+          }, Some(result.getHits.getTotalHits))
+        }
       case _ =>
         throw new Exception("Expected ElasticSearch search criteria")
     }
@@ -96,7 +111,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
 
-    client.execute(request).map(response => Versioned(entity, response.getVersion.toString))
+    preMutate(entity) flatMap { _ =>
+      client.execute(request).map(response => Versioned(entity, response.getVersion.toString)) flatMap { storedEntity =>
+        postMutate(storedEntity) map { _ => storedEntity }
+      }
+    }
   }
 
   def modify(id: Id[T], refreshAfterMutation: Boolean)(modify: T => T): Future[Versioned[T]] = {
@@ -119,19 +138,33 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
     // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
-    client.execute(request).map(response => Versioned(entity.entity, response.getVersion.toString))
-  }
-
-  def delete(id: Id[T], refreshAfterMutation: Boolean): Future[Unit] = {
-    val request = new DeleteRequest(index.name, t.name, id.toString).refresh(refreshAfterMutation)
-
-    client.execute(request) map {
-      response =>
-        if (response.isNotFound) {
-          throw new IdNotFoundException(id.toString, t.name)
-        }
+    preMutate(entity) flatMap { _ =>
+      client.execute(request).map(response => Versioned(entity.entity, response.getVersion.toString)) flatMap { mutatedEntity =>
+        postMutate(mutatedEntity.entity) map { _ => mutatedEntity }
+      }
     }
   }
+
+  def delete(id: Id[T], refreshAfterMutation: Boolean = true): Future[Unit] =
+    retrieve(id) map (entity => {
+      val request = new DeleteRequest(index.name, t.name, id.toString).refresh(refreshAfterMutation)
+      (entity match {
+        case None => Future.successful()
+        case Some(e) => preMutate(e)
+      }) flatMap { _ =>
+        client.execute(request) map {
+          response =>
+            if (response.isNotFound) {
+              throw new IdNotFoundException(id.toString, t.name)
+            }
+        }
+      } flatMap { _ =>
+        (entity match {
+          case None => Future.successful()
+          case Some(e) => preMutate(e)
+        })
+      }
+    })
 
   def query(queryBuilder: QueryBuilder): Future[List[Versioned[T]]] = {
     val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).request
@@ -169,6 +202,6 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
       case entities => entities
     })
   }
-  
-  implicit def toResults(f : Future[SearchResult[T]]) = ESRootDao.toResults(f)
+
+  implicit def toResults(f: Future[SearchResult[T]]) = ESRootDao.toResults(f)
 }

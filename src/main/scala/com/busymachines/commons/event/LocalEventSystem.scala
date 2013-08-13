@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.actor.ActorRef
 import akka.actor.Props
 import com.busymachines.commons.Logging
+import scala.concurrent.Future
 
 class LocalEventBus[E <: BusEvent](actorSystem: ActorSystem) extends EventBus[E] with Logging {
   def createEndpoint: EventBusEndpoint[E] = {
@@ -18,8 +19,9 @@ class LocalEventBus[E <: BusEvent](actorSystem: ActorSystem) extends EventBus[E]
     actorRef
   }
   
-  def publish(event: E) = {
+  def publish(event: E):Future[Unit] = {
     debug(s"Published event $event")
     actorSystem.eventStream.publish(event)
+    Future.successful()
   }
 }
