@@ -39,4 +39,6 @@ class DefaultBusEndpoint(eventBus: EventBus) extends EventBusEndpoint {
     onReceiveCompletions.map(completion => completion(event))
 }
 
-case class DaoMutationEvent(entityType:String,indexName:String,typeName:String,id:Id[_]) extends BusEvent
+case class DaoMutationEvent(entityType:String,indexName:String,typeName:String,id:Id[_]) extends BusEvent {
+  def forEntityType[T] = ???
+}
