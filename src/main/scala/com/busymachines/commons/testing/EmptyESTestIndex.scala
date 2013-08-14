@@ -7,6 +7,7 @@ import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.event.EventBus
 import com.busymachines.commons.event.BusEvent
 import com.busymachines.commons.event.LocalEventBus
+import com.busymachines.commons.event.DoNothingEventSystem
 
 object EmptyESTestIndex {
   private val usedIndexes = concurrent.TrieMap[String, Int]()
@@ -15,11 +16,13 @@ object EmptyESTestIndex {
     usedIndexes(baseName) = i + 1
     baseName + (if (i > 0) i else "")
   }
+  lazy val doNothingEventBus = new DoNothingEventSystem
   lazy val client = new ESClient(new ESConfiguration) }
 
-class EmptyESTestIndex(name : String) extends ESIndex(EmptyESTestIndex.client, EmptyESTestIndex.getNextName("test-" + name),null) {
+class EmptyESTestIndex(name : String,eventBus:EventBus) extends ESIndex(EmptyESTestIndex.client, EmptyESTestIndex.getNextName("test-" + name),eventBus) {
   
-  def this(c : Class[_]) = this(c.getName.toLowerCase)
+  def this(c : Class[_],eventBus:EventBus) = this(c.getName.toLowerCase,eventBus)
+  def this(c : Class[_]) = this(c.getName.toLowerCase,EmptyESTestIndex.doNothingEventBus)
 
   drop
   initialize
