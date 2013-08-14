@@ -65,6 +65,7 @@ object UserMapping extends ESMapping[User] {
   val phoneNumbers = "phoneNumbers" as Nested(PhoneNumberMapping)
   val emailAddresses = "emailAddresses" as Nested(EmailMapping)
   val roles = "roles" as String & NotAnalyzed
+  val logins = "logins" as String & NotAnalyzed
 }
 
 object UserRoleMapping extends ESMapping[UserRole] {

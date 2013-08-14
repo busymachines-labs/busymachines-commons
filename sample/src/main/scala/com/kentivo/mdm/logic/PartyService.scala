@@ -11,18 +11,36 @@ import com.kentivo.mdm.db.PartyDao
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import com.kentivo.mdm.db.LoginDao
+import com.kentivo.mdm.domain.Login
 
-class PartyService(partyDao : PartyDao, loginDao : LoginDao)(implicit ec : ExecutionContext) {
+class PartyService(partyDao: PartyDao, loginDao: LoginDao)(implicit ec: ExecutionContext) {
 
   private val partyCache = LruCache[Option[Party]](2000, 50, 7 days, 8 hours)
 
-  
-  def authenticate(email : String, password : String)  = {
-    loginDao.findByEmail(email).map {
-      case Some(Versioned(login, version)) =>
+  /**
+   * Authenticate a user by its clear-text password.
+   */
+  def authenticate(email: String, password: String): Future[Option[(Party, User, Login)]] = {
+    loginDao.findByEmail(email).flatMap {
+      case Some(Versioned(login, _)) =>
+
+        // check password
+        if (login.withClearTextPassword(password).password == login.password) {
+
+          // find corresponding party and user
+          partyDao.findByLoginId(login.id).map {
+            case Some(Versioned(party, _)) =>
+              party.users.find(_.logins.exists(_.id == login.id)) match {
+                case Some(user) => Some((party, user, login))
+                case None => None
+              }
+            case None => None
+          }
+        } else Future.successful(None)
+      case None => Future.successful(None)
     }
   }
-  
+
   def list(implicit auth: AuthenticationData): List[Party] = {
     Nil
   }
@@ -38,7 +56,7 @@ class PartyService(partyDao : PartyDao, loginDao : LoginDao)(implicit ec : Execu
    * Find a specific party by id.
    */
   def getParty(partyId: Id[Party]): Future[Option[Party]] = {
-   partyCache(partyId, () => partyDao.retrieve(partyId).map(_.map(_.entity)))
+    partyCache(partyId, () => partyDao.retrieve(partyId).map(_.map(_.entity)))
   }
 
   /**

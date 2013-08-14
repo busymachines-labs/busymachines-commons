@@ -104,13 +104,3 @@ object EmailKind extends Enumeration {
   val Other = Value("other")
 }
 
-case class Login (
-  id : Id[Login] = Id.generate,
-  email : String, 
-  salt : String = Random.nextString(8),
-  password : Array[Byte] = Array.empty) {
-  
-  def withPassword(password: String) = 
-    this.copy(password = (salt + password).sha256Hash)
-}
-
