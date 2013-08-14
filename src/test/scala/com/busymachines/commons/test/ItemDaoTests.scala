@@ -21,10 +21,11 @@ import scala.concurrent.Future
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.Logging
+import com.busymachines.commons.event.DoNothingEventSystem
 
 class ItemDaoTests extends FlatSpec with Logging {
 
-  val esIndex = new EmptyESTestIndex(getClass)
+  val esIndex = new EmptyESTestIndex(getClass,new DoNothingEventSystem)
   val dao = new ESRootDao[Item](esIndex, ESType("item", ItemMapping))
   val nestedDao = new ESNestedDao[Item, Property]("properties") {
     def parentDao = dao
