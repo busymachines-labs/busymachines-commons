@@ -1,8 +1,9 @@
 package com.busymachines.commons.cache
 
-import scala.language.postfixOps
 import scala.concurrent.ExecutionContext
+import scala.language.postfixOps
 import scala.concurrent.Future
+import scala.concurrent.Future.sequence
 import spray.caching.{ Cache => SprayCache }
 import spray.caching.ExpiringLruCache
 import scala.concurrent.duration.Duration
@@ -41,17 +42,8 @@ class Cache[K, V](val cache: SprayCache[V]) {
   def remove(key: K): Option[Future[V]] =
     cache.remove(key)
 
-  def remove(keys: Set[K])(implicit executor: ExecutionContext): Future[Map[K, Option[V]]] = {
-    Future.sequence(keys.map(key => cache.remove(key)).map(_ match {
-      case None => Future.successful(None)
-      case Some(f) => f
-    })) map { results =>
-      (keys zip (results)).map(t => t._1 ->
-        (t._2.asInstanceOf[Option[V]] match {
-          case None => None
-          case Some(e) => Some(e)
-        })) toMap
-    }
+  def remove(keys: Set[K])(implicit executor: ExecutionContext): Map[K, Future[V]] = {
+    keys.flatMap(key => cache.remove(key).map(key -> _)).toMap
   }
 
   def clear =
