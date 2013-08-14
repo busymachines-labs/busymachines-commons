@@ -31,15 +31,13 @@ import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.event.DaoMutationEvent
-/*
-import scala.reflect.api.TypeTags.TypeTag
-*/
+import scala.reflect.ClassTag
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
 }
 
-class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implicit ec: ExecutionContext/*,tag: TypeTag[T]*/) extends ESDao[T](t.name) with RootDao[T] with Logging {
+class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T])(implicit ec: ExecutionContext, tag: ClassTag[T]) extends ESDao[T](t.name) with RootDao[T] with Logging {
 
   val client = index.client
   val mapping = t.mapping
@@ -56,7 +54,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat](index: ESIndex, t: ESType[T])(implici
 
   protected def postMutate(entity: T): Future[Unit] =
     busEndpoint.publish(DaoMutationEvent(
-      entityType = getClass.getCanonicalName,
+      entityType = tag.runtimeClass.getCanonicalName,
       indexName = index.name,
       typeName = t.name,
       id = entity.id))
