@@ -15,31 +15,20 @@ import scala.concurrent.Future
 
 class DistributedEventBus(actorSystem: ActorSystem, topic: String = "all") extends EventBus {
 
-  private val localEndpoints: scala.collection.mutable.Map[EventBusEndpoint, ActorRef] = scala.collection.mutable.Map[EventBusEndpoint, ActorRef]()
+  private val localSubscribers: scala.collection.mutable.ListBuffer[ActorRef] = scala.collection.mutable.ListBuffer[ActorRef]()
 
-  private val subscriber = actorSystem.actorOf(Props(classOf[DistributedSubscriber], topic, {
+  private val distributedSubscriber = actorSystem.actorOf(Props(classOf[DistributedSubscriber], topic, {
     event: BusEvent =>
-      localEndpoints.map { case (endpoint, actor) => actor ! event }
+      localSubscribers.map { case actor => actor ! event }
   }))
 
   private val publisher = actorSystem.actorOf(Props(classOf[DistributedPublisher], topic))
 
-  def createEndpoint: EventBusEndpoint = {
-    val endPoint = new DefaultBusEndpoint(this)
-    this.subscribe(endPoint)
-    endPoint
-  }
+  def subscribe(f: BusEvent => Any): Unit = 
+    localSubscribers += actorSystem.actorOf(Props(classOf[EventBusEndpointActor], f))
 
-  def subscribe(endPoint: EventBusEndpoint): ActorRef = {
-    val actorRef = actorSystem.actorOf(Props(classOf[EventBusEndpointActor], endPoint))
-    localEndpoints.put(endPoint, actorRef)
-    actorRef
-  }
-
-  def publish(event: BusEvent):Future[Unit] = {
+  def publish(event: BusEvent):Unit = 
     publisher ! event
-    Future.successful()
-  }
 }
 
 class DistributedSubscriber(topic: String, onReceiveCompletion: BusEvent => Any) extends Actor with ActorLogging {

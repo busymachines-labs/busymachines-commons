@@ -10,40 +10,19 @@ import java.util.UUID
 trait BusEvent
 
 trait EventBus {
-  def createEndpoint: EventBusEndpoint
-  def subscribe(endPoint: EventBusEndpoint): ActorRef
-  def publish(event: BusEvent):Future[Unit]
-}
-
-trait EventBusEndpoint {
-  def onReceive(f: BusEvent => Any)
-  def publish(event: BusEvent):Future[Unit]
-  def receive(event: BusEvent)
-}
-
-class EventBusEndpointActor(e: EventBusEndpoint) extends Actor {
-  def receive = {
-    case event: BusEvent => e.receive(event.asInstanceOf[BusEvent])
-  }
-}
-
-class DefaultBusEndpoint(eventBus: EventBus) extends EventBusEndpoint {
-
-  private val onReceiveCompletions = scala.collection.mutable.ListBuffer[BusEvent => Any]()
-
-  def publish(event: BusEvent) =
-    eventBus.publish(event)
-
-  def onReceive(f: BusEvent => Any) =
-    onReceiveCompletions += f
-
-  def receive(event: BusEvent) =
-    onReceiveCompletions.map(completion => completion(event))
+  def subscribe(f: BusEvent => Any): Unit
+  def publish(event: BusEvent):Unit
 }
 
 object DaoMutationEvent {
   def apply(entityType:Class[_],indexName:String,typeName:String,id:String) = 
     new DaoMutationEvent(entityType.getName.replaceAllLiterally("$", ""),indexName,typeName,id)  
+}
+
+class EventBusEndpointActor(f:BusEvent => Any) extends Actor {
+  def receive = {
+    case event: BusEvent => f(event)
+  }
 }
 
 case class DaoMutationEvent(entityType:String,indexName:String,typeName:String,id:String) extends BusEvent {

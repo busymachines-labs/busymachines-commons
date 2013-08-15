@@ -14,21 +14,17 @@ class EventBusEndpointTests extends FlatSpec  {
     val actorSystem = ActorSystem("aurum")
     val localEventBus = new LocalEventBus(actorSystem)
 
-    val endpoint = localEventBus.createEndpoint
-
-    endpoint onReceive {
+    localEventBus subscribe {
       event: BusEvent =>
         enpointReceived1 = true
     }
 
-    endpoint onReceive {
+    localEventBus subscribe {
       event: BusEvent =>
         enpointReceived2 = true
     }
 
-    val endpoint2 = localEventBus.createEndpoint
-
-    endpoint2.publish(new BusEvent {})
+    localEventBus.publish(new BusEvent {})
 
     Thread.sleep(1000)
     

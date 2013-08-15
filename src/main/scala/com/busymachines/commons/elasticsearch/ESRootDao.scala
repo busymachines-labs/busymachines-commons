@@ -41,7 +41,6 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
   val client = index.client
   val mapping = t.mapping
-  val busEndpoint = index.bus.createEndpoint
   // Add mapping.
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
@@ -53,11 +52,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     Future.successful()
 
   protected def postMutate(entity: T): Future[Unit] =
-    busEndpoint.publish(DaoMutationEvent(
+    Future.successful(index.bus.publish(DaoMutationEvent(
       entityType = tag.runtimeClass,
       indexName = index.name,
       typeName = t.name,
-      id = entity.id.toString))
+      id = entity.id.toString)))
 
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
     query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id => id.toString): _*))
