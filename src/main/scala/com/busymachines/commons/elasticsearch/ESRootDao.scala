@@ -59,7 +59,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       id = entity.id.toString)))
 
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
-    query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id => id.toString): _*))
+    query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id => id.toString): _*), Page.all) map { result => result.result }
 
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]] = {
     val request = new GetRequest(index.name, t.name, id.toString)
@@ -163,16 +163,19 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       }
     })
 
-  def query(queryBuilder: QueryBuilder): Future[List[Versioned[T]]] = {
-    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).request
-    client.execute(request).map(_.getHits.hits.toList.map { hit =>
-      val json = hit.sourceAsString.asJson
-      val version = json.getESVersion
-      Versioned(json.convertFromES(mapping), version)
-    })
+  def query(queryBuilder: QueryBuilder, page: Page): Future[SearchResult[T]] = {
+    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).setFrom(page.from).setSize(page.size).request
+    client.execute(request).map { result =>
+      SearchResult(result.getHits.hits.toList.map { hit =>
+        val json = hit.sourceAsString.asJson
+        val version = json.getESVersion
+        Versioned(json.convertFromES(mapping), version)
+      }, Some(result.getHits.getTotalHits))
+    }
   }
 
-  def query(queryStr: String): Future[List[Versioned[T]]] = query(new QueryStringQueryBuilder(queryStr))
+  def queryWithString(queryStr: String, page: Page): Future[SearchResult[T]] =
+    query(new QueryStringQueryBuilder(queryStr), page)
 
   protected def doSearch(filter: FilterBuilder): Future[List[Versioned[T]]] = {
     val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setFilter(filter).request
