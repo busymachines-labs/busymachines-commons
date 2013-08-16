@@ -33,7 +33,7 @@ private[elasticsearch] object MediaMapping extends ESMapping[HashedMedia] {
   val data = "data" as String & NotIndexed
 }
 
-class MediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends Logging {
+class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends Logging {
 
   private val hasher = Hashing.md5
   private val encoding = BaseEncoding.base64Url
