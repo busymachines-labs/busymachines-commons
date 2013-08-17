@@ -9,14 +9,6 @@ import com.typesafe.config.ConfigFactory
 
 class RichConfig(config: Config) {
 
-  private def option[A](path: String, f: String => A) =
-    if (config.hasPath(path)) Some(f(path))
-    else None
-
-  private def seq[A, B](path: String, f: String => java.util.List[A]) =
-    if (config.hasPath(path)) f(path).toSeq
-    else Nil
-
   def getStringOption(path: String): Option[String] =
     option(path, config.getString).filterNot(_ == "")
 
@@ -57,20 +49,16 @@ class RichConfig(config: Config) {
     config.getMilliseconds(path).longValue.millis
 
   def getDurationOption(path: String): Option[Duration] =
-    if (config.hasPath(path)) Some(getDuration(path))
-    else None
+    option(path, getDuration)
 
   def getDurationSeq(path: String): Seq[Duration] =
-    if (config.hasPath(path)) config.getMillisecondsList(path).map(_.longValue.millis).toSeq
-    else Nil
+    seq(path, config.getMillisecondsList(_).map(_.longValue.millis))
 
   def getConfigOption(path: String): Option[Config] =
-    if (config.hasPath(path)) Some(config.getConfig(path))
-    else None
+    option(path, config.getConfig)
 
   def getConfigOrEmpty(path: String): Config =
-    if (config.hasPath(path)) config.getConfig(path)
-    else ConfigFactory.empty
+    getConfigOption(path).getOrElse(ConfigFactory.empty)
 
   def mkString(sep: String) =
     toSeq.mkString(sep)
@@ -86,4 +74,12 @@ class RichConfig(config: Config) {
       }
     }
   }
+  
+  private def option[A](path: String, f: String => A) =
+    if (config.hasPath(path)) Some(f(path))
+    else None
+
+  private def seq[A, B](path: String, f: String => java.util.List[A]) =
+    if (config.hasPath(path)) f(path).toSeq
+    else Nil
 }
