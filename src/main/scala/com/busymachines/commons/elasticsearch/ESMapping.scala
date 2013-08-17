@@ -49,6 +49,8 @@ class ESMapping[A] extends Logging {
   
   protected var _allProperties : Properties[A] = Properties(Nil)
   
+  val _all = ESProperty("_all", "_all", String)
+  
   def allProperties = _allProperties
   
   def mappingConfiguration(doctype : String): String = 
