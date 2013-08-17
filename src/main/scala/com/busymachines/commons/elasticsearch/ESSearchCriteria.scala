@@ -10,17 +10,27 @@ trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def toFilter: FilterBuilder
   def &&(other: ESSearchCriteria[A]) =
     ESSearchCriteria.And(other)
+  def ||(other: ESSearchCriteria[A]) =
+    ESSearchCriteria.Or(other)
 }
 
 object ESSearchCriteria {
   class Delegate[A](criteria: => ESSearchCriteria[A]) extends ESSearchCriteria[A] {
     def toFilter = criteria.toFilter
   }
-  case class And[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
+  
+case class And[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
     override def &&(other: ESSearchCriteria[A]) =
       And((children.toSeq :+ other): _*)
     def toFilter = FilterBuilders.andFilter(children.map(_.toFilter): _*)
   }
+
+case class Or[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
+    override def ||(other: ESSearchCriteria[A]) =
+      Or((children.toSeq :+ other): _*)
+    def toFilter = FilterBuilders.orFilter(children.map(_.toFilter): _*)
+  }
+
 
   case class Equals[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter =
