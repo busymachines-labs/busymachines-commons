@@ -48,9 +48,7 @@ class ESMapping[A] extends Logging {
   import ESMapping._
   
   protected var _allProperties : Properties[A] = Properties(Nil)
-  
-  //val _all = ESProperty("_all", "_all", String)
-  
+   
   def allProperties = _allProperties
   
   def mappingConfiguration(doctype : String): String = 
@@ -83,6 +81,7 @@ class ESMapping[A] extends Logging {
   val IncludeInAll = Option("include_in_all","true")
   def Nested[T](properties : Properties[T]) : Options[T] = Options(Option("type", "nested"), Option("properties", properties))
   def Nested[T](mapping : ESMapping[T]) : Options[T] = Nested(mapping._allProperties)
+  val _all = ESProperty("_all", "_all", String)
   
   implicit class RichName(name : String) extends RichMappedName(name, name)
   
