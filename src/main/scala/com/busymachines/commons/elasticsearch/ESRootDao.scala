@@ -32,6 +32,8 @@ import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.event.DaoMutationEvent
 import scala.reflect.ClassTag
+import org.elasticsearch.search.sort.SortOrder
+import com.busymachines.commons.dao.SearchSort
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -72,7 +74,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  def search(criteria: SearchCriteria[T], page: Page = Page.first, facets: Seq[FacetField] = Seq.empty): Future[SearchResult[T]] = {
+  def search(criteria: SearchCriteria[T], page: Page = Page.first, sort:SearchSort=ESSearchSort.asc("_id"), facets: Seq[FacetField] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
         val request =
@@ -82,6 +84,8 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             .setSearchType(SearchType.DFS_QUERY_AND_FETCH)
             .setFrom(page.from)
             .setSize(page.size)
+            .addSort(sort.field, sort.order)
+            
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
@@ -164,7 +168,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     })
 
   def query(queryBuilder: QueryBuilder, page: Page): Future[SearchResult[T]] = {
-    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).setFrom(page.from).setSize(page.size).request
+    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).addSort("_id", SortOrder.ASC).setFrom(page.from).setSize(page.size).request
     client.execute(request).map { result =>
       SearchResult(result.getHits.hits.toList.map { hit =>
         val json = hit.sourceAsString.asJson
@@ -178,7 +182,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     query(new QueryStringQueryBuilder(queryStr), page)
 
   protected def doSearch(filter: FilterBuilder): Future[List[Versioned[T]]] = {
-    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setFilter(filter).request
+    val request = client.javaClient.prepareSearch(index.name).addSort("_id", SortOrder.ASC).setTypes(t.name).setFilter(filter).request
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
       val json = hit.sourceAsString.asJson
       val version = json.getESVersion

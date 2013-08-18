@@ -14,6 +14,7 @@ import spray.json.JsonFormat
 import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.dao.SearchResult
+import com.busymachines.commons.dao.SearchSort
 
 abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName : String)(implicit ec: ExecutionContext) extends ESDao[T](typeName) with NestedDao[P, T] {
 
@@ -114,6 +115,6 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
     }
   }
 
-  def search(criteria: SearchCriteria[T], page : Page = Page.first, facets : Seq[FacetField] = Seq.empty): Future[SearchResult[T]] =
+  def search(criteria: SearchCriteria[T], page : Page = Page.first, sort:SearchSort = ESSearchSort.asc("_id"), facets : Seq[FacetField] = Seq.empty): Future[SearchResult[T]] =
     ???
 }

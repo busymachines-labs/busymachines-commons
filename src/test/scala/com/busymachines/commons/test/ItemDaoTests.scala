@@ -7,6 +7,7 @@ import com.busymachines.commons.domain.CommonJsonFormats._
 import com.busymachines.commons.elasticsearch.ESSearchCriteria.Delegate
 import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
+import com.busymachines.commons.elasticsearch.ESSearchSort
 import com.busymachines.commons.implicits.richFuture
 import com.busymachines.commons.test.DomainJsonFormats.itemFormat
 import com.busymachines.commons.test.DomainJsonFormats.propertyFormat
@@ -129,5 +130,27 @@ class ItemDaoTests extends FlatSpec with Logging {
      assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page(0,5)).await.size === 5)
    
   }
+  
+    it should "search & sort" in {
+    val item1 = Item(name = "D Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "C Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item3 = Item(name = "B Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item4 = Item(name = "A Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item5 = Item(name = "E Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+
+    dao.create(item1, true).await
+    dao.create(item2, true).await
+    dao.create(item3, true).await
+    dao.create(item4, true).await
+    dao.create(item5, true).await
+    
+    
+    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all,ESSearchSort.asc("name")).await.result(0).name === "A Sample item")
+    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all,ESSearchSort.asc("name")).await.result(1).name === "B Sample item")
+    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all,ESSearchSort.asc("name")).await.result(2).name === "C Sample item")
+    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all,ESSearchSort.asc("name")).await.result(3).name === "D Sample item")
+    
+    //assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all).await === dao.search(ItemMapping.id in item2.id::item1.id::item3.id::item4.id::item5.id::Nil,Page.all).await)
+    }
   
 }
