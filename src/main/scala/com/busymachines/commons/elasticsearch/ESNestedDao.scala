@@ -51,7 +51,7 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
     }.map(_.flatten)
   }
 
-  def create(id : Id[P], entity: T, refreshAfterMutation : Boolean): Future[Versioned[T]] = {
+  def create(id : Id[P], entity: T, refreshAfterMutation : Boolean = true): Future[Versioned[T]] = {
     retrieve(entity.id) flatMap {
       case Some(Versioned(entity, _)) => 
         throw new IdAlreadyExistsException(entity.id.toString, typeName)
@@ -68,7 +68,7 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
 	  }
   }
   
-  def modify(id : Id[T], refreshAfterMutation : Boolean)(f : T => T) : Future[Versioned[T]] = {
+  def modify(id : Id[T], refreshAfterMutation : Boolean = true)(f : T => T) : Future[Versioned[T]] = {
     retrieveParent(id) flatMap {
       case None => throw new IdNotFoundException(id.toString, typeName)
       case Some(Versioned(parent, version)) =>
@@ -84,7 +84,7 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
     }
   }
   
-  def update(entity: Versioned[T], refreshAfterMutation : Boolean): Future[Versioned[T]] = {
+  def update(entity: Versioned[T], refreshAfterMutation : Boolean = true): Future[Versioned[T]] = {
     retrieveParent(entity.entity.id) flatMap {
       case None => throw new IdNotFoundException(entity.entity.id.toString, typeName)
       case Some(Versioned(parent, _)) =>
@@ -99,7 +99,7 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
     }
   }
 
-  def delete(id : Id[T], refreshAfterMutation : Boolean) : Future[Unit] = {
+  def delete(id : Id[T], refreshAfterMutation : Boolean = true) : Future[Unit] = {
     retrieveParent(id) flatMap {
       case None => throw new IdNotFoundException(id.toString, typeName)
       case Some(Versioned(parent, version)) =>

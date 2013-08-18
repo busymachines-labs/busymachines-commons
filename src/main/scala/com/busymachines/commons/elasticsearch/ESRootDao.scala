@@ -94,7 +94,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  def create(entity: T, refreshAfterMutation: Boolean): Future[Versioned[T]] = {
+  def create(entity: T, refreshAfterMutation: Boolean = true): Future[Versioned[T]] = {
     val json = entity.convertToES(mapping)
     val request = new IndexRequest(index.name, t.name)
       .id(entity.id.toString)
@@ -115,7 +115,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  def modify(id: Id[T], refreshAfterMutation: Boolean)(modify: T => T): Future[Versioned[T]] = {
+  def modify(id: Id[T], refreshAfterMutation: Boolean = true)(modify: T => T): Future[Versioned[T]] = {
     retrieve(id).flatMap {
       case None => throw new IdNotFoundException(id.toString, t.name)
       case Some(Versioned(entity, version)) =>
@@ -123,7 +123,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  def update(entity: Versioned[T], refreshAfterMutation: Boolean): Future[Versioned[T]] = {
+  def update(entity: Versioned[T], refreshAfterMutation: Boolean = true): Future[Versioned[T]] = {
     val newJson = entity.entity.convertToES(mapping).withESVersion(entity.version)
     val request = new IndexRequest(index.name, t.name)
       .refresh(refreshAfterMutation)
