@@ -14,8 +14,9 @@ import spray.routing.Route
 import spray.routing.RoutingSettings
 import spray.routing.directives.LogEntry
 import spray.routing.ExceptionHandler
+import spray.routing.HttpService
 
-class HttpServer(routes : Route*)(implicit actorSystem: ActorSystem) extends Logging {
+abstract class HttpServer(implicit actorSystem : ActorSystem) extends CommonHttpService with Logging {
 
   private implicit def eh = exceptionHandler
   private implicit def rs = routingSettings
@@ -25,7 +26,7 @@ class HttpServer(routes : Route*)(implicit actorSystem: ActorSystem) extends Log
   val exceptionHandler : ExceptionHandler = ExceptionHandler.default
   val routingSettings = RoutingSettings(actorSystem)
 
-  def route = routes.reduce((r1, r2) => r1 ~ r2)
+  def route : Route
 
   class Actor extends HttpServiceActor {
     val theRoute = route
