@@ -11,12 +11,12 @@ object CommonConfig {
   }
   val defaultConfig = ConfigFactory.load(getClass.getClassLoader)
   val fileConfigs = configFiles.map(config => ConfigFactory.parseURL(new URL(config)))
-  val globalConfig = fileConfigs.foldRight(defaultConfig)((config, defaultConfig) => config.withFallback(defaultConfig))
+  val config = fileConfigs.foldRight(defaultConfig)((config, defaultConfig) => config.withFallback(defaultConfig))
 
-  val devmode = globalConfig.getBooleanOption("busymachines.devmode") getOrElse false
+  val devmode = config.getBooleanOption("busymachines.devmode") getOrElse false
 }
 
 class CommonConfig(baseName : String) {
-  val globalConfig = CommonConfig.globalConfig
+  val globalConfig = CommonConfig.config
   lazy val config = globalConfig.getConfigOrEmpty(baseName) 
 }
