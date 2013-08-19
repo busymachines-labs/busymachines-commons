@@ -8,6 +8,6 @@ object ESClient {
   implicit def toEsClient(client : ESClient) = new org.scalastuff.esclient.ESClient(client)
 }
 
-class ESClient(val config : ESConfiguration) extends TransportClient(ImmutableSettings.settingsBuilder().put("cluster.name", config.clusterName)) {
+class ESClient(val config : ESConfig) extends TransportClient(ImmutableSettings.settingsBuilder().put("cluster.name", config.clusterName)) {
   addTransportAddresses(config.hostNames.map(new InetSocketTransportAddress(_, config.port)): _*)
 } 

@@ -1,11 +1,10 @@
 package com.busymachines.commons.elasticsearch
 
 import com.busymachines.commons.implicits._
-import com.busymachines.commons.HasConfiguration
+import com.busymachines.commons.CommonConfig
 
-class ESConfiguration extends HasConfiguration {
+class ESConfig(baseName: String) extends CommonConfig(baseName) {
   def clusterName = config.getStringOption("clusterName") getOrElse "elasticsearch"
-  def indexName = config.getString("indexName") 
   def hostNames = config.getStringSeq("hostNames") nonEmptyOrElse Seq("localhost")
   def numberOfShards = config.getIntOption("numberOfShards") getOrElse 1
   def numberOfReplicas = config.getIntOption("numberOfReplicas") getOrElse 0

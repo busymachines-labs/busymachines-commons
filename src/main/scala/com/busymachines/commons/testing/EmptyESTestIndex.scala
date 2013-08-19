@@ -2,7 +2,7 @@ package com.busymachines.commons.testing
 
 import scala.collection.concurrent
 import com.busymachines.commons.elasticsearch.ESClient
-import com.busymachines.commons.elasticsearch.ESConfiguration
+import com.busymachines.commons.elasticsearch.ESConfig
 import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.event.EventBus
 import com.busymachines.commons.event.BusEvent
@@ -17,7 +17,7 @@ object EmptyESTestIndex {
     baseName + (if (i > 0) i else "")
   }
   lazy val doNothingEventBus = new DoNothingEventSystem
-  lazy val client = new ESClient(new ESConfiguration) }
+  lazy val client = new ESClient(new ESConfig("test.busymachines.db.elasticsearch")) }
 
 class EmptyESTestIndex(name : String,eventBus:EventBus) extends ESIndex(EmptyESTestIndex.client, EmptyESTestIndex.getNextName("test-" + name),eventBus) {
   

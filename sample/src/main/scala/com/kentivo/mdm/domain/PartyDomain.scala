@@ -5,6 +5,7 @@ import com.busymachines.commons.implicits._
 import scala.util.Random
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
+import com.busymachines.commons.domain.Credentials
 
 case class Party (
   
@@ -57,7 +58,7 @@ case class UserRole (
 
 case class User (
   id : Id[User] = Id.generate,
-  logins : List[Id[Login]] = Nil,
+  logins : List[Id[Credentials]] = Nil,
   firstName : String = "",
   middleName : String = "",
   lastName : String = "",

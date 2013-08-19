@@ -31,16 +31,16 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
   implicit val credentialsFormat = jsonFormat3(Credentials)
   
   def route: RequestContext => Unit =
-    path("users" / "authentication") { 
-      post {
-       entity(as[Credentials]) { 
-         case Credentials(email, password, _) =>
-           authenticator.authenticateUser(email, password).map {
-             case Some()
-           }
-       }
-      }
-    } ~
+//    path("users" / "authentication") { 
+//      post {
+//       entity(as[Credentials]) { 
+//         case Credentials(email, password, _) =>
+//           authenticator.authenticateUser(email, password).map {
+//             case Some()
+//           }
+//       }
+//      }
+//    } ~
     path("users" / MatchId[User] / "authentication") { userId =>
       // Check if user is authenticated.
       get {
@@ -53,7 +53,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
       } ~
         // Log in a specific user. Password will be in the body, in json format.  
         post {
-          entity(as[AuthenticationUser]) { authenticationUser =>
+          entity(as[Credentials]) { authenticationUser =>
             authenticator.authenticateUser(userName, authenticationUser.password, authenticationUser.partyName) match {
               case Some(AuthenticationToken(token)) => {
                 val message = "User %s has been succesfully logged in".format(userName)
