@@ -19,9 +19,12 @@ import spray.http.ContentTypes
 
 // See https://developer.mozilla.org/en-US/docs/HTTP/Access_control_CORS
 
-trait CORSDirectives  { this: HttpService =>
+trait CORSDirectives { this: HttpService =>
   def respondWithCORSHeaders(origin: String) =
     respondWithHeaders(
+      HttpHeaders.`Access-Control-Allow-Methods`(HttpMethods.GET, HttpMethods.POST, HttpMethods.DELETE, HttpMethods.OPTIONS, HttpMethods.PUT),
+      HttpHeaders.`Access-Control-Allow-Headers`("X-Requested-With, Cache-Control, Pragma, Origin, Authorization, Content-Type, Auth-Token"),
+      HttpHeaders.`Access-Control-Expose-Headers`("Auth-Token"),
       HttpHeaders.`Access-Control-Allow-Origin`(origin),
       HttpHeaders.`Access-Control-Allow-Credentials`(true))
 
