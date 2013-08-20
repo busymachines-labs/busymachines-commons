@@ -7,64 +7,88 @@ import scala.concurrent.duration._
 import com.typesafe.config.impl.SimpleConfig
 import com.typesafe.config.ConfigFactory
 
-class RichConfig(config: Config) {
+class RichConfig(theConfig: Config) {
 
-  def getStringOption(path: String): Option[String] =
-    option(path, config.getString).filterNot(_ == "")
-
-  def getStringSeq(path: String): Seq[String] =
-    seq(path, config.getStringList)
-
-  def getIntOption(path: String): Option[Int] =
-    option(path, config.getInt)
-
-  def getIntSeq(path: String): Seq[Int] =
-    seq(path, config.getIntList(_).map(_.toInt))
-
-  def getLongOption(path: String): Option[Long] =
-    option(path, config.getLong)
-
-  def getLongSeq(path: String): Seq[Long] =
-    seq(path, config.getLongList(_).map(_.toLong))
-
-  def getDoubleOption(path: String): Option[Double] =
-    option(path, config.getDouble)
-
-  def getDoubleSeq(path: String): Seq[Double] =
-    seq(path, config.getDoubleList(_).map(_.toDouble))
+  def isDefined(path: String) = 
+    theConfig.hasPath(path)
+  
+  def string(path: String) = 
+    theConfig.getString(path)
     
-  def getBooleanOption(path: String): Option[Boolean] =
-    option(path, config.getBoolean)
+  def stringOption(path: String): Option[String] =
+    option(path, theConfig.getString).filterNot(_ == "")
 
-  def getBooleanSeq(path: String): Seq[Boolean] =
-    seq(path, config.getBooleanList(_).map(_.booleanValue))
+  def stringSeq(path: String): Seq[String] =
+    seq(path, theConfig.getStringList)
+
+  def int(path: String) = 
+    theConfig.getInt(path)
     
-  def getBytesOption(path: String): Option[Long] =
-    option(path, config.getBytes)
+  def intOption(path: String): Option[Int] =
+    option(path, theConfig.getInt)
 
-  def getBytesSeq(path: String): Seq[Long] =
-    seq(path, config.getBytesList(_).map(_.longValue))
+  def intSeq(path: String): Seq[Int] =
+    seq(path, theConfig.getIntList(_).map(_.toInt))
 
-  def getDuration(path: String): Duration =
-    config.getMilliseconds(path).longValue.millis
+  def long(path: String) = 
+    theConfig.getLong(path)
+    
+  def longOption(path: String): Option[Long] =
+    option(path, theConfig.getLong)
 
-  def getDurationOption(path: String): Option[Duration] =
-    option(path, getDuration)
+  def longSeq(path: String): Seq[Long] =
+    seq(path, theConfig.getLongList(_).map(_.toLong))
 
-  def getDurationSeq(path: String): Seq[Duration] =
-    seq(path, config.getMillisecondsList(_).map(_.longValue.millis))
+  def double(path: String) = 
+    theConfig.getDouble(path)
+    
+  def doubleOption(path: String): Option[Double] =
+    option(path, theConfig.getDouble)
 
-  def getConfigOption(path: String): Option[Config] =
-    option(path, config.getConfig)
+  def doubleSeq(path: String): Seq[Double] =
+    seq(path, theConfig.getDoubleList(_).map(_.toDouble))
+    
+  def boolean(path: String) = 
+    theConfig.getBoolean(path)
 
-  def getConfigOrEmpty(path: String): Config =
-    getConfigOption(path).getOrElse(ConfigFactory.empty)
+  def booleanOption(path: String): Option[Boolean] =
+    option(path, theConfig.getBoolean)
+    
+  def booleanSeq(path: String): Seq[Boolean] =
+    seq(path, theConfig.getBooleanList(_).map(_.booleanValue))
+    
+  def bytes(path: String) = 
+    theConfig.getBytes(path)
+
+  def bytesOption(path: String): Option[Long] =
+    option(path, theConfig.getBytes)
+
+  def bytesSeq(path: String): Seq[Long] =
+    seq(path, theConfig.getBytesList(_).map(_.longValue))
+
+  def duration(path: String): Duration =
+    theConfig.getMilliseconds(path).longValue.millis
+
+  def durationOption(path: String): Option[Duration] =
+    option(path, duration)
+
+  def durationSeq(path: String): Seq[Duration] =
+    seq(path, theConfig.getMillisecondsList(_).map(_.longValue.millis))
+    
+  def config(path: String) = 
+    theConfig.getConfig(path)
+
+  def configOption(path: String): Option[Config] =
+    option(path, theConfig.getConfig)
+
+  def configOrEmpty(path: String): Config =
+    configOption(path).getOrElse(ConfigFactory.empty)
 
   def mkString(sep: String) =
     toSeq.mkString(sep)
 
   def toSeq: Seq[String] =
-    toSeq("", config).sortWith(_ < _).map(x => x._1 + "=" + x._2)
+    toSeq("", theConfig).sortWith(_ < _).map(x => x._1 + "=" + x._2)
 
   private def toSeq(prefix: String, config: Config): Seq[(String, String)] = {
     config.entrySet.toSeq.flatMap { entry =>
@@ -76,10 +100,10 @@ class RichConfig(config: Config) {
   }
   
   private def option[A](path: String, f: String => A) =
-    if (config.hasPath(path)) Some(f(path))
+    if (theConfig.hasPath(path)) Some(f(path))
     else None
 
   private def seq[A, B](path: String, f: String => java.util.List[A]) =
-    if (config.hasPath(path)) f(path).toSeq
+    if (theConfig.hasPath(path)) f(path).toSeq
     else Nil
 }
