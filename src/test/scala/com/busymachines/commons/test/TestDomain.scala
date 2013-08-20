@@ -22,8 +22,8 @@ case class Property(
 case class Item(
   id: Id[Item] = Id.generate[Item],
   location:GeoPoint,
-  priceNormal : Double,
-  priceSale : Double,
+  priceNormal : Double = 0,
+  priceSale : Double = 0,
   validUntil: DateTime,
   name: String,
   properties: List[Property] = Nil) extends HasId[Item]
