@@ -153,11 +153,27 @@ class ItemDaoTests extends FlatSpec with Logging {
   }
 
   it should "search with gt/gte/lt/lte" in {
-    val item1 = Item(name = "D Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
-    val item2 = Item(name = "C Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item1 = Item(name = "D Sample item", priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "C Sample item", priceNormal = 2.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item1, true).await
     dao.create(item2, true).await
 
+    assert(dao.search(ItemMapping.priceNormal gt 0.0).await.size === 2)
+    assert(dao.search(ItemMapping.priceNormal gt 1.0).await.size === 1)
+    assert(dao.search(ItemMapping.priceNormal gt 2.0).await.size === 0)
+
+    assert(dao.search(ItemMapping.priceNormal gte 0.0).await.size === 2)
+    assert(dao.search(ItemMapping.priceNormal gte 1.0).await.size === 2)
+    assert(dao.search(ItemMapping.priceNormal gte 2.0).await.size === 1)
+
+    assert(dao.search(ItemMapping.priceNormal lt 0.0).await.size === 0)
+    assert(dao.search(ItemMapping.priceNormal lt 1.0).await.size === 0)
+    assert(dao.search(ItemMapping.priceNormal lt 2.0).await.size === 1)
+
+    assert(dao.search(ItemMapping.priceNormal lte 0.0).await.size === 0)
+    assert(dao.search(ItemMapping.priceNormal lte 1.0).await.size === 1)
+    assert(dao.search(ItemMapping.priceNormal lte 2.0).await.size === 2)
+    
   }
 
 }

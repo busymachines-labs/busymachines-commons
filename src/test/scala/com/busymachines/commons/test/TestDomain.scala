@@ -50,6 +50,8 @@ object ItemMapping extends ESMapping[Item] {
   val id = "id" -> "_id" as String & NotAnalyzed
   val location = "location" as GeoPoint
   val name = "name" as String & NotAnalyzed & IncludeInAll
+  val priceNormal = "priceNormal" as Double
+  val priceSale = "priceSale" as Double
   val validUntil = "validUntil" as Date & NotAnalyzed & IncludeInAll
   val properties = "properties" -> "item_properties" as Nested(PropertyMapping)
 }
