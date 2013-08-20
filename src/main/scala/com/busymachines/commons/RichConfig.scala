@@ -75,6 +75,15 @@ class RichConfig(theConfig: Config) {
   def durationSeq(path: String): Seq[Duration] =
     seq(path, theConfig.getMillisecondsList(_).map(_.longValue.millis))
     
+  def jodaDuration(path: String): org.joda.time.Duration = 
+    new org.joda.time.Duration(theConfig.getMilliseconds(path))
+    
+  def jodaDurationOption(path: String): Option[org.joda.time.Duration] = 
+    option(path, jodaDuration)
+  
+  def jodaDurationSeq(path: String): Seq[org.joda.time.Duration] = 
+    seq(path, theConfig.getMillisecondsList(_).map(new org.joda.time.Duration(_)))
+  
   def config(path: String) = 
     theConfig.getConfig(path)
 
