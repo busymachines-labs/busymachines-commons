@@ -7,7 +7,7 @@ import scala.concurrent.duration._
 import com.typesafe.config.impl.SimpleConfig
 import com.typesafe.config.ConfigFactory
 
-class RichConfig(theConfig: Config) {
+class RichConfig(val theConfig: Config) {
 
   def isDefined(path: String) = 
     theConfig.hasPath(path)
@@ -84,14 +84,18 @@ class RichConfig(theConfig: Config) {
   def jodaDurationSeq(path: String): Seq[org.joda.time.Duration] = 
     seq(path, theConfig.getMillisecondsList(_).map(new org.joda.time.Duration(_)))
   
-  def config(path: String) = 
-    theConfig.getConfig(path)
+  def apply(path: String) = 
+    config(path)
+    
+  def config(path: String) =
+    if (path.isEmpty) this
+    else new RichConfig(theConfig.getConfig(path))
 
-  def configOption(path: String): Option[Config] =
-    option(path, theConfig.getConfig)
+  def configOption(path: String): Option[RichConfig] =
+    option(path, config)
 
-  def configOrEmpty(path: String): Config =
-    configOption(path).getOrElse(ConfigFactory.empty)
+  def configOrEmpty(path: String): RichConfig =
+    configOption(path).getOrElse(new RichConfig(ConfigFactory.empty))
 
   def mkString(sep: String) =
     toSeq.mkString(sep)

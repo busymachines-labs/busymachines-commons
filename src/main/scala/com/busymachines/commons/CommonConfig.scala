@@ -19,6 +19,4 @@ object CommonConfig extends CommonConfig("") {
   val devmode = booleanOption("busymachines.devmode") getOrElse false
 }
 
-class CommonConfig(baseName : String) extends RichConfig(CommonConfigFactory.config.config(baseName))
-
-
+class CommonConfig(baseName : String) extends RichConfig(CommonConfigFactory.config(baseName).theConfig)
