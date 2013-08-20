@@ -40,7 +40,7 @@ object ESSearchCriteria {
     def toFilter = FilterBuilders.orFilter(children.map(_.toFilter): _*)
   }
 
-  case class FGt[A, T, V](path1: Path[A, T], path2: Path[A, T])(implicit jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
+  case class FGt[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
     def toFilter = {
 
       val p1 = path1.properties match {
@@ -60,7 +60,7 @@ object ESSearchCriteria {
       }
 
       (p1, p2) match {
-        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value &gt; doc['$p1Field'].value")
+        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value > doc['$p2Field'].value")
         case _ => FilterBuilders.matchAllFilter
       }
     }
