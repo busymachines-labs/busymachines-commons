@@ -85,7 +85,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             .setFrom(page.from)
             .setSize(page.size)
             .addSort(sort.field, sort.order)
-            
+            debug(s"Executing search ${request}")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
