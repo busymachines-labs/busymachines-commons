@@ -15,15 +15,18 @@ import spray.routing.RoutingSettings
 import spray.routing.directives.LogEntry
 import spray.routing.ExceptionHandler
 import spray.routing.HttpService
+import spray.routing.RejectionHandler
 
 abstract class HttpServer(implicit actorSystem : ActorSystem) extends CommonHttpService with Logging {
 
   private implicit def eh = exceptionHandler
+  private implicit val rh = rejectionHandler 
   private implicit def rs = routingSettings
 
   val interface : String = "localhost"
   val port : Int = 8080
   val exceptionHandler : ExceptionHandler = ExceptionHandler.default
+  val rejectionHandler : RejectionHandler = RejectionHandler.Default
   val routingSettings = RoutingSettings(actorSystem)
 
   def route : Route
