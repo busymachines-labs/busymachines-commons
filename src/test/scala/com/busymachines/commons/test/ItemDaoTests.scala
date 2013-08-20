@@ -26,7 +26,7 @@ import com.busymachines.commons.event.DoNothingEventSystem
 
 class ItemDaoTests extends FlatSpec with Logging {
 
-  val esIndex = new EmptyESTestIndex(getClass,new DoNothingEventSystem)
+  val esIndex = new EmptyESTestIndex(getClass, new DoNothingEventSystem)
   val dao = new ESRootDao[Item](esIndex, ESType("item", ItemMapping))
   val nestedDao = new ESNestedDao[Item, Property]("properties") {
     def parentDao = dao
@@ -35,19 +35,20 @@ class ItemDaoTests extends FlatSpec with Logging {
       item.properties.find(_.id == id)
 
     def createEntity(item: Item, property: Property): Item =
-    item.copy(properties = item.properties ++ List(property))
+      item.copy(properties = item.properties ++ List(property))
 
     def modifyEntity(item: Item, id: Id[Property], found: Found, modify: Property => Property): Item =
-    item.copy(properties = item.properties.map {
-      case property if property.id == id => found(modify(property))
-      case property => property
-    })
+      item.copy(properties = item.properties.map {
+        case property if property.id == id => found(modify(property))
+        case property => property
+      })
 
     def deleteEntity(item: Item, id: Id[Property], found: Found): Item =
-    item.copy(properties = item.properties.filter {
-      case property if property.id == id => found(property); false
-      case property => true
-    })
+      item.copy(properties = item.properties.filter {
+        case property if property.id == id =>
+          found(property); false
+        case property => true
+      })
 
     def retrieveParent(id: Id[Property]): scala.concurrent.Future[Option[Versioned[Item]]] =
       ???
@@ -93,7 +94,7 @@ class ItemDaoTests extends FlatSpec with Logging {
 
   it should "search by id" in {
     val propertyId = Id.generate[Property]
-    val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(id = propertyId,name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(id = propertyId, name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item, true).await
     assert(dao.search(ItemMapping.id === item.id).await.size === 1)
     assert(dao.searchSingle(ItemMapping.properties / PropertyMapping.id === propertyId).await.get.name === item.name)
@@ -101,12 +102,12 @@ class ItemDaoTests extends FlatSpec with Logging {
 
   it should "search by id using in" in {
     val propertyId = Id.generate[Property]
-    val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(id = propertyId,name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(id = propertyId, name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item, true).await
-    assert(dao.search(ItemMapping.id in item.id::Nil).await.size === 1)
-    assert(dao.searchSingle(ItemMapping.properties / PropertyMapping.id in propertyId::Nil).await.get.name === item.name)
+    assert(dao.search(ItemMapping.id in item.id :: Nil).await.size === 1)
+    assert(dao.searchSingle(ItemMapping.properties / PropertyMapping.id in propertyId :: Nil).await.get.name === item.name)
   }
-  
+
   it should "search & paginate" in {
     val item1 = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     val item2 = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
@@ -120,18 +121,18 @@ class ItemDaoTests extends FlatSpec with Logging {
     dao.create(item4, true).await
     dao.create(item5, true).await
 
-    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page(0,1)).await.size === 1)
-    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page(1,1)).await.size === 1)
-    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page(2,1)).await.size === 1)
-    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page(3,1)).await.size === 1)
-    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page(4,1)).await.size === 1)
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page(0, 1)).await.size === 1)
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page(1, 1)).await.size === 1)
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page(2, 1)).await.size === 1)
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page(3, 1)).await.size === 1)
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page(4, 1)).await.size === 1)
 
-     assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page(0,3)).await.size === 3)
-     assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page(0,5)).await.size === 5)
-   
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page(0, 3)).await.size === 3)
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page(0, 5)).await.size === 5)
+
   }
-  
-    it should "search & sort" in {
+
+  it should "search & sort" in {
     val item1 = Item(name = "D Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     val item2 = Item(name = "C Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     val item3 = Item(name = "B Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
@@ -143,14 +144,20 @@ class ItemDaoTests extends FlatSpec with Logging {
     dao.create(item3, true).await
     dao.create(item4, true).await
     dao.create(item5, true).await
-    
-    
-    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all,ESSearchSort.asc("name")).await.result(0).name === "A Sample item")
-    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all,ESSearchSort.asc("name")).await.result(1).name === "B Sample item")
-    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all,ESSearchSort.asc("name")).await.result(2).name === "C Sample item")
-    assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all,ESSearchSort.asc("name")).await.result(3).name === "D Sample item")
-    
-    //assert(dao.search(ItemMapping.id in item1.id::item2.id::item3.id::item4.id::item5.id::Nil,Page.all).await === dao.search(ItemMapping.id in item2.id::item1.id::item3.id::item4.id::item5.id::Nil,Page.all).await)
-    }
-  
+
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page.all, ESSearchSort.asc("name")).await.result(0).name === "A Sample item")
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page.all, ESSearchSort.asc("name")).await.result(1).name === "B Sample item")
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page.all, ESSearchSort.asc("name")).await.result(2).name === "C Sample item")
+    assert(dao.search(ItemMapping.id in item1.id :: item2.id :: item3.id :: item4.id :: item5.id :: Nil, Page.all, ESSearchSort.asc("name")).await.result(3).name === "D Sample item")
+
+  }
+
+  it should "search with gt/gte/lt/lte" in {
+    val item1 = Item(name = "D Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "C Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    dao.create(item1, true).await
+    dao.create(item2, true).await
+
+  }
+
 }

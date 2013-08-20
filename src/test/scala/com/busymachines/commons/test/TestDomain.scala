@@ -22,6 +22,8 @@ case class Property(
 case class Item(
   id: Id[Item] = Id.generate[Item],
   location:GeoPoint,
+  priceNormal : Double = 0,
+  priceSale : Double = 0,
   validUntil: DateTime,
   name: String,
   properties: List[Property] = Nil) extends HasId[Item]
@@ -29,7 +31,7 @@ case class Item(
 object DomainJsonFormats extends CommonJsonFormats {
   implicit val propertyReferenceFormat = jsonFormat2(PropertyExternalReference)
   implicit val propertyFormat = jsonFormat4(Property)
-  implicit val itemFormat = jsonFormat5(Item)
+  implicit val itemFormat = jsonFormat7(Item)
 }
 
 object PropertyReferenceMapping extends ESMapping[PropertyExternalReference] {
