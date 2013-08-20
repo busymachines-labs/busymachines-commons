@@ -16,6 +16,7 @@ import com.busymachines.commons.event.EventBus
 import com.busymachines.commons.event.BusEvent
 import com.busymachines.commons.event.LocalEventBus
 import akka.actor.ActorSystem
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 
 class ESIndex(_client: ESClient, val name : String,eventBus:EventBus) {
 
@@ -36,6 +37,10 @@ class ESIndex(_client: ESClient, val name : String,eventBus:EventBus) {
     _client
   }
 
+  def refresh {
+    _client.admin.indices().refresh(new RefreshRequest())
+  }
+  
   def drop {
     initialized.set(false)
     val indicesExistsReponse = _client.execute(new IndicesExistsRequest(name))
