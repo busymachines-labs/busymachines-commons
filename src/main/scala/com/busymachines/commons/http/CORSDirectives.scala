@@ -21,13 +21,13 @@ import spray.http.ContentTypes
 
 trait CORSDirectives { this: HttpService =>
   def respondWithCORSHeaders(origin: String) =
-    respondWithHeaders(
-      HttpHeaders.`Access-Control-Allow-Methods`(HttpMethods.GET, HttpMethods.POST, HttpMethods.DELETE, HttpMethods.OPTIONS, HttpMethods.PUT),
-      HttpHeaders.`Access-Control-Allow-Headers`("X-Requested-With, Cache-Control, Pragma, Origin, Authorization, Content-Type, Auth-Token"),
-      HttpHeaders.`Access-Control-Expose-Headers`("Auth-Token"),
-      HttpHeaders.`Access-Control-Allow-Origin`(origin),
-      HttpHeaders.`Access-Control-Allow-Credentials`(true))
-
+   respondWithHeaders(
+    HttpHeaders.`Access-Control-Allow-Methods`(HttpMethods.GET, HttpMethods.POST, HttpMethods.DELETE, HttpMethods.OPTIONS, HttpMethods.PUT),
+    HttpHeaders.`Access-Control-Allow-Headers`("X-Requested-With, Cache-Control, Pragma, Origin, Authorization, Content-Type, Auth-Token"),
+    HttpHeaders.`Access-Control-Expose-Headers`("Auth-Token"),
+    HttpHeaders.`Access-Control-Allow-Origin`(origin),
+    HttpHeaders.`Access-Control-Allow-Credentials`(true))
+    
   def corsFilter(origin: String)(route: Route) =
     if (origin == "*")
       respondWithCORSHeaders("*")(route)
@@ -41,12 +41,6 @@ trait CORSDirectives { this: HttpService =>
             complete(Forbidden, Nil, "Invalid origin") // Maybe, a Rejection will fit better
       }
 
-  // SHOULD WE USE ABOVE OR BELOW???
-  // When CORS is enabled, we have to return specific headers.
-  def fcross(origin: String) = respondWithHeaders(
-    HttpHeaders.`Access-Control-Allow-Methods`(HttpMethods.GET, HttpMethods.POST, HttpMethods.DELETE, HttpMethods.OPTIONS, HttpMethods.PUT),
-    HttpHeaders.`Access-Control-Allow-Headers`("X-Requested-With, Cache-Control, Pragma, Origin, Authorization, Content-Type, Auth-Token"),
-    HttpHeaders.`Access-Control-Expose-Headers`("Auth-Token"))
 
-  def crossDomain = fcross("*")
+  def crossDomain = respondWithCORSHeaders("*")
 }
