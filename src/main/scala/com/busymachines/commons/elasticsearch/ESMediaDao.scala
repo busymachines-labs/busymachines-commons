@@ -66,7 +66,7 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends Logging 
   def store(mimeType: String, name: Option[String], data: Array[Byte]): Future[Media] = {
     def hash = hasher.hashBytes(data).toString
     val stringData = encoding.encode(data)
-    dao.search(MediaMapping.mimeType === mimeType && MediaMapping.hash === hash) flatMap {
+    dao.search(MediaMapping.mimeType === mimeType or MediaMapping.hash === hash) flatMap {
       _.find(m => m.data == stringData && m.name == name) match {
         case Some(Versioned(HashedMedia(id, mimeType, name, hash, data), version)) =>
           Future.successful(Media(Id(id.toString), mimeType, name, encoding.decode(data)))

@@ -8,9 +8,9 @@ import org.elasticsearch.index.query.QueryStringQueryBuilder
 
 trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def toFilter: FilterBuilder
-  def &&(other: ESSearchCriteria[A]) =
+  def and (other: ESSearchCriteria[A]) =
     ESSearchCriteria.And(other)
-  def ||(other: ESSearchCriteria[A]) =
+  def or (other: ESSearchCriteria[A]) =
     ESSearchCriteria.Or(other)
   def not(other: ESSearchCriteria[A]) =
     ESSearchCriteria.Not(other)
@@ -29,13 +29,13 @@ object ESSearchCriteria {
   }
 
   case class And[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
-    override def &&(other: ESSearchCriteria[A]) =
+    override def and(other: ESSearchCriteria[A]) =
       And((children.toSeq :+ other): _*)
     def toFilter = FilterBuilders.andFilter(children.map(_.toFilter): _*)
   }
 
   case class Or[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
-    override def ||(other: ESSearchCriteria[A]) =
+    override def or(other: ESSearchCriteria[A]) =
       Or((children.toSeq :+ other): _*)
     def toFilter = FilterBuilders.orFilter(children.map(_.toFilter): _*)
   }
