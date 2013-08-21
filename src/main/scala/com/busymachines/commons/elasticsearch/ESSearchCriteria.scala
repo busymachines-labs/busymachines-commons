@@ -8,13 +8,12 @@ import org.elasticsearch.index.query.QueryStringQueryBuilder
 
 trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def toFilter: FilterBuilder
-  def and (other: ESSearchCriteria[A]) =
-    ESSearchCriteria.And(other)
-  def or (other: ESSearchCriteria[A]) =
-    ESSearchCriteria.Or(other)
+  def and(other: ESSearchCriteria[A]) =
+    ESSearchCriteria.And(this, other)
+  def or(other: ESSearchCriteria[A]) =
+    ESSearchCriteria.Or(this, other)
   def not(other: ESSearchCriteria[A]) =
     ESSearchCriteria.Not(other)
-
 }
 
 object ESSearchCriteria {
@@ -31,7 +30,8 @@ object ESSearchCriteria {
   case class And[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
     override def and(other: ESSearchCriteria[A]) =
       And((children.toSeq :+ other): _*)
-    def toFilter = FilterBuilders.andFilter(children.map(_.toFilter): _*)
+    def toFilter =
+      FilterBuilders.andFilter(children.map(_.toFilter): _*)
   }
 
   case class Or[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
@@ -41,29 +41,11 @@ object ESSearchCriteria {
   }
 
   case class FGt[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
-    def toFilter = {
-
-      val p1 = path1.properties match {
-        case p :: Nil => Some(p.mappedName)
-        case property :: rest =>
-          val names = path1.properties.map(_.mappedName)
-          Some(names.mkString("."))
-        case _ => None
-      }
-
-      val p2 = path2.properties match {
-        case p :: Nil => Some(p.mappedName)
-        case property :: rest =>
-          val names = path2.properties.map(_.mappedName)
-          Some(names.mkString("."))
-        case _ => None
-      }
-
-      (p1, p2) match {
+    def toFilter =
+      (path1.toOptionString, path2.toOptionString) match {
         case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value > doc['$p2Field'].value")
         case _ => FilterBuilders.matchAllFilter
       }
-    }
   }
 
   case class Gt[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
@@ -73,6 +55,14 @@ object ESSearchCriteria {
         case property :: rest =>
           val names = path.properties.map(_.mappedName)
           FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.rangeFilter(names.mkString(".")).gt(value))
+        case _ => FilterBuilders.matchAllFilter
+      }
+  }
+
+  case class FGte[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
+    def toFilter =
+      (path1.toOptionString, path2.toOptionString) match {
+        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value >= doc['$p2Field'].value")
         case _ => FilterBuilders.matchAllFilter
       }
   }
@@ -88,6 +78,14 @@ object ESSearchCriteria {
       }
   }
 
+  case class FLt[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
+    def toFilter =
+      (path1.toOptionString, path2.toOptionString) match {
+        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value < doc['$p2Field'].value")
+        case _ => FilterBuilders.matchAllFilter
+      }
+  }
+
   case class Lt[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter =
       path.properties match {
@@ -95,6 +93,14 @@ object ESSearchCriteria {
         case property :: rest =>
           val names = path.properties.map(_.mappedName)
           FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.rangeFilter(names.mkString(".")).lt(value))
+        case _ => FilterBuilders.matchAllFilter
+      }
+  }
+
+  case class FLte[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
+    def toFilter =
+      (path1.toOptionString, path2.toOptionString) match {
+        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value <= doc['$p2Field'].value")
         case _ => FilterBuilders.matchAllFilter
       }
   }
@@ -110,7 +116,15 @@ object ESSearchCriteria {
       }
   }
 
-  case class Equals[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
+  case class FEq[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
+    def toFilter =
+      (path1.toOptionString, path2.toOptionString) match {
+        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value == doc['$p2Field'].value")
+        case _ => FilterBuilders.matchAllFilter
+      }
+  }
+
+  case class Eq[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter =
       path.properties match {
         case p :: Nil => FilterBuilders.termFilter(p.mappedName, value)
@@ -119,6 +133,18 @@ object ESSearchCriteria {
           FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.termFilter(names.mkString("."), value))
         case _ => FilterBuilders.matchAllFilter
       }
+  }
+
+  case class FNeq[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
+    def toFilter =
+      (path1.toOptionString, path2.toOptionString) match {
+        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value != doc['$p2Field'].value")
+        case _ => FilterBuilders.matchAllFilter
+      }
+  }
+
+  case class Neq[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
+    def toFilter = Not(Eq(path, value)).toFilter
   }
 
   case class In[A, T, V](path: Path[A, T], values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {

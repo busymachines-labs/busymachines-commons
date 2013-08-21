@@ -17,6 +17,7 @@ case class Property(
   id: Id[Property] = Id.generate[Property],
   mandatory: Boolean = false,
   name: String,
+  value: Double = 0,
   externalReferences: List[PropertyExternalReference] = Nil) extends HasId[Property]
 
 case class Item(
@@ -30,7 +31,7 @@ case class Item(
 
 object DomainJsonFormats extends CommonJsonFormats {
   implicit val propertyReferenceFormat = jsonFormat2(PropertyExternalReference)
-  implicit val propertyFormat = jsonFormat4(Property)
+  implicit val propertyFormat = jsonFormat5(Property)
   implicit val itemFormat = jsonFormat7(Item)
 }
 
@@ -43,6 +44,7 @@ object PropertyMapping extends ESMapping[Property] {
   val id = "id" -> "_id" as String & NotAnalyzed
   val mandatory = "mandatory" as Boolean
   val name = "name" as String & NotAnalyzed & IncludeInAll
+  val value = "value" as Double
   val externalReferences = "externalReferences" -> "external_references" as Nested(PropertyReferenceMapping)
 }
 

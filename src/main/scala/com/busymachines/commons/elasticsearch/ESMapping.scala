@@ -8,69 +8,98 @@ import com.busymachines.commons.domain.GeoPoint
 import spray.json.JsonWriter
 
 object ESProperty {
-  implicit def toPath[A, T](property : ESProperty[A, T]) = Path[A, T](property :: Nil)
+  implicit def toPath[A, T](property: ESProperty[A, T]) = Path[A, T](property :: Nil)
 }
 
-case class ESProperty[A, T](name : String, mappedName : String, options : ESMapping.Options[T]) {
+case class ESProperty[A, T](name: String, mappedName: String, options: ESMapping.Options[T]) {
   val nestedProperties = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping.Properties[A]])
   // Needed to prevent other implicit === methods
-  def gt (path : Path[A, T]) = ESSearchCriteria.FGt(this, path)
-  def === [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Equals(this, value)
-//  def gt [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Gt(this, value)
-//  def gte [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Gte(this, value)
-//  def lt [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Lt(this, value)
-//  def lte [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Lte(this, value)
-//  def in [V] (values : Seq[V])(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.In(this, values)
+  def equ(path: Path[A, T]) = ESSearchCriteria.FEq(this, path)
+  def equ(property: ESProperty[A, T]) = ESSearchCriteria.FEq(this, property)
+  def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Eq(this, value)
+
+  def neq(path: Path[A, T]) = ESSearchCriteria.FNeq(this, path)
+  def neq(property: ESProperty[A, T]) = ESSearchCriteria.FNeq(this, property)
+  def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Neq(this, value)
+  
+  def gt(path: Path[A, T]) = ESSearchCriteria.FGt(this, path)
+  def gt(property: ESProperty[A, T]) = ESSearchCriteria.FGt(this, property)
+  def gt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gt(this, value)
+
+  def gte(path: Path[A, T]) = ESSearchCriteria.FGte(this, path)  
+  def gte(property: ESProperty[A, T]) = ESSearchCriteria.FGte(this, property)
+  def gte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gte(this, value)
+  
+  def lt(path: Path[A, T]) = ESSearchCriteria.FLt(this, path)
+  def lt(property: ESProperty[A, T]) = ESSearchCriteria.FLt(this, property)
+  def lt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lt(this, value)
+  
+  def lte(path: Path[A, T]) = ESSearchCriteria.FLte(this, path)  
+  def lte(property: ESProperty[A, T]) = ESSearchCriteria.FLte(this, property)  
+  def lte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lte(this, value)
+  
+  def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
 }
 
-case class Path[A, T](properties : List[ESProperty[_, _]]) {
-  def head : ESProperty[A, _] = properties.head.asInstanceOf[ESProperty[A, _]]
-  def last : ESProperty[_, T] = properties.head.asInstanceOf[ESProperty[_, T]]
-  def / [A2 <: T, V2](property : ESProperty[A2, V2]) = Path[A, V2](properties :+ property)
-  def === [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Equals(this, value)
-  def eq [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Equals(this, value)
-  def gt (path : Path[A, T]) = ESSearchCriteria.FGt(this, path)
-  def gt [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Gt(this, value)
-  def gte [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Gte(this, value)
-  def lt [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Lt(this, value)
-  def lte [V] (value : V)(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.Lte(this, value)
-  def in [V] (values : Seq[V])(implicit writer : JsonWriter[V], jsConverter : JsValueConverter[T]) = ESSearchCriteria.In(this, values)
+case class Path[A, T](properties: List[ESProperty[_, _]]) {
+  def head: ESProperty[A, _] = properties.head.asInstanceOf[ESProperty[A, _]]
+  def last: ESProperty[_, T] = properties.head.asInstanceOf[ESProperty[_, T]]
+  def /[A2 <: T, V2](property: ESProperty[A2, V2]) = Path[A, V2](properties :+ property)
+  def equ(path: Path[A, T]) = ESSearchCriteria.FEq(this, path)
+  def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Eq(this, value)
+  def neq(path: Path[A, T]) = ESSearchCriteria.FNeq(this, path)
+  def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Neq(this, value)
+  def gt(path: Path[A, T]) = ESSearchCriteria.FGt(this, path)
+  def gt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gt(this, value)
+  def gte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gte(this, value)
+  def lt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lt(this, value)
+  def lte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lte(this, value)
+  def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
+
+  def toOptionString =
+    properties match {
+      case p :: Nil => Some(p.mappedName)
+      case property :: rest =>
+        val names = properties.map(_.mappedName)
+        Some(names.mkString("."))
+      case _ => None
+    }
 }
 
 object ESMapping {
 
-  case class Properties[A](properties : List[ESProperty[A, _]]) {
+  case class Properties[A](properties: List[ESProperty[A, _]]) {
     lazy val propertiesByName = properties.groupBy(_.name).mapValues(_.head)
     lazy val propertiesByMappedName = properties.groupBy(_.mappedName).mapValues(_.head)
   }
-  
-  case class Option(name : String, value : Any) 
-  case class Options[T](options : Option*) {
+
+  case class Option(name: String, value: Any)
+  case class Options[T](options: Option*) {
     options.groupBy(_.name).collect {
-      case (name, values) if values.size > 1 => 
+      case (name, values) if values.size > 1 =>
         throw new Exception("Incompatible options: " + values.mkString(", "))
     }
-    def & (option : Option) = Options[T]((options.toSeq ++ Seq(option)):_*)
+    def &(option: Option) = Options[T]((options.toSeq ++ Seq(option)): _*)
   }
 }
 
 class ESMapping[A] extends Logging {
 
   import ESMapping._
-  
-  protected var _allProperties : Properties[A] = Properties(Nil)
-   
+
+  protected var _allProperties: Properties[A] = Properties(Nil)
+
   def allProperties = _allProperties
-  
-  def mappingConfiguration(doctype : String): String = 
+
+  def mappingConfiguration(doctype: String): String =
     print(mapping(doctype), "\n")
-  
-  def mapping(doctype : String) = Properties[Any](List(ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
-      Option("_all", Map("enabled" -> true)),
-      Option("_source", Map("enabled" -> true)),
-      Stored, 
-      Option("properties", allProperties))):_*))))
-    
+
+  def mapping(doctype: String) = Properties[Any](List(ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
+    Option("_all", Map("enabled" -> true)),
+    Option("_source", Map("enabled" -> true)),
+    Stored,
+    Option("properties", allProperties))): _*))))
+
   val String = Options[String](Option("type", "string"))
   val Date = Options[DateTime](Option("type", "date"))
   def Object[T] = Options[T](Option("type", "object"))
@@ -89,30 +118,30 @@ class ESMapping[A] extends Logging {
   val NotIndexed = Option("index", "no")
   val Analyzed = Option("index", "analyzed")
   val NotAnalyzed = Option("index", "not_analyzed")
-  val IncludeInAll = Option("include_in_all","true")
-  def Nested[T](properties : Properties[T]) : Options[T] = Options(Option("type", "nested"), Option("properties", properties))
-  def Nested[T](mapping : ESMapping[T]) : Options[T] = Nested(mapping._allProperties)
+  val IncludeInAll = Option("include_in_all", "true")
+  def Nested[T](properties: Properties[T]): Options[T] = Options(Option("type", "nested"), Option("properties", properties))
+  def Nested[T](mapping: ESMapping[T]): Options[T] = Nested(mapping._allProperties)
   val _all = ESProperty("_all", "_all", String)
-  
-  implicit class RichName(name : String) extends RichMappedName(name, name)
-  
-  implicit class RichMappedName(name : (String, String)) {
-    def as[T](options : Options[T]) = add(ESProperty[A, T](name._1, name._2, options))
-    def add[T](property : ESProperty[A, T]) = {
+
+  implicit class RichName(name: String) extends RichMappedName(name, name)
+
+  implicit class RichMappedName(name: (String, String)) {
+    def as[T](options: Options[T]) = add(ESProperty[A, T](name._1, name._2, options))
+    def add[T](property: ESProperty[A, T]) = {
       _allProperties = Properties(_allProperties.properties :+ property)
       property
     }
     implicit def toProperty = ESProperty(name._1, name._2, Options())
   }
-  def print(obj : Any, indent : String) : String = obj match {
-    case properties : Properties[A] => 
+  def print(obj: Any, indent: String): String = obj match {
+    case properties: Properties[A] =>
       properties.properties.map(p => "\"" + p.mappedName + "\": " + print(p.options, indent + "    ")).mkString(indent + "{" + indent + "  ", "," + indent + "  ", indent + "}")
-    case options : Options[_] =>
+    case options: Options[_] =>
       options.options.map(print(_, indent)).mkString("{", ", ", "}")
-    case option : Option =>
+    case option: Option =>
       "\"" + option.name + "\": " + print(option.value, indent)
-    case s : String => "\"" + s.toString + "\""
-    case json : Map[_, _] => json.map(t => "\"" + t._1 + "\": " + print(t._2, indent)).mkString("{", ", ", "}")
+    case s: String => "\"" + s.toString + "\""
+    case json: Map[_, _] => json.map(t => "\"" + t._1 + "\": " + print(t._2, indent)).mkString("{", ", ", "}")
     case v => v.toString
   }
 }

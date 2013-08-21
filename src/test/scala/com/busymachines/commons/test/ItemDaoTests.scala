@@ -89,15 +89,15 @@ class ItemDaoTests extends FlatSpec with Logging {
   it should "create & search for simple nested object" in {
     val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item, true).await
-    assert(dao.search(ItemMapping.properties / PropertyMapping.name === "Property3").await.size === 1)
+    assert(dao.search(ItemMapping.properties / PropertyMapping.name equ "Property3").await.size === 1)
   }
 
   it should "search by id" in {
     val propertyId = Id.generate[Property]
     val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(id = propertyId, name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item, true).await
-    assert(dao.search(ItemMapping.id === item.id).await.size === 1)
-    assert(dao.searchSingle(ItemMapping.properties / PropertyMapping.id === propertyId).await.get.name === item.name)
+    assert(dao.search(ItemMapping.id equ item.id).await.size === 1)
+    assert(dao.searchSingle(ItemMapping.properties / PropertyMapping.id equ propertyId).await.get.name === item.name)
   }
 
   it should "search by id using in" in {
@@ -108,6 +108,15 @@ class ItemDaoTests extends FlatSpec with Logging {
     assert(dao.searchSingle(ItemMapping.properties / PropertyMapping.id in propertyId :: Nil).await.get.name === item.name)
   }
 
+  it should "search with and/or" in {
+    val item1 = Item(name = "AndOr", priceNormal = 4.0, priceSale = 3.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "AndOr", priceNormal = 2.0, priceSale = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    dao.create(item1, true).await
+    dao.create(item2, true).await
+    assert(dao.search((ItemMapping.name equ "AndOr") and (ItemMapping.priceSale equ 1.0)).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "AndOr") and ((ItemMapping.priceSale equ 3.0) or (ItemMapping.priceSale equ 1.0))).await.size === 2)
+  }
+  
   it should "search & paginate" in {
     val item1 = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     val item2 = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
@@ -153,36 +162,51 @@ class ItemDaoTests extends FlatSpec with Logging {
   }
 
   it should "search with value based gt/gte/lt/lte" in {
-    val item1 = Item(name = "D Sample item", priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
-    val item2 = Item(name = "C Sample item", priceNormal = 2.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item1 = Item(name = "MySpecial", priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "MySpecial", priceNormal = 2.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item1, true).await
     dao.create(item2, true).await
 
-    assert(dao.search(ItemMapping.priceNormal gt 0.0).await.size === 2)
-    assert(dao.search(ItemMapping.priceNormal gt 1.0).await.size === 1)
-    assert(dao.search(ItemMapping.priceNormal gt 2.0).await.size === 0)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal equ 0.0)).await.size === 0)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal equ 2.0)).await.size === 1)
 
-    assert(dao.search(ItemMapping.priceNormal gte 0.0).await.size === 2)
-    assert(dao.search(ItemMapping.priceNormal gte 1.0).await.size === 2)
-    assert(dao.search(ItemMapping.priceNormal gte 2.0).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal neq 1.0)).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal neq 3.0)).await.size === 2)
+    
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal gt 0.0)).await.size === 2)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal gt 1.0)).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal gt 2.0)).await.size === 0)
 
-    assert(dao.search(ItemMapping.priceNormal lt 0.0).await.size === 0)
-    assert(dao.search(ItemMapping.priceNormal lt 1.0).await.size === 0)
-    assert(dao.search(ItemMapping.priceNormal lt 2.0).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal gte 0.0)).await.size === 2)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal gte 1.0)).await.size === 2)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal gte 2.0)).await.size === 1)
 
-    assert(dao.search(ItemMapping.priceNormal lte 0.0).await.size === 0)
-    assert(dao.search(ItemMapping.priceNormal lte 1.0).await.size === 1)
-    assert(dao.search(ItemMapping.priceNormal lte 2.0).await.size === 2)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal lt 0.0)).await.size === 0)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal lt 1.0)).await.size === 0)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal lt 2.0)).await.size === 1)
+
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal lte 0.0)).await.size === 0)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal lte 1.0)).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "MySpecial") and (ItemMapping.priceNormal lte 2.0)).await.size === 2)
     
   }
 
   it should "search with field based gt/gte/lt/lte" in {
-    val item1 = Item(name = "D Sample item",priceSale = 0.5, priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
-    val item2 = Item(name = "C Sample item", priceSale = 3.0, priceNormal = 2.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item1 = Item(name = "321312 - Sample item",priceSale = 0.5, priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "321312 - Sample item", priceSale = 3.0, priceNormal = 4.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item3 = Item(name = "321312 - Sample item", priceSale = 6.0, priceNormal = 6.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+
     dao.create(item1, true).await
     dao.create(item2, true).await
+    dao.create(item3, true).await
 
-    assert(dao.search(ItemMapping.priceNormal gt ItemMapping.priceSale).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "321312 - Sample item") and (ItemMapping.priceNormal gt  ItemMapping.priceSale)).await.size === 2)    
+    assert(dao.search((ItemMapping.name equ "321312 - Sample item") and (ItemMapping.priceNormal gte  ItemMapping.priceSale)).await.size === 3)    
+
+    assert(dao.search((ItemMapping.name equ "321312 - Sample item") and (ItemMapping.priceSale lt  ItemMapping.priceNormal)).await.size === 2)    
+    assert(dao.search((ItemMapping.name equ "321312 - Sample item") and (ItemMapping.priceSale lte  ItemMapping.priceNormal)).await.size === 3)    
+    assert(dao.search((ItemMapping.name equ "321312 - Sample item") and (ItemMapping.priceNormal equ  ItemMapping.priceSale)).await.size === 1)    
+    assert(dao.search((ItemMapping.name equ "321312 - Sample item") and (ItemMapping.priceNormal neq  ItemMapping.priceSale)).await.size === 2)    
     
   }
   
