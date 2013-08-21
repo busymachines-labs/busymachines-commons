@@ -5,6 +5,8 @@ import org.elasticsearch.index.query.FilterBuilders
 import com.busymachines.commons.dao.SearchCriteria
 import spray.json.JsonWriter
 import org.elasticsearch.index.query.QueryStringQueryBuilder
+import com.busymachines.commons.domain.GeoPoint
+import org.elasticsearch.common.unit.DistanceUnit
 
 trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def toFilter: FilterBuilder
@@ -44,6 +46,17 @@ object ESSearchCriteria {
     def toFilter =
       (path1.toOptionString, path2.toOptionString) match {
         case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value > doc['$p2Field'].value")
+        case _ => FilterBuilders.matchAllFilter
+      }
+  }
+
+  case class GeoDistance[A, T](path: Path[A, T], geoPoint: GeoPoint, radiusInKm: Double) extends ESSearchCriteria[A] {
+    def toFilter =
+      path.properties match {
+        case p :: Nil => FilterBuilders.geoDistanceFilter(p.mappedName).point(geoPoint.lat, geoPoint.lon).distance(radiusInKm, DistanceUnit.KILOMETERS)
+        case property :: rest =>
+          val names = path.properties.map(_.mappedName)
+          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.geoDistanceFilter(names.mkString(".")).point(geoPoint.lat, geoPoint.lon).distance(radiusInKm, DistanceUnit.KILOMETERS))
         case _ => FilterBuilders.matchAllFilter
       }
   }
