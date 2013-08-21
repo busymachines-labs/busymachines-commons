@@ -152,7 +152,7 @@ class ItemDaoTests extends FlatSpec with Logging {
 
   }
 
-  it should "search with gt/gte/lt/lte" in {
+  it should "search with value based gt/gte/lt/lte" in {
     val item1 = Item(name = "D Sample item", priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     val item2 = Item(name = "C Sample item", priceNormal = 2.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     dao.create(item1, true).await
@@ -176,4 +176,15 @@ class ItemDaoTests extends FlatSpec with Logging {
     
   }
 
+  it should "search with field based gt/gte/lt/lte" in {
+    val item1 = Item(name = "D Sample item",priceSale = 0.5, priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "C Sample item", priceSale = 3.0, priceNormal = 2.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    dao.create(item1, true).await
+    dao.create(item2, true).await
+
+    assert(dao.search(ItemMapping.priceNormal gt ItemMapping.priceSale).await.size === 1)
+    
+  }
+  
+  
 }
