@@ -17,6 +17,6 @@ class RichByteArray(val bytes : Array[Byte]) extends AnyVal {
     RichByteArray.md5.hashBytes(bytes).asBytes
 
   def crc32 = 
-    RichByteArray.crc32.hashBytes(bytes).padToLong
+    RichByteArray.crc32.hashBytes(bytes).asInt
     
 }
