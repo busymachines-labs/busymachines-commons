@@ -42,6 +42,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "io.spray" % "spray-caching" % "1.2-20130719" withSources(),
     libraryDependencies += "org.scalastuff" %% "esclient" % "0.20.3" withSources(),
     libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources(),
+    libraryDependencies += "org.clapper" %% "argot" % "1.0.1" withSources(),
     libraryDependencies +=  "ch.qos.logback" % "logback-classic" % "1.0.13" withSources(),
     libraryDependencies += "com.typesafe" % "config" % "1.0.0" withSources(),
     libraryDependencies += "joda-time" % "joda-time" % "2.2" withSources(),
