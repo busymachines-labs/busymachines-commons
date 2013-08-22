@@ -17,5 +17,6 @@ project/plugins/project/
 /.settings
 
 *.jar
-
+.idea/*
+.idea_modules/*
 .DS_Store

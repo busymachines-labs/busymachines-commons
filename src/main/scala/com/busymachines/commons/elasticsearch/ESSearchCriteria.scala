@@ -33,13 +33,22 @@ object ESSearchCriteria {
     override def and(other: ESSearchCriteria[A]) =
       And((children.toSeq :+ other): _*)
     def toFilter =
-      FilterBuilders.andFilter(children.map(_.toFilter): _*)
+      children match {
+        case Nil => FilterBuilders.matchAllFilter
+        case f :: Nil => f.toFilter
+        case _ => FilterBuilders.andFilter(children.map(_.toFilter): _*)
+      }
   }
 
   case class Or[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
     override def or(other: ESSearchCriteria[A]) =
       Or((children.toSeq :+ other): _*)
-    def toFilter = FilterBuilders.orFilter(children.map(_.toFilter): _*)
+    def toFilter =
+      children match {
+        case Nil => FilterBuilders.matchAllFilter
+        case f :: Nil => f.toFilter
+        case _ => FilterBuilders.orFilter(children.map(_.toFilter): _*)
+      }
   }
 
   case class FGt[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
