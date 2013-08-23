@@ -1,12 +1,9 @@
 package com.busymachines.commons
 
-import spray.json.JsValue
-import spray.json.JsObject
-import spray.json.JsArray
-import spray.json.JsString
+import spray.json._
 import scala.collection.mutable
-import spray.json.JsNumber
 import com.busymachines.commons.domain.Id
+import scala.Some
 
 object RichJsValue {
   def recurse(value : JsValue)(pf : PartialFunction[(String, JsValue), (String, JsValue)]) : JsValue = {
@@ -36,6 +33,25 @@ class RichJsValue(val value : JsValue) extends AnyVal {
     findIds(value, idmap)
     replaceIds(value, idmap)
   }
+
+  def setField(field : String, value : JsValue) : JsValue = {
+    value match {
+      case JsObject(fields) =>
+        JsObject(fields.filter(_._1 != field).toSeq.+:(field -> value):_*)
+      case value =>
+        value
+    }
+  }
+
+  def unsetField(field : String) : JsValue = {
+    value match {
+      case JsObject(fields) =>
+        JsObject(fields.filter(_._1 != field) )
+      case value =>
+        value
+    }
+  }
+
 
   private def findIds(value : JsValue, idmap : mutable.Map[String, String]) {
     value match {

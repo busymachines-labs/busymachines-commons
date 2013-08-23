@@ -23,6 +23,7 @@ import com.busymachines.commons.dao.Page
 import com.busymachines.commons.dao.FacetFieldValue
 import spray.json.JsArray
 import spray.json.RootJsonWriter
+import scala.concurrent.duration.{Duration, FiniteDuration, Deadline}
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -135,6 +136,19 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   }
   implicit val facetFieldValueFormat = jsonFormat2(FacetFieldValue)
   
+  implicit val durationFormat = new JsonFormat[FiniteDuration] {
+    def write(value: FiniteDuration) = JsObject(
+      "length" -> JsNumber(value.length),
+      "unit" -> JsString(value.unit.name))
+    def read(value: JsValue): FiniteDuration = value match {
+      case JsObject(o) =>
+        FiniteDuration(
+          length = o.getOrElse("length", deserializationError(s"FiniteDuration lacks length field")).toString.toLong,
+          unit = o.getOrElse("unit", deserializationError(s"FiniteDuration lacks unit field")).toString)
+      case s => deserializationError("Couldn't convert '" + s + "' to a geo point")
+    }
+  }
+
   implicit def versionedFormat[T <: HasId[T]](implicit tFormat : JsonFormat[T]) = jsonFormat2(Versioned[T])
   
   class SearchResultFormat[T <: HasId[T]](fieldName : String)(implicit tFormat : JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {

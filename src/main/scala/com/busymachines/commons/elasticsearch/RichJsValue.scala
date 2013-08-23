@@ -1,10 +1,9 @@
 package com.busymachines.commons.elasticsearch
 
-import com.busymachines.commons.RichJsValue.recurse
 import spray.json.JsObject
+import com.busymachines.commons.RichJsValue.recurse
 import spray.json.JsString
 import spray.json.JsValue
-import spray.json.JsonWriter
 import spray.json.JsonReader
 import spray.json.JsArray
 

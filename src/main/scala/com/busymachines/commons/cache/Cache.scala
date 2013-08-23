@@ -11,6 +11,7 @@ import spray.caching.{Cache => SprayCache}
 import spray.caching.{Cache => SprayCache}
 import spray.caching.ValueMagnet.fromFuture
 
+@deprecated
 trait CacheWithCacheViews[K, V] {
   def invalidateCache(keys: K*): Future[Unit]
   def invalidateCacheViews(key: K, value: V): Future[Unit]

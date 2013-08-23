@@ -66,13 +66,13 @@ class RichConfig(val theConfig: Config) {
   def bytesSeq(path: String): Seq[Long] =
     seq(path, theConfig.getBytesList(_).map(_.longValue))
 
-  def duration(path: String): Duration =
+  def duration(path: String): FiniteDuration =
     theConfig.getMilliseconds(path).longValue.millis
 
-  def durationOption(path: String): Option[Duration] =
+  def durationOption(path: String): Option[FiniteDuration] =
     option(path, duration)
 
-  def durationSeq(path: String): Seq[Duration] =
+  def durationSeq(path: String): Seq[FiniteDuration] =
     seq(path, theConfig.getMillisecondsList(_).map(_.longValue.millis))
     
   def jodaDuration(path: String): org.joda.time.Duration = 
