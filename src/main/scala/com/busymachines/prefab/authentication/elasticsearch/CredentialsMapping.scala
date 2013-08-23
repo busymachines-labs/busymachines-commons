@@ -1,7 +1,8 @@
 package com.busymachines.prefab.authentication.elasticsearch
 
 import com.busymachines.commons.elasticsearch.ESMapping
-import com.busymachines.prefab.authentication.model.{PasswordCredentials, Credentials}
+import com.busymachines.prefab.authentication.model.Credentials
+import com.busymachines.prefab.authentication.model.PasswordCredentials
 
 object CredentialsMapping extends ESMapping[Credentials] {
   val id = "id" -> "_id" as String & NotAnalyzed
