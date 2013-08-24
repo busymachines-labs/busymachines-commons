@@ -5,8 +5,9 @@ import com.busymachines.prefab.authentication.model.Credentials
 import spray.json.JsonFormat
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.dao.RootDao
+import com.busymachines.prefab.authentication.db.CredentialsDao
 
 class ESCredentialsDao(index : ESIndex, indexType : String = "credentials")(implicit ec : ExecutionContext, credentialFormat : JsonFormat[Credentials])
-  extends ESRootDao[Credentials](index, ESType("credentials", CredentialsMapping)) {
+  extends ESRootDao[Credentials](index, ESType("credentials", CredentialsMapping)) with CredentialsDao {
 
 }
