@@ -27,6 +27,9 @@ abstract class PrefabAuthenticator[Principal, SecurityContext] (config: Authenti
 
   protected def createSecurityContext(principal: Principal) : Future[SecurityContext]
 
+  def deauthenticate(id : Id[Authentication]) = 
+    cache.remove(id)
+
   def authenticate(id : Id[Authentication]) : Future[Option[SecurityContext]] = 
     getOrFetchCachedData(id).map(_.map(_._2._2))
 
