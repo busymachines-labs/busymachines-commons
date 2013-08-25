@@ -8,9 +8,7 @@ class Digester {
 
   def digest(plainText: String) = hashing.hashString(plainText)
   def digest(plainText: Array[Byte]) = hashing.hashBytes(plainText)
-  def matches(plainText: String, digestedText: String): Boolean =
-    digest(plainText).toString.equals(digestedText)
-  def matches(plainText: Array[Byte], digestedText: Array[Byte]): Boolean =
+  def matches(plainText: String, digestedText: String): Boolean = 
     digest(plainText).toString.equals(digestedText)
 
 }
