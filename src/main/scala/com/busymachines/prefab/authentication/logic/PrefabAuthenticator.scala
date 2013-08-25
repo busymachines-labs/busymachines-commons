@@ -25,7 +25,7 @@ abstract class PrefabAuthenticator[Principal, SecurityContext] (config: Authenti
   
   private val cache = Cache.expiringLru[Id[Authentication], CachedData](config.maxCapacity, 50, config.expiration * 1.2, config.idleTime)
 
-  protected def createSecurityContext(principal: Principal,id : Id[Authentication]) : Future[SecurityContext]
+  protected def createSecurityContext(principal: Principal, id : Id[Authentication]) : Future[SecurityContext]
 
   def deauthenticate(id : Id[Authentication]) = 
     cache.remove(id)
@@ -41,6 +41,9 @@ abstract class PrefabAuthenticator[Principal, SecurityContext] (config: Authenti
     val authentication = Authentication(id, principalFormat.write(principal), new DateTime(config.expiration.toMillis))
     authenticationDao.createAuthentication(authentication).map(??? => id)
   }
+  
+  def devmodeSecurityContext(devmodeAuth : Option[String]) : Option[SecurityContext] = 
+    None
   
   private def getOrFetchCachedData(id : Id[Authentication]) : Future[CachedData] = {
     cache(id) {

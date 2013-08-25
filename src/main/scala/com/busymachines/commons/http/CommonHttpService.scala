@@ -6,7 +6,7 @@ import spray.routing.RequestContext
 import spray.routing.Route
 import akka.actor.ActorRefFactory
 
-abstract class CommonHttpService(implicit val actorRefFactory : ActorRefFactory) extends HttpService with CommonDirectives with Route with Logging {
+abstract class CommonHttpService(implicit val actorRefFactory : ActorRefFactory) extends HttpService with CommonDirectives with Route with Logging  {
 
   implicit def executionContext = actorRefFactory.dispatcher
   

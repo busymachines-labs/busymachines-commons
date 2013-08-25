@@ -11,5 +11,5 @@ object CredentialsMapping extends ESMapping[Credentials] {
 
 object PasswordCredentialsMapping extends ESMapping[PasswordCredentials] {
   val salt = "salt" as String & NotAnalyzed
-  val passwordHash = "passwordHash" as Binary
+  val passwordHash = "passwordHash" as Binary & NotAnalyzed
 }

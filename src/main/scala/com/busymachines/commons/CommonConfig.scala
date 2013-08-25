@@ -14,9 +14,13 @@ object CommonConfigFactory {
   val config = fileConfigs.foldRight(defaultConfig)((config, defaultConfig) => config.withFallback(defaultConfig))  
 }
 
-object CommonConfig extends CommonConfig("") {
+object CommonConfig extends CommonConfig("") with Logging {
 
   val devmode = booleanOption("busymachines.devmode") getOrElse false
+  
+  if (devmode) {
+    info("Starting in development mode.")
+  }
 }
 
 class CommonConfig(baseName : String) extends RichConfig(CommonConfigFactory.config(baseName).theConfig)
