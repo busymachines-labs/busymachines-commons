@@ -30,7 +30,7 @@ trait AuthenticationDirectives {
               else None
           }
         
-          ctx.request.headers.find(_.is(tokenKey)).map(_.value).map(Id[Authentication](_)) match {
+          ctx.request.headers.find(_.is(tokenKey)).map(_.value).flatMap(Id.get[Authentication](_)) match {
             case Some(authenticationId) =>
               authenticator.authenticate(authenticationId) map {
                 case Some(securityContext) => Right(securityContext)

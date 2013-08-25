@@ -14,6 +14,14 @@ object Id {
     case buffer =>
       new Id[A](new UUID(buffer.getLong(),buffer.getLong()))
   }
+  def get[A](id : String) : Option[Id[A]] = {
+    try {
+      Some(new Id[A](UUID.fromString(id)))
+    }
+    catch {
+      case t : Throwable => None
+    }
+  }
   def static[A](id : String) = new Id[A](UUID.nameUUIDFromBytes(id.getBytes("UTF-8")))
 }
 
