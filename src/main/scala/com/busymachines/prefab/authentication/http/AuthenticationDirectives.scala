@@ -15,7 +15,7 @@ trait AuthenticationDirectives {
 
   def authenticationRoute[Principal, SecurityContext](authenticator : PrefabAuthenticator[Principal, SecurityContext], timeout : Duration)(nested : SecurityContext => Route) : Route = {
     ctx =>
-	    ctx.request.headers.find(_.is(tokenKey)).map(_.value).map(Id[Authentication](_)) match {
+	    ctx.request.headers.find(_.equals(tokenKey)).map(_.value).map(Id[Authentication](_)) match {
 	      case Some(authenticationId) =>
 	        authenticator.authenticate(authenticationId, timeout) match {
 	          case Some(securityContext) =>
