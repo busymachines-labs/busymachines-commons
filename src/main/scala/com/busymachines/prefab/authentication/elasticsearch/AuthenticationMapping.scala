@@ -6,6 +6,6 @@ import spray.json.JsObject
 
 object AuthenticationMapping extends ESMapping[Authentication] {
   val id = "id" -> "_id" as String & NotAnalyzed
-  val principal = "principal" as Object[JsObject]
+  val principal = "principal" as String & NotAnalyzed
   val expirationTime = "expirationTime" as Date & NotAnalyzed
 }

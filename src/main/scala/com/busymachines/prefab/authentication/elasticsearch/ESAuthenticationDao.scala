@@ -16,7 +16,7 @@ class ESAuthenticationDao(index : ESIndex, indexType : String = "authentication"
   def retrieveAuthentication(id : Id[Authentication]) : Future[Option[Authentication]] = 
     retrieve(id).map(_.map(_.entity.asInstanceOf[Authentication]))
   
-  def createAuthentication(authentication : Authentication) : Future[Nothing] = 
-    create(authentication).map(_ => ???)
+  def createAuthentication(authentication : Authentication) : Future[Unit] = 
+    create(authentication) map {_ => }
 
 }
