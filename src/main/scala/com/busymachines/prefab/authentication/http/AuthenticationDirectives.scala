@@ -18,19 +18,20 @@ import spray.routing.authentication.ContextAuthenticator
 import spray.routing.directives.AuthMagnet
 
 trait AuthenticationDirectives {
-  
+
   val tokenKey = "Auth-Token".toLowerCase
 
-  implicit def toAuthentication[SecurityContext](authenticator : PrefabAuthenticator[_, SecurityContext])(implicit ec : ExecutionContext) = {
+  implicit def toAuthentication[SecurityContext](authenticator: PrefabAuthenticator[_, SecurityContext])(implicit ec: ExecutionContext) = {
     AuthMagnet.fromContextAuthenticator {
       new HttpAuthenticator[SecurityContext] {
-        override def apply(ctx : RequestContext) = {
+        override def apply(ctx: RequestContext) = {
           def devmodeAuth = {
-              if (CommonConfig.devmode) authenticator.devmodeSecurityContext(ctx.request.uri.query.get("devmode-auth"))
-              else None
+            if (CommonConfig.devmode) authenticator.devmodeSecurityContext(ctx.request.uri.query.get("devmode-auth"))
+            else None
           }
-        
-          ctx.request.headers.find(_.is(tokenKey)).map(_.value).flatMap(Id.get[Authentication](_)) match {
+          
+          ctx.request.headers.find(_.is(tokenKey)).map(_.value).
+          orElse(ctx.request.uri.query.get(tokenKey)).flatMap(Id.get[Authentication](_)) match {
             case Some(authenticationId) =>
               authenticator.authenticate(authenticationId) map {
                 case Some(securityContext) => Right(securityContext)
@@ -45,15 +46,15 @@ trait AuthenticationDirectives {
                 case Some(devContext) => Future.successful(Right(devContext))
                 case none => Future.successful(Left(AuthenticationFailedRejection(CredentialsMissing, this)))
               }
-          }      
+          }
         }
         def executionContext: ExecutionContext = ec
-    
+
         def authenticate(credentials: Option[HttpCredentials], ctx: RequestContext): Future[Option[SecurityContext]] = ???
-      
+
         def getChallengeHeaders(httpRequest: HttpRequest): List[HttpHeader] = Nil
       }
     }
   }
-  
+
 }
