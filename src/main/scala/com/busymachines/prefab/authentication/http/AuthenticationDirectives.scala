@@ -29,24 +29,24 @@ trait AuthenticationDirectives {
             if (CommonConfig.devmode) authenticator.devmodeSecurityContext(ctx.request.uri.query.get("devmode-auth"))
             else None
           }
-          
+
           ctx.request.headers.find(_.is(tokenKey)).map(_.value).
-          orElse(ctx.request.uri.query.get(tokenKey)).flatMap(Id.get[Authentication](_)) match {
-            case Some(authenticationId) =>
-              authenticator.authenticate(authenticationId) map {
-                case Some(securityContext) => Right(securityContext)
-                case None =>
-                  devmodeAuth match {
-                    case Some(devContext) => Right(devContext)
-                    case none => Left(AuthenticationFailedRejection(CredentialsRejected, this))
-                  }
-              }
-            case None =>
-              devmodeAuth match {
-                case Some(devContext) => Future.successful(Right(devContext))
-                case none => Future.successful(Left(AuthenticationFailedRejection(CredentialsMissing, this)))
-              }
-          }
+            orElse(ctx.request.uri.query.get(tokenKey)).flatMap(Id.get[Authentication](_)) match {
+              case Some(authenticationId) =>
+                authenticator.authenticate(authenticationId) map {
+                  case Some(securityContext) => Right(securityContext)
+                  case None =>
+                    devmodeAuth match {
+                      case Some(devContext) => Right(devContext)
+                      case none => Left(AuthenticationFailedRejection(CredentialsRejected, this))
+                    }
+                }
+              case None =>
+                devmodeAuth match {
+                  case Some(devContext) => Future.successful(Right(devContext))
+                  case none => Future.successful(Left(AuthenticationFailedRejection(CredentialsMissing, this)))
+                }
+            }
         }
         def executionContext: ExecutionContext = ec
 
