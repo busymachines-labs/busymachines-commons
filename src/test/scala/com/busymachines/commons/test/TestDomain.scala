@@ -15,6 +15,7 @@ case class PropertyExternalReference(
 
 case class Property(
   id: Id[Property] = Id.generate[Property],
+  likes : Option[Int] = None,  
   mandatory: Boolean = false,
   name: String,
   value: Double = 0,
@@ -23,6 +24,7 @@ case class Property(
 case class Item(
   id: Id[Item] = Id.generate[Item],
   location:GeoPoint,
+  expectedProfit : Option[Int] = None,
   priceNormal : Double = 0,
   priceSale : Double = 0,
   validUntil: DateTime,
@@ -31,8 +33,8 @@ case class Item(
 
 object DomainJsonFormats extends CommonJsonFormats {
   implicit val propertyReferenceFormat = jsonFormat2(PropertyExternalReference)
-  implicit val propertyFormat = jsonFormat5(Property)
-  implicit val itemFormat = jsonFormat7(Item)
+  implicit val propertyFormat = jsonFormat6(Property)
+  implicit val itemFormat = jsonFormat8(Item)
 }
 
 object PropertyReferenceMapping extends ESMapping[PropertyExternalReference] {
@@ -45,6 +47,7 @@ object PropertyMapping extends ESMapping[Property] {
   val mandatory = "mandatory" as Boolean
   val name = "name" as String & NotAnalyzed & IncludeInAll
   val value = "value" as Double
+  val likes = "likes" as Integer
   val externalReferences = "externalReferences" -> "external_references" as Nested(PropertyReferenceMapping)
 }
 
@@ -53,6 +56,7 @@ object ItemMapping extends ESMapping[Item] {
   val location = "location" as GeoPoint
   val name = "name" as String & NotAnalyzed & IncludeInAll
   val priceNormal = "priceNormal" as Double
+  val expectedProfit = "expectedProfit" as Double
   val priceSale = "priceSale" as Double
   val validUntil = "validUntil" as Date & NotAnalyzed & IncludeInAll
   val properties = "properties" -> "item_properties" as Nested(PropertyMapping)

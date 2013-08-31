@@ -183,14 +183,27 @@ object ESSearchCriteria {
   case class Missing[A, T](path: Path[A, T]) extends ESSearchCriteria[A] {
     def toFilter =
       path.properties match {
-        case p :: Nil => FilterBuilders.missingFilter(p.mappedName)
+        case p :: Nil => FilterBuilders.missingFilter(p.mappedName).existence(true)
         case property :: rest =>
           val names = path.properties.map(_.mappedName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.missingFilter(names.mkString(".")))
+          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.missingFilter(names.tail.mkString(".")).existence(true))
         case _ => FilterBuilders.matchAllFilter
       }
   }
 
   def missing[A, T](path: Path[A, T]) = Missing(path)
 
+  case class Exists[A, T](path: Path[A, T]) extends ESSearchCriteria[A] {
+    def toFilter =
+      path.properties match {
+        case p :: Nil => FilterBuilders.existsFilter(p.mappedName)
+        case property :: rest =>
+          val names = path.properties.map(_.mappedName)
+          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.existsFilter(names.tail.mkString(".")))
+        case _ => FilterBuilders.matchAllFilter
+      }
+  }
+
+  def exists[A, T](path: Path[A, T]) = Exists(path)
+  
 }

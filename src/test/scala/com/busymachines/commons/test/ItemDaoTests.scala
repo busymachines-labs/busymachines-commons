@@ -224,4 +224,32 @@ class ItemDaoTests extends FlatSpec with Logging {
 
   }
 
+  it should "search with missing" in {
+    val item1 = Item(name = "311 - Sample item", expectedProfit = Some(10), priceSale = 0.5, priceNormal = 1.0, validUntil = now, location = GeoPoint(10, 10), properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "311 - Sample item", priceSale = 3.0, priceNormal = 4.0, validUntil = now, location = GeoPoint(11, 11), properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item3 = Item(name = "311 - Sample item", priceSale = 6.0, priceNormal = 6.0, validUntil = now, location = GeoPoint(20, 20), properties = Property(name = "Property3", likes = Some(11)) :: Property(name = "Property4", likes = Some(10)) :: Nil)
+
+    dao.create(item1, true).await
+    dao.create(item2, true).await
+    dao.create(item3, true).await
+
+    assert(dao.search((ItemMapping.name equ "311 - Sample item") and (ItemMapping.expectedProfit missing)).await.size === 2)
+    assert(dao.search((ItemMapping.name equ "311 - Sample item") and (ItemMapping.properties / PropertyMapping.likes missing)).await.size === 2)
+
+  }
+  
+  it should "search with exists" in {
+    val item1 = Item(name = "411 - Sample item", expectedProfit = Some(10), priceSale = 0.5, priceNormal = 1.0, validUntil = now, location = GeoPoint(10, 10), properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "411 - Sample item", priceSale = 3.0, priceNormal = 4.0, validUntil = now, location = GeoPoint(11, 11), properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item3 = Item(name = "411 - Sample item", priceSale = 6.0, priceNormal = 6.0, validUntil = now, location = GeoPoint(20, 20), properties = Property(name = "Property3", likes = Some(11)) :: Property(name = "Property4", likes = Some(10)) :: Nil)
+
+    dao.create(item1, true).await
+    dao.create(item2, true).await
+    dao.create(item3, true).await
+
+    assert(dao.search((ItemMapping.name equ "411 - Sample item") and (ItemMapping.expectedProfit exists)).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "411 - Sample item") and (ItemMapping.properties / PropertyMapping.likes exists)).await.size === 1)
+
+  }
+  
 }

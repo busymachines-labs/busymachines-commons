@@ -42,6 +42,9 @@ case class ESProperty[A, T](name: String, mappedName: String, options: ESMapping
   def lte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lte(this, value)
 
   def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
+  def missing = ESSearchCriteria.missing(this)
+  def exists = ESSearchCriteria.exists(this)
+
 }
 
 case class Path[A, T](properties: List[ESProperty[_, _]]) {
@@ -61,6 +64,8 @@ case class Path[A, T](properties: List[ESProperty[_, _]]) {
   def lt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lt(this, value)
   def lte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lte(this, value)
   def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
+  def missing = ESSearchCriteria.missing(this)
+  def exists = ESSearchCriteria.exists(this)
 
   def toOptionString =
     properties match {

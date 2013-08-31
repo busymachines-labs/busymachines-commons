@@ -50,8 +50,8 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
   }
 
-  protected def preMutate(entity: T): Future[Unit] =
-    Future.successful()
+  protected def preMutate(entity: T): Future[T] =
+    Future.successful(entity)
 
   protected def postMutate(entity: T): Future[Unit] =
     Future.successful(index.bus.publish(DaoMutationEvent(
