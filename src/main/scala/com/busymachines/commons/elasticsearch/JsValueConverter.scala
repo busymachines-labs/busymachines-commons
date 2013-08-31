@@ -3,6 +3,7 @@ package com.busymachines.commons.elasticsearch
 import spray.json.JsValue
 import spray.json.JsString
 import spray.json.JsNumber
+import org.joda.time.DateTime
 
 object JsValueConverter {
   implicit val stringConverter = new JsValueConverter[String] {
@@ -26,6 +27,14 @@ object JsValueConverter {
       value match {
         case JsString(s) => s toBoolean
         case other => false
+      }
+  }
+
+  implicit val dateConverter = new JsValueConverter[DateTime] {
+    def convert(value: JsValue): DateTime =
+      value match {
+        case JsString(s) => DateTime.parse(s)
+        case other => throw new IllegalArgumentException(s"Cannot convert string $other to date time")
       }
   }
 
