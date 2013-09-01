@@ -4,6 +4,7 @@ import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.MutableDateTime
 import scala.collection.mutable.ListBuffer
+import org.joda.time.Interval
 
 trait DurationSlicer {
   def slice(time: DateTime, duration: Duration, nextMarkFunc: DateTime => DateTime): Seq[Duration] = {
@@ -34,5 +35,14 @@ trait DurationSlicer {
 
   }
   def slice(time: DateTime, duration: Duration): Seq[Duration]
+  def intervals(time: DateTime, duration: Duration): Seq[Interval] = {
+    var previousTime = time
+    slice(time, duration).map(d => {
+      val interval = new Interval(previousTime, d)
+      previousTime = interval.getEnd
+      interval
+    })
+  }
+
   def hasSlices(time: DateTime, duration: Duration): Boolean
 }
