@@ -31,8 +31,7 @@ trait AuthenticationDirectives extends  Logging {
             else None
           }
 
-          ctx.request.headers.find(_.is(tokenKey)).map(_.value).
-            orElse(ctx.request.uri.query.get(tokenKey)).flatMap(Id.get[Authentication](_)) match {
+          ctx.request.headers.find(_.is(tokenKey)).map(_.value).flatMap(Id.get[Authentication](_)) match {
               case Some(authenticationId) =>
                 debug(s"Request ${ctx.request.uri} with auth id $authenticationId")
                 authenticator.authenticate(authenticationId) map {
