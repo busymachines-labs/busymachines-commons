@@ -20,7 +20,7 @@ import com.busymachines.commons.Logging
 
 trait AuthenticationDirectives extends  Logging {
 
-  val tokenKey = "Auth-Token".toLowerCase
+  val tokenKey = "Auth-Token"
 
   implicit def toAuthentication[SecurityContext](authenticator: PrefabAuthenticator[_, SecurityContext])(implicit ec: ExecutionContext) = {
     AuthMagnet.fromContextAuthenticator {
