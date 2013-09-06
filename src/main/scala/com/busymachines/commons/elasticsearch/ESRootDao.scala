@@ -65,16 +65,16 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]] = {
     val request = new GetRequest(index.name, t.name, id.toString)
-    client.execute(request).map(response => Option(response.getSourceAsString)) map {
+    client.execute(request).map(response => Option(response)) map {
       case None => None
       case Some(source) =>
-        val json = source.asJson
-        val version = json.getESVersion
+        val json = source.getSourceAsString.asJson
+        val version = source.getVersion.toString
         Some(Versioned(json.convertFromES(mapping), version))
     }
   }
 
-  def search(criteria: SearchCriteria[T], page: Page = Page.first, sort:SearchSort=ESSearchSort.asc("_id"), facets: Seq[FacetField] = Seq.empty): Future[SearchResult[T]] = {
+  def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = ESSearchSort.asc("_id"), facets: Seq[FacetField] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
         val request =
@@ -85,7 +85,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             .setFrom(page.from)
             .setSize(page.size)
             .addSort(sort.field, sort.order)
-            debug(s"Executing search ${request}")
+        debug(s"Executing search ${request}")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
