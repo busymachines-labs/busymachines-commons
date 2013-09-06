@@ -128,11 +128,12 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   }
 
   def update(entity: Versioned[T], refreshAfterMutation: Boolean = true): Future[Versioned[T]] = {
-    val newJson = entity.entity.convertToES(mapping).withESVersion(entity.version)
+    val newJson = entity.entity.convertToES(mapping)
     val request = new IndexRequest(index.name, t.name)
       .refresh(refreshAfterMutation)
       .id(entity.entity.id.toString)
       .source(newJson.toString)
+      .version(entity.version.toLong)
 
     debug(s"Update $t.name: $newJson")
 
