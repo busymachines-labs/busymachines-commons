@@ -133,7 +133,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       .refresh(refreshAfterMutation)
       .id(entity.entity.id.toString)
       .source(newJson.toString)
-      .version(entity.version.toLong)
+    //      .version(entity.version.toLong)
 
     debug(s"Update $t.name: $newJson")
 
