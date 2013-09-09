@@ -12,12 +12,11 @@ trait DomainJsonFormats extends CommonJsonFormats {
   implicit val phoneNumberKindFormat = enumFormat(PhoneNumberKind)
   implicit val phoneNumberFormat = jsonFormat2(PhoneNumber)
   implicit val emailKindFormat = enumFormat(EmailKind)
-  implicit val emailFormat = jsonFormat2(Email)
-  implicit val userFormat = jsonFormat9(User)
+  implicit val emailFormat = jsonFormat3(Email)
+  implicit val userFormat = jsonFormat10(User)
   implicit val userRoleFormat = jsonFormat3(UserRole)
   implicit val relatedPartyFormat = jsonFormat3(RelatedParty)
   implicit val partyFormat = jsonFormat9(Party)
-  implicit val loginFormat = jsonFormat4(Login)
 
   implicit val unitFormat = stringJsonFormat("Unit", s => Unit(Nil))
 

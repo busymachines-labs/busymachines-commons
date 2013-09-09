@@ -1,7 +1,7 @@
 package com.kentivo.mdm.logic
 
-import scala.language.postfixOps
 import java.util.Locale
+import scala.language.postfixOps
 import scala.Option.option2Iterable
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
@@ -11,7 +11,7 @@ import scala.io.Codec
 import scala.xml.NodeSeq
 import scala.xml.XML
 import org.joda.time.DateTime
-import com.busymachines.commons.elasticsearch.MediaDao
+import com.busymachines.commons.elasticsearch.ESMediaDao
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.Media
 import com.busymachines.commons.implicits._
@@ -42,7 +42,7 @@ import com.busymachines.commons.RichSource
 import com.busymachines.commons.Logging
 import com.busymachines.commons.dao.Page
 
-class IcecatAdapter(itemDao: ItemDao, mediaDao : MediaDao)(implicit ec: ExecutionContext, system: ActorSystem) extends Logging {
+class IcecatAdapter(itemDao: ItemDao, mediaDao : ESMediaDao)(implicit ec: ExecutionContext, system: ActorSystem) extends Logging {
 
   val repository = Id.static[Repository]("icecat-repo")
   val icecatRootItemId = Id.static[Item]("icecat-root")

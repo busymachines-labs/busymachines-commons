@@ -13,14 +13,13 @@ import spray.httpx.SprayJsonSupport._
 import com.busymachines.commons.http.CommonHttpService
 import com.busymachines.commons.domain.CommonJsonFormats._
 import com.kentivo.mdm.domain.DomainJsonFormats._
-import com.busymachines.commons.http.AbstractAuthenticator
 import com.kentivo.mdm.domain.User
-import com.kentivo.mdm.api.UserAuthenticator
+import com.kentivo.mdm.logic.UserAuthenticator
  
 class SourceApiV1(sourceManager: SourceManager, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
   
   val route = path("sources") {
-    authenticate(authenticator) { implicit auth =>
+    authenticate(authenticator) { implicit securityContext =>
       get {
         complete {
           sourceManager.findSources(None)

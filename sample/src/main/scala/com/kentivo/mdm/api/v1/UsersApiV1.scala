@@ -1,14 +1,13 @@
 package com.kentivo.mdm.api.v1
 
-import com.kentivo.mdm.api.ApiDirectives
 import com.kentivo.mdm.domain.User
+import com.kentivo.mdm.api.ApiDirectives
 import com.kentivo.mdm.logic.UsersManager
 import com.kentivo.mdm.logic.PartyService
 import akka.actor.ActorRefFactory
 import spray.http.StatusCodes
 import com.busymachines.commons.http.CommonHttpService
-import com.busymachines.commons.http.AbstractAuthenticator
-import com.kentivo.mdm.api.UserAuthenticator
+import com.kentivo.mdm.logic.UserAuthenticator
 
 class UsersApiV1(partyService : PartyService, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
 

@@ -10,45 +10,39 @@ import spray.caching.LruCache
 import com.kentivo.mdm.db.PartyDao
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
-import com.kentivo.mdm.db.LoginDao
-import com.kentivo.mdm.domain.Login
+import com.kentivo.mdm.db.UserDao
+import com.busymachines.prefab.authentication.elasticsearch.ESCredentialsDao
+import com.busymachines.commons.Logging
+import com.busymachines.prefab.authentication.model.Credentials
+import com.busymachines.prefab.authentication.model.PasswordCredentials
 
-class PartyService(partyDao: PartyDao, loginDao: LoginDao)(implicit ec: ExecutionContext) {
+class PartyService(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCredentialsDao, userAuthenticator : UserAuthenticator)(implicit ec: ExecutionContext) extends Logging {
 
   private val partyCache = LruCache[Option[Party]](2000, 50, 7 days, 8 hours)
 
-  /**
-   * Authenticate a user by its clear-text password.
-   */
-  def authenticate(email: String, password: String): Future[Option[(Party, User, Login)]] = {
-    loginDao.findByEmail(email).flatMap {
-      case Some(Versioned(login, _)) =>
-
-        // check password
-        if (login.withClearTextPassword(password).password == login.password) {
-
-          // find corresponding party and user
-          partyDao.findByLoginId(login.id).map {
-            case Some(Versioned(party, _)) =>
-              party.users.find(_.logins.exists(_.id == login.id)) match {
-                case Some(user) => Some((party, user, login))
-                case None => None
-              }
-            case None => None
+  def createOrUpdateUserCredentials(userId: Id[User], newPassword: String): Future[Versioned[User]] =
+    userDao.retrieve(userId) flatMap {
+      case None => throw new Exception(s"Non existent user with id $userId")
+      case Some(user) =>
+        user.credentials map { credential =>
+          credentialsDao.delete(credential) onFailure {
+            case t => error("Cannot delete a credential", t)
           }
-        } else Future.successful(None)
-      case None => Future.successful(None)
+        }
+        credentialsDao.create(Credentials(passwordCredentials = Some(PasswordCredentials(newPassword)))) flatMap { 
+          storedCredentials =>
+            userDao.modify(user.id)(_.copy(credentials = storedCredentials.id :: Nil))
+        }
     }
-  }
-
-  def list(implicit auth: AuthenticationData): List[Party] = {
+  
+  def list(implicit auth: SecurityContext): List[Party] = {
     Nil
   }
 
   /**
    * Create a party based on specific fields received.
    */
-  def create(party: Party)(implicit auth: AuthenticationData): Int = {
+  def create(party: Party)(implicit auth: SecurityContext): Int = {
     0
   }
 

@@ -9,10 +9,11 @@ import akka.actor.ActorSystem
 import akka.actor.ActorContext
 import spray.routing.RequestContext
 import com.busymachines.commons.http.CommonHttpService
-import com.kentivo.mdm.api.UserAuthenticator
-import com.kentivo.mdm.logic.AuthenticationData
 import scala.concurrent.duration._
 import com.kentivo.mdm.domain.User
+import com.kentivo.mdm.logic.UserAuthenticator
+import scala.concurrent.Await
+import com.busymachines.commons.domain.Id
 
 case class Credentials(
   email: String,
@@ -44,11 +45,21 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
     path("users" / MatchId[User] / "authentication") { userId =>
       // Check if user is authenticated.
       get {
-        authenticator.isAuthenticated(1.minute) {
-          case Some(auth) if auth.userId == userId =>
-            complete("OK")
-          case _ =>
-            reject
+        headerValueByName(tokenKey) { tokenValue =>
+          Await.result(authenticator.authenticate(Id(tokenValue)), 1 minute) match {
+            case Some(session) => {
+              complete {
+                Map("message" -> s"Partner with token $tokenValue is logged in")
+              }
+            }
+            case None => {
+              respondWithStatus(StatusCodes.NotFound) {
+                complete {
+                  Map("message" -> s"Partner with token $tokenValue is not logged in")
+                }
+              }
+            }
+          }
         }
       } ~
         // Log in a specific user. Password will be in the body, in json format.  

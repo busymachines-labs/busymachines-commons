@@ -6,7 +6,7 @@ import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
 //import com.github.retronym.SbtOneJar
 import less.Plugin._
-import com.busymachines.WebPlugin._
+//import com.busymachines.WebPlugin._
 
 object SampleBuild extends Build {
 
@@ -18,7 +18,7 @@ object SampleBuild extends Build {
     lessSettings ++ 
 //    yuiCompressor.Plugin.yuiSettings ++ 
 //    sbtclosure.SbtClosurePlugin.closureSettings ++
-    webSettings ++
+//    webSettings ++
       Seq(
         sbtPlugin := false,
         organization := "com.busymachines",
@@ -31,8 +31,14 @@ object SampleBuild extends Build {
         EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
         EclipseKeys.withSource := true)
 
+
+  val scalaleafs = RootProject(file("../../scalaleafs"))
+  val commonsProj = RootProject(file(".."))
+
+
   val sample = Project(id = "sample", base = file("."), settings = defaultSettings ++ Seq(
  mainClass in (Compile, run) := Some("com.kentivo.mdm.ui.UiServer"),
-    libraryDependencies ++= Seq(commons)))
+    libraryDependencies ++= Seq(commons))).
+	dependsOn(scalaleafs, commonsProj)
 
 }

@@ -17,10 +17,10 @@ class CredentialsTests extends FlatSpec with Logging {
   val dao = new ESCredentialsDao(esIndex)
 
   "CredentialsDao" should "create & retrieve" in {
-    val credentials = Credentials(passwordCredentials=Some(PasswordCredentials(salt="",passwordHash="Hello World")))
+    val credentials = Credentials(passwordCredentials=Some(PasswordCredentials("changeme")))
     dao.create(credentials).await
     assert(dao.retrieve(credentials.id).await.get.id === credentials.id)
-    assert(dao.retrieve(credentials.id).await.get.passwordCredentials.get.passwordHash === credentials.passwordCredentials.get.passwordHash)
+    assert(dao.retrieve(credentials.id).await.get.passwordCredentials.get.hasPassword("changeme"))
 
   }
   

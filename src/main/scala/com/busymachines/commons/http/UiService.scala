@@ -34,7 +34,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   private val cacheTime: Duration = 7 days
   private val cacheTimeSecs = cacheTime.toSeconds
   private val theCache = routeCache(timeToLive = cacheTime)
-
+  
   if (CommonConfig.devmode)
     info("Starting UI Routing is devmode")
 

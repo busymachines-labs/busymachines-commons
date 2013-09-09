@@ -5,7 +5,7 @@ import com.busymachines.commons.implicits._
 import scala.util.Random
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
-import com.busymachines.commons.domain.Credentials
+import com.busymachines.prefab.authentication.model.Credentials
 
 case class Party (
   
@@ -58,12 +58,13 @@ case class UserRole (
 
 case class User (
   id : Id[User] = Id.generate,
-  logins : List[Id[Credentials]] = Nil,
+  credentials : List[Id[Credentials]] = Nil,
   firstName : String = "",
   middleName : String = "",
   lastName : String = "",
   addresses : List[Address] = Nil,
   phoneNumbers : List[PhoneNumber] = Nil,
+  primaryEmail : String = "",
   emailAddresses : List[Email] = Nil,
   roles : List[Id[UserRole]] = Nil
 ) extends HasId[User]
@@ -96,6 +97,7 @@ object PhoneNumberKind extends Enumeration {
 
 case class Email (
   kind : Option[EmailKind.Value] = None,
+  validated : Boolean,
   email : String
 )
 

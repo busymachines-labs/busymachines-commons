@@ -16,7 +16,6 @@ import com.kentivo.mdm.domain.PhoneNumber
 import com.kentivo.mdm.domain.Email
 import com.kentivo.mdm.domain.User
 import com.kentivo.mdm.domain.UserRole
-import com.kentivo.mdm.domain.Login
 
 object PartyMapping extends ESMapping[Party] {
   val id = "id" -> "_id" as String & NotAnalyzed
@@ -63,6 +62,7 @@ object UserMapping extends ESMapping[User] {
   val lastName = "lastName" as String & Analyzed
   val addresses = "addresses" as Nested(AddressMapping)
   val phoneNumbers = "phoneNumbers" as Nested(PhoneNumberMapping)
+  val primaryEmail = "primaryEmail" as String & Analyzed 
   val emailAddresses = "emailAddresses" as Nested(EmailMapping)
   val roles = "roles" as String & NotAnalyzed
   val logins = "logins" as String & NotAnalyzed
@@ -72,13 +72,6 @@ object UserRoleMapping extends ESMapping[UserRole] {
   val id = "id" -> "_id" as String & NotAnalyzed
   val name = "name" as String & Analyzed
   val permissions = "permissions" as String & NotAnalyzed
-}
-
-object LoginMapping extends ESMapping[Login] {
-  val id = "id" -> "_id" as String & NotAnalyzed
-  val email = "email" as String & Analyzed
-  val salt = "salt" as String & NotAnalyzed
-  val password = "password" as Binary & NotAnalyzed
 }
 
 object ItemMapping extends ESMapping[Item] {

@@ -21,11 +21,12 @@ import scala.concurrent.ExecutionContext
 import com.busymachines.commons.Logging
 import com.busymachines.commons.domain.CommonJsonFormats
 import spray.routing.Route
+import com.busymachines.prefab.authentication.http.AuthenticationDirectives
 
 /**
  * Base trait for individual API service traits.
  */
-trait ApiDirectives extends Directives with Logging with SprayJsonSupport with DomainJsonFormats with CommonJsonFormats  { 
+trait ApiDirectives extends Directives with Logging with SprayJsonSupport with DomainJsonFormats with CommonJsonFormats with AuthenticationDirectives { 
 
 //  implicit def actorRefFactory: ActorRefFactory
 //  implicit def executionContext: ExecutionContext = actorRefFactory.dispatcher
