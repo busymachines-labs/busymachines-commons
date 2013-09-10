@@ -1,7 +1,5 @@
 package com.kentivo.mdm.api.v1
 
-import com.kentivo.mdm.api.ApiDirectives
-import com.kentivo.mdm.logic.AuthenticationToken
 import spray.http.HttpHeaders.RawHeader
 import spray.http.StatusCodes
 import akka.actor.ActorRefFactory
@@ -14,22 +12,14 @@ import com.kentivo.mdm.domain.User
 import com.kentivo.mdm.logic.UserAuthenticator
 import scala.concurrent.Await
 import com.busymachines.commons.domain.Id
-
-case class Credentials(
-  email: String,
-  password: String,
-  partyName: Option[String])
-
-object AuthenticationApiV1 {
-  val tokenKey = "Auth-Token"
-}
+import com.kentivo.mdm.api.v1.model.AuthenticationRequest
+import com.kentivo.mdm.logic.SecurityContext
+import com.kentivo.mdm.logic.UserAuthenticator
 
 /**
  * Handling authentication before using API.
  */
-class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
-  
-  implicit val credentialsFormat = jsonFormat3(Credentials)
+class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiV1Directives {
   
   def route: RequestContext => Unit =
 //    path("users" / "authentication") { 
@@ -46,7 +36,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
       // Check if user is authenticated.
       get {
         headerValueByName(tokenKey) { tokenValue =>
-          Await.result(authenticator.authenticate(Id(tokenValue)), 1 minute) match {
+          Await.result(authenticator.authenticate(Id(tokenValue)), 1.minute) match {
             case Some(session) => {
               complete {
                 Map("message" -> s"Partner with token $tokenValue is logged in")
@@ -64,20 +54,20 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
       } ~
         // Log in a specific user. Password will be in the body, in json format.  
         post {
-          entity(as[Credentials]) { authenticationUser =>
-            authenticator.authenticateUser(userName, authenticationUser.password, authenticationUser.partyName) match {
-              case Some(AuthenticationToken(token)) => {
-                val message = "User %s has been succesfully logged in".format(userName)
+          entity(as[AuthenticationRequest]) { request =>
+            Await.result(authenticator.authenticateWithLoginNamePassword(request.loginName, request.password), 1.minute) match {
+              case Some(SecurityContext(partyId, userId, loginName, authenticationId, permissions)) => {
+                val message = "User %s has been succesfully logged in".format(request.loginName)
                 debug(message)
-                respondWithHeader(RawHeader(AuthenticationApiV1.tokenKey, token)) {
+                respondWithHeader(RawHeader(tokenKey, authenticationId.toString)) {
                   complete {
-                    // Return authenticated user.
-                    Authentication.isAuthenticated(AuthenticationToken(token)).getOrElse(null)
+                    // Return authenticated user id.
+                        Map("userId" -> userId)
                   }
                 }
               }
               case None => {
-                debug("Tried to log in user %s but received 'Invalid userName or password.'".format(userName))
+                debug("Tried to log in user %s but received 'Invalid userName or password.'".format(request.loginName))
                 respondWithStatus(StatusCodes.NotFound) {
                   complete {
                     Map("message" -> "Invalid userName or password.")
@@ -89,18 +79,18 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
         } ~
         // Log out a specific user.
         delete {
-          headerValueByName(AuthenticationApiV1.tokenKey) { tokenValue =>
-            Authentication.isAuthenticated(new AuthenticationToken(tokenValue)) match {
-              case Some(user) => {
-                Authentication.deAuthenticate(AuthenticationToken(tokenValue))
-                val message = "User %s has been succesfully logged out".format(userName)
+          headerValueByName(tokenKey) { tokenValue =>
+            Await.result(authenticator.authenticate(Id(tokenValue)), 1.minute) match {
+              case Some(securityContext) => {
+                authenticator.deauthenticate(Id(tokenValue))
+                val message = "User %s has been succesfully logged out".format(securityContext.loginName)
                 debug(message)
                 complete {
                   Map("message" -> message)
                 }
               }
               case None => {
-                val message = "User %s is not logged in".format(userName)
+                val message = "User already logged out."
                 debug(message)
                 respondWithStatus(StatusCodes.NotFound) {
                   complete {

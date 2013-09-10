@@ -9,6 +9,7 @@ import com.kentivo.mdm.domain.Party
 case class SecurityContext(
   partyId: Id[Party],
   userId: Id[User],
+  loginName : String,
   authenticationId: Id[Authentication],
   permissions: Set[Permission.Value] = Set.empty) extends PrefabSecurityContext[Permission.Value] {
 
@@ -96,8 +97,6 @@ object Permission extends Enumeration {
   val canViewSelfMeasurementsAggregates = Value("canViewSelfMeasurementsAggregates")
 
 }
-
-case class AuthenticationToken(token: String)
 
 case class SecurityRole(id: Id[SecurityRole], name: String, permissions: Set[Permission.Value])
 

@@ -33,12 +33,12 @@ object SampleBuild extends Build {
 
 
   val scalaleafs = RootProject(file("../../scalaleafs"))
-  val commonsProj = RootProject(file(".."))
+  //val commonsProj = RootProject(file(".."))
 
 
   val sample = Project(id = "sample", base = file("."), settings = defaultSettings ++ Seq(
  mainClass in (Compile, run) := Some("com.kentivo.mdm.ui.UiServer"),
     libraryDependencies ++= Seq(commons))).
-	dependsOn(scalaleafs, commonsProj)
+	dependsOn(scalaleafs)
 
 }

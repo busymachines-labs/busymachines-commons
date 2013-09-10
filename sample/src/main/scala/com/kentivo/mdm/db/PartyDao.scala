@@ -18,10 +18,17 @@ class PartyDao(index : ESIndex)(implicit ec: ExecutionContext) extends ESRootDao
   def findByUserId(userId : Id[User]) = 
     searchSingle(PartyMapping.users / UserMapping.id equ userId)
 
-  def findUserByPrimaryEmail(email : String) : Future[Option[(Party, User)]] = 
-    searchSingle(PartyMapping.users / UserMapping.primaryEmail equ email) map { 
+  def findUserById(id : Id[User]) : Future[Option[(Party, User)]] = 
+    searchSingle(PartyMapping.users / UserMapping.id equ id) map { 
       case Some(Versioned(party, _)) =>
-        party.users.find(_.primaryEmail == email).map((party, _))
+        party.users.find(_.id == id).map((party, _))
+      case _ => None
+  }
+  
+  def findUserByLoginName(loginName : String) : Future[Option[(Party, User)]] = 
+    searchSingle(PartyMapping.users / UserMapping.loginName equ loginName) map { 
+      case Some(Versioned(party, _)) =>
+        party.users.find(_.loginName == loginName).map((party, _))
       case _ => None
   }
 } 

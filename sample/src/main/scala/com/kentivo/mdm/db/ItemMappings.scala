@@ -57,12 +57,12 @@ object RelatedPartyMapping extends ESMapping[RelatedParty] {
 
 object UserMapping extends ESMapping[User] {
   val id = "id" -> "_id" as String & NotAnalyzed
+  val loginName = "loginName" as String & NotAnalyzed 
   val firstName = "firstName" as String & Analyzed
   val middleName = "middleName" as String & Analyzed
   val lastName = "lastName" as String & Analyzed
   val addresses = "addresses" as Nested(AddressMapping)
   val phoneNumbers = "phoneNumbers" as Nested(PhoneNumberMapping)
-  val primaryEmail = "primaryEmail" as String & Analyzed 
   val emailAddresses = "emailAddresses" as Nested(EmailMapping)
   val roles = "roles" as String & NotAnalyzed
   val logins = "logins" as String & NotAnalyzed

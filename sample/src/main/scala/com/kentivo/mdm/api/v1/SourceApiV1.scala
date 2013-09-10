@@ -1,6 +1,5 @@
 package com.kentivo.mdm.api.v1
 
-import com.kentivo.mdm.api.ApiDirectives
 import com.busymachines.commons
 import com.kentivo.mdm.domain.Source
 import com.kentivo.mdm.logic.SourceManager
@@ -16,7 +15,7 @@ import com.kentivo.mdm.domain.DomainJsonFormats._
 import com.kentivo.mdm.domain.User
 import com.kentivo.mdm.logic.UserAuthenticator
  
-class SourceApiV1(sourceManager: SourceManager, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiDirectives {
+class SourceApiV1(sourceManager: SourceManager, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with ApiV1Directives {
   
   val route = path("sources") {
     authenticate(authenticator) { implicit securityContext =>

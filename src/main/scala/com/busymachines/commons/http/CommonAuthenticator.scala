@@ -22,6 +22,7 @@ import com.typesafe.config.ConfigFactory
 import com.google.common.cache.CacheBuilder
 import java.util.concurrent.TimeUnit
 
+// TODO remove, replaced by Id[Authentication]
 case class AuthenticationToken(token: String)
 
 class CommonAuthenticator2[A](implicit val ec: ExecutionContext) {

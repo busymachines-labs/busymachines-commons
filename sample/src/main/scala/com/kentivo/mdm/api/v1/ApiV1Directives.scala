@@ -1,32 +1,17 @@
-package com.kentivo.mdm.api
+package com.kentivo.mdm.api.v1
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import com.kentivo.mdm.api.v1.AuthenticationApiV1
-import com.kentivo.mdm.logic.AuthenticationToken
 import spray.httpx.SprayJsonSupport
-import spray.routing.authentication.Authentication
-import spray.routing.AuthenticationFailedRejection
 import spray.routing.Directives
-import spray.routing.HttpService
-import spray.routing.RequestContext
-import spray.routing.authentication.ContextAuthenticator
-import spray.routing.directives.AuthMagnet.fromContextAuthenticator
-import com.kentivo.mdm.domain.User
 import com.kentivo.mdm.domain.DomainJsonFormats
-import akka.actor.ActorRefFactory
-import akka.actor.ActorSystem
-import akka.actor.ActorContext
-import scala.concurrent.ExecutionContext
 import com.busymachines.commons.Logging
 import com.busymachines.commons.domain.CommonJsonFormats
-import spray.routing.Route
 import com.busymachines.prefab.authentication.http.AuthenticationDirectives
+import com.kentivo.mdm.api.v1.model.ApiV1JsonFormats
 
 /**
  * Base trait for individual API service traits.
  */
-trait ApiDirectives extends Directives with Logging with SprayJsonSupport with DomainJsonFormats with CommonJsonFormats with AuthenticationDirectives { 
+trait ApiV1Directives extends Directives with Logging with SprayJsonSupport with ApiV1JsonFormats with DomainJsonFormats with CommonJsonFormats with AuthenticationDirectives { 
 
 //  implicit def actorRefFactory: ActorRefFactory
 //  implicit def executionContext: ExecutionContext = actorRefFactory.dispatcher

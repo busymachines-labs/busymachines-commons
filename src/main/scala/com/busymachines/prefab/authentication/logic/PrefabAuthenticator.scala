@@ -20,11 +20,11 @@ class AuthenticationConfig(baseName: String) extends CommonConfig(baseName) {
 
 abstract class PrefabAuthenticator[Principal, SecurityContext](config: AuthenticationConfig, authenticationDao: AuthenticationDao)(implicit ec: ExecutionContext, principalFormat: JsonFormat[Principal]) {
 
-  private type CachedData = Option[(Authentication, (Principal, SecurityContext))]
+  private type CachedData = Option[(Principal, SecurityContext)]
 
   private val cache = Cache.expiringLru[Id[Authentication], CachedData](config.maxCapacity, 50, config.expiration * 1.2, config.idleTime)
 
-  protected def createSecurityContext(principal: Principal, id: Id[Authentication]): Future[SecurityContext]
+  protected def createSecurityContext(principal: Principal, id: Id[Authentication]): Future[Option[SecurityContext]]
 
   def deauthenticate(id: Id[Authentication]) =
     (authenticationDao.delete(id) flatMap { _ =>
@@ -35,10 +35,10 @@ abstract class PrefabAuthenticator[Principal, SecurityContext](config: Authentic
     }) map {_ => }
 
   def authenticate(id: Id[Authentication]): Future[Option[SecurityContext]] =
-    getOrFetchCachedData(id).map(_.map(_._2._2))
+    getOrFetchCachedData(id).map(_.map(_._2))
 
   def authenticate(id: Id[Authentication], timeout: Duration): Option[SecurityContext] =
-    Await.result(getOrFetchCachedData(id), timeout).map(_._2._2)
+    Await.result(getOrFetchCachedData(id), timeout).map(_._2)
 
   def setAuthenticated(principal: Principal): Future[Id[Authentication]] = {
     val id: Id[Authentication] = Id.generate
@@ -55,8 +55,10 @@ abstract class PrefabAuthenticator[Principal, SecurityContext](config: Authentic
         case Some(authentication) =>
           val principal = principalFormat.read(authentication.principal)
           createSecurityContext(principal, id).map {
-            securityContext =>
-              Some((authentication, (principal, securityContext)))
+            case Some(securityContext) =>
+              Some(principal, securityContext)
+            case None =>
+              None
           }
         case None =>
           Future.successful(None)

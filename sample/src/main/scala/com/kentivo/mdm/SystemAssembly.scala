@@ -25,6 +25,7 @@ import com.kentivo.mdm.logic.UserAuthenticator
 import com.kentivo.mdm.logic.UserAuthenticator
 import com.busymachines.prefab.authentication.logic.AuthenticationConfig
 import com.busymachines.prefab.authentication.elasticsearch.ESAuthenticationDao
+import com.busymachines.prefab.authentication.elasticsearch.ESCredentialsDao
 
 class SystemAssembly {
 

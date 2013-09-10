@@ -59,12 +59,12 @@ case class UserRole (
 case class User (
   id : Id[User] = Id.generate,
   credentials : List[Id[Credentials]] = Nil,
+  loginName : String = "",
   firstName : String = "",
   middleName : String = "",
   lastName : String = "",
   addresses : List[Address] = Nil,
   phoneNumbers : List[PhoneNumber] = Nil,
-  primaryEmail : String = "",
   emailAddresses : List[Email] = Nil,
   roles : List[Id[UserRole]] = Nil
 ) extends HasId[User]
