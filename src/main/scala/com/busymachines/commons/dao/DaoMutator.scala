@@ -17,55 +17,55 @@ import scala.concurrent.Await
 import com.busymachines.commons.Logging
 
 object DaoMutator {
-  def apply[T <: HasId[T] : ClassTag](dao : RootDao[T])(implicit ec : ExecutionContext) = new RootDaoMutator[T](dao)
-  def apply[P <: HasId[P], T <: HasId[T] : ClassTag](dao : NestedDao[P, T])(implicit ec : ExecutionContext) = new NestedDaoMutator[P, T](dao)
+  def apply[T <: HasId[T]: ClassTag](dao: RootDao[T])(implicit ec: ExecutionContext) = new RootDaoMutator[T](dao)
+  def apply[P <: HasId[P], T <: HasId[T]: ClassTag](dao: NestedDao[P, T])(implicit ec: ExecutionContext) = new NestedDaoMutator[P, T](dao)
 }
 
-abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classTag : ClassTag[T], ec : ExecutionContext) extends Logging {
-  
+abstract class DaoMutator[T <: HasId[T]: ClassTag](dao: Dao[T])(implicit classTag: ClassTag[T], ec: ExecutionContext) extends Logging {
+
   protected val _changedEntities = mutable.Map[Id[T], Versioned[T]]()
   protected val _createdEntities = mutable.Map[Id[T], String]()
   protected val _cache = new DaoCache(dao)
 
-  val changedEntities: scala.collection.Map[Id[T], T] = 
+  val changedEntities: scala.collection.Map[Id[T], T] =
     _changedEntities.mapValues(_.entity)
 
-  def retrieve(id: Id[T], timeout : Duration): Option[T] = 
+  def retrieve(id: Id[T], timeout: Duration): Option[T] =
     _changedEntities.get(id).map(Some(_)).getOrElse(_cache.retrieve(id, timeout)).map(_.entity)
 
-  def retrieve(ids : Seq[Id[T]], timeout : Duration) : Seq[T] = 
+  def retrieve(ids: Seq[Id[T]], timeout: Duration): Seq[T] =
     ids.flatMap(id => _changedEntities.get(id).map(Some(_)).getOrElse(_cache.retrieve(id, timeout))).map(_.entity)
-  
-  def search(criteria: SearchCriteria[T], page : Page, timeout : Duration) : List[T] = {
+
+  def search(criteria: SearchCriteria[T], page: Page, timeout: Duration): List[T] = {
     val entities = _cache.search(criteria, page, timeout)
     entities.map(entity => _changedEntities.get(entity.id).getOrElse(entity)).map(_.entity)
   }
-    
-  def modify(id: Id[T], timeout : Duration)(f: T => T): T = {
+
+  def modify(id: Id[T], timeout: Duration)(f: T => T): T = {
     modify(id, throw new IdNotFoundException(id.toString, classTag.runtimeClass.getSimpleName), timeout)(f)
   }
 
-  def modify(id: Id[T], create : => T, timeout : Duration)(f: T => T): T = {  
+  def modify(id: Id[T], create: => T, timeout: Duration)(f: T => T): T = {
     val entity = retrieve(id, timeout).getOrElse(create)
     val modified = f(entity)
     if (entity != modified) {
-      _changedEntities += (id -> Versioned(modified, ""))
+      _changedEntities += (id -> Versioned(modified, 1))
     }
     modified
   }
-  
-  def update(entity : T, timeout: Duration) =
+
+  def update(entity: T, timeout: Duration) =
     modify(entity.id, timeout)(_ => entity)
-  
-  def write(timeout : Duration, reindex : Boolean = true) : Seq[Versioned[T]] = {
-    val writes = for (versionedEntity <- _changedEntities.values) 
+
+  def write(timeout: Duration, reindex: Boolean = true): Seq[Versioned[T]] = {
+    val writes = for (versionedEntity <- _changedEntities.values)
       yield (versionedEntity.entity.id, _createdEntities.get(versionedEntity.entity.id) match {
-        case Some(parentId) => 
-          createEntity(parentId, versionedEntity.entity)
-        case None => 
-          debug(s"Updating entity: ${versionedEntity.entity.id}")
-          dao.update(versionedEntity, false)
-      })
+      case Some(parentId) =>
+        createEntity(parentId, versionedEntity.entity)
+      case None =>
+        debug(s"Updating entity: ${versionedEntity.entity.id}")
+        dao.update(versionedEntity, false)
+    })
     val futures = for ((id, future) <- writes) yield {
       val promise = Promise[(Option[Versioned[T]], Option[(Id[T], Throwable)])]()
       future.onComplete {
@@ -84,37 +84,37 @@ abstract class DaoMutator[T <: HasId[T] :ClassTag](dao : Dao[T])(implicit classT
         None
     }
   }
-  
+
   def clear {
     _changedEntities.clear
     _createdEntities.clear
   }
-  
-  protected def createEntity(parentId : String, entity : T) : Future[Versioned[T]]
-}  
 
-class RootDaoMutator[T <: HasId[T] : ClassTag](dao : RootDao[T])(implicit ec : ExecutionContext) extends DaoMutator[T](dao){
-  
-  def getOrCreate(id: Id[T], create : => T, timeout : Duration): T = {
+  protected def createEntity(parentId: String, entity: T): Future[Versioned[T]]
+}
+
+class RootDaoMutator[T <: HasId[T]: ClassTag](dao: RootDao[T])(implicit ec: ExecutionContext) extends DaoMutator[T](dao) {
+
+  def getOrCreate(id: Id[T], create: => T, timeout: Duration): T = {
     _changedEntities.getOrElseUpdate(id, result(dao.retrieve(id), timeout) match {
       case Some(versionedInstance) => versionedInstance
-      case None => Versioned(create, "")
+      case None => Versioned(create, 1)
     }).entity
   }
-  
-  protected def createEntity(parentId : String, entity : T) =
+
+  protected def createEntity(parentId: String, entity: T) =
     dao.create(entity, false)
 }
 
-class NestedDaoMutator[P <: HasId[P], T <: HasId[T] : ClassTag](dao : NestedDao[P, T])(implicit ec : ExecutionContext) extends DaoMutator[T](dao){
-  
-  def getOrCreate(id: Id[T], parent : Id[P], create : => T, timeout : Duration): T = {
+class NestedDaoMutator[P <: HasId[P], T <: HasId[T]: ClassTag](dao: NestedDao[P, T])(implicit ec: ExecutionContext) extends DaoMutator[T](dao) {
+
+  def getOrCreate(id: Id[T], parent: Id[P], create: => T, timeout: Duration): T = {
     _changedEntities.getOrElseUpdate(id, result(dao.retrieve(id), timeout) match {
       case Some(entity) => entity
-      case None => Versioned(create, "")
+      case None => Versioned(create, 1)
     }).entity
   }
-  
-  protected def createEntity(parentId : String, entity : T) =
+
+  protected def createEntity(parentId: String, entity: T) =
     dao.create(Id(parentId), entity, false)
 }
