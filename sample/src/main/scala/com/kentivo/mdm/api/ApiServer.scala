@@ -45,7 +45,7 @@ class ApiServer(authenticationApiV1: AuthenticationApiV1, partyApiV1: PartiesApi
         userApiV1 ~
         sourceApiV1 ~
         apiDocV1
-    } ~ leafsUi.route ~ ui
+    } ~ leafsUi.route
 
   override val exceptionHandler =
     ExceptionHandler {
@@ -59,6 +59,7 @@ class ApiServer(authenticationApiV1: AuthenticationApiV1, partyApiV1: PartiesApi
         warn(s"Request ${ctx.request} contains invalid input: ${e.message}", e)
         ctx.complete(StatusCodes.BadRequest, Map("message" -> e.message, "field" -> e.field))
         case e: Throwable => ctx =>
+          e.printStackTrace()
         error(s"Request ${ctx.request} could not be handled normally: ${e.getMessage}", e)
         ctx.complete(StatusCodes.InternalServerError, Map("message" -> e.getMessage))
     }

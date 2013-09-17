@@ -6,6 +6,7 @@ import Defaults._
 
 //resolvers += Resolver.url("sbt-plugin-releases", url("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns)
 
+addSbtPlugin("io.spray" % "sbt-revolver" % "0.7.1")
 
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.2.0")
 
