@@ -9,6 +9,8 @@ import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
  */
 object BusyMachinesCommonsBuild extends Build {
  
+  val sprayVersion = "1.2-20130719"
+  
   lazy val project = Project(id = "commons", base = file("."), settings = 
     Project.defaultSettings ++ 
     publishSettings ++
@@ -32,14 +34,13 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.0-RC2" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.2.0-RC2" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-contrib" % "2.2.0-RC2" withSources(),
-    libraryDependencies += "io.spray" % "spray-can" % "1.2-20130719" withSources(),
-    libraryDependencies += "io.spray" % "spray-routing" % "1.2-20130719" withSources(),
-    libraryDependencies += "io.spray" % "spray-client" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" % "spray-can" % sprayVersion withSources(),
+    libraryDependencies += "io.spray" % "spray-client" % sprayVersion withSources(),
     libraryDependencies += "io.spray" %%  "spray-json" % "1.2.5" withSources(),
-    libraryDependencies += "io.spray" % "spray-servlet" % "1.2-20130719" withSources(),
-    libraryDependencies += "io.spray" % "spray-routing" % "1.2-20130719" withSources(),
-    libraryDependencies += "io.spray" % "spray-testkit" % "1.2-20130719" % "test" withSources(),
-    libraryDependencies += "io.spray" % "spray-caching" % "1.2-20130719" withSources(),
+    libraryDependencies += "io.spray" % "spray-servlet" % sprayVersion withSources(),
+    libraryDependencies += "io.spray" % "spray-routing" % sprayVersion withSources(),
+    libraryDependencies += "io.spray" % "spray-testkit" % sprayVersion % "test" withSources(),
+    libraryDependencies += "io.spray" % "spray-caching" % sprayVersion withSources(),
     libraryDependencies += "org.scalastuff" %% "esclient" % "0.20.3" withSources(),
     libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources(),
     libraryDependencies += "org.clapper" %% "argot" % "1.0.1" withSources(),

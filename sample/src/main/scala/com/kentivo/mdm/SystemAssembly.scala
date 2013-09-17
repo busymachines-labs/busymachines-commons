@@ -26,6 +26,7 @@ import com.kentivo.mdm.logic.UserAuthenticator
 import com.busymachines.prefab.authentication.logic.AuthenticationConfig
 import com.busymachines.prefab.authentication.elasticsearch.ESAuthenticationDao
 import com.busymachines.prefab.authentication.elasticsearch.ESCredentialsDao
+import com.kentivo.mdm.ui.UI
 
 class SystemAssembly {
 
@@ -34,9 +35,9 @@ class SystemAssembly {
 
   lazy val eventBus = new DistributedEventBus(actorSystem)
   
-  val esConfig = new ESConfig("kentivo.es")
-  val esClient = new ESClient(esConfig)
-  val index = new ESIndex(esClient, "kentivo.mdm", eventBus) 
+  lazy val esConfig = new ESConfig("kentivo.es")
+  lazy val esClient = new ESClient(esConfig)
+  lazy val index = new ESIndex(esClient, "kentivo.mdm", eventBus) 
 
   lazy val partyDao = new PartyDao(index)
   lazy val userDao = new UserDao(partyDao)
@@ -54,5 +55,6 @@ class SystemAssembly {
   lazy val sourceApiV1 = new SourceApiV1(sourceManager, authenticator)
   lazy val apiDocV1 = new ApiDocV1
   lazy val ui = new UiService
-  lazy val server = new ApiServer(authenticationApiV1, partyApiV1, userApiV1, sourceApiV1, apiDocV1, ui)
+  lazy val leafsUi = new UI
+  lazy val server = new ApiServer(authenticationApiV1, partyApiV1, userApiV1, sourceApiV1, apiDocV1, ui, leafsUi)
 }
