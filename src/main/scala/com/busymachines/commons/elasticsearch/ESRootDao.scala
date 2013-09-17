@@ -69,8 +69,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       case None => None
       case Some(source) =>
         val json = source.getSourceAsString.asJson
-        val version = source.getVersion.toString
-        Some(Versioned(json.convertFromES(mapping), version))
+        Some(Versioned(json.convertFromES(mapping), source.getVersion))
     }
   }
 
@@ -85,12 +84,12 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             .setFrom(page.from)
             .setSize(page.size)
             .addSort(sort.field, sort.order)
+            .setVersion(true)
         debug(s"Executing search ${request}")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
-            val version = json.getESVersion
-            Versioned(json.convertFromES(mapping), version)
+            Versioned(json.convertFromES(mapping), hit.version)
           }, Some(result.getHits.getTotalHits))
         }
       case _ =>
@@ -113,7 +112,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     //      Future.successful(Versioned(entity, response.getVersion.toString))
 
     preMutate(entity) flatMap { _ =>
-      client.execute(request).map(response => Versioned(entity, response.getVersion.toString)) flatMap { storedEntity =>
+      client.execute(request).map(response => Versioned(entity, response.getVersion)) flatMap { storedEntity =>
         postMutate(storedEntity) map { _ => storedEntity }
       }
     }
@@ -133,7 +132,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       .refresh(refreshAfterMutation)
       .id(entity.entity.id.toString)
       .source(newJson.toString)
-    //      .version(entity.version.toLong)
+      .version(entity.version)
 
     debug(s"Update $t.name: $newJson")
 
@@ -141,7 +140,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
     preMutate(entity) flatMap { _ =>
-      client.execute(request).map(response => Versioned(entity.entity, response.getVersion.toString)) flatMap { mutatedEntity =>
+      client.execute(request).map(response => Versioned(entity.entity, response.getVersion)) flatMap { mutatedEntity =>
         postMutate(mutatedEntity.entity) map { _ => mutatedEntity }
       }
     }
@@ -169,12 +168,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     })
 
   def query(queryBuilder: QueryBuilder, page: Page): Future[SearchResult[T]] = {
-    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).addSort("_id", SortOrder.ASC).setFrom(page.from).setSize(page.size).request
+    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).addSort("_id", SortOrder.ASC).setFrom(page.from).setSize(page.size).setVersion(true).request
     client.execute(request).map { result =>
       SearchResult(result.getHits.hits.toList.map { hit =>
         val json = hit.sourceAsString.asJson
-        val version = json.getESVersion
-        Versioned(json.convertFromES(mapping), version)
+        Versioned(json.convertFromES(mapping), hit.getVersion)
       }, Some(result.getHits.getTotalHits))
     }
   }
@@ -183,11 +181,10 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     query(new QueryStringQueryBuilder(queryStr), page)
 
   protected def doSearch(filter: FilterBuilder): Future[List[Versioned[T]]] = {
-    val request = client.javaClient.prepareSearch(index.name).addSort("_id", SortOrder.ASC).setTypes(t.name).setFilter(filter).request
+    val request = client.javaClient.prepareSearch(index.name).addSort("_id", SortOrder.ASC).setTypes(t.name).setFilter(filter).setVersion(true).request
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
       val json = hit.sourceAsString.asJson
-      val version = json.getESVersion
-      Versioned(json.convertFromES(mapping), version)
+      Versioned(json.convertFromES(mapping), hit.getVersion)
     })
   }
 
