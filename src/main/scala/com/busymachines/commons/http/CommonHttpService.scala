@@ -1,7 +1,7 @@
 package com.busymachines.commons.http
 
-import com.busymachines.commons.Logging
 import spray.routing.HttpService
+import com.busymachines.commons.Logging
 import spray.routing.RequestContext
 import spray.routing.Route
 import akka.actor.ActorRefFactory

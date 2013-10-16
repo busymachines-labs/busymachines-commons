@@ -11,7 +11,7 @@ object BusyMachinesCommonsBuild extends Build {
  
   val sprayVersion = "1.2-20130719"
   
-  lazy val project = Project(id = "commons", base = file("."), settings = 
+  lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++ 
     publishSettings ++
     site.settings ++ 
