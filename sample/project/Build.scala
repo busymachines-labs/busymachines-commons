@@ -11,7 +11,7 @@ import spray.revolver.RevolverPlugin._
 
 object SampleBuild extends Build {
 
-  val commons = "com.busymachines" %% "commons" % "0.0.1-SNAPSHOT" withSources() changing()
+  val commons = "com.busymachines" %% "busymachines-commons" % "0.0.1-SNAPSHOT" withSources() changing()
 
   def defaultSettings =
     Project.defaultSettings ++
@@ -41,6 +41,6 @@ object SampleBuild extends Build {
   val sample = Project(id = "sample", base = file("."), settings = defaultSettings ++ Seq(
  mainClass in (Compile, run) := Some("com.kentivo.mdm.Main"),
     libraryDependencies ++= Seq())).
-	dependsOn(scalaleafs, commonsProj)
+	dependsOn(commonsProj)
 
 }

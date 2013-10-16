@@ -8,7 +8,7 @@ import Defaults._
 
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.7.1")
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.2.0")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.3.0")
 
 //addSbtPlugin("org.scala-sbt" % "sbt-closure" % "0.1.3")
 
