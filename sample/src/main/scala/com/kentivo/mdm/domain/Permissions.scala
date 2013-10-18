@@ -1,7 +1,10 @@
 package com.kentivo.mdm.domain.permissions
 
-object ViewRepository
-object EditRepositoryMetaData
-object EditRepositoryData
-object ViewParentPartyRepository
-object EditParentPartyRepositoryData
+trait Permission
+
+object ViewRepository extends Permission
+object EditRepositoryData extends Permission
+object EditRepositoryMetaData extends Permission
+object ViewParentPartyRepository extends Permission
+object EditParentPartyRepositoryData extends Permission
+object EditParentPartyRepositoryMetaData extends Permission

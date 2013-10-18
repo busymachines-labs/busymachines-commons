@@ -10,7 +10,6 @@ import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.UnitOfMeasure
 import scala.actors.OutputChannel
 
-
 // Synchronizing an effective repository:
 //1. get lastSynchronizationTime
 //2. determine newSynchronizationTime
@@ -21,97 +20,122 @@ import scala.actors.OutputChannel
 //7.   calculate effective item
 //8. store newSynchronizationTime as lastSynchronizationTime
 
+
+//repository locales: nl, nl_be, nl_nl
+//webshop channel locales: nl_be, nl_nl
+//german webshop (no locales)
+//german north webshop (no locales, parent: german webshop)
+//german south webshop (no locales, parent: german webshop)
+//
+//fallback tree:
+//
+//default
+//  dutch
+//    dutch (be)
+//    dutch (nl)
+//  webshop
+//    dutch (be)
+//    dutch (nl)
+//    german webshop
+//      german north webshop
+//      german south webshop
+
+// import: 
+// Determine whether there was a change by comparing the effective value caused by THE SANE import source only. Only store when changed.
+
+// default properties:
+// - parents
+// - deleted
+
 /**
  * Main unit of data. Contains meta-data, data, history, effective repositories, etc.
  */
 case class Repository(
   id: Id[Repository] = Id.generate,
+  
+  /**
+   * Owner party of the repository and all related data (items, effective repositories)
+   */
   owner: Id[Party],
-  name: Map[Locale, String] = Map.empty,
-  main : EffectiveRepository,
-  secundairy : Map[String, EffectiveRepository],
+  
+  /**
+   * Name of this repository (multi-lingual).
+   */
+  name: Map[Option[Locale], String] = Map.empty,
+  
+  /**
+   * The current effective repository. It will be synchronised on the fly. 
+   */
+  current : EffectiveRepository,
+  
+  /**
+   * A copy of the repositories on a specific moment in time. It will be synchronised on-demand.
+   * Examples: preview, production
+   */
+  snapshots : Map[String, EffectiveRepository],
+  
   /**
    * Locales used by the repository.
    */
-  locales : List[Locale])
-
-/**
- * An effective repository is derived from a 'master' repository and
- * contains only the effective values for a particular locale and and channel.
- * All relevant mutations and rules have been applied.
- * The main effective repository will be synchronised always and on the fly, the
- * secondary ones are synchronised on-demand only, like "publish". 
- */   
-case class EffectiveRepository(
-  id : Id[Repository] = Id.generate,
-  lastSynchronizationTime : DateTime
+  locales : List[Locale]
 )
-  
+
 /**
  * A repository can store variations of data and meta-data that are channel-specific.
  * An example of a channel can be a SAP system (for exporting) or a web-shop. 
  */
 case class Channel(
+  id : Id[Channel],
+  
+  /**
+   * Channels can have parents defining the fallback tree.
+   */
+  parent : Option[Id[Channel]],
+  
   /**
    * Locales used by this channel. Not necessarily a sub-set or a super-set of the
    * repository's locales. 
    */
   locales : List[Locale]
-)
+) extends HasId[Channel]
   
 case class Item(
   id: Id[Item] = Id.generate,
   repository: Id[Repository],
-  lastMutationTime : DateTime, // maximum of ItemDefinition.mutationTime and all values.mutationTime
-  currentDefinition : ItemDefinition,
-  definitions: List[ItemDefinition],
-  values: Map[Id[Property], PropertyValue] = Map.empty
+  metaData: List[ItemMetaData] = Nil,
+  data: Map[Id[Property], List[PropertyValue]] = Map.empty
 ) extends HasId[Item] 
 
-case class ItemDefinition(
+case class ItemMetaData(
   mutation : Id[Mutation],
   mutationTime : DateTime,
-  parents: List[Id[Item]] = Nil,
   properties: List[Property] = Nil,
-  propertyGroups: List[PropertyGroup] = Nil,
+  propertyGroups: List[PropertyGroup] = Nil, // must be concatenated with parent extent
+  excludedPropertyGroups: Option[List[Id[PropertyGroup]]] = None, // entire list is either inherited or redefined
   isCategory: Boolean = false,
-  isDeleted: Boolean = false,
-  groups : List[PropertyGroup] = Nil,
-  rules: List[ItemRule] = Nil) extends HasId[ItemDefinition] 
-
-// immutable
-case class EffectiveItem(
-  id: Id[EffectiveItem] = Id.generate,
-  item: Id[Item],
-  repository: Id[Repository],
-  definition : ItemDefinition,
-  knownParentExtent: List[Id[Item]] = Nil,
-  locale : Locale,
-  channel : Option[Id[Channel]],
-  values : Map[Id[Property], String]
-) extends HasId[EffectiveItem]
+  rules: List[ItemRule] = Nil) extends HasId[ItemMetaData] 
 
 case class Property(
   id: Id[Property] = Id.generate,
-  name: Map[Locale, String] = Map.empty,
+  name: Map[Option[Locale], String] = Map.empty,
   scope : PropertyScope.Value = PropertyScope.Item,
   `type`: PropertyType.Value = PropertyType.String,
-  unitOfMeasure: Map[Locale, UnitOfMeasure] = Map.empty, // only if type == Real
+  unitOfMeasure: Map[Option[Locale], UnitOfMeasure] = Map.empty, // only if type == Real
   precision: Option[Int] = None, // only if type == Real, number of digits after the . 
   itemValueBase : Option[Id[Item]] = None, // only if type == Item
-  enumValues : Map[String, Map[Locale, String]] = Map.empty, // only if type == Enum
+  enumValues : Map[String, Map[Option[Locale], String]] = Map.empty, // only if type == Enum
   baseItem : Option[Id[Item]] = None, // only if type == Item
   baseItemIsCategoryConstraint : Option[Boolean] = None, // only if type == Item, true: must be category, false: may not be a category
   mandatory: Boolean = false,
   multiValue : Boolean = false,
   multiLingual: Boolean = false,
   public: Boolean = false, // visible by managed parties
-  groups : List[Id[PropertyGroup]] = Nil,
+  propertyGroups : List[Id[PropertyGroup]] = Nil, 
   rules: List[PropertyRule] = List.empty) extends HasId[Property]
 
 case class PropertyGroup(
   id : Id[PropertyGroup] = Id.generate,
-  name : Map[Locale, String] = Map.empty,
+  name : Map[Option[Locale], String] = Map.empty,
   properties : List[Id[Property]] = List.empty)
 
 object PropertyType extends Enumeration {
@@ -136,9 +160,47 @@ object PropertyScope extends Enumeration {
 case class PropertyValue(
   mutation: Id[Mutation],
   mutationTime : DateTime,
-  value: String,
-  channel : Option[Channel],
+  value: Option[String], // None has special meaning in effective calculation
+  channel : Option[Id[Channel]] = None,
   locale: Option[Locale] = None)
+
+/**
+ * An effective repository is derived from a 'master' repository and
+ * contains only the effective values for a particular locale and and channel.
+ * All relevant mutations and rules have been applied.
+ * An effective repository contains effective items for all relevant channels and
+ * locales.
+ */   
+case class EffectiveRepository(
+  id : Id[EffectiveRepository] = Id.generate,
+  
+  /**
+   * The effective repository will contain data from mutations that have an
+   * end-time smaller than the last synchronisation time.
+   */
+  lastSynchronizationTime : DateTime
+) extends HasId[EffectiveRepository]
+  
+/**
+ * An effective item contains the 'flat' view of an item for a specific channel and locale.
+ */ 
+case class EffectiveItem(
+  id: Id[EffectiveItem] = Id.generate,
+  /**
+   * Origin item.
+   */
+  item: Id[Item],
+  
+  /**
+   * Repository this item belongs to.
+   */
+  repository: Id[EffectiveRepository],
+  metaData : Id[ItemMetaData],
+  parentExtent: List[Id[Item]] = Nil,
+  locale : Option[Locale],
+  channel : Option[Id[Channel]],
+  values : Map[Id[Property], String]
+) extends HasId[EffectiveItem]
 
 case class Mutation(
   description: String,
@@ -147,6 +209,12 @@ case class Mutation(
   id: Id[Mutation] = Id.generate,
   user: Option[Id[User]] = None,
   source: Option[Id[Source]] = None) extends HasId[Mutation]
+
+
+case class GetEffictiveItemsResponse (
+  metaData : Map[Id[ItemMetaData], ItemMetaData],
+  items : List[EffectiveItem]
+)
 
 
 object Item2 {
