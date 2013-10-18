@@ -1,10 +1,10 @@
 package com.kentivo.mdm.domain
 
 import com.busymachines.commons.domain.CommonJsonFormats
-import spray.json._
-import com.busymachines.commons.domain.Unit
+import com.busymachines.commons.domain.UnitOfMeasure
 
-object DomainJsonFormats extends DomainJsonFormats 
+object DomainJsonFormats extends DomainJsonFormats
+
 trait DomainJsonFormats extends CommonJsonFormats {
 
   implicit val addressKindFormat = enumFormat(AddressKind)
@@ -18,7 +18,8 @@ trait DomainJsonFormats extends CommonJsonFormats {
   implicit val relatedPartyFormat = jsonFormat3(RelatedParty)
   implicit val partyFormat = jsonFormat9(Party)
 
-  implicit val unitFormat = stringJsonFormat("Unit", s => Unit(Nil))
+  implicit val unitOfMeasureFormat = stringJsonFormat("UnitOfMeasure", s => UnitOfMeasure(Nil))
+  implicit val mutationFormat = jsonFormat6(Mutation)
 
   implicit val itemRule = jsonFormat1(ItemRule)
   implicit val propertyRule = jsonFormat2(PropertyRule)
@@ -30,8 +31,9 @@ trait DomainJsonFormats extends CommonJsonFormats {
   implicit val propertyScope = enumFormat(PropertyScope)
   implicit val propertyValue = jsonFormat5(PropertyValue)
   implicit val propertyGroup = jsonFormat3(PropertyGroup)
-  implicit val property = jsonFormat13(Property)
-  implicit val itemFormat = jsonFormat12(Item)
+  implicit val property = jsonFormat16(Property)
+  implicit val itemDefinitionFormat = jsonFormat9(ItemDefinition)
+  implicit val itemFormat = jsonFormat6(Item)
 
   implicit val validator = jsonFormat1(Validator)
   implicit val streetMatcher = jsonFormat1(StreetMatcher)
@@ -43,5 +45,4 @@ trait DomainJsonFormats extends CommonJsonFormats {
   implicit val defaultMapping = jsonFormat3(DefaultMapping)
   implicit val mappingFormat = jsonFormat5(Mapping)
   implicit val sourceFormat = jsonFormat7(Source)
-  implicit val mutationFormat = jsonFormat5(Mutation)
 }

@@ -18,10 +18,10 @@ trait Implicits {
   
   implicit class RichItem(item : Item) {
     def property(property: Id[Property]): Option[Property] =
-      item.properties.find(_.id == property)
+      item.definition.properties.find(_.id == property)
   
     def value(property: Id[Property]): Option[PropertyValue] = 
-      item.values.find(_.property == property)
+      item.values.get(property)
   }
 }
 

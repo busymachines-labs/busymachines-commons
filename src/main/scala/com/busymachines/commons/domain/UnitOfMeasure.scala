@@ -1,14 +1,21 @@
 package com.busymachines.commons.domain
 
-case class Unit(factors : List[UnitFactor]) {
-  def symbol = factors.mkString("\u22C5")
+
+/**
+ * TODO
+ * - determine compatibility of Units of of measure. For example, all locale-specific units of a property must be compatible.
+ * - need to auto-convert between compatible units
+ * - add non-si units, like inches, pounds, miles
+ */
+case class UnitOfMeasure(terms : List[UnitOfMeasureTerm]) {
+  def symbol = terms.mkString("\u22C5")
 }
 
-case class UnitFactor(prefix : UnitPrefix.Prefix, baseUnit : BaseUnit.Unit, exponent : Integer) {
+case class UnitOfMeasureTerm(prefix : UnitPrefix.Prefix, baseUnit : UnitOfMeasure.Unit, exponent : Integer) {
   def symbol = prefix.symbol + baseUnit.symbol + exponent
 }
 
-object BaseUnit extends Enumeration {
+object UnitOfMeasure extends Enumeration {
   case class Unit(name : String, symbol : String) extends Val(name)
   val Metre = Unit("metre", "m")
   val Gram = Unit("gram", "g")

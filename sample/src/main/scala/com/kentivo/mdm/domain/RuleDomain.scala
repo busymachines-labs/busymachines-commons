@@ -3,7 +3,7 @@ package com.kentivo.mdm.domain
 import com.busymachines.commons.domain.Id
 import java.util.Locale
 import org.joda.time.DateTime
-import com.busymachines.commons.domain.Unit
+import com.busymachines.commons.domain.UnitOfMeasure
 
 case class ItemRule(
   id: Id[ItemRule])
@@ -15,7 +15,7 @@ case class PropertyRule(
 case class RangeCheck(
   min: Option[Double],
   max: Option[Double],
-  unit: Option[Unit])
+  unit: Option[UnitOfMeasure])
 
 case class Schedule(
   time: DateTime,

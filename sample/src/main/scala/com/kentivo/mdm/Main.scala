@@ -21,7 +21,9 @@ object Main extends App with Logging {
   
   import assembly.executionContext
   import assembly.actorSystem
-//  val icecat = new IcecatAdapter(assembly.itemDao, assembly.mediaDao)
-//  icecat.importAll
+  val icecat = new IcecatAdapter(assembly.itemDao, assembly.mediaDao)
+  icecat.importAll.onFailure {
+    case t : Throwable => t.printStackTrace
+  }
   assembly.server.start
 }

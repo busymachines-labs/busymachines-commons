@@ -10,7 +10,7 @@ import com.kentivo.mdm.domain.PropertyScope
 import java.util.Locale
 import scala.collection.concurrent.TrieMap
 import com.kentivo.mdm.domain.PropertyValue
-import com.busymachines.commons.domain.Unit
+import com.busymachines.commons.domain.UnitOfMeasure
 import com.kentivo.mdm.db.ItemDao
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.domain.Id
@@ -20,6 +20,18 @@ import scala.concurrent.duration._
 import com.busymachines.commons.dao.RootDaoMutator
 import com.kentivo.mdm.domain.Repository
 import com.busymachines.commons.dao.Page
+import com.kentivo.mdm.domain.Channel
+import com.kentivo.mdm.domain.ItemDefinition
+
+object Commands {
+  
+  /**
+   * When value == None, removes the value.
+   */
+  case class SetValue(item : Id[Item], property : Id[Property], value : Option[String], channel : Option[Channel] = None, locale : Option[Locale] = None)
+
+  case class SetItemDefinition(item : Id[Item], definition: ItemDefinition)
+}
 
 class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: Mutation)(implicit ec: ExecutionContext) {
 
@@ -50,7 +62,7 @@ class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: 
   
   def modifyProperty(itemId: Id[Item], propertyId: Id[Property])(modify: Property => Property): Property = {
     val item = getOrCreateItem(itemId)
-    val (properties, property, changed) = item.properties.modify(_.id == propertyId, Property(propertyId, mutation.id), modify)
+    val (properties, property, changed) = sk.modify(_.id == propertyId, Property(propertyId, mutation.id), modify)
     if (changed) {
       mutator.update(item.copy(properties = properties), timeout)
     }

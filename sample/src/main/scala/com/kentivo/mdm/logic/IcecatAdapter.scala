@@ -98,7 +98,7 @@ class IcecatAdapter(itemDao: ItemDao, mediaDao : ESMediaDao)(implicit ec: Execut
     
     var itemsToWrite = Map[Id[Item], Item]()
     
-    val mutation = Mutation("Icecat Import", DateTime.now)
+    val mutation = Mutation("Icecat Import", DateTime.now, DateTime.now)
     
     val mutator = new Mutator(itemDao, repository, mutation)
 

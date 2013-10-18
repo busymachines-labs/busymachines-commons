@@ -1,0 +1,7 @@
+package com.kentivo.mdm.domain.permissions
+
+object ViewRepository
+object EditRepositoryMetaData
+object EditRepositoryData
+object ViewParentPartyRepository
+object EditParentPartyRepositoryData

@@ -65,11 +65,15 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]] = {
     val request = new GetRequest(index.name, t.name, id.toString)
-    client.execute(request).map(response => Option(response)) map {
-      case None => None
-      case Some(source) =>
-        val json = source.getSourceAsString.asJson
-        Some(Versioned(json.convertFromES(mapping), source.getVersion))
+    client.execute(request) map {
+      case response if !response.isExists => 
+        None
+      case response if response.isSourceEmpty =>
+        error(s"No source available for ${t.name} with id $id")
+        None
+      case response =>
+        val json = response.getSourceAsString.asJson
+        Some(Versioned(json.convertFromES(mapping), response.getVersion))
     }
   }
 

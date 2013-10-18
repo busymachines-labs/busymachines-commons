@@ -2,7 +2,6 @@ package com.kentivo.mdm.domain
 
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
-import com.busymachines.commons.domain.Unit
 
 /**
  * Constraint: Source properties must exist in source types.
