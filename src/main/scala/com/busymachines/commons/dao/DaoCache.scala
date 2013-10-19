@@ -11,11 +11,14 @@ import scala.concurrent.duration.Duration
 /**
  * This cache has unbounded size and lifetime. Mainly exists for use inside mutator.
  */
-class DaoCache[T <: HasId[T]](val dao: Dao[T])(implicit ec: ExecutionContext) {
+class DaoCache[T <: HasId[T]](val dao: Dao[T], autoInvalidate : Boolean = false)(implicit ec: ExecutionContext) {
 
   private val _idCache = TrieMap[Id[T], Option[Versioned[T]]]()
   private val _searchCache = TrieMap[(SearchCriteria[T], Page), List[Versioned[T]]]()
 
+  if (autoInvalidate) 
+    dao.onChange(invalidate)
+  
   def retrieve(id: Id[T], timeout: Duration): Option[Versioned[T]] =
     _idCache.getOrElseUpdate(id, Await.result(dao.retrieve(id), timeout))
 
@@ -38,4 +41,9 @@ class DaoCache[T <: HasId[T]](val dao: Dao[T])(implicit ec: ExecutionContext) {
         case None => v
       }
     })
+    
+  def invalidate(id: Id[T]) : Unit = {
+    _idCache.remove(id)
+    _searchCache.clear
+  }
 }
