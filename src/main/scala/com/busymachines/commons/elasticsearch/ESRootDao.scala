@@ -30,10 +30,11 @@ import org.elasticsearch.action.search.SearchType
 import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.Page
-import com.busymachines.commons.event.DaoMutationEvent
 import scala.reflect.ClassTag
 import org.elasticsearch.search.sort.SortOrder
 import com.busymachines.commons.dao.SearchSort
+import com.google.common.eventbus.EventBus
+import com.busymachines.commons.event.BusEvent
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -49,16 +50,6 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     debug(mappingConfiguration)
     client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
   }
-
-  protected def preMutate(entity: T): Future[T] =
-    Future.successful(entity)
-
-  protected def postMutate(entity: T): Future[Unit] =
-    Future.successful(index.bus.publish(DaoMutationEvent(
-      entityType = tag.runtimeClass,
-      indexName = index.name,
-      typeName = t.name,
-      id = entity.id.toString)))
 
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
     query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id => id.toString): _*), Page.all) map { result => result.result }
@@ -209,5 +200,23 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     })
   }
 
+  def onChange(f : Id[T] => Unit) {
+    index.bus.subscribe {
+      case ESRootDaoMutationEvent(n, id) if n == eventName =>
+        f(Id[T](id))
+    }
+  }
+  
+  protected val eventName = tag.runtimeClass.getName.replaceAllLiterally("$", "") + "_" + index.name + "_" + t.name
+
+  protected def preMutate(entity: T): Future[T] =
+    Future.successful(entity)
+
+  protected def postMutate(entity: T): Future[Unit] =
+    Future.successful(index.bus.publish(ESRootDaoMutationEvent(eventName, entity.id.toString)))
+
+
   implicit def toResults(f: Future[SearchResult[T]]) = ESRootDao.toResults(f)
 }
+
+case class ESRootDaoMutationEvent(eventName : String, id : String) extends BusEvent 

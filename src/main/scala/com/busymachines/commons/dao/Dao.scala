@@ -26,5 +26,7 @@ trait Dao[T <: HasId[T]] {
   def update(entity: Versioned[T], reindex : Boolean = true): Future[Versioned[T]]
 
   def delete(id: Id[T], reindex : Boolean = true): Future[Unit]
+  
+  def onChange(f: Id[T] => Unit): Unit
 }
 

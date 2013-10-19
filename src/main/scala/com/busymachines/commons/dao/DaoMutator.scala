@@ -21,7 +21,7 @@ object DaoMutator {
   def apply[P <: HasId[P], T <: HasId[T]: ClassTag](dao: NestedDao[P, T])(implicit ec: ExecutionContext) = new NestedDaoMutator[P, T](dao)
 }
 
-abstract class DaoMutator[T <: HasId[T]: ClassTag](dao: Dao[T])(implicit classTag: ClassTag[T], ec: ExecutionContext) extends Logging {
+abstract class DaoMutator[T <: HasId[T]](dao: Dao[T])(implicit classTag: ClassTag[T], ec: ExecutionContext) extends Logging {
 
   protected val _changedEntities = mutable.Map[Id[T], Versioned[T]]()
   protected val _createdEntities = mutable.Map[Id[T], String]()

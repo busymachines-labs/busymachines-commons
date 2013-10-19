@@ -117,4 +117,7 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
 
   def search(criteria: SearchCriteria[T], page : Page = Page.first, sort:SearchSort = ESSearchSort.asc("_id"), facets : Seq[FacetField] = Seq.empty): Future[SearchResult[T]] =
     ???
+    
+  def onChange(f : Id[T] => Unit) : Unit = 
+    ???
 }
