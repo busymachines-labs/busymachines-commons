@@ -32,7 +32,7 @@ trait DomainJsonFormats extends CommonJsonFormats {
   implicit val propertyValue = jsonFormat5(PropertyValue)
   implicit val propertyGroup = jsonFormat3(PropertyGroup)
   implicit val property = jsonFormat16(Property)
-  implicit val itemDefinitionFormat = jsonFormat8(ItemMetaData)
+  implicit val itemDefinitionFormat = jsonFormat7(ItemMetadata)
   implicit val itemFormat = jsonFormat4(Item)
 
   implicit val validator = jsonFormat1(Validator)

@@ -1,40 +1,43 @@
 package com.busymachines.commons.elasticsearch
 
-import scala.annotation.implicitNotFound
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+import scala.reflect.ClassTag
+
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
-import org.elasticsearch.client.Client
+import org.elasticsearch.action.search.SearchType
+import org.elasticsearch.index.engine.VersionConflictEngineException
 import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryStringQueryBuilder
+import org.elasticsearch.search.sort.SortOrder
+
 import com.busymachines.commons.Logging
+import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.IdNotFoundException
+import com.busymachines.commons.dao.Page
+import com.busymachines.commons.dao.RetryVersionConflictAsync
 import com.busymachines.commons.dao.RootDao
+import com.busymachines.commons.dao.SearchCriteria
+import com.busymachines.commons.dao.SearchResult
+import com.busymachines.commons.dao.SearchSort
+import com.busymachines.commons.dao.VersionConflictException
 import com.busymachines.commons.dao.Versioned
-import com.busymachines.commons.elasticsearch.implicits._
+import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
-import spray.json.JsonFormat
-import spray.json.pimpAny
-import spray.json.pimpString
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
-import com.busymachines.commons.dao.SearchCriteria
-import org.elasticsearch.action.index.IndexAction
-import org.elasticsearch.common.io.stream.BytesStreamOutput
-import org.elasticsearch.action.search.SearchType
-import com.busymachines.commons.dao.SearchResult
-import com.busymachines.commons.dao.FacetField
-import com.busymachines.commons.dao.Page
-import scala.reflect.ClassTag
-import org.elasticsearch.search.sort.SortOrder
-import com.busymachines.commons.dao.SearchSort
-import com.google.common.eventbus.EventBus
+import com.busymachines.commons.elasticsearch.ESClient.toEsClient
+import com.busymachines.commons.elasticsearch.implicits.richEnity
+import com.busymachines.commons.elasticsearch.implicits.richJsValue
 import com.busymachines.commons.event.BusEvent
+
+import spray.json.JsonFormat
+import spray.json.pimpString
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -114,13 +117,18 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   }
 
   def modify(id: Id[T], refreshAfterMutation: Boolean = true)(modify: T => T): Future[Versioned[T]] = {
-    retrieve(id).flatMap {
-      case None => throw new IdNotFoundException(id.toString, t.name)
-      case Some(Versioned(entity, version)) =>
-        update(Versioned(modify(entity), version), refreshAfterMutation)
+    RetryVersionConflictAsync(10) {
+      retrieve(id).flatMap {
+        case None => throw new IdNotFoundException(id.toString, t.name)
+        case Some(Versioned(entity, version)) =>
+          update(Versioned(modify(entity), version), refreshAfterMutation)
+      }
     }
   }
 
+  /**
+   * @throws VersionConflictException
+   */
   def update(entity: Versioned[T], refreshAfterMutation: Boolean = true): Future[Versioned[T]] = {
     val newJson = entity.entity.convertToES(mapping)
     val request = new IndexRequest(index.name, t.name)
@@ -134,11 +142,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
-    preMutate(entity) flatMap { _ =>
+    preMutate(entity).flatMap { entity : T =>
       client.execute(request).map(response => Versioned(entity.entity, response.getVersion)) flatMap { mutatedEntity =>
         postMutate(mutatedEntity.entity) map { _ => mutatedEntity }
       }
-    }
+    }.recover {case e : VersionConflictEngineException => throw new VersionConflictException(e) }
   }
 
   def delete(id: Id[T], refreshAfterMutation: Boolean = true): Future[Unit] =

@@ -13,8 +13,8 @@ import scala.concurrent.duration.Duration
  */
 class DaoCache[T <: HasId[T]](val dao: Dao[T], autoInvalidate : Boolean = false)(implicit ec: ExecutionContext) {
 
-  private val _idCache = TrieMap[Id[T], Option[Versioned[T]]]()
-  private val _searchCache = TrieMap[(SearchCriteria[T], Page), List[Versioned[T]]]()
+  private val _idCache = TrieMap.empty[Id[T], Option[Versioned[T]]] 
+  private val _searchCache = TrieMap.empty[(SearchCriteria[T], Page), List[Versioned[T]]]
 
   if (autoInvalidate) 
     dao.onChange(invalidate)

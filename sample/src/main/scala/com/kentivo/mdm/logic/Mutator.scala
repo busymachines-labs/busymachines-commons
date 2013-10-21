@@ -8,6 +8,9 @@ import com.busymachines.commons.implicits._
 import com.kentivo.mdm.domain.Property
 import com.kentivo.mdm.domain.PropertyScope
 import java.util.Locale
+import scala.util.Try
+import scala.util.Success
+import scala.util.Failure
 import scala.collection.concurrent.TrieMap
 import com.kentivo.mdm.domain.PropertyValue
 import com.busymachines.commons.domain.UnitOfMeasure
@@ -15,96 +18,148 @@ import com.kentivo.mdm.db.ItemDao
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.dao.SearchCriteria
+import com.busymachines.commons.dao.DaoCache
+import com.busymachines.commons.dao.VersionConflictException
+import com.busymachines.commons.dao.RetryVersionConflict
+import scala.annotation.tailrec
+import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration._
 import com.busymachines.commons.dao.RootDaoMutator
+import com.busymachines.commons.dao.Versioned
 import com.kentivo.mdm.domain.Repository
 import com.busymachines.commons.dao.Page
 import com.kentivo.mdm.domain.Channel
-import com.kentivo.mdm.domain.ItemDefinition
+import com.kentivo.mdm.domain.ItemMetadata
+import org.joda.time.DateTime
+import com.kentivo.mdm.domain.ItemMetadata
 
-object Commands {
+class Mutator (val repositoryId : Id[Repository], val itemDao : ItemDao, val mutations : MutationManager, val mutation: Mutation, end : () => Unit, timeout : Duration)(implicit ec: ExecutionContext) {
+
+  def endMutation = end()
+  
+  def setValue(itemId : Id[Item], propertyId : Id[Property], value : Option[String], channel : Option[Id[Channel]], locale : Option[Locale]) =
+    setValues(itemId, (propertyId, value, channel, locale))
+    
+  def setValues(itemId : Id[Item], changes : (Id[Property], Option[String], Option[Id[Channel]], Option[Locale])*) = {
+    modifyItem(itemId) { item =>
+      var resultData = item.data
+      var shouldUpdate : Boolean = false
+      val now = DateTime.now
+      for ((propertyId, value, channel, locale) <- changes) {
+        val values = resultData.get(propertyId).getOrElse(Nil)
+        var maxMutationTime = new DateTime(0l)
+        var maxPriority : Int = Int.MinValue
+        var effectiveValue: Option[PropertyValue] = None
+        var lastSourceMutationTime = maxMutationTime
+        var lastSourceValue: Option[PropertyValue] = None
+        values.foreach { value =>
+          val valueMutation = mutations.get(value.mutation)
+          val mutationTime = value.mutationTime
+          val priority = valueMutation.priority
+          if (value.mutation != mutation.id && channel == value.channel && locale == value.locale) {
+            if (priority >= maxPriority && mutationTime.isAfter(maxMutationTime)) {
+              maxPriority = priority
+              maxMutationTime = mutationTime
+              effectiveValue = Some(value)
+            }
+            if (valueMutation.source ==  mutation.source &&  mutationTime.isAfter(lastSourceMutationTime)) {
+              lastSourceMutationTime = mutationTime
+              lastSourceValue = Some(value)
+            }
+          }
+        }
+        
+        (effectiveValue, lastSourceValue) match {
+          case (Some(effective), Some(lastSource)) if effective.value == value && lastSource.value == value => 
+          case _ => 
+            shouldUpdate = true
+            resultData += (propertyId -> (values :+ PropertyValue(mutation.id, now, value, channel, locale)))
+        }
+      }
+      if (shouldUpdate) (true, item.copy(data = resultData), item)
+      else (false, item, item)
+    }
+  }
   
   /**
-   * When value == None, removes the value.
+   * Modifies the metadata for given item. This operation will never update an existing ItemMetadata instance.
+   * Instead, it will create a new one, which is the instance that is returned. Note
+   * that this instance is not necessary the effective metadata instance, since this 
+   * depends on the priority of the current mutation.
+   * This function recognizes when the modification does not cause any changes. It is a no-op when the resulting 
+   * metadata instance equals the effective one AND equals the last one from the same source, which must exist in this case. 
+   * When there are no changes, the function returns the last metadata from the same source. 
    */
-  case class SetValue(item : Id[Item], property : Id[Property], value : Option[String], channel : Option[Channel] = None, locale : Option[Locale] = None)
+  def modifyMetadata(itemId : Id[Item])(modify : ItemMetadata => ItemMetadata) : ItemMetadata = {
 
-  case class SetItemDefinition(item : Id[Item], definition: ItemDefinition)
-}
+    modifyItem(itemId) { item =>
+      // find the effective metadata based on priority and mutation time
+      var maxMutationTime = new DateTime(0l)
+      var maxPriority : Int = Int.MinValue
+      var effectiveMetadata: Option[ItemMetadata] = None
+      var lastSourceMutationTime = maxMutationTime
+      var lastSourceMetadata: Option[ItemMetadata] = None
+      item.metadata.foreach { metadata =>
+        val metadataMutation = mutations.get(metadata.mutation)
+        val mutationTime = metadata.mutationTime
+        val priority = metadataMutation.priority
+        if (metadata.mutation != mutation.id) {
+          if (priority >= maxPriority && mutationTime.isAfter(maxMutationTime)) {
+            maxPriority = priority
+            maxMutationTime = mutationTime
+            effectiveMetadata = Some(metadata)
+          }
+          if (metadataMutation.source ==  mutation.source &&  mutationTime.isAfter(lastSourceMutationTime)) {
+            lastSourceMutationTime = mutationTime
+            lastSourceMetadata = Some(metadata)
+          }
+        }
+      }
+      // set mutation time and create new metadata if necessary
+      val now = DateTime.now
+      val original = effectiveMetadata.
+        map(_.copy(mutation = mutation.id, mutationTime = now)).
+        getOrElse(ItemMetadata(mutation = mutation.id, mutationTime = now))
 
-class Mutator(val itemDao : ItemDao, val repository : Repository, val mutation: Mutation)(implicit ec: ExecutionContext) {
-
-  private val mutator = new RootDaoMutator[Item](itemDao)
-  private val timeout = 1 minute
-  
-  private def createItem(id : Id[Item]) = Item(id, repository.id, mutation.id)
-
-  def createItem = Item(Id.generate, repository.id, mutation.id)
-  
-  def retrieve(id : Id[Item]) = 
-    mutator.retrieve(id, timeout)
-
-  def retrieve(ids : Seq[Id[Item]]) = 
-    mutator.retrieve(ids, timeout)
-
-  def searchItems(criteria : SearchCriteria[Item], page : Page, timeout : Duration) : Seq[Item] = 
-    mutator.search(criteria, page, timeout)
-    
-  def getChangedItem(id: Id[Item]): Option[Item] =
-    mutator.changedEntities.get(id)
-
-  def getOrCreateItem(id: Id[Item]): Item = 
-    mutator.getOrCreate(id, createItem(id), timeout)
-
-  def modifyItem(itemId: Id[Item])(modify: Item => Item): Item = 
-    mutator.modify(itemId, createItem(itemId), timeout)(modify)
-  
-  def modifyProperty(itemId: Id[Item], propertyId: Id[Property])(modify: Property => Property): Property = {
-    val item = getOrCreateItem(itemId)
-    val (properties, property, changed) = sk.modify(_.id == propertyId, Property(propertyId, mutation.id), modify)
-    if (changed) {
-      mutator.update(item.copy(properties = properties), timeout)
-    }
-    property
-  }
-
-  def modifyValues(itemId: Id[Item], propertyId: Id[Property])(modify: List[PropertyValue] => List[PropertyValue]) : Item = {
-    val item = getOrCreateItem(itemId)
-    val (values, otherValues) = item.values.partition(_.property == propertyId)
-    val newValues = otherValues ++ modify(values) 
-    if (item.values != newValues) {
-      val modItem = item.copy(values = newValues)
-      mutator.update(item.copy(values = newValues), timeout)
-      modItem
-    } else {
-      item
+      // Modify metadata and check whether there are changes
+      val modified = modify(original)
+      val (shouldUpdate, result) = lastSourceMetadata match {
+        case Some(sourceMetadata) 
+          if modified == original && 
+            (sourceMetadata.eq(effectiveMetadata.getOrElse(original)) || 
+            modified == sourceMetadata.copy(mutation = mutation.id, mutationTime = now)) => (false, sourceMetadata)
+        case None => (true, modified)
+      }
+        
+      // remove old metadata with same mutation, add the new metadata
+      val resultingItem = shouldUpdate match {
+        case true => item.copy(metadata = item.metadata.filterNot(_.mutation.id == mutation.id) :+ modified)
+        case false => item
+      }
+      
+      (shouldUpdate, resultingItem, modified)
     }
   }
-  
-  def setValues(itemId: Id[Item], propertyId: Id[Property], values: Seq[(Locale, String)]) : Item =
-    modifyValues(itemId, propertyId)(_ => values.toList.map { 
-      case (locale, value) => PropertyValue(propertyId, mutation.id, value, Some(locale))
-    })
-  
-  def setValue(itemId: Id[Item], propertyId: Id[Property], value : Option[String], locale : Option[Locale] = None, unit : Option[Unit] = None) : Item = {
-    val item = getOrCreateItem(itemId)
-    val (newValues, _, changed) = value match {
-      case Some(value) => 
-        item.values.modify(_.locale == locale, PropertyValue(propertyId, mutation.id, value, locale, unit))
-      case None =>
-        val newValues = item.values.filterNot(_.locale == locale)
-        (newValues, Unit, item.values != newValues)
+
+  def modifyProperty(itemId: Id[Item], propertyId: Id[Property])(modify: Property => Property): ItemMetadata = {
+    modifyMetadata(itemId) { metadata =>
+      metadata.copy(properties = metadata.properties.modify(_.id == propertyId, Property(propertyId), modify)._1)
     }
-    if (changed) {
-      val modItem = item.copy(values = newValues)
-      mutator.update(item.copy(values = newValues), timeout)
-      modItem
-    }
-    else item
   }
   
-  def write(timeout : Duration) {
-    mutator.write(timeout, true);
+  private def modifyItem[A](itemId : Id[Item])(modify : Item => (Boolean, Item, A)) : A = {
+    RetryVersionConflict(10) {
+      // Make sure item has been created.
+      val Versioned(item, version) = Await.result(itemDao.retrieve(itemId), timeout).getOrElse(Versioned(new Item(repository = repositoryId), 1))
+      // Modify the item
+      val (shouldUpdate, modified, result) = modify(item)
+      // Update 
+      if (shouldUpdate) {
+        Await.result(itemDao.update(Versioned(modified, version), false), timeout)
+      }
+      // return result
+      result
+    }
   }
 }

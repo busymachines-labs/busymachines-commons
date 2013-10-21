@@ -7,7 +7,7 @@ import com.busymachines.commons.domain.HasId
  * Constraint: Source properties must exist in source types.
  * Constraint: Target properties must exist in either repository items or source types.
  */
-case class Source(
+case class ImportSource(
   id: Id[Source] = Id.generate,
   name : String,
   repository: Id[Repository],

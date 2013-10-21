@@ -23,6 +23,8 @@ object Cache {
     new Cache[K, V](new ExpiringLruCache[V](maxCapacity, initialCapacity, if (timeToLive.isFinite) timeToLive.toMillis else 0, if (timeToIdle.isFinite) timeToIdle.toMillis else 0))
 }
 
+
+// TODO rename to AsyncCache
 class Cache[K, V](val cache: SprayCache[V]) {
 
   def apply(key: K) =

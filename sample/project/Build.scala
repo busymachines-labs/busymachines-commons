@@ -23,7 +23,7 @@ object SampleBuild extends Build {
 //    webSettings ++
       Seq(
         sbtPlugin := false, 
-        organization := "com.busymachines",
+        organization := "com.kentivo",
         version := "1.0.0-SNAPSHOT",
         scalaVersion := "2.10.1",
         publishMavenStyle := false,
@@ -38,7 +38,7 @@ object SampleBuild extends Build {
   val commonsProj = RootProject(file(".."))
 
 
-  val sample = Project(id = "sample", base = file("."), settings = defaultSettings ++ Seq(
+  val catalog = Project(id = "kentivo-catalog", base = file("."), settings = defaultSettings ++ Seq(
  mainClass in (Compile, run) := Some("com.kentivo.mdm.Main"),
     libraryDependencies ++= Seq())).
 	dependsOn(commonsProj)

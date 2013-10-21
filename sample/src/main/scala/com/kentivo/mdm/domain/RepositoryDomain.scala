@@ -77,8 +77,17 @@ case class Repository(
   /**
    * Locales used by the repository.
    */
-  locales : List[Locale]
+  locales : List[Locale],
+  
+  sources : List[Source] = Nil,
+  
+  sourcePriorities: Map[(Id[Source], List[DateTime]), Int] = Map.empty
 )
+
+case class Source(
+  id : Id[Source],
+  priority : Int
+) extends HasId[Source]
 
 /**
  * A repository can store variations of data and meta-data that are channel-specific.
@@ -102,18 +111,18 @@ case class Channel(
 case class Item(
   id: Id[Item] = Id.generate,
   repository: Id[Repository],
-  metaData: List[ItemMetaData] = Nil,
+  metadata: List[ItemMetadata] = Nil,
   data: Map[Id[Property], List[PropertyValue]] = Map.empty
 ) extends HasId[Item] 
 
-case class ItemMetaData(
+case class ItemMetadata(
   mutation : Id[Mutation],
   mutationTime : DateTime,
   properties: List[Property] = Nil,
   propertyGroups: List[PropertyGroup] = Nil, // must be concatenated with parent extent
   excludedPropertyGroups: Option[List[Id[PropertyGroup]]] = None, // entire list is either inherited or redefined
   isCategory: Boolean = false,
-  rules: List[ItemRule] = Nil) extends HasId[ItemMetaData] 
+  rules: List[ItemRule] = Nil) extends HasId[ItemMetadata] 
 
 case class Property(
   id: Id[Property] = Id.generate,
@@ -178,7 +187,11 @@ case class EffectiveRepository(
    * The effective repository will contain data from mutations that have an
    * end-time smaller than the last synchronisation time.
    */
-  lastSynchronizationTime : DateTime
+  lastSynchronizationTime : DateTime,
+  
+  sourcePriorities: Map[Id[Source], Int],
+  
+  effectiveMetadata: Map[Id[Item], EffectiveItemMetadata]
 ) extends HasId[EffectiveRepository]
   
 /**
@@ -195,26 +208,26 @@ case class EffectiveItem(
    * Repository this item belongs to.
    */
   repository: Id[EffectiveRepository],
-  metaData : Id[ItemMetaData],
   parentExtent: List[Id[Item]] = Nil,
   locale : Option[Locale],
   channel : Option[Id[Channel]],
   values : Map[Id[Property], String]
 ) extends HasId[EffectiveItem]
 
+case class EffectiveItemMetadata(
+  properties: List[Property] = Nil,
+  propertyGroups: List[PropertyGroup] = Nil, // must be concatenated with parent extent
+  excludedPropertyGroups: Option[List[Id[PropertyGroup]]] = None, // entire list is either inherited or redefined
+  isCategory: Boolean = false) extends HasId[ItemMetadata] 
+
 case class Mutation(
+  id: Id[Mutation] = Id.generate,
+  source: Id[Source],
   description: String,
   startTime: DateTime,
-  endTime: DateTime,
-  id: Id[Mutation] = Id.generate,
+  endTime: Option[DateTime] = None,
   user: Option[Id[User]] = None,
-  source: Option[Id[Source]] = None) extends HasId[Mutation]
-
-
-case class GetEffictiveItemsResponse (
-  metaData : Map[Id[ItemMetaData], ItemMetaData],
-  items : List[EffectiveItem]
-)
+  priority: Int) extends HasId[Mutation]
 
 
 object Item2 {
