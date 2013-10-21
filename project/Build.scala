@@ -30,7 +30,7 @@ object BusyMachinesCommonsBuild extends Build {
     resolvers += "spray repo" at "http://nightlies.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" withSources(),
-    libraryDependencies +=  "org.elasticsearch" % "elasticsearch" % "0.90.2" withSources(),
+    libraryDependencies +=  "org.elasticsearch" % "elasticsearch" % "0.90.5" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.1" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.2.1" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-contrib" % "2.2.1" withSources(),
@@ -46,8 +46,8 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "org.clapper" %% "argot" % "1.0.1" withSources(),
     libraryDependencies +=  "ch.qos.logback" % "logback-classic" % "1.0.13" withSources(),
     libraryDependencies += "com.typesafe" % "config" % "1.0.0" withSources(),
-    libraryDependencies += "joda-time" % "joda-time" % "2.2" withSources(),
-    libraryDependencies += "org.joda" % "joda-convert" % "1.3.1" withSources(), // for class file error in joda-time
+    libraryDependencies += "joda-time" % "joda-time" % "2.3" withSources(),
+    libraryDependencies += "org.joda" % "joda-convert" % "1.5" withSources(), // for class file error in joda-time
     libraryDependencies += "com.google.guava" % "guava" % "14.0.1" withSources(),
     libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1" // for class file error in guava
 ))
