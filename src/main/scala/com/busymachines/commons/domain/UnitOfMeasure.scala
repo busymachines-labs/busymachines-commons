@@ -17,6 +17,9 @@ case class UnitOfMeasureTerm(prefix : UnitPrefix.Prefix, baseUnit : UnitOfMeasur
 
 object UnitOfMeasure extends Enumeration {
   case class Unit(name : String, symbol : String) extends Val(name)
+  object Unit {
+    implicit def toUnitOfMeasure(unit : Unit) = UnitOfMeasure(UnitOfMeasureTerm(UnitPrefix.None, unit, 1) :: Nil)
+  }
   val Metre = Unit("metre", "m")
   val Gram = Unit("gram", "g")
   val Second = Unit("second", "s")
