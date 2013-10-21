@@ -25,6 +25,8 @@ import com.busymachines.commons.dao.FacetFieldValue
 import spray.json.JsArray
 import spray.json.RootJsonWriter
 import scala.concurrent.duration.{Duration, FiniteDuration, Deadline}
+import org.joda.time.LocalDate
+import scala.collection.immutable.HashMap
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -70,7 +72,20 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     }
   }
 
-  implicit val dateTimeFormat = new JsonFormat[DateTime] {
+  implicit val jodaDateFormat = new JsonFormat[LocalDate] {
+    val format = ISODateTimeFormat.localDateParser
+    def write(value: LocalDate) = JsString(format.print(value))
+    def read(value: JsValue): LocalDate = value match {
+      case JsString(s) =>
+        try format.parseLocalDate(s)
+        catch {
+          case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
+        }
+      case s => deserializationError("Couldn't convert '" + s + "' to a date-time")
+    }
+  }
+
+  implicit val jodaDateTimeFormat = new JsonFormat[DateTime] {
     val format = ISODateTimeFormat.dateTime.withZoneUTC
     def write(value: DateTime) = JsString(format.print(value))
     def read(value: JsValue): DateTime = value match {
@@ -119,29 +134,12 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   implicit val unitOfMeasureFormat = stringJsonFormat("UnitOfMeasure", s => UnitOfMeasure(Nil))
   
   implicit val localeJsonFormat = stringJsonFormat[Locale]("Locale", _ match {
-    case "und" => Locale.ROOT
+    case "" => Locale.ROOT
     case tag => Locale.forLanguageTag(tag)
-  }, _.toLanguageTag)
-
-  //  implicit def localeMapJsonFormat[T: JsonFormat] = new JsonFormat[Map[Locale, T]] {
-  //    def write(map: Map[Locale, T]) = map.toList match {
-  //      case Nil =>
-  //        JsArray()
-  //      case (locale, value) :: Nil =>
-  //        if (locale.getCountry.isEmpty && locale.getLanguage.isEmpty && locale.getVariant.isEmpty)
-  //          value.toJson
-  //        else
-  //          localeJsonFormat.write(locale, Some("value2", value.toJson))
-  //      case entries =>
-  //        JsArray(for ((locale, value) <- entries)
-  //          yield localeJsonFormat.write(locale, Some("value2", value.toJson)))
-  //    }
-  //    def read(value: JsValue) = value match {
-  //      case JsString(s) => Map.empty
-  //      case _ => Map.empty
-  //    }
-  //  }
-  //  
+  }, _ match {
+    case locale if locale == Locale.ROOT => ""
+    case locale => locale.getLanguage
+  })
     
   implicit def idFormat[A] = stringJsonFormat[Id[A]]("Id", Id(_))
   implicit val mediaFormat = jsonFormat4(Media)
