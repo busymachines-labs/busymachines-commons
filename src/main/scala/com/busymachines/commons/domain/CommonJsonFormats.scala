@@ -3,6 +3,7 @@ package com.busymachines.commons.domain
 import java.util.Currency
 import java.util.Locale
 import org.joda.time.DateTime
+import org.joda.time.Duration
 import org.joda.time.format.ISODateTimeFormat
 import spray.json.DefaultJsonProtocol
 import spray.json.JsObject
@@ -82,6 +83,18 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     }
   }
 
+  implicit val jodaDurationFormat = new JsonFormat[org.joda.time.Duration] {
+    def write(value: org.joda.time.Duration) = JsString(value.getMillis()+"")
+    def read(value: JsValue): org.joda.time.Duration = value match {
+      case JsString(s) =>
+        try org.joda.time.Duration.parse(s)
+        catch {
+          case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a duration: " + e.getMessage)
+        }
+      case s => deserializationError("Couldn't convert '" + s + "' to a duration")
+    }
+  }
+  
   implicit val geoPointFormat = new JsonFormat[GeoPoint] {
     def write(value: GeoPoint) = JsObject(
       "lat" -> JsNumber(value.lat),
