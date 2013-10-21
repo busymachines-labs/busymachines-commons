@@ -103,6 +103,8 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     }
   }
 
+  implicit val unitOfMeasureFormat = stringJsonFormat("UnitOfMeasure", s => UnitOfMeasure(Nil))
+  
   implicit val localeJsonFormat = stringJsonFormat[Locale]("Locale", _ match {
     case "und" => Locale.ROOT
     case tag => Locale.forLanguageTag(tag)
