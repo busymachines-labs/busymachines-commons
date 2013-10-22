@@ -20,7 +20,12 @@ class DaoCache[T <: HasId[T]](val dao: Dao[T], autoInvalidate : Boolean = false)
     dao.onChange(invalidate)
   
   def retrieve(id: Id[T], timeout: Duration): Option[Versioned[T]] =
-    _idCache.getOrElseUpdate(id, Await.result(dao.retrieve(id), timeout))
+    _idCache.getOrElseUpdate(id, {
+      Await.result(dao.retrieve(id), timeout) map {
+        case Versioned(entity, version) => 
+          Versioned(onRetrieved(entity), version)
+      }
+    })
 
   def retrieve(ids: Seq[Id[T]], timeout: Duration): Seq[Versioned[T]] = {
     val cached = ids.map(id => id -> _idCache.get(id))
@@ -46,4 +51,6 @@ class DaoCache[T <: HasId[T]](val dao: Dao[T], autoInvalidate : Boolean = false)
     _idCache.remove(id)
     _searchCache.clear
   }
+  
+  def onRetrieved(value : T) : T = value
 }
