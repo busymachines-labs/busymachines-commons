@@ -71,19 +71,6 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
       case x => deserializationError("Expected " + type_ + " as String, but got " + x)
     }
   }
-
-  implicit val jodaDateTimeFormat = new JsonFormat[DateTime] {
-    val format = ISODateTimeFormat.dateOptionalTimeParser.withZoneUTC
-    def write(value: DateTime) = JsString(format.print(value))
-    def read(value: JsValue): DateTime = value match {
-      case JsString(s) =>
-        try format.parseDateTime(s)
-        catch {
-          case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
-        }
-      case s => deserializationError("Couldn't convert '" + s + "' to a date-time")
-    }
-  }
   
   implicit val jodaDateFormat = new JsonFormat[LocalDate] {
     val format = ISODateTimeFormat.date.withZoneUTC
@@ -98,6 +85,19 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     }
   }
 
+  implicit val jodaDateTimeFormat = new JsonFormat[DateTime] {
+    val format = ISODateTimeFormat.dateOptionalTimeParser.withZoneUTC
+    def write(value: DateTime) = JsString(format.print(value))
+    def read(value: JsValue): DateTime = value match {
+      case JsString(s) =>
+        try format.parseDateTime(s)
+        catch {
+          case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
+        }
+      case s => deserializationError("Couldn't convert '" + s + "' to a date-time")
+    }
+  }
+  
   implicit val jodaDurationFormat = new JsonFormat[org.joda.time.Duration] {
     def write(value: org.joda.time.Duration) = JsString(value.getMillis()+"")
     def read(value: JsValue): org.joda.time.Duration = value match {
