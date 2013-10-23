@@ -73,7 +73,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   }
 
   implicit val jodaDateFormat = new JsonFormat[LocalDate] {
-    val format = ISODateTimeFormat.date.withZoneUTC
+    val format = ISODateTimeFormat.date
     def write(value: LocalDate) = JsString(format.print(value))
     def read(value: JsValue): LocalDate = value match {
       case JsString(s) =>
