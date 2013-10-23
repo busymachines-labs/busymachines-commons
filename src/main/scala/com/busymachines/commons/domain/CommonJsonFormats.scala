@@ -86,11 +86,12 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
 //  }
 
   implicit val jodaDateTimeFormat = new JsonFormat[DateTime] {
-    val format = ISODateTimeFormat.dateOptionalTimeParser.withZoneUTC
-    def write(value: DateTime) = JsString(format.print(value))
+    val parser = ISODateTimeFormat.dateOptionalTimeParser.withZoneUTC
+    val formatter = ISODateTimeFormat.dateTime.withZoneUTC
+    def write(value: DateTime) = JsString(formatter.print(value))
     def read(value: JsValue): DateTime = value match {
       case JsString(s) =>
-        try format.parseDateTime(s)
+        try parser.parseDateTime(s)
         catch {
           case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
         }
