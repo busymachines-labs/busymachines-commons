@@ -72,25 +72,25 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     }
   }
 
-  implicit val jodaDateFormat = new JsonFormat[LocalDate] {
-    val format = ISODateTimeFormat.date.withZoneUTC
-    def write(value: LocalDate) = JsString(format.print(value))
-    def read(value: JsValue): LocalDate = value match {
-      case JsString(s) =>
-        try format.parseLocalDate(s)
-        catch {
-          case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
-        }
-      case s => deserializationError("Couldn't convert '" + s + "' to a date-time")
-    }
-  }
-
   implicit val jodaDateTimeFormat = new JsonFormat[DateTime] {
     val format = ISODateTimeFormat.dateOptionalTimeParser.withZoneUTC
     def write(value: DateTime) = JsString(format.print(value))
     def read(value: JsValue): DateTime = value match {
       case JsString(s) =>
         try format.parseDateTime(s)
+        catch {
+          case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
+        }
+      case s => deserializationError("Couldn't convert '" + s + "' to a date-time")
+    }
+  }
+  
+  implicit val jodaDateFormat = new JsonFormat[LocalDate] {
+    val format = ISODateTimeFormat.date.withZoneUTC
+    def write(value: LocalDate) = JsString(format.print(value))
+    def read(value: JsValue): LocalDate = value match {
+      case JsString(s) =>
+        try format.parseLocalDate(s)
         catch {
           case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
         }
