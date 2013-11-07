@@ -18,7 +18,7 @@ import spray.routing.authentication.ContextAuthenticator
 import spray.routing.directives.AuthMagnet
 import com.busymachines.commons.Logging
 
-trait AuthenticationDirectives extends  Logging {
+trait AuthenticationDirectives extends Logging {
 
   val tokenKey = "Auth-Token"
   val tokenKeyLower = tokenKey.toLowerCase

@@ -3,7 +3,7 @@ package com.busymachines.prefab.authentication.logic
 import com.busymachines.commons.NotAuthorizedException
 
 /**
- * A security context may inherit from CommonSecurityContext. Since it throws
+ * A security context may inherit from PrefabSecurityContext. Since it throws
  * NotAuthorizedException, the CommonExceptionHandler will translate this to the right
  * HTTP error code. Beyond this, there is no need to inherit this class.
  * A security context should be an implicit parameter to all logic-layer components.
