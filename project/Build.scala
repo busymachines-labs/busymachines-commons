@@ -9,7 +9,7 @@ import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
  */
 object BusyMachinesCommonsBuild extends Build {
  
-  val sprayVersion = "1.2-20130719"
+  val sprayVersion = "1.2-RC2"
   
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++ 
@@ -27,7 +27,7 @@ object BusyMachinesCommonsBuild extends Build {
     scalacOptions += "-unchecked",
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
-    resolvers += "spray repo" at "http://nightlies.spray.io",
+    resolvers += "spray repo" at "http://repo.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" withSources(),
     libraryDependencies +=  "org.elasticsearch" % "elasticsearch" % "0.90.5" withSources(),

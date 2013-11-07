@@ -9,6 +9,9 @@ import spray.http.Renderer
 import spray.http.HttpHeaders
 import spray.http.HttpMethods
 import spray.http.ContentTypes
+import spray.http.AllowedOrigins
+import spray.http.AllOrigins
+import spray.http.SomeOrigins
 
 /**
  * Code copied from:
@@ -20,7 +23,7 @@ import spray.http.ContentTypes
 // See https://developer.mozilla.org/en-US/docs/HTTP/Access_control_CORS
 
 trait CORSDirectives { this: HttpService =>
-  def respondWithCORSHeaders(origin: String) =
+  def respondWithCORSHeaders(origin: AllowedOrigins) =
    respondWithHeaders(
     HttpHeaders.`Access-Control-Allow-Methods`(HttpMethods.GET, HttpMethods.POST, HttpMethods.DELETE, HttpMethods.OPTIONS, HttpMethods.PUT),
     HttpHeaders.`Access-Control-Allow-Headers`("X-Requested-With, Cache-Control, Pragma, Origin, Authorization, Content-Type, Auth-Token"),
@@ -30,17 +33,17 @@ trait CORSDirectives { this: HttpService =>
     
   def corsFilter(origin: String)(route: Route) =
     if (origin == "*")
-      respondWithCORSHeaders("*")(route)
+      respondWithCORSHeaders(AllOrigins)(route)
     else
       optionalHeaderValueByName("Origin") {
         case None => route
         case Some(clientOrigin) =>
           if (origin == clientOrigin)
-            respondWithCORSHeaders(origin)(route)
+            respondWithCORSHeaders(SomeOrigins(origin :: Nil))(route)
           else
             complete(Forbidden, Nil, "Invalid origin") // Maybe, a Rejection will fit better
       }
 
 
-  def crossDomain = respondWithCORSHeaders("*")
+  def crossDomain = respondWithCORSHeaders(AllOrigins)
 }

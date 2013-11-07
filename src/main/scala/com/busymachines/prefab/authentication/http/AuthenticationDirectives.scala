@@ -40,13 +40,13 @@ trait AuthenticationDirectives extends  Logging {
                   case None =>
                     devmodeAuth match {
                       case Some(devContext) => Right(devContext)
-                      case none => Left(AuthenticationFailedRejection(CredentialsRejected, this))
+                      case none => Left(AuthenticationFailedRejection(CredentialsRejected, Nil))
                     }
                 }
               case None =>
                 devmodeAuth match {
                   case Some(devContext) => Future.successful(Right(devContext))
-                  case none => Future.successful(Left(AuthenticationFailedRejection(CredentialsMissing, this)))
+                  case none => Future.successful(Left(AuthenticationFailedRejection(CredentialsMissing, Nil)))
                 }
             }
         }

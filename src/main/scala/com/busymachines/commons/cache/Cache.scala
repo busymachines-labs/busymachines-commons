@@ -11,16 +11,9 @@ import spray.caching.{Cache => SprayCache}
 import spray.caching.{Cache => SprayCache}
 import spray.caching.ValueMagnet.fromFuture
 
-@deprecated
-trait CacheWithCacheViews[K, V] {
-  def invalidateCache(keys: K*): Future[Unit]
-  def invalidateCacheViews(key: K, value: V): Future[Unit]
-  def updateCacheViews(key: K, value: V): Future[Unit]
-}
-
 object Cache {
   def expiringLru[K, V](initialCapacity: Int, maxCapacity: Long = Long.MaxValue, timeToLive: Duration = Duration.Inf, timeToIdle: Duration = Duration.Inf) =
-    new Cache[K, V](new ExpiringLruCache[V](maxCapacity, initialCapacity, if (timeToLive.isFinite) timeToLive.toMillis else 0, if (timeToIdle.isFinite) timeToIdle.toMillis else 0))
+    new Cache[K, V](new ExpiringLruCache[V](maxCapacity, initialCapacity, timeToLive, timeToIdle))
 }
 
 

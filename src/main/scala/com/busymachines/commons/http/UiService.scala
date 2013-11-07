@@ -23,7 +23,6 @@ import spray.routing.Route
 import spray.routing.directives.CacheSpecMagnet.apply
 import spray.routing.directives.CachingDirectives.cache
 import spray.routing.directives.CachingDirectives.routeCache
-import spray.routing.directives.CompletionMagnet.fromObject
 import spray.routing.directives.ContentTypeResolver
 import spray.util.actorSystem
 import com.busymachines.commons.CommonConfig
@@ -48,25 +47,19 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
           }
           val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
           if (mediaType.binary) {
-            detachTo(singleRequestServiceActor) {
-              respondWithHeader(`Cache-Control`(`max-age`(cacheTimeSecs))) {
-                getFromResource(doc, ext, mediaType, shouldProcess)
-              }
+            respondWithHeader(`Cache-Control`(`max-age`(cacheTimeSecs))) {
+              getFromResource(doc, ext, mediaType, shouldProcess)
             }
           } else {
             if (shouldCache) {
               cache(theCache) {
-                detachTo(singleRequestServiceActor) {
-                  respondWithHeader(`Cache-Control`(`max-age`(cacheTimeSecs))) {
-                    getFromResource(doc, ext, mediaType, shouldProcess)
-                  }
+                respondWithHeader(`Cache-Control`(`max-age`(cacheTimeSecs))) {
+                  getFromResource(doc, ext, mediaType, shouldProcess)
                 }
               }
             } else {
-              detachTo(singleRequestServiceActor) {
-                respondWithHeader(`Cache-Control`(`no-cache`)) {
-                  getFromResource(doc, ext, mediaType, shouldProcess)
-                }
+              respondWithHeader(`Cache-Control`(`no-cache`)) {
+                getFromResource(doc, ext, mediaType, shouldProcess)
               }
             }
           }
