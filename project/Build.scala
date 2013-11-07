@@ -22,7 +22,7 @@ object BusyMachinesCommonsBuild extends Build {
     exportJars := true,      
     organization := "com.busymachines",
     version := "0.0.1-SNAPSHOT",
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.10.3",
     scalacOptions += "-deprecation",
     scalacOptions += "-unchecked",
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
