@@ -1,11 +1,11 @@
 package com.busymachines.commons
 
 import com.typesafe.config.Config
-import spray.json.JsValue
+import _root_.spray.json.JsValue
 import scala.concurrent.Future
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-import spray.json.JsObject
+import _root_.spray.json.JsObject
 import scala.concurrent.ExecutionContext
 import java.net.URL
 import scala.xml.factory.XMLLoader

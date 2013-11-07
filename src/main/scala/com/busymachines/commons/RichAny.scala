@@ -1,6 +1,7 @@
 package com.busymachines.commons
 
-import spray.json.{JsValue, JsonFormat}
+import _root_.spray.json.{JsValue, JsonFormat}
+
 import com.busymachines.commons.implicits._
 
 class RichAny[A](val a: A) extends AnyVal {

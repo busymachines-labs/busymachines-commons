@@ -1,4 +1,4 @@
-package com.busymachines.prefab.authentication.http
+package com.busymachines.prefab.authentication.spray
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future

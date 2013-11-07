@@ -1,4 +1,4 @@
-package com.busymachines.commons.http
+package com.busymachines.commons.spray
 
 import java.io.File
 import scala.concurrent.duration.Duration

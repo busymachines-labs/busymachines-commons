@@ -1,6 +1,6 @@
 package com.busymachines.commons
 
-import spray.json._
+import _root_.spray.json._
 import scala.collection.mutable
 import com.busymachines.commons.domain.Id
 import scala.Some
