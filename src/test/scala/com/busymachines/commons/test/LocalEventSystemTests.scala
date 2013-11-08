@@ -15,13 +15,13 @@ class LocalEventSystemTests extends FlatSpec  {
     val localEventBus = new LocalEventBus(actorSystem)
 
     localEventBus subscribe {
-      event: BusEvent =>
+      case event: BusEvent =>
         enpoint1Received = true
     }
 
 
     localEventBus subscribe {
-      event: BusEvent =>
+      case event: BusEvent =>
         enpoint2Received = true
 
     }

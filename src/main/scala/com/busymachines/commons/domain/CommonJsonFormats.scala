@@ -41,7 +41,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
       case _ => deserializationError("Currency expected")
     }
   }
-
+  
   def enumFormat[E <: Enumeration](enum: E) = new JsonFormat[E#Value] {
     def write(value: E#Value) = JsString(value.toString)
     def read(value: JsValue): E#Value = value match {
@@ -59,7 +59,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     def read(value: JsValue) = instance
   }
 
-  def stringJsonFormat[A](type_ : String, fromStr: String => A, toStr: A => String = (a: A) => a.toString) = new JsonFormat[A] {
+  def stringFormat[A](type_ : String, fromStr: String => A, toStr: A => String = (a: A) => a.toString) = new JsonFormat[A] {
     def write(value: A) = JsString(toStr(value))
     def read(value: JsValue): A = value match {
       case JsString(s) =>
@@ -132,9 +132,9 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     }
   }
 
-  implicit val unitOfMeasureFormat = stringJsonFormat("UnitOfMeasure", s => UnitOfMeasure(Nil))
+  implicit val unitOfMeasureFormat = stringFormat("UnitOfMeasure", s => UnitOfMeasure(Nil))
   
-  implicit val localeJsonFormat = stringJsonFormat[Locale]("Locale", _ match {
+  implicit val localeJsonFormat = stringFormat[Locale]("Locale", _ match {
     case "" => Locale.ROOT
     case tag => Locale.forLanguageTag(tag)
   }, _ match {
@@ -142,8 +142,9 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     case locale => locale.getLanguage
   })
     
-  implicit def idFormat[A] = stringJsonFormat[Id[A]]("Id", Id(_))
+  implicit def idFormat[A] = stringFormat[Id[A]]("Id", Id(_))
   implicit val mediaFormat = jsonFormat4(Media)
+  implicit val moneyFormat = jsonFormat2(Money)
   
   implicit val facetFieldFormat = new JsonWriter[FacetField] {
     def write(c: FacetField) = JsString(c.toString)

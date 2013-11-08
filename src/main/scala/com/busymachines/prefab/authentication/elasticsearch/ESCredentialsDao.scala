@@ -14,12 +14,10 @@ import com.busymachines.commons.dao.Versioned
 class ESCredentialsDao(index : ESIndex, indexType : String = "credentials")(implicit ec : ExecutionContext)
   extends ESRootDao[Credentials](index, ESType("credentials", CredentialsMapping)) with CredentialsDao {
 
-  def retrieveWithPassword(ids : Seq[Id[Credentials]], password : String) : Future[Option[Credentials]] = {
-    retrieve(ids) map {
-      credentials : List[Versioned[Credentials]] =>
-        credentials.find(_.entity.passwordCredentials.map(_.hasPassword(password)).getOrElse(false)) map {
-          case Versioned(credentials, _) => credentials
-        }
+  def retrieveWithPassword(id : Id[Credentials], password : String) : Future[Option[Credentials]] = {
+    retrieve(id) map {
+      credentials : Option[Versioned[Credentials]] =>
+        credentials.map(_.entity).filter(_.passwordCredentials.exists(_.hasPassword(password))) 
     }
   }
 

@@ -7,5 +7,5 @@ import com.busymachines.commons.domain.Id
 import scala.concurrent.Future
 
 trait CredentialsDao extends RootDao[Credentials] {
-  def retrieveWithPassword(ids : Seq[Id[Credentials]], password : String) : Future[Option[Credentials]]
+  def retrieveWithPassword(ids : Id[Credentials], password : String) : Future[Option[Credentials]]
 }

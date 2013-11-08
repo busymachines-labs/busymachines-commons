@@ -7,4 +7,4 @@ import org.joda.time.DateTime
 
 case class Credentials(
   id: Id[Credentials] = Id.generate,
-  passwordCredentials: Option[PasswordCredentials] = None) extends HasId[Credentials]
+  passwordCredentials: List[PasswordCredentials] = Nil) extends HasId[Credentials]

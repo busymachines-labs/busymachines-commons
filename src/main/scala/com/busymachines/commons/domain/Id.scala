@@ -25,12 +25,12 @@ object Id {
   def static[A](id : String) = new Id[A](UUID.nameUUIDFromBytes(id.getBytes("UTF-8")))
 }
 
-case class Id[A](id: UUID) {
-  override def toString = id.toString
+case class Id[A](uuid: UUID) {
+  override def toString = uuid.toString
   def toByteArray = ByteBuffer.wrap(Array[Byte](16)) match {
     case buffer =>
-      buffer.putLong(id.getMostSignificantBits);
-      buffer.putLong(id.getLeastSignificantBits);
+      buffer.putLong(uuid.getMostSignificantBits);
+      buffer.putLong(uuid.getLeastSignificantBits);
       buffer.array();
     }
 }

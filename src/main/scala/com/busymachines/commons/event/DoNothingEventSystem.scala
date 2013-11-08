@@ -6,7 +6,7 @@ import scala.concurrent.Future
 
 class DoNothingEventSystem extends EventBus with Logging {
 
-  def subscribe(f:BusEvent => Any): Unit = {
+  def subscribe(f: PartialFunction[BusEvent, Any]): Unit = {
     debug(s"Subscribed to endpoint but in fact did nothing")
   }
 

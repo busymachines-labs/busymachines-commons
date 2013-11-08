@@ -10,7 +10,7 @@ import java.util.UUID
 trait BusEvent
 
 trait EventBus {
-  def subscribe(f: BusEvent => Any): Unit
+  def subscribe(f: PartialFunction[BusEvent, Any]): Unit
   def publish(event: BusEvent):Unit
 }
 

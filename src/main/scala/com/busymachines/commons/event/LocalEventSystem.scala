@@ -9,7 +9,7 @@ import akka.actor.Actor
 
 class LocalEventBus(actorSystem: ActorSystem) extends EventBus with Logging {
   
-  def subscribe(f:BusEvent => Any): Unit = {
+  def subscribe(f: PartialFunction[BusEvent, Any]): Unit = {
     val actorRef = actorSystem.actorOf(Props(classOf[LocalEventBusEndpointActor], f))
     actorSystem.eventStream.subscribe(actorRef, classOf[BusEvent])
   }
