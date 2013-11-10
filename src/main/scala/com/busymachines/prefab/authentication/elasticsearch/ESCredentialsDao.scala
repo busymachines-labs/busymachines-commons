@@ -10,15 +10,12 @@ import com.busymachines.prefab.authentication.model.SecurityJsonFormats._
 import com.busymachines.commons.domain.Id
 import scala.concurrent.Future
 import com.busymachines.commons.dao.Versioned
+import com.busymachines.prefab.authentication.model.Credentials
 
 class ESCredentialsDao(index : ESIndex, indexType : String = "credentials")(implicit ec : ExecutionContext)
   extends ESRootDao[Credentials](index, ESType("credentials", CredentialsMapping)) with CredentialsDao {
-
-  def retrieveWithPassword(id : Id[Credentials], password : String) : Future[Option[Credentials]] = {
-    retrieve(id) map {
-      credentials : Option[Versioned[Credentials]] =>
-        credentials.map(_.entity).filter(_.passwordCredentials.exists(_.hasPassword(password))) 
-    }
-  }
+  
+  def findByLogin(login : String) = 
+    search(CredentialsMapping.passwordCredentials / PasswordCredentialsMapping.login equ login)
 
 }

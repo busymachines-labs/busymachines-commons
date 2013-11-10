@@ -116,6 +116,16 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
+  def getOrCreate(id: Id[T], refreshAfterMutation: Boolean = true)(_create : => T): Future[Versioned[T]] = {
+    retrieve(id) flatMap {
+      case Some(entity) => Future.successful(entity)
+      case None => create(_create, refreshAfterMutation)
+    }
+  }
+
+  def getOrCreateAndModify(id: Id[T], refreshAfterMutation: Boolean = true)(_create : => T)(_modify : T => T): Future[Versioned[T]] = 
+    getOrCreate(id, refreshAfterMutation)(_create).flatMap(entity => update(entity.copy(entity = _modify(entity)), refreshAfterMutation))
+
   def modify(id: Id[T], refreshAfterMutation: Boolean = true)(modify: T => T): Future[Versioned[T]] = {
     RetryVersionConflictAsync(10) {
       retrieve(id).flatMap {

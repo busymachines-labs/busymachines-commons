@@ -24,7 +24,5 @@ trait ESImplicits {
   implicit def stripVersionedFromFuture[T](f : Future[Versioned[T]])(implicit ec : ExecutionContext) = f.map(_.entity)
   implicit def stripVersionedFromFutureOption[T](f : Future[Option[Versioned[T]]])(implicit ec : ExecutionContext) = f.map(_.map(_.entity))
   implicit def stripVersionedFromFutureList[T](f : Future[List[Versioned[T]]])(implicit ec : ExecutionContext) = f.map(_.map(_.entity))
-  implicit def convertToUnit(f : Future[_])(implicit ec : ExecutionContext) : Future[Unit] = f.map(_ => Unit)
-
 }
 
