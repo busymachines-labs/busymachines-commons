@@ -18,7 +18,7 @@ import com.busymachines.prefab.party.service.SecurityContext
 /**
  * Handling authentication before using API.
  */
-class AuthenticationApi(authenticator: UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with PartyApiDirectives {
+class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with PartyApiV1Directives {
   
   def route: RequestContext => Unit =
 //    path("users" / "authentication") { 

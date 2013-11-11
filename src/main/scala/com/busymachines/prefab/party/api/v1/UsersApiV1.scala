@@ -7,7 +7,7 @@ import spray.http.StatusCodes
 import com.busymachines.commons.spray.CommonHttpService
 import com.busymachines.prefab.party.logic.UserAuthenticator
 
-class UserApi(partyService : PartyService, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with PartyApiDirectives {
+class UsersApiV1(partyService : PartyService, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with PartyApiV1Directives {
 
   val route =
     path("users") {

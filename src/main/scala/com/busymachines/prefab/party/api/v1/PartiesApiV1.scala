@@ -7,7 +7,7 @@ import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.logic.UserAuthenticator
 import com.busymachines.prefab.party.service.PartyService
 
-class PartyApi(partyService : PartyService, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with PartyApiDirectives {
+class PartiesApiV1(partyService : PartyService, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with PartyApiV1Directives {
   val route =
     path("parties") {
       authenticate(authenticator) { implicit securityContext =>
