@@ -32,7 +32,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
   }
   
   /**
-   * Authenticates a user of a specific party/
+   * Authenticates a user of a specific party.
    */
   def authenticateWithLoginNamePassword(partyId : Id[Party], login: String, password: String): Future[Option[SecurityContext]] = 
     partyDao.retrieve(partyId).flatMap { party =>
@@ -42,12 +42,12 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
   /**
    * Authenticates a user regardless of the party it belongs to.
    */
-  def authenticateWithLoginNamePassword(login: String, password: String, validate : Credentials => Boolean = _ => true): Future[Option[SecurityContext]] = {
-    credentialsDao.findByLogin(login).flatMap {
+  def authenticateWithLoginNamePassword(loginName: String, password: String, validate : Credentials => Boolean = _ => true): Future[Option[SecurityContext]] = {
+    credentialsDao.findByLogin(loginName).flatMap {
       credentials =>
         credentials.
           map(_.entity).
-          filter(_.passwordCredentials.exists(p => p.login == login && p.hasPassword(password))).
+          filter(_.passwordCredentials.exists(p => p.login == loginName && p.hasPassword(password))).
           filter(validate).
           headOption match {
           case Some(credentials) => 
@@ -56,7 +56,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
                 createSecurityContext(credentials.id, authenticationId)
             }
           case None => 
-            debug(s"Cannot authenticate $login.")
+            debug(s"Cannot authenticate $loginName.")
             Future.successful(None)
         }
     }
