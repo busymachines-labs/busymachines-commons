@@ -25,7 +25,7 @@ object JsValueConverter {
   implicit val booleanConverter = new JsValueConverter[Boolean] {
     def convert(value: JsValue): Boolean =
       value match {
-        case JsString(s) => s toBoolean
+        case JsString(s) => s.toBoolean
         case other => false
       }
   }

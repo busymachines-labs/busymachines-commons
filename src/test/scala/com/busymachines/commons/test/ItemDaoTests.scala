@@ -1,6 +1,7 @@
 package com.busymachines.commons.test
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.language.postfixOps
 import org.scalatest.FlatSpec
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.CommonJsonFormats._

@@ -1,7 +1,6 @@
 package com.busymachines.commons.spray
 
 import com.busymachines.commons.Logging
-import com.busymachines.commons.spray.CommonHttpService;
 
 import akka.actor.ActorSystem
 import akka.actor.Props
