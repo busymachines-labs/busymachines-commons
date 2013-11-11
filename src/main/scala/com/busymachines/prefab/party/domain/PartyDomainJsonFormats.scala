@@ -6,11 +6,11 @@ object PartyDomainJsonFormats extends PartyDomainJsonFormats
 
 trait PartyDomainJsonFormats extends CommonJsonFormats {
 
-  implicit val phoneNumberKindFormat = stringFormat[PhoneNumberKind]("PhoneNumberKind", PhoneNumberKind, _._kind)
-  implicit val addressKindFormat = stringFormat[AddressKind]("AddressKind", AddressKind(_), _._kind)
-  implicit val emailKindFormat = stringFormat[EmailAddressKind]("EmailKind", EmailAddressKind(_), _._kind)
-  implicit val relationFormat = stringFormat[RelationKind]("RelationKind", RelationKind(_), _.kind)
-  implicit val permissionFormat = stringFormat[Permission]("Permission", Permission(_), _._permission)
+  implicit val phoneNumberKindFormat = stringFormat[PhoneNumberKind]("PhoneNumberKind", PhoneNumberKind, _.name)
+  implicit val addressKindFormat = stringFormat[AddressKind]("AddressKind", AddressKind(_), _.name)
+  implicit val emailKindFormat = stringFormat[EmailAddressKind]("EmailKind", EmailAddressKind(_), _.name)
+  implicit val relationFormat = stringFormat[RelationKind]("RelationKind", RelationKind(_), _.name)
+  implicit val permissionFormat = stringFormat[Permission]("Permission", Permission(_), _.name)
   implicit val addressFormat = jsonFormat6(Address)
   implicit val phoneNumberFormat = jsonFormat2(PhoneNumber)
   implicit val emailFormat = jsonFormat3(EmailAddress)

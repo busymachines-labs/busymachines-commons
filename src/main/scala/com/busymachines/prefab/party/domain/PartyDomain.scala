@@ -75,9 +75,6 @@ case class PartyRole (
   permissions : List[Permission]
 )
 
-case class RelationKind(kind : String)
-
-
 case class UserRole (
   id : Id[UserRole] = Id.generate,
   name : String,
@@ -120,9 +117,10 @@ case class EmailAddress (
   emailAddress : String
 )
 
-case class AddressKind(_kind : String)
-case class PhoneNumberKind(_kind : String)
-case class EmailAddressKind(_kind : String)
-case class Permission(_permission : String)
+case class RelationKind(name : String)
+case class AddressKind(name : String)
+case class PhoneNumberKind(name : String)
+case class EmailAddressKind(name : String)
+case class Permission(name : String)
 
 
