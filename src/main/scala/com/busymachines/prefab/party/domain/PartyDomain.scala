@@ -34,14 +34,6 @@ case class Party (
   
   emailAddresses : List[EmailAddress] = Nil,
 
-  /**
-   * Party is allowed to create assets and child-models of these models.
-   * Party can see all child models and their properties.
-   * Party can see all properties of parent models.
-   * Party can only change models it owns (AssetModel.owner)
-   */
-//  visibleAssetModels : List[Id[CatalogItem]] = Nil,
-  
   relations : List[RelatedParty] = Nil,
   
   /**
