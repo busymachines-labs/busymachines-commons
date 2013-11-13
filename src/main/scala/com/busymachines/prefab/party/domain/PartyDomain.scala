@@ -7,7 +7,9 @@ import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
 import com.busymachines.prefab.authentication.model.Credentials
 
-case class Tenant(id : Id[Tenant], name : String) extends HasId[Tenant]
+case class Tenant(
+  id : Id[Tenant], 
+  name : String) extends HasId[Tenant]
 
 case class Party (
   
