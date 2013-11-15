@@ -31,16 +31,14 @@ class ESSequenceDaoTests extends FlatSpec with Logging {
 
   val esIndex = new EmptyESTestIndex(getClass, new DoNothingEventSystem)
   val sequenceDao = new ESSequenceDao(esIndex)
-  val sequence1 = Sequence(Id.generate,"testSequence1",0)
-  val sequence2 = Sequence(Id.generate,"testSequence2",0)
+  val sequence1 = Id.static[Sequence]("testSequence1")
+  val sequence2 = Id.static[Sequence]("testSequence2")
   
   "SequenceDao" should "create & increment" in {
-    sequenceDao.create(sequence1)
-    sequenceDao.create(sequence2)
-    assert(sequenceDao.next(sequence1, 1) === 1)
-    assert(sequenceDao.next(sequence2, 1) === 1)
-    assert(sequenceDao.next(sequence1, 1) === 2)
-    assert(sequenceDao.next(sequence2, 1) === 2)
+    assert(sequenceDao.next(sequence1) === 1)
+    assert(sequenceDao.next(sequence2) === 1)
+    assert(sequenceDao.next(sequence1) === 2)
+    assert(sequenceDao.next(sequence2) === 2)
   }
   
 }

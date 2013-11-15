@@ -175,4 +175,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
       }
     } 
   }
+  
+  implicit val sequenceFormat = jsonFormat2(Sequence)
+
 }
