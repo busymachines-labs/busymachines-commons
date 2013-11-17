@@ -23,6 +23,10 @@ object ESSearchCriteria {
     def toFilter = criteria.toFilter
   }
 
+  case class All[A]() extends ESSearchCriteria[A] {
+    def toFilter = FilterBuilders.matchAllFilter
+  }
+  
   case class Not[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
     override def not(other: ESSearchCriteria[A]) =
       Not((children.toSeq :+ other): _*)
