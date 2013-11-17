@@ -26,7 +26,7 @@ private[elasticsearch] case class HashedMedia(
   hash: String,
   data: String) extends HasId[HashedMedia]
 
-private[elasticsearch] object MoneyMapping extends ESMapping[Money] {
+object MoneyMapping extends ESMapping[Money] {
   val currency = "currency" as String & Analyzed
   val amount = "amount" as Double & Analyzed
 }
