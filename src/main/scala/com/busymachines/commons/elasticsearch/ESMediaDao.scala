@@ -17,6 +17,7 @@ import com.busymachines.commons.domain.MimeType
 import com.busymachines.commons.domain.Media
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.Logging
+import com.busymachines.commons.domain.Money
 
 private[elasticsearch] case class HashedMedia(
   id: Id[HashedMedia],
@@ -24,6 +25,11 @@ private[elasticsearch] case class HashedMedia(
   name: Option[String],
   hash: String,
   data: String) extends HasId[HashedMedia]
+
+private[elasticsearch] object MoneyMapping extends ESMapping[Money] {
+  val currency = "currency" as String & Analyzed
+  val amount = "amount" as Double & Analyzed
+}
 
 private[elasticsearch] object MediaMapping extends ESMapping[HashedMedia] {
   val id = "id" -> "_id" as String & NotAnalyzed
