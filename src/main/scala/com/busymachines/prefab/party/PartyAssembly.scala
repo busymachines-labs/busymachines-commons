@@ -1,7 +1,6 @@
 package com.busymachines.prefab.party
 
 import scala.concurrent.ExecutionContext
-
 import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.prefab.authentication.elasticsearch.ESAuthenticationDao
 import com.busymachines.prefab.authentication.elasticsearch.ESCredentialsDao
@@ -13,8 +12,8 @@ import com.busymachines.prefab.party.db.PartyDao
 import com.busymachines.prefab.party.db.UserDao
 import com.busymachines.prefab.party.logic.PartyManager
 import com.busymachines.prefab.party.logic.UserAuthenticator
-
 import akka.actor.ActorSystem
+import com.busymachines.commons.elasticsearch.ESSequenceDao
 
 trait PartyAssembly {
 
@@ -24,8 +23,10 @@ trait PartyAssembly {
   
   def partyIndex = index
   def authenticationIndex = index
+  def sequenceIndex = index
   def authenticationConfigBaseName = "authentication"
 
+  lazy val sequenceDao = new ESSequenceDao(sequenceIndex)
   lazy val partyDao = new PartyDao(partyIndex)
   lazy val userDao = new UserDao(partyDao)
   lazy val credentialsDao = new ESCredentialsDao(partyIndex)
