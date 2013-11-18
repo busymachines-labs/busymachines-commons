@@ -18,9 +18,8 @@ class PartiesApiV1(partyService : PartyService, authenticator : UserAuthenticato
         } ~
           post {
             entity(as[Party]) { party =>
-              val partyId = partyService.createParty(party)
               complete {
-                Map("id" -> partyId)
+               partyService.createParty(party) map ( p => Map("id" -> p.id))
               }
             }
           }
