@@ -43,6 +43,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
    * Authenticates a user regardless of the party it belongs to.
    */
   def authenticateWithLoginNamePassword(loginName: String, password: String, validate : Credentials => Boolean = _ => true): Future[Option[SecurityContext]] = {
+    debug(s"Trying to authenticate with username $loginName and password ****")
     credentialsDao.findByLogin(loginName).flatMap {
       credentials =>
         credentials.
@@ -53,7 +54,10 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
           case Some(credentials) => 
             setAuthenticated(credentials.id) flatMap {
               authenticationId =>
-                createSecurityContext(credentials.id, authenticationId)
+                createSecurityContext(credentials.id, authenticationId) map { x=>
+                	debug(s" security context build is $x")
+                	x
+                }
             }
           case None => 
             debug(s"Cannot authenticate $loginName.")

@@ -32,7 +32,7 @@ class PartyDao(index : ESIndex)(implicit ec: ExecutionContext) extends ESRootDao
   def findUserByCredentialsId(id : Id[Credentials]) : Future[Option[(Party, User)]] = 
     searchSingle(PartyMapping.users / UserMapping.credentials equ id) map { 
       case Some(Versioned(party, _)) =>
-        party.users.find(_.id == id).map((party, _))
+        party.users.find(_.credentials == id).map((party, _))
       case _ => None
   }
 } 
