@@ -10,6 +10,7 @@ import com.busymachines.commons.domain.CommonJsonFormats.sequenceFormat
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.Sequence
 import scala.concurrent.Await
+import com.busymachines.commons.dao.SequenceDao
 
 private[elasticsearch] object SequenceMapping extends ESMapping[Sequence] {
   val id = "id" -> "_id" as String & NotAnalyzed
@@ -18,7 +19,7 @@ private[elasticsearch] object SequenceMapping extends ESMapping[Sequence] {
 }
 
 class ESSequenceDao(index: ESIndex, `type` : String = "sequence")(implicit ec: ExecutionContext) 
-    extends ESRootDao[Sequence](index, ESType[Sequence](`type`, SequenceMapping)) with Logging {
+    extends ESRootDao[Sequence](index, ESType[Sequence](`type`, SequenceMapping)) with SequenceDao with Logging {
 
   def apply(name : String) : Future[Id[Sequence]] = {
     val id = Id[Sequence](name)
