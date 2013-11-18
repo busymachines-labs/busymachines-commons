@@ -1,6 +1,5 @@
-package com.busymachines.commons.testing
+package com.busymachines.commons
 
-import scala.language.postfixOps
 import scala.concurrent.Await
 import scala.concurrent.Future
 import scala.concurrent.duration._
