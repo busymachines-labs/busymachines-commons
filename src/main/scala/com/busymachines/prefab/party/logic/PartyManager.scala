@@ -34,15 +34,15 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
         }
     }
   
-  def listParties(implicit sc: SecurityContext): List[Party] = {
-    Nil
-  }
+  def listParties(implicit sc: SecurityContext): Future[List[Party]] = 
+    partyDao.retrieveAll		  
+  
 
   /**
    * Create a party based on specific fields received.
    */
-  def createParty(party: Party)(implicit sc: SecurityContext): Int = {
-    0
+  def createParty(party: Party)(implicit sc: SecurityContext): Future[Party] = {
+    partyDao.create(party).map(_.entity)
   }
 
   /**
