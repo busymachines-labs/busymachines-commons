@@ -19,7 +19,7 @@ trait Dao[T <: HasId[T]] {
 
   def search(criteria : SearchCriteria[T], page : Page = Page.first, sort:SearchSort = ESSearchSort.asc("_id"), facets: Seq[FacetField] = Seq.empty): Future[SearchResult[T]]
 
-  def searchSingle(criteria : SearchCriteria[T], f : SearchCriteria[T] => Unit): Future[Option[Versioned[T]]]
+  def searchSingle(criteria : SearchCriteria[T], onMany : List[Versioned[T]] => Versioned[T] = throw new MoreThanOneResultException): Future[Option[Versioned[T]]]
 
   def modify(id: Id[T], reindex : Boolean = true)(f : T => T): Future[Versioned[T]]
   
