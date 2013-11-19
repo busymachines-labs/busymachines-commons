@@ -59,6 +59,12 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     def read(value: JsValue) = instance
   }
 
+  /**
+   * String format for case classes that wrap a single string.
+   */
+  def stringWrapperFormat[A <: Product](construct: String => A) : JsonFormat[A] = 
+    stringFormat(construct.getClass.getSimpleName, construct, _.productElement(0).toString)
+  
   def stringFormat[A](type_ : String, fromStr: String => A, toStr: A => String = (a: A) => a.toString) = new JsonFormat[A] {
     def write(value: A) = JsString(toStr(value))
     def read(value: JsValue): A = value match {
@@ -143,7 +149,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     case locale => locale.getLanguage
   })
     
-  implicit def idFormat[A] = stringFormat[Id[A]]("Id", Id(_))
+  implicit def idFormat[A] = stringWrapperFormat(Id[A])
   implicit val mediaFormat = jsonFormat4(Media)
   implicit val moneyFormat = jsonFormat2(Money)
   
