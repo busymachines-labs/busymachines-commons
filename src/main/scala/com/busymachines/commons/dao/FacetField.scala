@@ -1,4 +1,5 @@
 package com.busymachines.commons.dao
 
-case class FacetFieldValue(facet : String, count : Int)
-trait FacetField 
+case class FacetFieldValue(name: String, count: Int)
+case class FacetField(name:String)
+trait Facet

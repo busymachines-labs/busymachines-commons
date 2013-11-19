@@ -17,7 +17,7 @@ trait Dao[T <: HasId[T]] {
   
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]]
 
-  def search(criteria : SearchCriteria[T], page : Page = Page.first, sort:SearchSort = ESSearchSort.asc("_id"), facets: Seq[FacetField] = Seq.empty): Future[SearchResult[T]]
+  def search(criteria : SearchCriteria[T], page : Page = Page.first, sort:SearchSort = ESSearchSort.asc("_id"), facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]]
 
   def searchSingle(criteria : SearchCriteria[T], f : SearchCriteria[T] => Unit): Future[Option[Versioned[T]]]
 
