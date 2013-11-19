@@ -54,10 +54,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
           case Some(credentials) => 
             setAuthenticated(credentials.id) flatMap {
               authenticationId =>
-                createSecurityContext(credentials.id, authenticationId) map { x=>
-                	debug(s" security context build is $x")
-                	x
-                }
+                createSecurityContext(credentials.id, authenticationId)
             }
           case None => 
             debug(s"Cannot authenticate $loginName.")
