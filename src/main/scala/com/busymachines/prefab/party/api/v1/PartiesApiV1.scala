@@ -23,7 +23,7 @@ class PartiesApiV1(partyService : PartyService, authenticator : UserAuthenticato
               }
             }
           }
-      }
+      } 
     } ~
       get {
         path("parties" / MatchId[Party]) { entityId =>

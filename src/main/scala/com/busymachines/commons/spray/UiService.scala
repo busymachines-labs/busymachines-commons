@@ -37,10 +37,13 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   if (CommonConfig.devmode)
     info("Starting UI Routing is devmode")
 
-  val route =
+  val route = route2("")
+  
+  def route2(nonPrefix: String) =
     get {
       path(Rest) {
         path =>
+          println("PATH: " + path)
           val (doc, ext, shouldCache, shouldProcess) = extension(path) match {
             case "" => (rootDocument, extension(rootDocument), false, true)
             case ext => (path, ext, true, false)
