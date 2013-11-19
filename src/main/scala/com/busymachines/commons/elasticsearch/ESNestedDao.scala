@@ -2,7 +2,6 @@ package com.busymachines.commons.elasticsearch
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-
 import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.IdAlreadyExistsException
 import com.busymachines.commons.dao.IdNotFoundException
@@ -15,8 +14,8 @@ import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.implicits._
-
 import spray.json.JsonFormat
+import com.busymachines.commons.dao.Facet
 
 abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName : String)(implicit ec: ExecutionContext) extends ESDao[T](typeName) with NestedDao[P, T] {
 
@@ -126,7 +125,7 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
     }
   }
 
-  def search(criteria: SearchCriteria[T], page : Page = Page.first, sort:SearchSort = ESSearchSort.asc("_id"), facets : Seq[FacetField] = Seq.empty): Future[SearchResult[T]] =
+  def search(criteria: SearchCriteria[T], page : Page = Page.first, sort:SearchSort = ESSearchSort.asc("_id"), facets : Seq[Facet] = Seq.empty): Future[SearchResult[T]] =
     ???
     
   def onChange(f : Id[T] => Unit) : Unit = 
