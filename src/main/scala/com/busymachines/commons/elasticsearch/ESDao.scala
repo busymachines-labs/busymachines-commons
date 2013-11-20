@@ -14,7 +14,7 @@ import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.MoreThanOneResultException
 
 abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit ec: ExecutionContext) extends Dao[T] with Logging {
-/*
+
   def searchSingle(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T]): Future[Option[Versioned[T]]] = {
     search(criteria).map(_ match {
       case SearchResult(Nil, _, _) => None
@@ -27,18 +27,5 @@ abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit e
             throw new MoreThanOneResultException(s"Search criteria $criteria returned more than one result and should return at most one result. Database probably inconsistent.")
         }
     })
-  }*/
-
-  def searchSingle(criteria: SearchCriteria[T], f: SearchCriteria[T] => Unit = (criteria) => {
-    error(s"Search criteria $criteria returned more than one result and should return at most one result. Database corrupted.")
-  }): Future[Option[Versioned[T]]] = {
-    search(criteria).map(_ match {
-      case SearchResult(Nil, _, _) => None
-      case SearchResult(first :: Nil, _, _) => Some(first)
-      case SearchResult(first :: rest, _, _) =>
-        f(criteria)
-        Some(first)
-    })
   }
-
 } 
