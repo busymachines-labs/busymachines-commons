@@ -77,7 +77,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
         val fieldList = (termFacet.fields.map(field => field.toOptionString match {
           case None => None
           case Some(fieldName) => Some(fieldName)
-        })) flatten
+        })).flatten
         
         FacetBuilders.termsFacet(termFacet.name).size(termFacet.size).fields(fieldList: _*)
       case _ => throw new Exception(s"Unknown facet term instance")

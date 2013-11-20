@@ -11,15 +11,12 @@ import spray.caching.{Cache => SprayCache}
 import spray.caching.{Cache => SprayCache}
 import spray.caching.ValueMagnet.fromFuture
 
-
-object Cache {
-  @deprecated("Use AsyncCache", "20-nov-2013")
-  def expiringLru[K, V](initialCapacity: Int, maxCapacity: Long = Long.MaxValue, timeToLive: Duration = Duration.Inf, timeToIdle: Duration = Duration.Inf) =
-    new Cache[K, V](new ExpiringLruCache[V](maxCapacity, initialCapacity, timeToLive, timeToIdle))
+object AsyncCache {
+  def expiringLru[K, V](initialCapacity: Int = 16, maxCapacity: Long = Long.MaxValue, timeToLive: Duration = Duration.Inf, timeToIdle: Duration = Duration.Inf) =
+    new AsyncCache[K, V](new ExpiringLruCache[V](maxCapacity, initialCapacity, timeToLive, timeToIdle))
 }
 
-@deprecated("Use AsyncCache", "20-nov-2013")
-class Cache[K, V](val cache: SprayCache[V]) {
+class AsyncCache[K, V](val cache: SprayCache[V]) {
 
   def apply(key: K) =
     cache.apply(key)

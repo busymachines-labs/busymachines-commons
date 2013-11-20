@@ -8,7 +8,7 @@ import scala.concurrent.duration.Duration
 import org.joda.time.DateTime
 
 import com.busymachines.commons.CommonConfig
-import com.busymachines.commons.cache.Cache
+import com.busymachines.commons.cache.AsyncCache
 import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.authentication.db.AuthenticationDao
 import com.busymachines.prefab.authentication.model.Authentication
@@ -39,7 +39,7 @@ abstract class PrefabAuthenticator[Principal, SecurityContext](config: Authentic
 
   private type CachedData = Option[(Principal, SecurityContext)]
 
-  private val cache = Cache.expiringLru[Id[Authentication], CachedData](config.maxCapacity, 50, config.expiration * 1.2, config.idleTime)
+  private val cache = AsyncCache.expiringLru[Id[Authentication], CachedData](config.maxCapacity, 50, config.expiration * 1.2, config.idleTime)
 
   /**
    * Re-authenticates based on given authentication id (token).
