@@ -97,6 +97,11 @@ class RichConfig(val theConfig: Config) {
   def configOrEmpty(path: String): RichConfig =
     configOption(path).getOrElse(new RichConfig(ConfigFactory.empty))
 
+  def configSeq(path: String) : Seq[RichConfig] =
+    if (path.isEmpty) this :: Nil
+    else theConfig.getConfigList(path).map(new RichConfig(_))
+
+
   def mkString(sep: String) =
     toSeq.mkString(sep)
 

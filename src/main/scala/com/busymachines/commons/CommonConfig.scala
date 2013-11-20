@@ -3,6 +3,8 @@ package com.busymachines.commons
 import com.typesafe.config.ConfigFactory
 import java.net.URL
 import com.busymachines.commons.implicits._
+import com.typesafe.config.Config
+import scala.collection.SeqProxy
 
 object CommonConfigFactory {
   val configFiles = System.getProperty("config") match {
@@ -23,4 +25,10 @@ object CommonConfig extends CommonConfig("") with Logging {
   }
 }
 
-class CommonConfig(baseName : String) extends RichConfig(CommonConfigFactory.config(baseName).theConfig)
+class CommonConfigSeq[A <: CommonConfig](f : Config => A) {
+  def apply(baseName : String) = CommonConfigFactory.config.configSeq(baseName).toList.map(c => f(c.theConfig))
+}
+
+class CommonConfig(config : Config) extends RichConfig(config) {
+  def this(baseName : String)  = this(CommonConfigFactory.config(baseName).theConfig)
+}
