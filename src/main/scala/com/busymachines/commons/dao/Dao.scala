@@ -12,6 +12,8 @@ import scala.concurrent.ExecutionContext
  */
 trait Dao[T <: HasId[T]] {
   
+  def criteriaAll:SearchCriteria[T]
+
   def defaultSort:SearchSort
 
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]]
