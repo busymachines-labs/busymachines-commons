@@ -27,7 +27,7 @@ trait AuthenticationDirectives extends Logging {
       new HttpAuthenticator[SecurityContext] {
         override def apply(ctx: RequestContext) = {
           def devmodeAuth = {
-            if (CommonConfig.devmode) authenticator.devmodeSecurityContext(ctx.request.uri.query.get("devmode-auth"))
+            if (CommonConfig.devmode) authenticator.devmodeSecurityContext(ctx.request.uri.query.get("dev-login"))
             else None
           }
 

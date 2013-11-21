@@ -14,22 +14,25 @@ import com.busymachines.prefab.party.domain.Tenant
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.service.PartyService
 
-class PartyBootstrap(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
+class PartyFixture(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
 
-  def bootstrap {
+  def create {
     if (CommonConfig.devmode) {
       
-      val tenantId = Id.static[Tenant]("test-tenant-1")
-      val party1Id = Id.static[Party]("test-party-1")
+      val testTenantId = Id.static[Tenant]("test-tenant-1")
+      val testParty1Id = Id.static[Party]("test-party-1")
+      val testUser1Id = Id.static[User]("test-user-1")
+      val testUser1CredentialsId = Id.static[Credentials]("test-user-1-credentials")
       
       val user1 = User(
-        id = Id.static[User]("user1"),
+        id = testUser1Id,
+        credentials = testUser1CredentialsId,
         firstName = Some("John"),
         lastName = Some("Doe"),
         addresses = Address(street = Some("Street 1")) :: Nil)
   
-      partyDao.getOrCreateAndModify(party1Id)(Party(party1Id, tenantId)) { party =>
-        party.copy(tenant = tenantId, users = user1 :: Nil, company = Some(Company("Test Company")))
+      partyDao.getOrCreateAndModify(testParty1Id)(Party(testParty1Id, testTenantId)) { party =>
+        party.copy(tenant = testTenantId, users = user1 :: Nil, company = Some(Company("Test Company")))
       }
       
       credentialsDao.getOrCreateAndModify(user1.credentials)(Credentials(user1.credentials)) { credentials =>

@@ -4,6 +4,7 @@ import com.busymachines.prefab.authentication.logic.AuthenticationConfig
 import com.busymachines.prefab.authentication.db.CredentialsDao
 import com.busymachines.prefab.authentication.db.AuthenticationDao
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 import com.busymachines.prefab.authentication.logic.PrefabAuthenticator
 import com.busymachines.commons.Logging
 import com.busymachines.commons.implicits._
@@ -31,6 +32,17 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
     }
   }
   
+  override def devmodeSecurityContext(devmodeAuth : Option[String]) : Option[SecurityContext] =
+    devmodeAuth.flatMap { loginName =>
+      credentialsDao.findByLogin(loginName).await(1.minute).headOption.flatMap { 
+        case Versioned(credentials, _) => 
+          val authenticationId = setAuthenticated(credentials.id).await(1.minute) 
+          val context = createSecurityContext(credentials.id, authenticationId).await(1.minute)
+          debug(s"Authenticated test user: $loginName")
+          context
+      }
+    }
+    
   /**
    * Authenticates a user of a specific party.
    */
