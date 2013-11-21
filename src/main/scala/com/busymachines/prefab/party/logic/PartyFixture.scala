@@ -35,7 +35,7 @@ class PartyFixture(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
         party.copy(tenant = testTenantId, users = user1 :: Nil, company = Some(Company("Test Company")))
       }
       
-      credentialsDao.getOrCreateAndModify(user1.credentials)(Credentials(user1.credentials)) { credentials =>
+      credentialsDao.getOrCreateAndModify(testUser1CredentialsId)(Credentials(testUser1CredentialsId)) { credentials =>
         credentials.copy(passwordCredentials = PasswordCredentials("user1@test.com", "test") :: Nil)
       }
     } else {

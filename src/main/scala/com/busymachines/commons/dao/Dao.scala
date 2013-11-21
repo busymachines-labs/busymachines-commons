@@ -12,15 +12,11 @@ import scala.concurrent.ExecutionContext
  */
 trait Dao[T <: HasId[T]] {
   
-  def criteriaAll:SearchCriteria[T]
-
-  def defaultSort:SearchSort
-
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]]
   
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]]
 
-  def search(criteria : SearchCriteria[T], page : Page = Page.first, sort:SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]]
+  def search(criteria : SearchCriteria[T], page : Page = Page.first, sort : SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]]
 
   def searchSingle(criteria : SearchCriteria[T], onMany : List[Versioned[T]] => Versioned[T] = _ => throw new MoreThanOneResultException): Future[Option[Versioned[T]]]
 
@@ -31,5 +27,9 @@ trait Dao[T <: HasId[T]] {
   def delete(id: Id[T], reindex : Boolean = true): Future[Unit]
   
   def onChange(f: Id[T] => Unit): Unit
+
+  def all : SearchCriteria[T]
+
+  def defaultSort : SearchSort
 }
 
