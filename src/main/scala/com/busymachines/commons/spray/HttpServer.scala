@@ -47,7 +47,7 @@ abstract class HttpServer(implicit actorSystem : ActorSystem) extends CommonHttp
     IO(Http) ! Http.Bind(actorSystem.actorOf(Props(new Actor), "http-server"), interface = interface, port = port)
 
     
-  def commonExceptionHandler = ExceptionHandler.default orElse ExceptionHandler {
+  def commonExceptionHandler = ExceptionHandler {
      case e: NotAuthorizedException => crossDomain {
       debug(s"Exception handler rejecting with forbidden because exception : $e")
       complete(StatusCodes.Unauthorized)
@@ -58,7 +58,6 @@ abstract class HttpServer(implicit actorSystem : ActorSystem) extends CommonHttp
     case e: Throwable => crossDomain { ctx =>
       error(s"Request ${ctx.request} could not be handled normally: ${e.getMessage}", e)
       ctx.complete(StatusCodes.InternalServerError, e.getMessage)
-    }
- 
-  }
+    } 
+  } orElse ExceptionHandler.default
 }

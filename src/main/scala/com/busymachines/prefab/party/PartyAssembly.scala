@@ -14,6 +14,7 @@ import com.busymachines.prefab.party.logic.PartyManager
 import com.busymachines.prefab.party.logic.UserAuthenticator
 import akka.actor.ActorSystem
 import com.busymachines.commons.elasticsearch.ESSequenceDao
+import com.busymachines.prefab.party.logic.PartyBootstrap
 
 trait PartyAssembly {
 
@@ -36,4 +37,5 @@ trait PartyAssembly {
   lazy val authenticationApiV1 = new AuthenticationApiV1(authenticator)
   lazy val usersApiV1 = new UsersApiV1(partyManager, authenticator)
   lazy val partiesApiV1 = new PartiesApiV1(partyManager, authenticator)
+  lazy val partyBootstrap = new PartyBootstrap(partyDao, credentialsDao)
 }
