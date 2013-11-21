@@ -73,7 +73,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
   private def toESFacets(facets: Seq[Facet]):Seq[FacetBuilder] = 
     facets.map(_ match {
-      case termFacet: ESTermFacet[_, T] =>
+      case termFacet: ESTermFacet =>
         val fieldList = (termFacet.fields.map(field => field.toOptionString match {
           case None => None
           case Some(fieldName) => Some(fieldName)
@@ -87,7 +87,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = ESSearchSort.asc("_id"), facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
-        val request =
+        var request =
           client.javaClient.prepareSearch(index.name)
             .setTypes(t.name)
             .setFilter(criteria.toFilter)
@@ -96,11 +96,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             .setSize(page.size)
             .addSort(sort.field, sort.order)
             .setVersion(true)
-        /*    
+            
         for (facet <- toESFacets(facets)) {
           request = request.addFacet(facet)
         }
-        */    
+            
         debug(s"Executing search ${request}")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
