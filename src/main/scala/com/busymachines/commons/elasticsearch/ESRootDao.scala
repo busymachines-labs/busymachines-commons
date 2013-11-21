@@ -84,7 +84,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     })
   
 
-  def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = ESSearchSort.asc("_id"), facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
+  def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
         var request =

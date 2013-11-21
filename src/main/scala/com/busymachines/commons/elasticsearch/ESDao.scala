@@ -12,9 +12,12 @@ import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.Logging
 import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.MoreThanOneResultException
+import com.busymachines.commons.dao.SearchSort
 
 abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit ec: ExecutionContext) extends Dao[T] with Logging {
 
+  def defaultSort:SearchSort = ESSearchSort.asc("_id")
+  
   def searchSingle(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T]): Future[Option[Versioned[T]]] = {
     search(criteria).map(_ match {
       case SearchResult(Nil, _, _) => None

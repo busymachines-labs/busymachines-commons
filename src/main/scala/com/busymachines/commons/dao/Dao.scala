@@ -4,7 +4,6 @@ import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
-import com.busymachines.commons.elasticsearch.ESSearchSort
 
 /**
  * High-level abstraction for DAOs for CRUD operations.
@@ -13,11 +12,13 @@ import com.busymachines.commons.elasticsearch.ESSearchSort
  */
 trait Dao[T <: HasId[T]] {
   
+  def defaultSort:SearchSort
+
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]]
   
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]]
 
-  def search(criteria : SearchCriteria[T], page : Page = Page.first, sort:SearchSort = ESSearchSort.asc("_id"), facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]]
+  def search(criteria : SearchCriteria[T], page : Page = Page.first, sort:SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]]
 
   def searchSingle(criteria : SearchCriteria[T], onMany : List[Versioned[T]] => Versioned[T] = _ => throw new MoreThanOneResultException): Future[Option[Versioned[T]]]
 
