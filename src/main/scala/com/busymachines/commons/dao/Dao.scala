@@ -5,6 +5,13 @@ import com.busymachines.commons.domain.HasId
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
+trait Facet {
+  def name : String
+}
+case class FacetValue(value: String, count: Int)
+trait SearchSort 
+trait SearchCriteria[T]
+
 /**
  * High-level abstraction for DAOs for CRUD operations.
  *

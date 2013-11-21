@@ -16,7 +16,6 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryStringQueryBuilder
 import org.elasticsearch.search.sort.SortOrder
 import com.busymachines.commons.Logging
-import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.IdNotFoundException
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.dao.RetryVersionConflictAsync
@@ -80,7 +79,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
         })).flatten
         
         FacetBuilders.termsFacet(termFacet.name).size(termFacet.size).fields(fieldList: _*)
-      case _ => throw new Exception(s"Unknown facet term instance")
+      case _ => throw new Exception(s"Unknown facet type")
     })
   
 

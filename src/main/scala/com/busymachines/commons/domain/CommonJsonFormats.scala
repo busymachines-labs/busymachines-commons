@@ -15,18 +15,17 @@ import spray.json.deserializationError
 import spray.json.JsObject
 import spray.json.JsNumber
 import spray.json.JsonWriter
-import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.SearchResult
-import com.busymachines.commons.dao.FacetField
 import spray.json.JsonWriter
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Page
-import com.busymachines.commons.dao.FacetFieldValue
 import spray.json.JsArray
 import spray.json.RootJsonWriter
 import scala.concurrent.duration.{Duration, FiniteDuration, Deadline}
 import org.joda.time.LocalDate
 import scala.collection.immutable.HashMap
+import com.busymachines.commons.dao.Facet
+import com.busymachines.commons.dao.FacetValue
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -153,10 +152,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   implicit val mediaFormat = jsonFormat4(Media)
   implicit val moneyFormat = jsonFormat2(Money)
   
-  implicit val facetFieldFormat = new JsonWriter[FacetField] {
-    def write(c: FacetField) = JsString(c.toString)
-  }
-  implicit val facetFieldValueFormat = jsonFormat2(FacetFieldValue)
+  implicit val facetValueFormat = jsonFormat2(FacetValue)
   
   implicit val durationFormat = new JsonFormat[FiniteDuration] {
     def write(value: FiniteDuration) = JsObject(

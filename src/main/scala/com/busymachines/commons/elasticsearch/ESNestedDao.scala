@@ -2,7 +2,6 @@ package com.busymachines.commons.elasticsearch
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import com.busymachines.commons.dao.FacetField
 import com.busymachines.commons.dao.IdAlreadyExistsException
 import com.busymachines.commons.dao.IdNotFoundException
 import com.busymachines.commons.dao.NestedDao
