@@ -93,7 +93,8 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             .setSearchType(SearchType.DFS_QUERY_AND_FETCH)
             .setFrom(page.from)
             .setSize(page.size)
-            .addSort(sort.field, sort.order)
+// TODO disabled sorting            
+//            .addSort(sort.field, sort.order)
             .setVersion(true)
             
         for (facet <- toESFacets(facets)) {
