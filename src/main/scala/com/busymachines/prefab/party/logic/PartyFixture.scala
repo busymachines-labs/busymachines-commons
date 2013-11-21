@@ -38,6 +38,9 @@ class PartyFixture(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
       credentialsDao.getOrCreateAndModify(user1.credentials)(Credentials(user1.credentials)) { credentials =>
         credentials.copy(passwordCredentials = PasswordCredentials("user1@test.com", "test") :: Nil)
       }
+    } else {
+      partyDao.delete(testParty1Id)
+      credentialsDao.delete(testUser1CredentialsId)
     }
   }
 }
