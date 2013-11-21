@@ -9,4 +9,7 @@ object ESSearchSort {
   def desc(field:String) = ESSearchSort(field,SortOrder.DESC)
 }
 
-case class ESSearchSort(field:String,order:SortOrder) extends SearchSort
+case class ESSearchSort(field:String,order:SortOrder) extends SearchSort {
+  def asc:SearchSort= this.copy(order=SortOrder.ASC)
+  def desc:SearchSort= this.copy(order=SortOrder.DESC)
+}

@@ -9,7 +9,10 @@ trait Facet {
   def name : String
 }
 case class FacetValue(value: String, count: Int)
-trait SearchSort 
+trait SearchSort {
+  def asc:SearchSort
+  def desc:SearchSort
+}
 trait SearchCriteria[T]
 
 /**

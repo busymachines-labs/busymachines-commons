@@ -37,6 +37,9 @@ import spray.json.pimpString
 import com.busymachines.commons.dao.Facet
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.facet.FacetBuilder
+import collection.JavaConversions._
+import org.elasticsearch.search.facet.terms.TermsFacet
+import com.busymachines.commons.dao.FacetValue
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -70,18 +73,26 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  private def toESFacets(facets: Seq[Facet]):Seq[FacetBuilder] = 
-    facets.map(_ match {
+  private def toESFacets(facets: Seq[Facet]): Map[Facet, FacetBuilder] =
+    facets.map(facet => facet match {
       case termFacet: ESTermFacet =>
         val fieldList = (termFacet.fields.map(field => field.toOptionString match {
           case None => None
           case Some(fieldName) => Some(fieldName)
         })).flatten
-        
-        FacetBuilders.termsFacet(termFacet.name).size(termFacet.size).fields(fieldList: _*)
+
+        facet -> FacetBuilders.termsFacet(termFacet.name).size(termFacet.size).fields(fieldList: _*)
       case _ => throw new Exception(s"Unknown facet type")
-    })
-  
+    }) toMap
+
+  private def convertESFacetResponse(facets: Seq[Facet], response: org.elasticsearch.action.search.SearchResponse) =
+        response.getFacets().facetsAsMap().entrySet() map (entry => {
+          val facet = facets.collectFirst({ case x if x.name == entry.getKey => x }).getOrElse(throw new Exception(s"The ES response contains facet ${entry.getKey} that were not requested"))
+          entry.getValue match {
+            case termFacet: TermsFacet => facet.name -> ((termFacet.getEntries().map(termEntry => FacetValue(termEntry.getTerm.string, termEntry.getCount))) toList)
+            case _ => throw new Exception(s"The ES reponse contains unknown facet ${entry.getValue}")
+          }
+        }) toMap
 
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
@@ -93,20 +104,20 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             .setSearchType(SearchType.DFS_QUERY_AND_FETCH)
             .setFrom(page.from)
             .setSize(page.size)
-// TODO disabled sorting            
-//            .addSort(sort.field, sort.order)
+            // TODO disabled sorting            
+            //            .addSort(sort.field, sort.order)
             .setVersion(true)
-            
-        for (facet <- toESFacets(facets)) {
-          request = request.addFacet(facet)
+        val requestFacets = toESFacets(facets)
+        for (facet <- requestFacets) {
+          request = request.addFacet(facet._2)
         }
-            
+
         debug(s"Executing search ${request}")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
             Versioned(json.convertFromES(mapping), hit.version)
-          }, Some(result.getHits.getTotalHits))
+          }, Some(result.getHits.getTotalHits), convertESFacetResponse(facets,result))
         }
       case _ =>
         throw new Exception("Expected ElasticSearch search criteria")
