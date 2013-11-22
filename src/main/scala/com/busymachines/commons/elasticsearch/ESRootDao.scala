@@ -93,7 +93,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             case _ => throw new Exception(s"The ES reponse contains unknown facet ${entry.getValue}")
           }
         }) toMap
-
+  
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
@@ -117,7 +117,8 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
             Versioned(json.convertFromES(mapping), hit.version)
-          }, Some(result.getHits.getTotalHits), convertESFacetResponse(facets,result))
+          }, Some(result.getHits.getTotalHits),
+          if (result.getFacets() != null) convertESFacetResponse(facets, result) else Map.empty)
         }
       case _ =>
         throw new Exception("Expected ElasticSearch search criteria")
