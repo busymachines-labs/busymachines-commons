@@ -172,8 +172,9 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   class SearchResultFormat[T <: HasId[T]](fieldName : String)(implicit tFormat : JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
     def write(result: SearchResult[T]) = {
       val jsonResult = JsArray(result.result.map(_.entity).map(tFormat.write(_)))
+      val jsonFacetResult = JsObject(result.facets.map(facet => facet._1 -> JsArray((facet._2).map(value=> facetValueFormat.write(value)))))
       result.totalCount match {
-        case Some(totalCount) => JsObject(fieldName -> jsonResult, "totalCount" -> JsNumber(totalCount))
+        case Some(totalCount) => JsObject(fieldName -> jsonResult, "totalCount" -> JsNumber(totalCount), "facets" -> jsonFacetResult)
         case None => JsObject(fieldName -> jsonResult)
       }
     } 
