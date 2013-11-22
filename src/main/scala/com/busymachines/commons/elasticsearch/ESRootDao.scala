@@ -86,13 +86,13 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }).toMap
 
   private def convertESFacetResponse(facets: Seq[Facet], response: org.elasticsearch.action.search.SearchResponse) =
-        response.getFacets.facetsAsMap.entrySet.map { entry => 
-          val facet = facets.collectFirst({ case x if x.name == entry.getKey => x }).getOrElse(throw new Exception(s"The ES response contains facet ${entry.getKey} that were not requested"))
-          entry.getValue match {
-            case termFacet: TermsFacet => facet.name -> ((termFacet.getEntries().map(termEntry => FacetValue(termEntry.getTerm.string, termEntry.getCount))).toList)
-            case _ => throw new Exception(s"The ES reponse contains unknown facet ${entry.getValue}")
-          }
-        }.toMap
+    response.getFacets.facetsAsMap.entrySet.map { entry => 
+      val facet = facets.collectFirst({ case x if x.name == entry.getKey => x }).getOrElse(throw new Exception(s"The ES response contains facet ${entry.getKey} that were not requested"))
+      entry.getValue match {
+        case termFacet: TermsFacet => facet.name -> ((termFacet.getEntries().map(termEntry => FacetValue(termEntry.getTerm.string, termEntry.getCount))).toList)
+        case _ => throw new Exception(s"The ES reponse contains unknown facet ${entry.getValue}")
+      }
+    }.toMap
   
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
