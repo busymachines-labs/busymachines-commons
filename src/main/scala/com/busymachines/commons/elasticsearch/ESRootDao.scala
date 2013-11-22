@@ -89,7 +89,8 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     response.getFacets.facetsAsMap.entrySet.map { entry => 
       val facet = facets.collectFirst { case x if x.name == entry.getKey => x }.getOrElse(throw new Exception(s"The ES response contains facet ${entry.getKey} that were not requested"))
       entry.getValue match {
-        case termFacet: TermsFacet => facet.name -> ((termFacet.getEntries().map(termEntry => FacetValue(termEntry.getTerm.string, termEntry.getCount))).toList)
+        case termFacet: TermsFacet => 
+          facet.name -> termFacet.getEntries.map(termEntry => FacetValue(termEntry.getTerm.string, termEntry.getCount)).toList
         case _ => throw new Exception(s"The ES reponse contains unknown facet ${entry.getValue}")
       }
     }.toMap
