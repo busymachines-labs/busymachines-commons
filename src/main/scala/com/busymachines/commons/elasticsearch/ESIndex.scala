@@ -18,7 +18,9 @@ import com.busymachines.commons.event.LocalEventBus
 import akka.actor.ActorSystem
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 
-class ESIndex(_client: ESClient, val name : String,eventBus:EventBus) {
+class ESIndex(_client: ESClient, val name : String, eventBus:EventBus) {
+  def this(config : ESConfig, name : String, eventBus:EventBus) = this(new ESClient(config), name, eventBus)
+  def this(configBaseName : String, name : String, eventBus:EventBus) = this(new ESConfig(configBaseName), name, eventBus)
 
   type InitializeHandler = () => Unit
   

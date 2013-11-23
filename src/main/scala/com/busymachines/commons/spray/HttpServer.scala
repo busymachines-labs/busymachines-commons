@@ -34,6 +34,7 @@ abstract class HttpServer(implicit actorSystem : ActorSystem) extends CommonHttp
 
   val interface : String = "localhost"
   val port : Int = 8080
+  val serverName : String = "http-server"
   val exceptionHandler : ExceptionHandler = commonExceptionHandler
   def rejectionHandler : RejectionHandler = commonRejectionHandler
   val routingSettings = RoutingSettings(actorSystem)
@@ -51,7 +52,7 @@ abstract class HttpServer(implicit actorSystem : ActorSystem) extends CommonHttp
   }
 
   def start =
-    IO(Http) ! Http.Bind(actorSystem.actorOf(Props(new Actor), "http-server"), interface = interface, port = port)
+    IO(Http) ! Http.Bind(actorSystem.actorOf(Props(new Actor), serverName), interface = interface, port = port)
 
   def commonRejectionHandler = RejectionHandler {
     case rejections if rejections.nonEmpty => 

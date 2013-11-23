@@ -18,25 +18,30 @@ import com.busymachines.prefab.party.logic.PartyFixture
 
 trait PartyAssembly {
 
+  // dependencies
   implicit def actorSystem : ActorSystem
   implicit def executionContext : ExecutionContext
   def index : ESIndex
   
+  // default configuration
   def partyIndex = index
   def authenticationIndex = index
   def sequenceIndex = index
   def authenticationConfigBaseName = "authentication"
+  def authenticationConfig = new AuthenticationConfig(authenticationConfigBaseName)
 
+  // components
   lazy val sequenceDao = new ESSequenceDao(sequenceIndex)
   lazy val partyDao = new PartyDao(partyIndex)
   lazy val userDao = new UserDao(partyDao)
   lazy val credentialsDao = new ESCredentialsDao(partyIndex)
   lazy val authenticationDao = new ESAuthenticationDao(authenticationIndex)
-  lazy val partyManager = new PartyManager(partyDao, userDao, credentialsDao, authenticator)
-  lazy val authenticator = new UserAuthenticator(new AuthenticationConfig(authenticationConfigBaseName), partyDao, credentialsDao, authenticationDao)
-  lazy val authenticationApiV1 = new AuthenticationApiV1(authenticator)
-  lazy val usersApiV1 = new UsersApiV1(partyManager, authenticator)
-  lazy val partiesApiV1 = new PartiesApiV1(partyManager, authenticator)
+  lazy val userAuthenticator = new UserAuthenticator(authenticationConfig, partyDao, credentialsDao, authenticationDao)
+  lazy val partyManager = new PartyManager(partyDao, userDao, credentialsDao, userAuthenticator)
+  lazy val authenticationApiV1 = new AuthenticationApiV1(userAuthenticator)
+  lazy val usersApiV1 = new UsersApiV1(partyManager, userAuthenticator)
+  lazy val partiesApiV1 = new PartiesApiV1(partyManager, userAuthenticator)
   
+  // services
   def createPartyFixture = PartyFixture.create(partyDao, credentialsDao)
 }
