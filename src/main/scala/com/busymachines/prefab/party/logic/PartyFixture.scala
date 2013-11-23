@@ -14,14 +14,16 @@ import com.busymachines.prefab.party.domain.Tenant
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.service.PartyService
 
-class PartyFixture(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
+object PartyFixture extends PartyFixture 
+
+trait PartyFixture {
 
   val testTenantId = Id.static[Tenant]("test-tenant-1")
   val testParty1Id = Id.static[Party]("test-party-1")
   val testUser1Id = Id.static[User]("test-user-1")
   val testUser1CredentialsId = Id.static[Credentials]("test-user-1-credentials")
 
-  def create {
+  private[party] def create(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
     if (CommonConfig.devmode) {
       
       val user1 = User(
