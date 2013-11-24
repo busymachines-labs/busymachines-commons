@@ -17,11 +17,21 @@ class ServerApp extends App {
   
   val installOption = CmdLineOption("install", None, Some("name")) {
     if (new File("/etc/init.d").isDirectory) {
-    	println("Installing application")
+      println("Installing application")
       
     }
     else {
-    	throw new Exception("Couldn't install application: unrecognized environment")
+      throw new Exception("Couldn't install application: unrecognized environment")
+    }
+  }
+  
+  val logfileOption = CmdLineOption("logfile", None, Some("name")) {
+    if (new File("/etc/init.d").isDirectory) {
+      println("Installing application")
+      
+    }
+    else {
+      throw new Exception("Couldn't install application: unrecognized environment")
     }
   }
   

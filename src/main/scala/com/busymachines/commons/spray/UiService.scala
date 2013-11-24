@@ -35,7 +35,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   private val theCache = routeCache(timeToLive = cacheTime)
   
   if (CommonConfig.devmode)
-    info("Starting UI Routing is devmode")
+    info("Resources are read from source folders (devmode)")
 
   val route = route2("")
   
