@@ -13,7 +13,7 @@ class RichSeq[A](val seq: Seq[A]) extends AnyVal {
         val modA = modify(a)
         found = Some(modA);
         changed = a != modA
-        newA
+        modA
       case a =>
         a
     }
