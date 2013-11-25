@@ -13,6 +13,7 @@ import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.domain.Tenant
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.service.PartyService
+import com.busymachines.commons.implicits.richFuture
 
 object PartyFixture extends PartyFixture 
 
@@ -36,16 +37,16 @@ trait PartyFixture {
         lastName = Some("Doe"),
         addresses = Address(street = Some("Street 1")) :: Nil)
   
-      partyDao.getOrCreateAndModify(testParty1Id)(Party(testParty1Id, testTenantId)) { party =>
+      (partyDao.getOrCreateAndModify(testParty1Id)(Party(testParty1Id, testTenantId)) { party =>
         party.copy(tenant = testTenantId, users = user1 :: Nil, company = Some(Company("Test Company")))
-      }
+      }).await
       
-      credentialsDao.getOrCreateAndModify(testUser1CredentialsId)(Credentials(testUser1CredentialsId)) { credentials =>
+      (credentialsDao.getOrCreateAndModify(testUser1CredentialsId)(Credentials(testUser1CredentialsId)) { credentials =>
         credentials.copy(passwordCredentials = PasswordCredentials(testUser1Username, testUser1Password) :: Nil)
-      }
+      }).await
     } else {
-      partyDao.delete(testParty1Id)
-      credentialsDao.delete(testUser1CredentialsId)
+      partyDao.delete(testParty1Id).await
+      credentialsDao.delete(testUser1CredentialsId).await
     }
   }
 }
