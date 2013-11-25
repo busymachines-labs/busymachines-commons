@@ -11,8 +11,9 @@ object ESProperty {
   implicit def toPath[A, T](property: ESProperty[A, T]) = Path[A, T](property :: Nil)
 }
 
-case class ESProperty[A, T](name: String, mappedName: String, options: ESMapping.Options[T]) {
+case class ESProperty[A, T](name: String, mappedName: String, options: ESMapping.Options[T]) extends PathElement[A, T] {
   val nestedProperties = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping.Properties[A]])
+  def fieldName = mappedName
   // Needed to prevent other implicit === methods
 
   def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
@@ -47,10 +48,20 @@ case class ESProperty[A, T](name: String, mappedName: String, options: ESMapping
 
 }
 
-case class Path[A, T](properties: List[ESProperty[_, _]]) {
-  def head: ESProperty[A, _] = properties.head.asInstanceOf[ESProperty[A, _]]
-  def last: ESProperty[_, T] = properties.head.asInstanceOf[ESProperty[_, T]]
-  def /[A2 <: T, V2](property: ESProperty[A2, V2]) = Path[A, V2](properties :+ property)
+trait PathElement[A, T] {
+  def fieldName : String 
+}
+object PathElement {
+  def apply[A, T](s : String) = new PathElement[A, T] {
+    def fieldName = s
+  }
+}
+
+case class Path[A, T](elements: List[PathElement[_, _]]) {
+  def head: PathElement[A, _] = elements.head.asInstanceOf[PathElement[A, _]]
+  def last: PathElement[_, T] = elements.head.asInstanceOf[PathElement[_, T]]
+  def /[A2 <: T, V2](property: PathElement[A2, V2]) = Path[A, V2](elements :+ property)
+  def /[A2 <: T, V2](fieldName : String) = Path[A, V2](elements :+ PathElement[A, V2](fieldName))
 
   def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
 
@@ -67,14 +78,11 @@ case class Path[A, T](properties: List[ESProperty[_, _]]) {
   def missing = ESSearchCriteria.missing(this)
   def exists = ESSearchCriteria.exists(this)
 
-  def toOptionString =
-    properties match {
-      case p :: Nil => Some(p.mappedName)
-      case property :: rest =>
-        val names = properties.map(_.mappedName)
-        Some(names.mkString("."))
-      case _ => None
-    }
+  def toESPath : Option[String] = 
+    elements.map(_.fieldName) match {
+    case Nil => None
+    case fieldNames => Some(fieldNames.mkString("."))
+  }
 }
 
 object ESMapping {

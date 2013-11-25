@@ -149,6 +149,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   })
     
   implicit def idFormat[A] = stringWrapperFormat(Id[A])
+  implicit def mimeTypeFormat = stringWrapperFormat(MimeType)
   implicit val mediaFormat = jsonFormat4(Media)
   implicit val moneyFormat = jsonFormat2(Money)
   

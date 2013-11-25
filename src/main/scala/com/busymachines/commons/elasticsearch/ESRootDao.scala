@@ -52,7 +52,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   // Add mapping.
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
-    debug(mappingConfiguration)
+    debug(s"Schema for ${t.name}: $mappingConfiguration")
     client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
   }
 
@@ -76,7 +76,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   private def toESFacets(facets: Seq[Facet]): Map[Facet, FacetBuilder] =
     facets.map(facet => facet match {
       case termFacet: ESTermFacet =>
-        val fieldList = (termFacet.fields.map(field => field.toOptionString match {
+        val fieldList = (termFacet.fields.map(field => field.toESPath match {
           case None => None
           case Some(fieldName) => Some(fieldName)
         })).flatten

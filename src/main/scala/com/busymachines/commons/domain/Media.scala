@@ -1,35 +1,36 @@
 package com.busymachines.commons.domain
 
 case class Media(
-  id : Id[Media] = Id.generate, 
-  mimeType : String, 
+  id : Id[Media]  = Id.generate, 
+  mimeType : MimeType, 
   name : Option[String] = None, 
   data : Array[Byte]
 ) extends HasId[Media]
 
-object MimeType {
+case class MimeType(value : String)
 
-  val gif = "image/gif"
-  val jpeg = "image/jpeg"
-  val pjpeg = "image/pjpeg"
-  val png = "image/png"
-  val svgXml = "image/svg+xml"
-  val tiff = "image/tiff"
+object MimeTypes {
+  val gif  = MimeType("image/gif")
+  val jpeg  = MimeType("image/jpeg")
+  val pjpeg  = MimeType("image/pjpeg")
+  val png  = MimeType("image/png")
+  val svgXml  = MimeType("image/svg+xml")
+  val tiff  = MimeType("image/tiff")
     
-  val pdf = "application/pdf"
-  val xml = "application/xml"
-  val zip = "application/zip"
-  val gzip = "application/gzip"
-  val json = "application/json"
-  val javascript = "application/javascript"
-  val postscript = "application/postscript"
+  val pdf  = MimeType("application/pdf")
+  val xml  = MimeType("application/xml")
+  val zip  = MimeType("application/zip")
+  val gzip  = MimeType("application/gzip")
+  val json  = MimeType("application/json")
+  val javascript  = MimeType("application/javascript")
+  val postscript  = MimeType("application/postscript")
     
-  val css = "text/css"
-  val csv = "text/csv"
-  val html = "text/html"
-  val text = "text/plain"
+  val css  = MimeType("text/css")
+  val csv  = MimeType("text/csv")
+  val html  = MimeType("text/html")
+  val text  = MimeType("text/plain")
 
-  def fromResourceName(name : String) : String = {
+  def fromResourceName(name : String) : MimeType = {
     if (name.endsWith(".gif")) gif
     if (name.endsWith(".jpeg")) jpeg
     if (name.endsWith(".pjpeg")) pjpeg
@@ -48,7 +49,7 @@ object MimeType {
     if (name.endsWith(".text")) text
     else name.lastIndexOf('.') match {
       case -1 => text
-      case i => "application/" + name.substring(i + 1)
+      case i => MimeType("application/" + name.substring(i + 1))
     }
   }
 }

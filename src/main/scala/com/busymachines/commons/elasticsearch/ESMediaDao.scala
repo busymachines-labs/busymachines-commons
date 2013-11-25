@@ -18,10 +18,11 @@ import com.busymachines.commons.domain.Media
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.Logging
 import com.busymachines.commons.domain.Money
+import com.busymachines.commons.domain.MimeTypes
 
 private[elasticsearch] case class HashedMedia(
   id: Id[HashedMedia],
-  mimeType: String,
+  mimeType: MimeType,
   name: Option[String],
   hash: String,
   data: String) extends HasId[HashedMedia]
@@ -69,10 +70,10 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends Logging 
   /**
    * The returned Media might have a different id.
    */
-  def store(mimeType: String, name: Option[String], data: Array[Byte]): Future[Media] = {
+  def store(mimeType: MimeType, name: Option[String], data: Array[Byte]): Future[Media] = {
     def hash = hasher.hashBytes(data).toString
     val stringData = encoding.encode(data)
-    dao.search((MediaMapping.mimeType equ mimeType) or (MediaMapping.hash equ hash)) flatMap {
+    dao.search((MediaMapping.mimeType equ mimeType.value) or (MediaMapping.hash equ hash)) flatMap {
       _.find(m => m.data == stringData && m.name == name) match {
         case Some(Versioned(HashedMedia(id, mimeType, name, hash, data), version)) =>
           Future.successful(Media(Id(id.toString), mimeType, name, encoding.decode(data)))
@@ -87,7 +88,7 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends Logging 
     Future(readUrl(url)) flatMap {
       case Some(bytes) =>
         val name = url.substring(url.lastIndexOf('/') + 1)
-        store(MimeType.fromResourceName(name), Some(name), bytes).map(Option(_))
+        store(MimeTypes.fromResourceName(name), Some(name), bytes).map(Option(_))
       case None =>
         Future.successful(None)
     }
