@@ -63,7 +63,7 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
     ""
     
   def findUser(id: Id[User])(implicit sc: SecurityContext): Future[Option[User]] = 
-    Future.successful(None)
+    userDao.retrieve(id)
 
   /**
    * To check if user has enough rights to use a specific party id for specific operations (eg. to create a location for this partyId) we have to
