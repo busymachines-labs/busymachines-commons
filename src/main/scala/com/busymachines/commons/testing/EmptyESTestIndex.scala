@@ -19,11 +19,11 @@ object EmptyESTestIndex {
   lazy val doNothingEventBus = new DoNothingEventSystem
   lazy val client = new ESClient(new ESConfig("test.busymachines.db.elasticsearch")) }
 
-class EmptyESTestIndex(name : String,eventBus:EventBus,client:ESClient) extends ESIndex(client, EmptyESTestIndex.getNextName("test-" + name),eventBus) {
+class EmptyESTestIndex(client : ESClient, name : String , eventBus:EventBus) extends ESIndex(client, EmptyESTestIndex.getNextName("test-" + name),eventBus) {
   
-  def this(c : Class[_],eventBus:EventBus,client:ESClient) = this(c.getName.toLowerCase,eventBus,client)
-  def this(c : Class[_],eventBus:EventBus) = this(c.getName.toLowerCase,eventBus,EmptyESTestIndex.client)
-  def this(c : Class[_]) = this(c.getName.toLowerCase,EmptyESTestIndex.doNothingEventBus,EmptyESTestIndex.client)
+  def this(c : Class[_],eventBus:EventBus,client:ESClient) = this(client, c.getName.toLowerCase,eventBus)
+  def this(c : Class[_],eventBus:EventBus) = this(EmptyESTestIndex.client, c.getName.toLowerCase,eventBus)
+  def this(c : Class[_]) = this(EmptyESTestIndex.client, c.getName.toLowerCase,EmptyESTestIndex.doNothingEventBus)
 
   drop
   initialize

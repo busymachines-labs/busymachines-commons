@@ -39,7 +39,6 @@ class PartyDaoTests extends FlatSpec with Logging {
 
     dao.create(party1).await  
     assert (dao.findUserByCredentialsId(user1.credentials).await !== None)
-
   }
   
 }

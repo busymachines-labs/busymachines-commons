@@ -20,8 +20,8 @@ class LocalEventBus(actorSystem: ActorSystem) extends EventBus with Logging {
   }
 }
 
-class LocalEventBusEndpointActor(f:BusEvent => Any) extends Actor {
+class LocalEventBusEndpointActor(f: PartialFunction[BusEvent, Any]) extends Actor with Logging {
   def receive = {
-    case event: BusEvent => f(event)
+    case event: BusEvent => f.applyOrElse(event, (_ : Any) => info("event ignored : " + event))
   }
 }
