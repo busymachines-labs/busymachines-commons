@@ -63,6 +63,6 @@ class DistributedPublisher(topic: String) extends Actor {
 
 class DistributedEventBusEndpointActor(f: PartialFunction[BusEvent, Any]) extends Actor with Logging {
   def receive = {
-    case event: BusEvent => f.applyOrElse(event, (_ : Any) => debug("event ignored : " + event))
+    case event: BusEvent => f.applyOrElse(event, (_ : Any) => debug("Event ignored : " + event))
   }
 }

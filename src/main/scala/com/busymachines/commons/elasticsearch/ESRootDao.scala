@@ -134,7 +134,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       .source(json.toString)
       .refresh(refreshAfterMutation)
 
-    debug(s"Create $t.name: $json")
+    debug(s"Create ${t.name}: $json")
 
     // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
     //      val response = client.execute(IndexAction.INSTANCE, request).get
