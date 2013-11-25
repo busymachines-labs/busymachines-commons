@@ -86,15 +86,15 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }).toMap
 
   private def convertESFacetResponse(facets: Seq[Facet], response: org.elasticsearch.action.search.SearchResponse) =
-    response.getFacets.facetsAsMap.entrySet.map { entry => 
+    response.getFacets.facetsAsMap.entrySet.map { entry =>
       val facet = facets.collectFirst { case x if x.name == entry.getKey => x }.getOrElse(throw new Exception(s"The ES response contains facet ${entry.getKey} that were not requested"))
       entry.getValue match {
-        case termFacet: TermsFacet => 
+        case termFacet: TermsFacet =>
           facet.name -> termFacet.getEntries.map(termEntry => FacetValue(termEntry.getTerm.string, termEntry.getCount)).toList
         case _ => throw new Exception(s"The ES reponse contains unknown facet ${entry.getValue}")
       }
     }.toMap
-  
+
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
@@ -105,9 +105,15 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             .setSearchType(SearchType.DFS_QUERY_AND_FETCH)
             .setFrom(page.from)
             .setSize(page.size)
-            // TODO disabled sorting            
-            //            .addSort(sort.field, sort.order)
             .setVersion(true)
+
+        // Sorting    
+        sort match {
+          case esSearchOrder:ESSearchSort => 
+            request = request.addSort(esSearchOrder.field, esSearchOrder.order)
+        }    
+        
+        // Faceting
         val requestFacets = toESFacets(facets)
         for (facet <- requestFacets) {
           request = request.addFacet(facet._2)
@@ -119,7 +125,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             val json = hit.sourceAsString.asJson
             Versioned(json.convertFromES(mapping), hit.version)
           }, Some(result.getHits.getTotalHits),
-          if (result.getFacets() != null) convertESFacetResponse(facets, result) else Map.empty)
+            if (result.getFacets() != null) convertESFacetResponse(facets, result) else Map.empty)
         }
       case _ =>
         throw new Exception("Expected ElasticSearch search criteria")
