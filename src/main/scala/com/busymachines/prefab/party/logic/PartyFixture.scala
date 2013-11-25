@@ -23,6 +23,9 @@ trait PartyFixture {
   val testUser1Id = Id.static[User]("test-user-1")
   val testUser1CredentialsId = Id.static[Credentials]("test-user-1-credentials")
 
+  val testUser1Username = "user1@test.com"
+  val testUser1Password = "test"
+  
   private[party] def create(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
     if (CommonConfig.devmode) {
       
@@ -38,7 +41,7 @@ trait PartyFixture {
       }
       
       credentialsDao.getOrCreateAndModify(testUser1CredentialsId)(Credentials(testUser1CredentialsId)) { credentials =>
-        credentials.copy(passwordCredentials = PasswordCredentials("user1@test.com", "test") :: Nil)
+        credentials.copy(passwordCredentials = PasswordCredentials(testUser1Username, testUser1Password) :: Nil)
       }
     } else {
       partyDao.delete(testParty1Id)
