@@ -45,7 +45,6 @@ case class ESProperty[A, T](name: String, mappedName: String, options: ESMapping
   def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
   def missing = ESSearchCriteria.missing(this)
   def exists = ESSearchCriteria.exists(this)
-
 }
 
 trait PathElement[A, T] {
@@ -77,12 +76,11 @@ case class Path[A, T](elements: List[PathElement[_, _]]) {
   def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
   def missing = ESSearchCriteria.missing(this)
   def exists = ESSearchCriteria.exists(this)
+  def nested(criteria : ESSearchCriteria[T]) = ESSearchCriteria.Nested(this)(criteria)
+  def ++[V] (other : Path[T, V]) = Path[A, V](elements ++ other.elements)
 
-  def toESPath : Option[String] = 
-    elements.map(_.fieldName) match {
-    case Nil => None
-    case fieldNames => Some(fieldNames.mkString("."))
-  }
+  def toESPath =
+    elements.map(_.fieldName).mkString(".")
 }
 
 object ESMapping {

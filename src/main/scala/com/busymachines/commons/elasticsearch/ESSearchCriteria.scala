@@ -16,21 +16,25 @@ trait ESSearchCriteria[A] extends SearchCriteria[A] {
     ESSearchCriteria.Or(this, other)
   def not(other: ESSearchCriteria[A]) =
     ESSearchCriteria.Not(other)
+  def prepend[A0](path : Path[A0, A]) : ESSearchCriteria[A0]
 }
 
 object ESSearchCriteria {
   class Delegate[A](criteria: => ESSearchCriteria[A]) extends ESSearchCriteria[A] {
     def toFilter = criteria.toFilter
+    def prepend[A0](path : Path[A0, A]) = criteria.prepend(path)
   }
 
   case class All[A]() extends ESSearchCriteria[A] {
     def toFilter = FilterBuilders.matchAllFilter
+    def prepend[A0](path : Path[A0, A]) = All[A0]()
   }
   
   case class Not[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
     override def not(other: ESSearchCriteria[A]) =
       Not((children.toSeq :+ other): _*)
     def toFilter = FilterBuilders.notFilter(FilterBuilders.andFilter(children.map(_.toFilter): _*))
+    def prepend[A0](path : Path[A0, A]) = Not(children.map(_.prepend(path)):_*)
   }
 
   case class And[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
@@ -42,6 +46,7 @@ object ESSearchCriteria {
         case f :: Nil => f.toFilter
         case _ => FilterBuilders.andFilter(children.map(_.toFilter): _*)
       }
+    def prepend[A0](path : Path[A0, A]) = And(children.map(_.prepend(path)):_*)
   }
 
   case class Or[A](children: ESSearchCriteria[A]*) extends ESSearchCriteria[A] {
@@ -53,172 +58,97 @@ object ESSearchCriteria {
         case f :: Nil => f.toFilter
         case _ => FilterBuilders.orFilter(children.map(_.toFilter): _*)
       }
+    def prepend[A0](path : Path[A0, A]) = Or(children.map(_.prepend(path)):_*)
   }
 
   case class FGt[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      (path1.toESPath, path2.toESPath) match {
-        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value > doc['$p2Field'].value")
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toESPath}'].value > doc['${path2.toESPath}'].value")
+    def prepend[A0](path : Path[A0, A]) = FGt(path ++ path1, path ++ path2)
   }
 
   case class GeoDistance[A, T](path: Path[A, T], geoPoint: GeoPoint, radiusInKm: Double) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.geoDistanceFilter(p.fieldName).point(geoPoint.lat, geoPoint.lon).distance(radiusInKm, DistanceUnit.KILOMETERS)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.geoDistanceFilter(names.mkString(".")).point(geoPoint.lat, geoPoint.lon).distance(radiusInKm, DistanceUnit.KILOMETERS))
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.geoDistanceFilter(path.toESPath).point(geoPoint.lat, geoPoint.lon).distance(radiusInKm, DistanceUnit.KILOMETERS)
+    def prepend[A0](path : Path[A0, A]) = GeoDistance(path ++ this.path, geoPoint, radiusInKm)
   }
 
   case class Gt[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.rangeFilter(p.fieldName).gt(value)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.rangeFilter(names.mkString(".")).gt(value))
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.rangeFilter(path.toESPath).gt(value)
+    def prepend[A0](path : Path[A0, A]) = Gt(path ++ this.path, value)
   }
 
   case class FGte[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      (path1.toESPath, path2.toESPath) match {
-        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value >= doc['$p2Field'].value")
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toESPath}'].value >= doc['${path2.toESPath}'].value")
+    def prepend[A0](path : Path[A0, A]) = FGte(path ++ path1, path ++ path2)
   }
 
   case class Gte[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.rangeFilter(p.fieldName).gte(value)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.rangeFilter(names.mkString(".")).gte(value))
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.rangeFilter(path.toESPath).gte(value)
+    def prepend[A0](path : Path[A0, A]) = Gte(path ++ this.path, value)
   }
 
   case class FLt[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      (path1.toESPath, path2.toESPath) match {
-        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value < doc['$p2Field'].value")
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toESPath}'].value < doc['${path2.toESPath}'].value")
+    def prepend[A0](path : Path[A0, A]) = FLt(path ++ path1, path ++ path2)
   }
 
   case class Lt[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.rangeFilter(p.fieldName).lt(value)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.rangeFilter(names.mkString(".")).lt(value))
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.rangeFilter(path.toESPath).lt(value)
+    def prepend[A0](path : Path[A0, A]) = Lt(path ++ this.path, value)
   }
 
   case class FLte[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      (path1.toESPath, path2.toESPath) match {
-        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value <= doc['$p2Field'].value")
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toESPath}'].value <= doc['${path2.toESPath}'].value")
+    def prepend[A0](path : Path[A0, A]) = FLte(path ++ path1, path ++ path2)
   }
 
   case class Lte[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.rangeFilter(p.fieldName).lte(value)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.rangeFilter(names.mkString(".")).lte(value))
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.rangeFilter(path.toESPath).lte(value)
+    def prepend[A0](path : Path[A0, A]) = Lte(path ++ this.path, value)
   }
 
   case class FEq[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      (path1.toESPath, path2.toESPath) match {
-        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value == doc['$p2Field'].value")
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toESPath}'].value == doc['${path2.toESPath}'].value")
+    def prepend[A0](path : Path[A0, A]) = FEq(path ++ path1, path ++ path2)
   }
 
   case class Eq[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.termFilter(p.fieldName, value)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.termFilter(names.mkString("."), value))
-        case _ => FilterBuilders.matchAllFilter
-      }
-  }
-
-  case class Eq2[A, T](path: Path[A, T], value: T)(implicit writer: JsonWriter[T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.termFilter(p.fieldName, value)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.termFilter(names.mkString("."), value))
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.termFilter(path.toESPath, value)
+    def prepend[A0](path : Path[A0, A]) = Eq(path ++ this.path, value)
   }
 
   case class FNeq[A, T, V](path1: Path[A, T], path2: Path[A, T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      (path1.toESPath, path2.toESPath) match {
-        case (Some(p1Field), Some(p2Field)) => FilterBuilders.scriptFilter(s"doc['$p1Field'].value != doc['$p2Field'].value")
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toESPath}'].value != doc['${path2.toESPath}'].value")
+    def prepend[A0](path : Path[A0, A]) = FNeq(path ++ path1, path ++ path2)
   }
 
   case class Neq[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter = Not(Eq(path, value)).toFilter
+    def prepend[A0](path : Path[A0, A]) = Neq(path ++ this.path, value)
   }
 
   case class In[A, T, V](path: Path[A, T], values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.inFilter(p.fieldName, values.map(v => v.toString): _*)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.inFilter(names.mkString("."), values.map(v => v.toString): _*))
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.inFilter(path.toESPath, values.map(v => v.toString): _*)
+    def prepend[A0](path : Path[A0, A]) = In(path ++ this.path, values)
   }
 
   case class Missing[A, T](path: Path[A, T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.missingFilter(p.fieldName).existence(true)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.missingFilter(names.tail.mkString(".")).existence(true))
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.missingFilter(path.toESPath).existence(true)
+    def prepend[A0](path : Path[A0, A]) = Missing(path ++ this.path)
   }
 
   def missing[A, T](path: Path[A, T]) = Missing(path)
 
+  
   case class Exists[A, T](path: Path[A, T]) extends ESSearchCriteria[A] {
-    def toFilter =
-      path.elements match {
-        case p :: Nil => FilterBuilders.existsFilter(p.fieldName)
-        case property :: rest =>
-          val names = path.elements.map(_.fieldName)
-          FilterBuilders.nestedFilter(names.dropRight(1).mkString("."), FilterBuilders.existsFilter(names.tail.mkString(".")))
-        case _ => FilterBuilders.matchAllFilter
-      }
+    def toFilter = FilterBuilders.existsFilter(path.toESPath)
+    def prepend[A0](path : Path[A0, A]) = Exists(path ++ this.path)
   }
 
   def exists[A, T](path: Path[A, T]) = Exists(path)
   
+  case class Nested[A, T](path: Path[A, T])(criteria : ESSearchCriteria[T]) extends ESSearchCriteria[A] {
+    def toFilter = 
+      FilterBuilders.nestedFilter(path.toESPath.mkString("."), criteria.prepend(path).toFilter) 
+    def prepend[A0](path : Path[A0, A]) = Nested(path ++ this.path)(criteria)
+  }
 }

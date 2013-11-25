@@ -76,10 +76,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   private def toESFacets(facets: Seq[Facet]): Map[Facet, FacetBuilder] =
     facets.map(facet => facet match {
       case termFacet: ESTermFacet =>
-        val fieldList = (termFacet.fields.map(field => field.toESPath match {
-          case None => None
-          case Some(fieldName) => Some(fieldName)
-        })).flatten
+        val fieldList = termFacet.fields.map(_.toESPath)
 
         facet -> FacetBuilders.termsFacet(termFacet.name).size(termFacet.size).fields(fieldList: _*)
       case _ => throw new Exception(s"Unknown facet type")
