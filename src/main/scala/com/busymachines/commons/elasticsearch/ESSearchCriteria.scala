@@ -12,8 +12,18 @@ trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def toFilter: FilterBuilder
   def and(other: ESSearchCriteria[A]) =
     ESSearchCriteria.And(this, other)
+  def and(other: Option[ESSearchCriteria[A]]) =
+    other match {
+      case Some(c) => ESSearchCriteria.And(this, c) 
+      case None => this 
+    }
   def or(other: ESSearchCriteria[A]) =
     ESSearchCriteria.Or(this, other)
+  def or(other: Option[ESSearchCriteria[A]]) =
+    other match {
+      case Some(c) => ESSearchCriteria.Or(this, c) 
+      case None => this 
+    }
   def not(other: ESSearchCriteria[A]) =
     ESSearchCriteria.Not(other)
   def prepend[A0](path : Path[A0, A]) : ESSearchCriteria[A0]
