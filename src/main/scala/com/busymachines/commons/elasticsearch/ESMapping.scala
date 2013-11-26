@@ -81,9 +81,15 @@ case class Path[A, T](elements: List[PathElement[_, _]]) {
   def exists = nest(Nil, this, ESSearchCriteria.exists(this))
   def ++[V] (other : Path[T, V]) = Path[A, V](elements ++ other.elements)
 
+  /**
+   * Nest given (usually compound) criteria inside a single nested filter.
+   */
   def apply(criteria : ESSearchCriteria[T]) = 
     ESSearchCriteria.Nested(this)(criteria.prepend(this))
   
+  /**
+   * Make sure that nested properties in given path create a nested filter in the resulting query.
+   */
   private def nest[A0, A, T](prefix: List[PathElement[_, _]], path : Path[A, T], criteria : ESSearchCriteria[A]) : ESSearchCriteria[A] = {
     path.elements match {
       case head :: tail if head.isNested =>
