@@ -29,24 +29,27 @@ trait PartyFixture {
   
   private[party] def create(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
     if (CommonConfig.devmode) {
-      
-      val user1 = User(
-        id = testUser1Id,
-        credentials = testUser1CredentialsId,
-        firstName = Some("John"),
-        lastName = Some("Doe"),
-        addresses = Address(street = Some("Street 1")) :: Nil)
-  
-      (partyDao.getOrCreateAndModify(testParty1Id)(Party(testParty1Id, testTenantId)) { party =>
-        party.copy(tenant = testTenantId, users = user1 :: Nil, company = Some(Company("Test Company")))
-      }).await
-      
-      (credentialsDao.getOrCreateAndModify(testUser1CredentialsId)(Credentials(testUser1CredentialsId)) { credentials =>
-        credentials.copy(passwordCredentials = PasswordCredentials(testUser1Username, testUser1Password) :: Nil)
-      }).await
+      createDevMode(partyDao, credentialsDao)
     } else {
       partyDao.delete(testParty1Id).await
       credentialsDao.delete(testUser1CredentialsId).await
     }
+  }
+  
+  def createDevMode(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
+    val user1 = User(
+      id = testUser1Id,
+      credentials = testUser1CredentialsId,
+      firstName = Some("John"),
+      lastName = Some("Doe"),
+      addresses = Address(street = Some("Street 1")) :: Nil)
+
+    (partyDao.getOrCreateAndModify(testParty1Id)(Party(testParty1Id, testTenantId)) { party =>
+      party.copy(tenant = testTenantId, users = user1 :: Nil, company = Some(Company("Test Company")))
+    }).await
+    
+    (credentialsDao.getOrCreateAndModify(testUser1CredentialsId)(Credentials(testUser1CredentialsId)) { credentials =>
+      credentials.copy(passwordCredentials = PasswordCredentials(testUser1Username, testUser1Password) :: Nil)
+    }).await
   }
 }
