@@ -24,7 +24,10 @@ import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.Logging
 import com.busymachines.commons.event.DoNothingEventSystem
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class ItemDaoTests extends FlatSpec with Logging {
 
   val esIndex = new EmptyESTestIndex(getClass, new DoNothingEventSystem)

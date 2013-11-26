@@ -146,9 +146,8 @@ object ESSearchCriteria {
 
   def exists[A, T](path: Path[A, T]) = Exists(path)
   
-  case class Nested[A, T](path: Path[A, T])(criteria : ESSearchCriteria[T]) extends ESSearchCriteria[A] {
-    def toFilter = 
-      FilterBuilders.nestedFilter(path.toESPath.mkString("."), criteria.prepend(path).toFilter) 
-    def prepend[A0](path : Path[A0, A]) = Nested(path ++ this.path)(criteria)
+  case class Nested[A, T](path: Path[A, T])(criteria : ESSearchCriteria[A]) extends ESSearchCriteria[A] {
+    def toFilter = FilterBuilders.nestedFilter(path.toESPath, criteria.toFilter) 
+    def prepend[A0](path : Path[A0, A]) = Nested(path ++ this.path)(criteria.asInstanceOf[ESSearchCriteria[A0]])
   }
 }

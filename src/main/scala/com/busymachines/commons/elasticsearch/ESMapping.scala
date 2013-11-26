@@ -14,6 +14,7 @@ object ESProperty {
 case class ESProperty[A, T](name: String, mappedName: String, options: ESMapping.Options[T]) extends PathElement[A, T] {
   val nestedProperties = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping.Properties[A]])
   def fieldName = mappedName
+  val isNested = options.options.contains(ESMapping.Nested)
   // Needed to prevent other implicit === methods
 
   def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
@@ -48,11 +49,13 @@ case class ESProperty[A, T](name: String, mappedName: String, options: ESMapping
 }
 
 trait PathElement[A, T] {
-  def fieldName : String 
+  def fieldName : String
+  def isNested : Boolean
 }
 object PathElement {
   def apply[A, T](s : String) = new PathElement[A, T] {
     def fieldName = s
+    def isNested = false
   }
 }
 
@@ -64,8 +67,8 @@ case class Path[A, T](elements: List[PathElement[_, _]]) {
 
   def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
 
-  def equ(path: Path[A, T]) = ESSearchCriteria.FEq(this, path)
-  def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Eq(this, value)
+  def equ(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FEq(this, path))
+  def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Eq(this, value))
   def neq(path: Path[A, T]) = ESSearchCriteria.FNeq(this, path)
   def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Neq(this, value)
   def gt(path: Path[A, T]) = ESSearchCriteria.FGt(this, path)
@@ -76,14 +79,25 @@ case class Path[A, T](elements: List[PathElement[_, _]]) {
   def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
   def missing = ESSearchCriteria.missing(this)
   def exists = ESSearchCriteria.exists(this)
-  def nested(criteria : ESSearchCriteria[T]) = ESSearchCriteria.Nested(this)(criteria)
   def ++[V] (other : Path[T, V]) = Path[A, V](elements ++ other.elements)
 
+  def apply(criteria : ESSearchCriteria[T]) = 
+    ESSearchCriteria.Nested(this)(criteria.prepend(this))
+  
+  private def nest[A0, A, T](prefix: List[PathElement[_, _]], path : Path[A, T], criteria : ESSearchCriteria[A]) : ESSearchCriteria[A] = {
+    path.elements match {
+      case head :: tail if head.isNested =>
+        val untilNow = prefix ++ List(head)
+        ESSearchCriteria.Nested(Path(untilNow))(nest(untilNow, Path(tail), criteria))
+      case _ => criteria
+    }
+  }
+  
   def toESPath =
     elements.map(_.fieldName).mkString(".")
 }
 
-object ESMapping {
+object ESMapping extends ESMappingConstants {
 
   case class Properties[A](properties: List[ESProperty[A, _]]) {
     lazy val propertiesByName = properties.groupBy(_.name).mapValues(_.head)
@@ -100,23 +114,10 @@ object ESMapping {
   }
 }
 
-class ESMapping[A] extends Logging {
-
+trait ESMappingConstants {
+  
   import ESMapping._
-
-  protected var _allProperties: Properties[A] = Properties(Nil)
-
-  def allProperties = _allProperties
-
-  def mappingConfiguration(doctype: String): String =
-    print(mapping(doctype), "\n")
-
-  def mapping(doctype: String) = Properties[Any](List(ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
-    Option("_all", Map("enabled" -> true)),
-    Option("_source", Map("enabled" -> true)),
-    Stored,
-    Option("properties", allProperties))): _*))))
-
+  
   val String = Options[String](Option("type", "string"))
   val Date = Options[DateTime](Option("type", "date"))
   def Object[T] = Options[T](Option("type", "object"))
@@ -136,9 +137,29 @@ class ESMapping[A] extends Logging {
   val Analyzed = Option("index", "analyzed")
   val NotAnalyzed = Option("index", "not_analyzed")
   val IncludeInAll = Option("include_in_all", "true")
-  def Nested[T](properties: Properties[T]): Options[T] = Options(Option("type", "nested"), Option("properties", properties))
-  def Nested[T](mapping: ESMapping[T]): Options[T] = Nested(mapping._allProperties)
+  def Nested[T](properties: Properties[T]): Options[T] = Options(Nested, Option("properties", properties))
+  def Nested[T](mapping: ESMapping[T]): Options[T] = Nested(mapping.allProperties)
   val _all = ESProperty("_all", "_all", String)
+}
+
+class ESMapping[A] extends ESMappingConstants with Logging {
+
+  import ESMapping._
+
+  private var _allProperties: Properties[A] = Properties(Nil)
+
+  def allProperties = _allProperties
+
+  def mappingConfiguration(doctype: String): String =
+    print(mapping(doctype), "\n")
+
+  def mapping(doctype: String) = Properties[Any](List(ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
+    Option("_all", Map("enabled" -> true)),
+    Option("_source", Map("enabled" -> true)),
+    Stored,
+    Option("properties", allProperties))): _*))))
+
+
 
   implicit class RichName(name: String) extends RichMappedName(name, name)
 

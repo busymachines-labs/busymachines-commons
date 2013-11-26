@@ -29,6 +29,7 @@ object BusyMachinesCommonsBuild extends Build {
     EclipseKeys.withSource := true,
     resolvers += "spray repo" at "http://repo.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
+    libraryDependencies += "junit" % "junit" % "4.11" % "test" withSources(),
     libraryDependencies += "org.scalatest" %% "scalatest" % "2.0" % "test" withSources(),
     libraryDependencies += "org.pegdown" % "pegdown" % "1.4.1" % "test" withSources(), // used by scalatest
     libraryDependencies +=  "org.elasticsearch" % "elasticsearch" % "0.90.5" withSources(),
