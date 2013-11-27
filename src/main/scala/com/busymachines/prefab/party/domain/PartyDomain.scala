@@ -95,7 +95,8 @@ case class User (
   
 case class Address (
   kind : Option[AddressKind] = None,
-  street: Option[String] = None, 
+  street: Option[String] = None,
+  houseNumber: Option[String] = None,
   street2: Option[String] = None, 
   postalCode: Option[String] = None, 
   city: Option[String] = None, 

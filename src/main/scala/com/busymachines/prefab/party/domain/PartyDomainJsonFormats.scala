@@ -11,7 +11,7 @@ trait PartyDomainJsonFormats extends CommonJsonFormats {
   implicit val emailKindFormat = stringFormat[EmailAddressKind]("EmailKind", EmailAddressKind(_), _.name)
   implicit val relationFormat = stringFormat[RelationKind]("RelationKind", RelationKind(_), _.name)
   implicit val permissionFormat = stringFormat[Permission]("Permission", Permission(_), _.name)
-  implicit val addressFormat = jsonFormat6(Address)
+  implicit val addressFormat = jsonFormat7(Address)
   implicit val phoneNumberFormat = jsonFormat2(PhoneNumber)
   implicit val emailFormat = jsonFormat3(EmailAddress)
   implicit val userFormat = jsonFormat9(User)
