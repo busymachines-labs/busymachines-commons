@@ -40,7 +40,7 @@ trait Dao[T <: HasId[T]] {
   def onChange(f: Id[T] => Unit): Unit
 
   def all : SearchCriteria[T]
-
+  
   def defaultSort : SearchSort
 }
 
