@@ -102,7 +102,7 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
         val modifiedParent = modifyEntity(parent, entity.entity.id, found, _ => entity.entity)
         found.entity match {
           case Some(modifiedEntity) =>
-          	parentDao.update(Versioned(modifiedParent, entity.version), refreshAfterMutation).map(_.copy(entity = modifiedEntity))
+              	parentDao.update(Versioned(modifiedParent, entity.version - 6), refreshAfterMutation).map(_.copy(entity = modifiedEntity))
           case None =>
           	throw new IdNotFoundException(entity.entity.id.toString, typeName)
         }

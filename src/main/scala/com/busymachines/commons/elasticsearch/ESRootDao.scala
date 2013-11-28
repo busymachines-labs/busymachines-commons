@@ -41,6 +41,8 @@ import collection.JavaConversions._
 import org.elasticsearch.search.facet.terms.TermsFacet
 import com.busymachines.commons.dao.FacetValue
 import org.elasticsearch.common.xcontent.XContentHelper
+import org.elasticsearch.common.bytes.BytesReference
+import org.elasticsearch.transport.RemoteTransportException
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -138,17 +140,19 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       .source(json.toString)
       .refresh(refreshAfterMutation)
 
-    debug(s"Create ${index.name}/${t.name}: ${XContentHelper.convertToJson(request.source, true, true)}")
-
     // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
 
-    preMutate(entity) flatMap { _ =>
+    preMutate(entity).flatMap { entity : T =>
       client.execute(request).map(response => Versioned(entity, response.getVersion)) flatMap { storedEntity =>
+        debug(s"Create ${index.name}/${t.name}/${entity.id}:\n${XContentHelper.convertToJson(request.source, true, true)}")
         postMutate(storedEntity) map { _ => storedEntity }
       }
-    }
+    }.recover(convertException { e =>
+      debug(s"Create ${index.name}/${t.name}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
+      throw e
+    })
   }
 
   def getOrCreate(id: Id[T], refreshAfterMutation: Boolean = true)(_create: => T): Future[Versioned[T]] = {
@@ -188,17 +192,26 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     //      Future.successful(Versioned(entity, response.getVersion.toString))
     preMutate(entity).flatMap { entity: T =>
       client.execute(request).map(response => Versioned(entity.entity, response.getVersion)) flatMap { mutatedEntity =>
-        debug(s"Update ${index.name}/${t.name}: ${XContentHelper.convertToJson(request.source, true, true)}")
+        debug(s"Update ${index.name}/${t.name}/${entity.id}:\n${XContentHelper.convertToJson(request.source, true, true)}")
         postMutate(mutatedEntity.entity) map { _ => mutatedEntity }
       }
-    }.recover { 
-      case e: VersionConflictEngineException => 
-        debug(s"Update ${index.name}/${t.name} failed: Version conflict\n${XContentHelper.convertToJson(request.source, true, true)}")
-        throw new VersionConflictException(e)
-      case throwable: Throwable =>
-        debug(s"Update ${index.name}/${t.name} failed: ${throwable}\n${XContentHelper.convertToJson(request.source, true, true)}")
-        throw throwable
-    }
+    }.recover(convertException { e =>
+      debug(s"Update ${index.name}/${t.name}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
+      throw e
+    })
+  }
+  
+  private def convertException(f : Throwable => Versioned[T]) : PartialFunction[Throwable, Versioned[T]] = {
+    case t : Throwable =>
+      val cause = t match {
+        case t : RemoteTransportException => t.getCause
+        case t => t
+      }
+      val converted = cause match {
+        case t: VersionConflictEngineException => new VersionConflictException(t)
+        case t => t
+      }
+      f(converted)
   }
 
   def delete(id: Id[T], refreshAfterMutation: Boolean = true): Future[Unit] =

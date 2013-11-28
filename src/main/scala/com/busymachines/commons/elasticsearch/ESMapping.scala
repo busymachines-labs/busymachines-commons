@@ -165,8 +165,6 @@ class ESMapping[A] extends ESMappingConstants with Logging {
     Stored,
     Option("properties", allProperties))): _*))))
 
-
-
   implicit class RichName(name: String) extends RichMappedName(name, name)
 
   implicit class RichMappedName(name: (String, String)) {
