@@ -22,7 +22,7 @@ trait PrefabSecurityContext[Permission] {
      */
   def mustBeAllowedTo(permission : Permission) : Unit =
     if (!permissions.contains(permission)) {
-      throw new NotAuthorizedException(s"printPrincipal has no permission to $permission")
+      throw new NotAuthorizedException(s"$principalDescription has no permission to $permission")
     }
 }
 

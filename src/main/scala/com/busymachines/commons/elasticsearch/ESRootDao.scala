@@ -40,6 +40,7 @@ import org.elasticsearch.search.facet.FacetBuilder
 import collection.JavaConversions._
 import org.elasticsearch.search.facet.terms.TermsFacet
 import com.busymachines.commons.dao.FacetValue
+import org.elasticsearch.common.xcontent.XContentHelper
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -52,7 +53,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   // Add mapping.
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
-    debug(s"Schema for ${t.name}: $mappingConfiguration")
+    debug(s"Schema for ${index.name}/${t.name}: $mappingConfiguration")
     client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
   }
 
@@ -116,7 +117,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
           request = request.addFacet(facet._2)
         }
 
-        debug(s"Executing search ${request}")
+        debug(s"Search ${index.name}/${t.name}: ${request}")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
@@ -137,7 +138,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       .source(json.toString)
       .refresh(refreshAfterMutation)
 
-    debug(s"Create ${t.name}: $json")
+    debug(s"Create ${index.name}/${t.name}: ${XContentHelper.convertToJson(request.source, true, true)}")
 
     // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
     //      val response = client.execute(IndexAction.INSTANCE, request).get
@@ -175,13 +176,14 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
    */
   def update(entity: Versioned[T], refreshAfterMutation: Boolean = true): Future[Versioned[T]] = {
     val newJson = entity.entity.convertToES(mapping)
+    
     val request = new IndexRequest(index.name, t.name)
       .refresh(refreshAfterMutation)
       .id(entity.entity.id.toString)
       .source(newJson.toString)
       .version(entity.version)
 
-    debug(s"Update $t.name: $newJson")
+    debug(s"Update ${index.name}/${t.name}: ${XContentHelper.convertToJson(request.source, true, true)}")
 
     // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
     //      val response = client.execute(IndexAction.INSTANCE, request).get
@@ -190,7 +192,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       client.execute(request).map(response => Versioned(entity.entity, response.getVersion)) flatMap { mutatedEntity =>
         postMutate(mutatedEntity.entity) map { _ => mutatedEntity }
       }
-    }.recover { case e: VersionConflictEngineException => throw new VersionConflictException(e) }
+    }.recover { case e: VersionConflictEngineException => e.printStackTrace; throw new VersionConflictException(e) }
   }
 
   def delete(id: Id[T], refreshAfterMutation: Boolean = true): Future[Unit] =
@@ -269,5 +271,4 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
   implicit def toResults(f: Future[SearchResult[T]]) = ESRootDao.toResults(f)
 }
-
 case class ESRootDaoMutationEvent(eventName: String, id: String) extends BusEvent 

@@ -112,10 +112,20 @@ case class EmailAddress (
   emailAddress : String
 )
 
-case class RelationKind(name : String)
-case class AddressKind(name : String)
-case class PhoneNumberKind(name : String)
-case class EmailAddressKind(name : String)
-case class Permission(name : String)
+case class RelationKind(name : String) {
+  override def toString = name
+}
+case class AddressKind(name : String) {
+  override def toString = name
+}
+case class PhoneNumberKind(name : String) {
+  override def toString = name
+}
+case class EmailAddressKind(name : String) {
+  override def toString = name
+}
+case class Permission(name : String) {
+  override def toString = name
+}
 
 
