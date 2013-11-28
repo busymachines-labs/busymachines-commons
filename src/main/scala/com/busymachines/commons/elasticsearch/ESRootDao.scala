@@ -183,16 +183,22 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       .source(newJson.toString)
       .version(entity.version)
 
-    debug(s"Update ${index.name}/${t.name}: ${XContentHelper.convertToJson(request.source, true, true)}")
-
     // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
     preMutate(entity).flatMap { entity: T =>
       client.execute(request).map(response => Versioned(entity.entity, response.getVersion)) flatMap { mutatedEntity =>
+        debug(s"Update ${index.name}/${t.name}: ${XContentHelper.convertToJson(request.source, true, true)}")
         postMutate(mutatedEntity.entity) map { _ => mutatedEntity }
       }
-    }.recover { case e: VersionConflictEngineException => e.printStackTrace; throw new VersionConflictException(e) }
+    }.recover { 
+      case e: VersionConflictEngineException => 
+        debug(s"Update ${index.name}/${t.name} failed: Version conflict\n${XContentHelper.convertToJson(request.source, true, true)}")
+        throw new VersionConflictException(e)
+      case throwable: Throwable =>
+        debug(s"Update ${index.name}/${t.name} failed: ${throwable}\n${XContentHelper.convertToJson(request.source, true, true)}")
+        throw throwable
+    }
   }
 
   def delete(id: Id[T], refreshAfterMutation: Boolean = true): Future[Unit] =
