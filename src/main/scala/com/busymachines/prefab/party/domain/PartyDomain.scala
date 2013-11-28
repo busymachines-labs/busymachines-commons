@@ -43,6 +43,9 @@ case class Party (
    */
   users : List[User] = Nil,
   
+  /**
+   * The user roles that available for the users in this party.
+   */ 
   userRoles : List[UserRole] = Nil
 ) extends HasId[Party]
 
@@ -84,6 +87,9 @@ case class User (
   addresses : List[Address] = Nil,
   phoneNumbers : List[PhoneNumber] = Nil,
   emailAddresses : List[EmailAddress] = Nil,
+  /**
+   * The user roles (from the party) to which this user belongs.
+   */ 
   roles : List[Id[UserRole]] = Nil
 ) extends HasId[User] {
 

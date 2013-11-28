@@ -80,8 +80,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     facets.map(facet => facet match {
       case termFacet: ESTermFacet =>
         val fieldList = termFacet.fields.map(_.toESPath)
-
-        facet -> FacetBuilders.termsFacet(termFacet.name).size(termFacet.size).fields(fieldList: _*)
+        facet -> FacetBuilders.termsFacet(termFacet.name).size(termFacet.size).facetFilter(facet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).fields(fieldList: _*)
       case _ => throw new Exception(s"Unknown facet type")
     }).toMap
 
@@ -98,6 +97,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
+        val searchCriteria = criteria.toFilter
         var request =
           client.javaClient.prepareSearch(index.name)
             .setTypes(t.name)

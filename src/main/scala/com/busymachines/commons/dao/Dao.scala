@@ -7,6 +7,7 @@ import scala.concurrent.ExecutionContext
 
 trait Facet {
   def name : String
+  def searchCriteria : SearchCriteria[_]
 }
 case class FacetValue(value: String, count: Int)
 
@@ -14,6 +15,13 @@ trait SearchSort {
   def asc:SearchSort
   def desc:SearchSort
 }
+
+/**
+ * The search criteria trait indicates that something is a search criteria in general.
+ * One of the consequences of this is that there should be very few assumptions made about what is a "search criteria".
+ * For example it might seem intuitive that any search criteria should have "and", "or", "not", etc. operations and as such those
+ * should be defined in the trait as well. But in fact it's unclear if all the search criteria implementations could support this. 
+ */ 
 trait SearchCriteria[T]
 
 /**

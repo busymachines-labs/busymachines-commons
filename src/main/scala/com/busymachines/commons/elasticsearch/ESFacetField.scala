@@ -1,6 +1,7 @@
 package com.busymachines.commons.elasticsearch
 
 import com.busymachines.commons.dao.Facet
+import com.busymachines.commons.dao.SearchCriteria
 
 object TermfacetOrders extends Enumeration {
   type TermFacetOrder = Value
@@ -10,4 +11,4 @@ object TermfacetOrders extends Enumeration {
   val countDesc = Value("countDesc")
 }
 
-case class ESTermFacet(name: String, fields: List[Path[_,_]], size: Int = 10, ordering: TermfacetOrders.Value = TermfacetOrders.termDesc) extends Facet
+case class ESTermFacet(name: String, searchCriteria:SearchCriteria[_], fields: List[Path[_,_]], size: Int = 10, ordering: TermfacetOrders.Value = TermfacetOrders.termDesc) extends Facet
