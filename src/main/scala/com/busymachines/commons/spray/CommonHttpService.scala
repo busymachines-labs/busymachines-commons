@@ -20,15 +20,4 @@ abstract class CommonHttpService(implicit val actorRefFactory: ActorRefFactory) 
 
   def cacheHeaders(duration: FiniteDuration) =
     respondWithHeaders(HttpHeaders.`Cache-Control`(CacheDirectives.`private`()), HttpHeaders.`Access-Control-Max-Age`(duration.toSeconds))
-
-  def decodeBase64(src: String): Option[Array[Byte]] = {
-    val base64 = "data:(.*);base64,(.*)".r
-    src match {
-      case base64(mimetype, data) => Some(Base64.decodeBase64(data.getBytes("UTF-8")))
-      case _ => {
-        None
-      }
-    }
-  }
-
 }
