@@ -41,10 +41,10 @@ class PartyClientAuthenticator(url : String, user : String, password : String)(i
           case t : Throwable => 
             error(s"Authentication failure for user $user at $url: ${t.getMessage}")
             throw t
-        }.flatMap { response =>
-          authenticationToken = Some(response.authToken)
-          authenticate(pipeline, request, false)
-        }
+          }.flatMap { response =>
+            authenticationToken = Some(response.authToken)
+            authenticate(pipeline, request, false)
+          }
     }
   }
 }
