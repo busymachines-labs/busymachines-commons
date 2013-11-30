@@ -6,6 +6,7 @@ import scala.collection.JavaConversions._
 import scala.concurrent.duration._
 import com.typesafe.config.impl.SimpleConfig
 import com.typesafe.config.ConfigFactory
+import scala.collection.mutable.ArrayBuffer
 
 class RichConfig(val theConfig: Config) {
 
@@ -101,6 +102,23 @@ class RichConfig(val theConfig: Config) {
     if (path.isEmpty) this :: Nil
     else theConfig.getConfigList(path).map(new RichConfig(_))
 
+  def as[A](construct : Config => A) = 
+    construct(theConfig)
+
+  def asSeq[A](construct : Config => A) = {
+    val result = ArrayBuffer[A]()
+    var foundMore = true
+    var index = 0
+    while (foundMore) {
+      if (theConfig.hasPath(index.toString)) {
+        result += construct(theConfig.getConfig(index.toString))
+        index += 1
+      } else {
+        foundMore = false
+      }
+    }
+    result.toSeq
+  }
 
   def mkString(sep: String) =
     toSeq.mkString(sep)
@@ -125,3 +143,4 @@ class RichConfig(val theConfig: Config) {
     if (theConfig.hasPath(path)) f(path).toSeq
     else Nil
 }
+

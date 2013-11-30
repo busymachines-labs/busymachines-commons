@@ -25,10 +25,7 @@ object CommonConfig extends CommonConfig("") with Logging {
   }
 }
 
-class CommonConfigSeq[A <: CommonConfig](f : Config => A) {
-  def apply(baseName : String) = CommonConfigFactory.config.configSeq(baseName).toList.map(c => f(c.theConfig))
+class CommonConfig(config : Config) extends RichConfig(config) {
+  def this(baseName : String) = this(CommonConfigFactory.config(baseName).theConfig)
 }
 
-class CommonConfig(config : Config) extends RichConfig(config) {
-  def this(baseName : String)  = this(CommonConfigFactory.config(baseName).theConfig)
-}

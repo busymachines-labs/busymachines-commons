@@ -15,6 +15,8 @@ import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.api.v1.model.AuthenticationRequest
 import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.prefab.authentication.model.Authentication
+import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
+import com.busymachines.prefab.authentication.spray.AuthenticationDirectives
 
 /**
  * Handling authentication before using API.
@@ -30,16 +32,15 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
             case Some(SecurityContext(tenantId, partyId, userId, loginName, authenticationId, permissions)) => {
               val message = "User %s has been succesfully logged in".format(request.loginName)
               debug(message)
-              respondWithHeader(RawHeader(tokenKey, authenticationId.toString)) {
+              respondWithHeader(RawHeader(AuthenticationDirectives.tokenKey, authenticationId.toString)) {
                 complete {
-                  // Return authenticated user id.
-                      Map("authToken" -> authenticationId.toString, "userId" -> userId.toString, "partyId" -> partyId.toString)
+                  AuthenticationResponse(authenticationId.toString, userId.toString, partyId.toString)
                 }
               }
             }
             case None => {
               debug("Tried to log in user %s but received 'Invalid userName or password.'".format(request.loginName))
-              respondWithStatus(StatusCodes.NotFound) {
+              respondWithStatus(StatusCodes.Forbidden) {
                 complete {
                   Map("message" -> "Invalid userName or password.")
                 }

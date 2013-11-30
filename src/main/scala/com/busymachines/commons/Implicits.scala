@@ -18,6 +18,7 @@ trait CommonImplicits {
   implicit def richConfig(config : Config) = new RichConfig(config)
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
   implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
+  implicit def richStringSeq(seq : Seq[String]) = new RichStringSeq(seq)
   implicit def richString(s : String) = new RichString(s)
   implicit def richByteArray(bytes : Array[Byte]) = new RichByteArray(bytes)
   implicit def richUrl(url : URL) = new RichUrl(url)
