@@ -52,9 +52,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "joda-time" % "joda-time" % "2.3" withSources(),
     libraryDependencies += "org.joda" % "joda-convert" % "1.5" withSources(), // for class file error in joda-time
     libraryDependencies += "com.google.guava" % "guava" % "14.0.1" withSources(),
-    libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1", // for class file error in guava
-    libraryDependencies += "commons-codec" % "commons-codec" % "1.8" // for base64 encoding
-
+    libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1" // for class file error in guava
 ))
 
   def publishSettings = Seq(
