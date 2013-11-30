@@ -1,14 +1,15 @@
 package com.busymachines.commons.spray
 
-import spray.routing.HttpService
+import scala.concurrent.duration.FiniteDuration
+
 import com.busymachines.commons.Logging
+
+import akka.actor.ActorRefFactory
+import spray.http.CacheDirectives
+import spray.http.HttpHeaders
+import spray.routing.HttpService
 import spray.routing.RequestContext
 import spray.routing.Route
-import akka.actor.ActorRefFactory
-import scala.concurrent.duration.FiniteDuration
-import spray.http.HttpHeaders
-import spray.http.CacheDirectives
-import org.apache.commons.codec.binary.Base64
 
 abstract class CommonHttpService(implicit val actorRefFactory: ActorRefFactory) extends HttpService with CommonDirectives with Route with Logging {
   implicit def executionContext = actorRefFactory.dispatcher
