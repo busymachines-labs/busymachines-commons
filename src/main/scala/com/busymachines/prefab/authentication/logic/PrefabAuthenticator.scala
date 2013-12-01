@@ -73,7 +73,7 @@ abstract class PrefabAuthenticator[Principal, SecurityContext](config: Authentic
    */
   def setAuthenticated(principal: Principal): Future[Id[Authentication]] = {
     val id: Id[Authentication] = Id.generate
-    val authentication = Authentication(id, principalFormat.write(principal), new DateTime(config.expiration.toMillis))
+    val authentication = Authentication(id, principalFormat.write(principal), DateTime.now.plusMillis(config.expiration.toMillis.toInt))
     authenticationDao.createAuthentication(authentication).map(??? => id)
   }
   

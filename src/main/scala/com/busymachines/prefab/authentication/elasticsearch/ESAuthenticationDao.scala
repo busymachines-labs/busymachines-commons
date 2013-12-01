@@ -18,5 +18,4 @@ class ESAuthenticationDao(index : ESIndex, indexType : String = "authentication"
   
   def createAuthentication(authentication : Authentication) : Future[Unit] = 
     create(authentication) map {_ => }
-
 }

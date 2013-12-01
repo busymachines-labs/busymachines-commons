@@ -6,6 +6,7 @@ import org.joda.time.DateTime
 import java.net.Inet4Address
 import com.busymachines.commons.domain.GeoPoint
 import spray.json.JsonWriter
+import scala.concurrent.duration.Duration
 
 object ESProperty {
   implicit def toPath[A, T](property: ESProperty[A, T]) = Path[A, T](property :: Nil)
@@ -110,13 +111,13 @@ object ESMapping extends ESMappingConstants {
     lazy val propertiesByMappedName = properties.groupBy(_.mappedName).mapValues(_.head)
   }
 
-  case class Option(name: String, value: Any)
-  case class Options[T](options: Option*) {
+  case class PropertyOption(name: String, value: Any)
+  case class Options[T](options: PropertyOption*) {
     options.groupBy(_.name).collect {
       case (name, values) if values.size > 1 =>
         throw new Exception("Incompatible options: " + values.mkString(", "))
     }
-    def &(option: Option) = Options[T]((options.toSeq ++ Seq(option)): _*)
+    def &(option: PropertyOption) = Options[T]((options.toSeq ++ Seq(option)): _*)
   }
 }
 
@@ -124,26 +125,26 @@ trait ESMappingConstants {
   
   import ESMapping._
   
-  val String = Options[String](Option("type", "string"))
-  val Date = Options[DateTime](Option("type", "date"))
-  def Object[T] = Options[T](Option("type", "object"))
-  val Float = Options[Float](Option("type", "float"))
-  val Double = Options[Double](Option("type", "double"))
-  val Integer = Options[Int](Option("type", "integer"))
-  val Long = Options[Long](Option("type", "long"))
-  val Short = Options[Short](Option("type", "short"))
-  val Byte = Options[Byte](Option("type", "byte"))
-  val Boolean = Options[Boolean](Option("type", "boolean"))
-  val Binary = Options[Array[Byte]](Option("type", "binary"))
-  val Ipv4 = Options[Inet4Address](Option("type", "ip"))
-  val GeoPoint = Options[GeoPoint](Option("type", "geo_point"))
-  val Nested = Option("type", "nested")
-  val Stored = Option("store", true)
-  val NotIndexed = Option("index", "no")
-  val Analyzed = Option("index", "analyzed")
-  val NotAnalyzed = Option("index", "not_analyzed")
-  val IncludeInAll = Option("include_in_all", "true")
-  def Nested[T](properties: Properties[T]): Options[T] = Options(Nested, Option("properties", properties))
+  val String = Options[String](PropertyOption("type", "string"))
+  val Date = Options[DateTime](PropertyOption("type", "date"))
+  def Object[T] = Options[T](PropertyOption("type", "object"))
+  val Float = Options[Float](PropertyOption("type", "float"))
+  val Double = Options[Double](PropertyOption("type", "double"))
+  val Integer = Options[Int](PropertyOption("type", "integer"))
+  val Long = Options[Long](PropertyOption("type", "long"))
+  val Short = Options[Short](PropertyOption("type", "short"))
+  val Byte = Options[Byte](PropertyOption("type", "byte"))
+  val Boolean = Options[Boolean](PropertyOption("type", "boolean"))
+  val Binary = Options[Array[Byte]](PropertyOption("type", "binary"))
+  val Ipv4 = Options[Inet4Address](PropertyOption("type", "ip"))
+  val GeoPoint = Options[GeoPoint](PropertyOption("type", "geo_point"))
+  val Nested = PropertyOption("type", "nested")
+  val Stored = PropertyOption("store", true)
+  val NotIndexed = PropertyOption("index", "no")
+  val Analyzed = PropertyOption("index", "analyzed")
+  val NotAnalyzed = PropertyOption("index", "not_analyzed")
+  val IncludeInAll = PropertyOption("include_in_all", "true")
+  def Nested[T](properties: Properties[T]): Options[T] = Options(Nested, PropertyOption("properties", properties))
   def Nested[T](mapping: ESMapping[T]): Options[T] = Nested(mapping.allProperties)
   val _all = ESProperty("_all", "_all", String)
 }
@@ -154,16 +155,22 @@ class ESMapping[A] extends ESMappingConstants with Logging {
 
   private var _allProperties: Properties[A] = Properties(Nil)
 
+  protected var ttl : Option[Duration] = None // enable ttl without a default ttl value: Some(Duration.Inf)
+  
   def allProperties = _allProperties
 
   def mappingConfiguration(doctype: String): String =
     print(mapping(doctype), "\n")
 
   def mapping(doctype: String) = Properties[Any](List(ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
-    Option("_all", Map("enabled" -> true)),
-    Option("_source", Map("enabled" -> true)),
-    Stored,
-    Option("properties", allProperties))): _*))))
+    Some(PropertyOption("_all", Map("enabled" -> true))),
+    Some(PropertyOption("_source", Map("enabled" -> true))),
+    ttl map {
+      case ttl if ttl.isFinite => PropertyOption("_ttl", Map("enabled" -> true, "default" -> ttl.toMillis))
+      case ttl => PropertyOption("_ttl", Map("enabled" -> true))
+    },
+    Some(Stored),
+    Some(PropertyOption("properties", allProperties))).flatten: _*)))))
 
   implicit class RichName(name: String) extends RichMappedName(name, name)
 
@@ -180,7 +187,7 @@ class ESMapping[A] extends ESMappingConstants with Logging {
       properties.properties.map(p => "\"" + p.mappedName + "\": " + print(p.options, indent + "    ")).mkString(indent + "{" + indent + "  ", "," + indent + "  ", indent + "}")
     case options: Options[_] =>
       options.options.map(print(_, indent)).mkString("{", ", ", "}")
-    case option: Option =>
+    case option: PropertyOption =>
       "\"" + option.name + "\": " + print(option.value, indent)
     case s: String => "\"" + s.toString + "\""
     case json: Map[_, _] => json.map(t => "\"" + t._1 + "\": " + print(t._2, indent)).mkString("{", ", ", "}")

@@ -106,7 +106,8 @@ case class Address (
   street2: Option[String] = None, 
   postalCode: Option[String] = None, 
   city: Option[String] = None, 
-  country : Option[String] = None)
+  country : Option[String] = None,
+  comment : Option[String] = None)
 
 case class PhoneNumber (
   kind : Option[PhoneNumberKind] = None,

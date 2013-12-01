@@ -43,6 +43,7 @@ import com.busymachines.commons.dao.FacetValue
 import org.elasticsearch.common.xcontent.XContentHelper
 import org.elasticsearch.common.bytes.BytesReference
 import org.elasticsearch.transport.RemoteTransportException
+import scala.concurrent.duration.Duration
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -52,6 +53,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
   val client = index.client
   val mapping = t.mapping
+  
   // Add mapping.
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
@@ -132,13 +134,14 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  def create(entity: T, refreshAfterMutation: Boolean = true): Future[Versioned[T]] = {
+  def create(entity: T, refreshAfterMutation: Boolean = true, ttl: Option[Duration] = None): Future[Versioned[T]] = {
     val json = entity.convertToES(mapping)
     val request = new IndexRequest(index.name, t.name)
       .id(entity.id.toString)
       .create(true)
       .source(json.toString)
       .refresh(refreshAfterMutation)
+      .ttl(ttl.map(_.toMillis).map(new java.lang.Long(_)).getOrElse(null))
 
     // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.       
     //      val response = client.execute(IndexAction.INSTANCE, request).get
