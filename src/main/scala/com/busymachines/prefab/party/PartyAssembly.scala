@@ -15,6 +15,7 @@ import com.busymachines.prefab.party.logic.UserAuthenticator
 import akka.actor.ActorSystem
 import com.busymachines.commons.elasticsearch.ESSequenceDao
 import com.busymachines.prefab.party.logic.PartyFixture
+import com.busymachines.prefab.party.logic.PartyCache
 
 trait PartyAssembly {
 
@@ -33,6 +34,7 @@ trait PartyAssembly {
   // components
   lazy val sequenceDao = new ESSequenceDao(sequenceIndex)
   lazy val partyDao = new PartyDao(partyIndex)
+  lazy val partyCache = new PartyCache(partyDao)
   lazy val userDao = new UserDao(partyDao)
   lazy val credentialsDao = new ESCredentialsDao(partyIndex)
   lazy val authenticationDao = new ESAuthenticationDao(authenticationIndex)
