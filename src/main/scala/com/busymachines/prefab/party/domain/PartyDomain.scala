@@ -47,8 +47,13 @@ case class Party (
    * The user roles that available for the users in this party.
    */ 
   userRoles : List[UserRole] = Nil
-) extends HasId[Party]
+) extends HasId[Party] {
 
+  def describe = 
+    person.map(p => p.firstName :: p.middleName :: p.lastName :: Nil mkString(" "))
+    .orElse(company.map(_.name)).getOrElse("")
+}
+  
 case class Company(
   name : String
 )

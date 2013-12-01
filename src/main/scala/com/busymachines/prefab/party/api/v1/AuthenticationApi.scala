@@ -29,7 +29,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
       post {
         entity(as[AuthenticationRequest]) { request =>
           Await.result(authenticator.authenticateWithLoginNamePassword(request.loginName, request.password), 1.minute) match {
-            case Some(SecurityContext(tenantId, partyId, userId, loginName, authenticationId, permissions)) => {
+            case Some(SecurityContext(tenantId, partyId, userId, partyName, loginName, authenticationId, permissions)) => {
               val message = "User %s has been succesfully logged in".format(request.loginName)
               debug(message)
               respondWithHeader(RawHeader(AuthenticationDirectives.tokenKey, authenticationId.toString)) {

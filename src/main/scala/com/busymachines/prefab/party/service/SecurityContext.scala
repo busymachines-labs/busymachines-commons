@@ -12,6 +12,7 @@ case class SecurityContext(
   tenantId: Id[Tenant],
   partyId: Id[Party],
   userId: Id[User],
+  party: String,
   user: String,
   authenticationId: Id[Authentication],
   permissions: Set[Permission] = Set.empty) extends PrefabSecurityContext[Permission] {
