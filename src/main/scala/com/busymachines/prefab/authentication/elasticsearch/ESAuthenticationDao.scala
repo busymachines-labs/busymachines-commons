@@ -21,7 +21,8 @@ class ESAuthenticationDao(index : ESIndex, indexType : String = "authentication"
   
   def createAuthentication(authentication : Authentication) : Future[Unit] = {
     val millis = authentication.expirationTime.getMillis - DateTime.now.getMillis
-    val ttl = if (millis > 0) Some(millis.milliseconds) else None
+    // make sure the document outlives the expiration of the document
+    val ttl = if (millis > 0) Some((millis * 1.3).milliseconds) else None
     create(authentication, true, ttl) map {_ => }
   }
 }
