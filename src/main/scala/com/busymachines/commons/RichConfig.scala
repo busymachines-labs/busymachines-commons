@@ -121,16 +121,22 @@ class RichConfig(val theConfig: Config) {
   }
 
   def mkString(sep: String) =
-    toSeq.mkString(sep)
+    toSortedStringSeq.mkString(sep)
 
-  def toSeq: Seq[String] =
+  def toSortedStringSeq: Seq[String] =
     toSeq("", theConfig).sortWith(_ < _).map(x => x._1 + "=" + x._2)
 
+  override def toString =
+    toString("")
+    
+  def toString(prefixFilter : String) = 
+    "\n  " + CommonConfig.toSortedStringSeq.filter(_.startsWith(prefixFilter)).mkString("\n  ")
+    
   private def toSeq(prefix: String, config: Config): Seq[(String, String)] = {
     config.entrySet.toSeq.flatMap { entry =>
       entry.getValue match {
-        case config: Config => toSeq(entry.getKey + ".", config)
-        case value => Seq((entry.getKey, value.render))
+        case config: Config => toSeq(entry.getKey.replace("\"", "") + ".", config)
+        case value => Seq((entry.getKey.replace("\"", ""), value.render))
       }
     }
   }

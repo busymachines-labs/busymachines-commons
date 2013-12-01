@@ -8,101 +8,6 @@ import com.busymachines.commons.domain.GeoPoint
 import spray.json.JsonWriter
 import scala.concurrent.duration.Duration
 
-object ESProperty {
-  implicit def toPath[A, T](property: ESProperty[A, T]) = Path[A, T](property :: Nil)
-}
-
-case class ESProperty[A, T](name: String, mappedName: String, options: ESMapping.Options[T]) extends PathElement[A, T] {
-  val nestedProperties = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping.Properties[A]])
-  def fieldName = mappedName
-  val isNested = options.options.contains(ESMapping.Nested)
-  // Needed to prevent other implicit === methods
-
-  def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
-
-  def equ(path: Path[A, T]) = ESSearchCriteria.FEq(this, path)
-  def equ(property: ESProperty[A, T]) = ESSearchCriteria.FEq(this, property)
-  def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Eq(this, value)
-
-  def neq(path: Path[A, T]) = ESSearchCriteria.FNeq(this, path)
-  def neq(property: ESProperty[A, T]) = ESSearchCriteria.FNeq(this, property)
-  def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Neq(this, value)
-
-  def gt(path: Path[A, T]) = ESSearchCriteria.FGt(this, path)
-  def gt(property: ESProperty[A, T]) = ESSearchCriteria.FGt(this, property)
-  def gt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gt(this, value)
-
-  def gte(path: Path[A, T]) = ESSearchCriteria.FGte(this, path)
-  def gte(property: ESProperty[A, T]) = ESSearchCriteria.FGte(this, property)
-  def gte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gte(this, value)
-
-  def lt(path: Path[A, T]) = ESSearchCriteria.FLt(this, path)
-  def lt(property: ESProperty[A, T]) = ESSearchCriteria.FLt(this, property)
-  def lt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lt(this, value)
-
-  def lte(path: Path[A, T]) = ESSearchCriteria.FLte(this, path)
-  def lte(property: ESProperty[A, T]) = ESSearchCriteria.FLte(this, property)
-  def lte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lte(this, value)
-
-  def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
-  def missing = ESSearchCriteria.missing(this)
-  def exists = ESSearchCriteria.exists(this)
-}
-
-trait PathElement[A, T] {
-  def fieldName : String
-  def isNested : Boolean
-}
-object PathElement {
-  def apply[A, T](s : String) = new PathElement[A, T] {
-    def fieldName = s
-    def isNested = false
-  }
-}
-
-case class Path[A, T](elements: List[PathElement[_, _]]) {
-  def head: PathElement[A, _] = elements.head.asInstanceOf[PathElement[A, _]]
-  def last: PathElement[_, T] = elements.head.asInstanceOf[PathElement[_, T]]
-  def /[A2 <: T, V2](property: PathElement[A2, V2]) = Path[A, V2](elements :+ property)
-  def /[A2 <: T, V2](fieldName : String) = Path[A, V2](elements :+ PathElement[A, V2](fieldName))
-
-  def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
-
-  def equ(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FEq(this, path))
-  def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Eq(this, value))
-  def neq(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FNeq(this, path))
-  def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Neq(this, value))
-  def gt(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FGt(this, path))
-  def gt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Gt(this, value))
-  def gte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Gte(this, value))
-  def lt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Lt(this, value))
-  def lte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Lte(this, value))
-  def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.In(this, values))
-  def missing = nest(Nil, this, ESSearchCriteria.missing(this))
-  def exists = nest(Nil, this, ESSearchCriteria.exists(this))
-  def ++[V] (other : Path[T, V]) = Path[A, V](elements ++ other.elements)
-
-  /**
-   * Nest given (usually compound) criteria inside a single nested filter.
-   */
-  def apply(criteria : ESSearchCriteria[T]) = 
-    ESSearchCriteria.Nested(this)(criteria.prepend(this))
-  
-  /**
-   * Make sure that nested properties in given path create a nested filter in the resulting query.
-   */
-  private def nest[A0, A, T](prefix: List[PathElement[_, _]], path : Path[A, T], criteria : ESSearchCriteria[A]) : ESSearchCriteria[A] = {
-    path.elements match {
-      case head :: tail if head.isNested =>
-        val untilNow = prefix ++ List(head)
-        ESSearchCriteria.Nested(Path(untilNow))(nest(untilNow, Path(tail), criteria))
-      case _ => criteria
-    }
-  }
-  
-  def toESPath =
-    elements.map(_.fieldName).mkString(".")
-}
 
 object ESMapping extends ESMappingConstants {
 
@@ -146,7 +51,7 @@ trait ESMappingConstants {
   val IncludeInAll = PropertyOption("include_in_all", "true")
   def Nested[T](properties: Properties[T]): Options[T] = Options(Nested, PropertyOption("properties", properties))
   def Nested[T](mapping: ESMapping[T]): Options[T] = Nested(mapping.allProperties)
-  val _all = ESProperty("_all", "_all", String)
+  val _all = new ESProperty("_all", "_all", String)
 }
 
 class ESMapping[A] extends ESMappingConstants with Logging {
@@ -162,7 +67,7 @@ class ESMapping[A] extends ESMappingConstants with Logging {
   def mappingConfiguration(doctype: String): String =
     print(mapping(doctype), "\n")
 
-  def mapping(doctype: String) = Properties[Any](List(ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
+  def mapping(doctype: String) = Properties[Any](List(new ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
     Some(PropertyOption("_all", Map("enabled" -> true))),
     Some(PropertyOption("_source", Map("enabled" -> true))),
     ttl map {
@@ -175,12 +80,12 @@ class ESMapping[A] extends ESMappingConstants with Logging {
   implicit class RichName(name: String) extends RichMappedName(name, name)
 
   implicit class RichMappedName(name: (String, String)) {
-    def as[T](options: Options[T]) = add(ESProperty[A, T](name._1, name._2, options))
+    def as[T](options: Options[T]) = add(new ESProperty[A, T](name._1, name._2, options))
     def add[T](property: ESProperty[A, T]) = {
       _allProperties = Properties(_allProperties.properties :+ property)
       property
     }
-    implicit def toProperty = ESProperty(name._1, name._2, Options())
+    implicit def toProperty = new ESProperty(name._1, name._2, Options())
   }
   def print(obj: Any, indent: String): String = obj match {
     case properties: Properties[A] =>
@@ -194,3 +99,43 @@ class ESMapping[A] extends ESMappingConstants with Logging {
     case v => v.toString
   }
 }
+
+object ESProperty {
+  implicit def toPath[A, T](property: ESProperty[A, T]) = Path[A, T](property :: Nil)
+}
+
+class ESProperty[A, T](val name: String, val mappedName: String, val options: ESMapping.Options[T]) 
+extends PathElement[A, T](mappedName, options.options.contains(ESMapping.Nested)) {
+  val nestedProperties = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping.Properties[A]])
+
+  def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
+
+  def equ(path: Path[A, T]) = ESSearchCriteria.FEq(this, path)
+  def equ(property: ESProperty[A, T]) = ESSearchCriteria.FEq(this, property)
+  def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Eq(this, value)
+
+  def neq(path: Path[A, T]) = ESSearchCriteria.FNeq(this, path)
+  def neq(property: ESProperty[A, T]) = ESSearchCriteria.FNeq(this, property)
+  def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Neq(this, value)
+
+  def gt(path: Path[A, T]) = ESSearchCriteria.FGt(this, path)
+  def gt(property: ESProperty[A, T]) = ESSearchCriteria.FGt(this, property)
+  def gt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gt(this, value)
+
+  def gte(path: Path[A, T]) = ESSearchCriteria.FGte(this, path)
+  def gte(property: ESProperty[A, T]) = ESSearchCriteria.FGte(this, property)
+  def gte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gte(this, value)
+
+  def lt(path: Path[A, T]) = ESSearchCriteria.FLt(this, path)
+  def lt(property: ESProperty[A, T]) = ESSearchCriteria.FLt(this, property)
+  def lt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lt(this, value)
+
+  def lte(path: Path[A, T]) = ESSearchCriteria.FLte(this, path)
+  def lte(property: ESProperty[A, T]) = ESSearchCriteria.FLte(this, property)
+  def lte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lte(this, value)
+
+  def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
+  def missing = ESSearchCriteria.missing(this)
+  def exists = ESSearchCriteria.exists(this)
+}
+

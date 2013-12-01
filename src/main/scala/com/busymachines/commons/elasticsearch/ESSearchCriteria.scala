@@ -7,6 +7,7 @@ import spray.json.JsonWriter
 import org.elasticsearch.index.query.QueryStringQueryBuilder
 import com.busymachines.commons.domain.GeoPoint
 import org.elasticsearch.common.unit.DistanceUnit
+import org.elasticsearch.search.facet.FacetBuilders
 
 trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def toFilter: FilterBuilder
@@ -161,3 +162,53 @@ object ESSearchCriteria {
     def prepend[A0](path : Path[A0, A]) = Nested(path ++ this.path)(criteria.asInstanceOf[ESSearchCriteria[A0]])
   }
 }
+
+case class PathElement[A, T] (
+  fieldName : String,
+  isNested : Boolean
+)
+
+case class Path[A, T](elements: List[PathElement[_, _]]) {
+  def head: PathElement[A, _] = elements.head.asInstanceOf[PathElement[A, _]]
+  def last: PathElement[_, T] = elements.head.asInstanceOf[PathElement[_, T]]
+  def /[A2 <: T, V2](property: PathElement[A2, V2]) = Path[A, V2](elements :+ property)
+  def /[A2 <: T, V2](fieldName : String) = Path[A, V2](elements :+ PathElement[A, V2](fieldName, false))
+
+  def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
+
+  def equ(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FEq(this, path))
+  def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Eq(this, value))
+  def neq(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FNeq(this, path))
+  def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Neq(this, value))
+  def gt(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FGt(this, path))
+  def gt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Gt(this, value))
+  def gte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Gte(this, value))
+  def lt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Lt(this, value))
+  def lte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Lte(this, value))
+  def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.In(this, values))
+  def missing = nest(Nil, this, ESSearchCriteria.missing(this))
+  def exists = nest(Nil, this, ESSearchCriteria.exists(this))
+  def ++[V] (other : Path[T, V]) = Path[A, V](elements ++ other.elements)
+
+  /**
+   * Nest given (usually compound) criteria inside a single nested filter.
+   */
+  def apply(criteria : ESSearchCriteria[T]) = 
+    ESSearchCriteria.Nested(this)(criteria.prepend(this))
+  
+  /**
+   * Make sure that nested properties in given path create a nested filter in the resulting query.
+   */
+  private def nest[A0, A, T](prefix: List[PathElement[_, _]], path : Path[A, T], criteria : ESSearchCriteria[A]) : ESSearchCriteria[A] = {
+    path.elements match {
+      case head :: tail if head.isNested =>
+        val untilNow = prefix ++ List(head)
+        ESSearchCriteria.Nested(Path(untilNow))(nest(untilNow, Path(tail), criteria))
+      case _ => criteria
+    }
+  }
+  
+  def toESPath =
+    elements.map(_.fieldName).mkString(".")
+}
+
