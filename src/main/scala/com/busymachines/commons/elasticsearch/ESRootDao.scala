@@ -53,7 +53,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
   val client = index.client
   val mapping = t.mapping
-  
+
   // Add mapping.
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
@@ -81,8 +81,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   private def toESFacets(facets: Seq[Facet]): Map[Facet, FacetBuilder] =
     facets.map(facet => facet match {
       case termFacet: ESTermFacet =>
-        val fieldList = termFacet.fields.map(_.toESPath)
-        facet -> FacetBuilders.termsFacet(termFacet.name).size(termFacet.size).facetFilter(facet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).fields(fieldList: _*)
+        val (facetBuilder,fields) = (termFacet.fields.size) match {
+          case s if s > 1 => (FacetBuilders.termsFacet(termFacet.name).nested(termFacet.fields.head.toESPath),termFacet.fields.tail)
+          case s if s == 1 => (FacetBuilders.termsFacet(termFacet.name),termFacet.fields)
+        }
+        facet -> facetBuilder.size(termFacet.size).facetFilter(facet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).fields(fields.map(_.toESPath): _*)
       case _ => throw new Exception(s"Unknown facet type")
     }).toMap
 
@@ -111,10 +114,10 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
         // Sorting    
         sort match {
-          case esSearchOrder:ESSearchSort => 
+          case esSearchOrder: ESSearchSort =>
             request = request.addSort(esSearchOrder.field, esSearchOrder.order)
-        }    
-        
+        }
+
         // Faceting
         val requestFacets = toESFacets(facets)
         for (facet <- requestFacets) {
@@ -147,7 +150,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
 
-    preMutate(entity).flatMap { entity : T =>
+    preMutate(entity).flatMap { entity: T =>
       client.execute(request).map(response => Versioned(entity, response.getVersion)) flatMap { storedEntity =>
         debug(s"Create ${index.name}/${t.name}/${entity.id}:\n${XContentHelper.convertToJson(request.source, true, true)}")
         postMutate(storedEntity) map { _ => storedEntity }
@@ -183,7 +186,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
    */
   def update(entity: Versioned[T], refreshAfterMutation: Boolean = true): Future[Versioned[T]] = {
     val newJson = entity.entity.convertToES(mapping)
-    
+
     val request = new IndexRequest(index.name, t.name)
       .refresh(refreshAfterMutation)
       .id(entity.entity.id.toString)
@@ -203,11 +206,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       throw e
     })
   }
-  
-  private def convertException(f : Throwable => Versioned[T]) : PartialFunction[Throwable, Versioned[T]] = {
-    case t : Throwable =>
+
+  private def convertException(f: Throwable => Versioned[T]): PartialFunction[Throwable, Versioned[T]] = {
+    case t: Throwable =>
       val cause = t match {
-        case t : RemoteTransportException => t.getCause
+        case t: RemoteTransportException => t.getCause
         case t => t
       }
       val converted = cause match {
