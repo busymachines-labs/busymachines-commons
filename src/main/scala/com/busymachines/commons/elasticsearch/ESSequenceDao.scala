@@ -11,6 +11,7 @@ import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.Sequence
 import scala.concurrent.Await
 import com.busymachines.commons.dao.SequenceDao
+import com.busymachines.commons.dao.VersionConflictException
 
 private[elasticsearch] object SequenceMapping extends ESMapping[Sequence] {
   val id = "id" -> "_id" as String & NotAnalyzed
@@ -21,20 +22,16 @@ private[elasticsearch] object SequenceMapping extends ESMapping[Sequence] {
 class ESSequenceDao(index: ESIndex, `type` : String = "sequence")(implicit ec: ExecutionContext) 
     extends ESRootDao[Sequence](index, ESType[Sequence](`type`, SequenceMapping)) with SequenceDao with Logging {
 
-  def apply(name : String) : Future[Id[Sequence]] = {
-    val id = Id[Sequence](name)
-    getOrCreate(id, false)(Sequence(id, 1)).map(_.id)
-  }
-  
   def current(sequence : Id[Sequence]) : Future[Long] = 
     retrieve(sequence).map(_.map(_.value).getOrElse(0))
     
   def next(sequence : Id[Sequence], incrementValue : Long = 1, retries : Int = 50): Future[Long] = 
     retry(increment(sequence,incrementValue), retries, 0)
 
-  private def retry(future: Future[Long], maxAttempts: Int, attempt: Int): Future[Long] = 
+  private def retry(future: => Future[Long], maxAttempts: Int, attempt: Int): Future[Long] = 
     future.recoverWith {
-      case e: VersionConflictEngineException =>
+      case e: VersionConflictException =>
+        debug(s"Version conflict $attempt: " + e.getMessage)
         if (attempt > maxAttempts) Future.failed(e) 
         else retry(future, maxAttempts, attempt + 1)
     }

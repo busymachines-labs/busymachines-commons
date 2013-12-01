@@ -15,7 +15,7 @@ import spray.http.HttpRequest
 import spray.http.StatusCodes
 import spray.httpx.SprayJsonSupport.sprayJsonMarshaller
 import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
-import com.busymachines.commons.concurrent.SynchronizedFuture
+import com.busymachines.commons.concurrent.SerializedFutures
 import com.busymachines.commons.cache.SyncRef
 
 class UserAuthenticatorClient(url : String, user : String, password : String)(implicit actorSystem: ActorSystem, ec: ExecutionContext) extends Logging {
