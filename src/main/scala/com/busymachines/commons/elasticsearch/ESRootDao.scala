@@ -78,11 +78,18 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
+  // TODO : Fix this to take care of the general case of nested facets : http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html#_all_nested_matching_root_documents
   private def toESFacets(facets: Seq[Facet]): Map[Facet, FacetBuilder] =
     facets.map(facet => facet match {
-      case termFacet: ESTermFacet =>
+      case termFacet: ESTermFacet =>         
         val fieldList = termFacet.fields.map(_.toESPath)
-        facet -> FacetBuilders.termsFacet(termFacet.name).size(termFacet.size).facetFilter(facet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).fields(fieldList: _*)
+        val firstFacetField = fieldList.head
+        val pathComponents = (firstFacetField.split("\\.") toList)
+        val facetbuilder = pathComponents.size match {
+          case s if s <= 1 => FacetBuilders.termsFacet(termFacet.name)
+          case s if s > 1 => FacetBuilders.termsFacet(termFacet.name).nested(pathComponents.head)
+        }
+        facet -> facetbuilder.size(termFacet.size).facetFilter(facet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).fields(fieldList: _*)
       case _ => throw new Exception(s"Unknown facet type")
     }).toMap
 
