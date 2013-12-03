@@ -18,6 +18,7 @@ import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.db.PartyDao
 import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.prefab.party.domain.PartyDomainJsonFormats._
+import com.busymachines.prefab.party.domain.User
 
 class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, credentialsDao: CredentialsDao, authenticationDao: AuthenticationDao)(implicit ec: ExecutionContext)
   extends PrefabAuthenticator[Id[Credentials], SecurityContext](config, authenticationDao) with Logging {
@@ -31,6 +32,14 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
         debug(s"Cannot authenticate user with credentials: ${credentialsId}.")
         None
     }
+  }
+  
+  /**
+   * Use this method when a security context is need, but there is no physical user that
+   * goes through the login process. For example, a batch process.
+   */
+  def securityContextFor(partyId : Id[Party], userId : Id[User]) = {
+    
   }
   
   override def devmodeSecurityContext(devmodeAuth : Option[String]) : Option[SecurityContext] =
