@@ -9,7 +9,7 @@ import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
  */
 object BusyMachinesCommonsBuild extends Build {
  
-  val sprayVersion = "1.2-RC2"
+  val sprayVersion = "1.2.0"
   
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++ 
