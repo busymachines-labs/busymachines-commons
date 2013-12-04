@@ -25,7 +25,8 @@ object CommonConfig extends CommonConfig("") with Logging {
   }
 }
 
-class CommonConfig(config : Config) extends RichConfig(config) {
+class
+CommonConfig(config : Config) extends RichConfig(config) {
   def this(baseName : String) = this(CommonConfigFactory.config(baseName).theConfig)
 }
 
