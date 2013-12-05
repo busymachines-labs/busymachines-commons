@@ -26,6 +26,7 @@ import spray.routing.directives.CachingDirectives.routeCache
 import spray.routing.directives.ContentTypeResolver
 import spray.util.actorSystem
 import com.busymachines.commons.CommonConfig
+import com.busymachines.commons.ProfilingUtils.time
 
 class UiService(resourceRoot: String = "public", rootDocument: String = "index.html")(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService {
 
@@ -69,6 +70,8 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
     }
 
   def getFromResource(path: String, ext: String, mediaType: MediaType, shouldProcess: Boolean)(implicit refFactory: ActorRefFactory, resolver: ContentTypeResolver): Route = {
+    
+    time("Fetching resource " + path + "." + ext) {
     val contentType = if (mediaType.binary) ContentType(mediaType) else ContentType(mediaType, HttpCharsets.`UTF-8`)
     val classLoader = actorSystem(refFactory).dynamicAccess.classLoader
 
@@ -98,6 +101,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
     content orElse contentBare match {
       case Some(bytes) => complete(bytes)
       case None => reject
+    }
     }
   }
 
