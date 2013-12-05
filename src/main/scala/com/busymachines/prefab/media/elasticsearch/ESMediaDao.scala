@@ -1,15 +1,11 @@
-package com.busymachines.commons.elasticsearch
+package com.busymachines.prefab.media.elasticsearch
 
-import scala.annotation.implicitNotFound
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import org.elasticsearch.index.query.FilterBuilders.termFilter
 import com.google.common.hash.Hashing
 import com.google.common.io.BaseEncoding
-import com.busymachines.commons
 import java.io.BufferedInputStream
 import java.net.URL
-import com.busymachines.commons.dao.RootDao
 import com.busymachines.commons.domain.CommonJsonFormats._
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
@@ -19,33 +15,20 @@ import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.Logging
 import com.busymachines.commons.domain.Money
 import com.busymachines.commons.domain.MimeTypes
-import com.busymachines.commons.dao.MediaDao
-
-private[elasticsearch] case class HashedMedia(
-  id: Id[HashedMedia],
-  mimeType: MimeType,
-  name: Option[String],
-  hash: String,
-  data: String) extends HasId[HashedMedia]
-
-object MoneyMapping extends ESMapping[Money] {
-  val currency = "currency" as String & Analyzed
-  val amount = "amount" as Double & Analyzed
-}
-
-private[elasticsearch] object MediaMapping extends ESMapping[HashedMedia] {
-  val id = "id" -> "_id" as String & NotAnalyzed
-  val mimeType = "mimeType" as String & Analyzed
-  val name = "name" as String & Analyzed
-  val hash = "hash" as String & NotAnalyzed
-  val data = "data" as String & NotIndexed
-}
+import com.busymachines.prefab.media.db.MediaDao
+import com.busymachines.commons.dao.SearchResult.toResult
+import com.busymachines.commons.dao.Versioned.toEntity
+import com.busymachines.commons.elasticsearch.ESIndex
+import com.busymachines.commons.elasticsearch.ESMapping
+import com.busymachines.commons.elasticsearch.ESRootDao
+import com.busymachines.commons.elasticsearch.ESType
+import com.busymachines.prefab.media.domain.HashedMedia
+import com.busymachines.prefab.media.domain.MediaDomainJsonFormats.hashMediaFormat
 
 class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao with Logging {
 
   private val hasher = Hashing.md5
   private val encoding = BaseEncoding.base64Url
-  private implicit val hashMediaFormat = jsonFormat5(HashedMedia)
   private val dao = new ESRootDao[HashedMedia](index, ESType[HashedMedia]("media", MediaMapping))
 
   def retrieveAll: Future[List[Media]] =
