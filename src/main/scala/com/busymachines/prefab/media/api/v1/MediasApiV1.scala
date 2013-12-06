@@ -7,27 +7,64 @@ import com.busymachines.prefab.media.db.MediaDao
 import com.busymachines.prefab.party.api.v1.PartyApiV1Directives
 import com.busymachines.prefab.media.api.v1.model.MediaApiV1JsonFormats
 import com.busymachines.prefab.media.api.v1.model.MediaInput
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.implicits.richString
+import com.busymachines.commons.implicits.richFuture
+import com.busymachines.commons.domain.Media
+import com.busymachines.commons.domain.MimeType
+import com.busymachines.commons.domain.MimeTypes
+import com.busymachines.commons.domain.Id
+import spray.http.MediaType
+import com.busymachines.commons.EntityNotFoundException
+import spray.http.HttpEntity
 
 class MediasApiV1(mediaDao: MediaDao, authenticator: UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with MediaApiV1Directives {
+
+  private def decodeWebBase64(src: String): Option[Array[Byte]] = {
+    val base64 = "data:(.*);base64,(.*)".r
+    src match {
+      case base64(mimetype, data) => Some(data.decodeBase64)
+      case _ => {
+        None
+      }
+    }
+  }
+
   val route =
     path("medias") {
       authenticate(authenticator) { implicit securityContext =>
-        get {
-          complete {
-            "OK"
-          }
-        } ~
           post {
             entity(as[MediaInput]) { mediaInput =>
               complete {
-                "OK"
-                //decodeWebBase64(entity.data).map(fdcManager.importPharmaCon(entity.name.getOrElse("The imported file must have a name."), _)).getOrElse(throw new Exception(s"The uploaded data could not be converted from base64"))
+                mediaDao.store(MimeTypes.fromResourceName(mediaInput.name.getOrElse(throw new Exception("The file must have a name."))), mediaInput.name, decodeWebBase64(mediaInput.data).getOrElse(throw new Exception("The file data could not be properly web base64 decoded."))) map (_.id.value)
               }
             }
           }
       }
-    }
+    } ~
+    path("medias" / MatchId[Media]) { mediaId =>
+        delete {
+          authenticate(authenticator) { implicit securityContext =>
+            complete {
+              mediaDao.delete(mediaId) map (_ => "OK")
+            }
+          }
+        } ~
+        get {
+            parameters(
+              'raw.as[Boolean]) { raw =>
+                mediaDao.retrieve(mediaId).await match {
+                  case None => complete {
+                    throw new EntityNotFoundException(mediaId.toString, "media")
+                  }
+                  case Some(media) => respondWithMediaType(MediaType.custom(media.mimeType.value)) {
+                    complete {
+                      HttpEntity(media.data)
+                    }
+                  }
+                }
+              }
+          }
+      }
 }
 
 
