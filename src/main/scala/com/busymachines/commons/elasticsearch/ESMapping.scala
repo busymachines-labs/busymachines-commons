@@ -55,7 +55,7 @@ trait ESMappingConstants {
   val Analyzed = PropertyOption("index", "analyzed")
   val NotAnalyzed = PropertyOption("index", "not_analyzed")
   val IncludeInAll = PropertyOption("include_in_all", "true")
-  def Nested[T](mapping: ESMapping[T]): Options[T] = Options(Nested, PropertyOption("nested", mapping))
+  def Nested[T](mapping: ESMapping[T]): Options[T] = Options(Nested, PropertyOption("properties", mapping))
   val _all = new ESProperty("_all", "_all", String)
 }
 
@@ -93,7 +93,7 @@ class ESMapping[A](implicit ct : ClassTag[A]) extends ESMappingConstants with Lo
         case ttl => PropertyOption("_ttl", Map("enabled" -> true))
       },
       Some(Stored),
-      Some(PropertyOption("nested", this))).flatten: _*)))))
+      Some(PropertyOption("properties", this))).flatten: _*)))))
   }
   
   implicit class RichName(name: String) extends RichMappedName(name, name)
