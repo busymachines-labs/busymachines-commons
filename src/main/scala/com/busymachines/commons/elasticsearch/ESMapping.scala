@@ -8,7 +8,12 @@ import com.busymachines.commons.domain.GeoPoint
 import spray.json.JsonWriter
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
+import com.busymachines.commons.domain.Money
 
+object MoneyMapping extends ESMapping[Money] {
+  val currency = "currency" as String & Analyzed
+  val amount = "amount" as Double & Analyzed
+}
 
 object ESMapping extends ESMappingConstants {
 

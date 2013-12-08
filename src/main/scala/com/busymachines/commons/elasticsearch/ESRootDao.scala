@@ -85,10 +85,10 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  // TODO : Fix this to take care of the general case of nested facets : http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html#_all_nested_matching_root_documents
+  // TODO : Investigate if this is generic enough : http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html#_all_nested_matching_root_documents
   private def toESFacets(facets: Seq[Facet]): Map[Facet, FacetBuilder] =
     facets.map(facet => facet match {
-      case termFacet: ESTermFacet =>         
+      case termFacet: ESTermFacet =>
         val fieldList = termFacet.fields.map(_.toESPath)
         val firstFacetField = fieldList.head
         val pathComponents = (firstFacetField.split("\\.").toList)
@@ -96,10 +96,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
           case s if s <= 1 => FacetBuilders.termsFacet(termFacet.name)
           case s if s > 1 => FacetBuilders.termsFacet(termFacet.name).nested(pathComponents.head)
         }
+
         facet -> facetbuilder.size(termFacet.size).facetFilter(facet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).fields(fieldList: _*)
       case _ => throw new Exception(s"Unknown facet type")
     }).toMap
-
+    
   private def convertESFacetResponse(facets: Seq[Facet], response: org.elasticsearch.action.search.SearchResponse) =
     response.getFacets.facetsAsMap.entrySet.map { entry =>
       val facet = facets.collectFirst { case x if x.name == entry.getKey => x }.getOrElse(throw new Exception(s"The ES response contains facet ${entry.getKey} that were not requested"))
@@ -114,10 +115,12 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     criteria match {
       case criteria: ESSearchCriteria[T] =>
         val searchCriteria = criteria.toFilter
+       
         var request =
           client.javaClient.prepareSearch(index.name)
             .setTypes(t.name)
-            .setFilter(criteria.toFilter)
+            .setQuery(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), criteria.toFilter))
+            //.setFilter(criteria.toFilter)
             .setSearchType(SearchType.DFS_QUERY_AND_FETCH)
             .setFrom(page.from)
             .setSize(page.size)

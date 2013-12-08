@@ -7,7 +7,7 @@ import com.busymachines.commons.implicits.richStringSeq
 import com.busymachines.prefab.authentication.spray.AuthenticationDirectives
 import com.busymachines.prefab.party.api.v1.model.AuthenticationRequest
 import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
-import com.busymachines.prefab.party.api.v1.model.PartyApiJsonFormats._
+import com.busymachines.prefab.party.api.v1.model.PartyApiV1JsonFormats._
 import akka.actor.ActorSystem
 import spray.client.UnsuccessfulResponseException
 import spray.client.pipelining._
