@@ -8,11 +8,15 @@ import com.busymachines.prefab.party.domain.EmailAddress
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.domain.Address
 import com.busymachines.prefab.party.domain.User
+import com.busymachines.prefab.party.domain.Person
+import com.busymachines.prefab.party.domain.Company
 
 object PartyMapping extends ESMapping[Party] {
   val id = "id" -> "_id" as String & NotAnalyzed
+  val tenant = "tenant" as String & NotAnalyzed
   val owner = "owner" as String & NotAnalyzed
-  val name = "name" as String & Analyzed
+  val person = "person" as Nested(PersonMapping)
+  val company = "company" as Nested(CompanyMapping)
   val addresses = "addresses" as Nested(AddressMapping)
   val phoneNumbers = "phoneNumbers" as Nested(PhoneNumberMapping)
   val emailAddresses = "emailAddresses" as Nested(EmailMapping)
@@ -21,13 +25,25 @@ object PartyMapping extends ESMapping[Party] {
   val userRoles = "userRoles" as Nested(UserRoleMapping)
 }
 
+object PersonMapping extends ESMapping[Person] {
+  val firstName = "firstName" as String & NotAnalyzed
+  val middleName = "middleName" as String & NotAnalyzed
+  val lastName = "lastName" as String & NotAnalyzed
+}
+
+object CompanyMapping extends ESMapping[Company] {
+  val name = "name" as String & NotAnalyzed
+}
+
 object AddressMapping extends ESMapping[Address] {
   val street = "street" as String & Analyzed
   val street2 = "street2" as String & Analyzed
   val postalCode = "postalCode" as String & NotAnalyzed
+  val houseNumber = "houseNumber" as String & NotAnalyzed
   val city = "city" as String & Analyzed
   val country = "country" as String & NotAnalyzed
   val kind = "kind" as String & NotAnalyzed
+  val comment = "comment" as String & Analyzed
 }
 
 object PhoneNumberMapping extends ESMapping[PhoneNumber] {
@@ -36,14 +52,16 @@ object PhoneNumberMapping extends ESMapping[PhoneNumber] {
 }
 
 object EmailMapping extends ESMapping[EmailAddress] {
-  val email = "email" as String & Analyzed
   val kind = "kind" as String & NotAnalyzed
+  val validated = "validated" as Boolean & NotAnalyzed
+  val emailAddress = "emailAddress" as String & Analyzed
 }
 
 object RelatedPartyMapping extends ESMapping[RelatedParty] {
   val relatedParty = "relatedParty" as String & NotAnalyzed
   val relatedPartyAlias = "relatedPartyAlias" as String & NotAnalyzed
-  val relationType = "relationType" as String & NotAnalyzed
+  val kind = "kind" as String & NotAnalyzed
+  val role = "role" as String & NotAnalyzed
 }
 
 object UserMapping extends ESMapping[User] {
@@ -56,7 +74,6 @@ object UserMapping extends ESMapping[User] {
   val phoneNumbers = "phoneNumbers" as Nested(PhoneNumberMapping)
   val emailAddresses = "emailAddresses" as Nested(EmailMapping)
   val roles = "roles" as String & NotAnalyzed
-  val logins = "logins" as String & NotAnalyzed
 }
 
 object UserRoleMapping extends ESMapping[UserRole] {

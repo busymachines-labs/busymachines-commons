@@ -38,9 +38,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   if (CommonConfig.devmode)
     info("Resources are read from source folders (devmode)")
 
-  val route = route2("")
-  
-  def route2(nonPrefix: String) =
+  def route =
     get {
       path(Rest) {
         path =>

@@ -57,8 +57,15 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   // Add mapping.
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
-    debug(s"Schema for ${index.name}/${t.name}: $mappingConfiguration")
-    client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
+    try {
+      client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
+      debug(s"Schema for ${index.name}/${t.name}: $mappingConfiguration")
+    }
+    catch {
+      case e : Throwable =>
+      error(s"Invalid schema for ${index.name}/${t.name}: $mappingConfiguration", e)
+      throw e
+    }
   }
 
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
@@ -84,7 +91,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       case termFacet: ESTermFacet =>         
         val fieldList = termFacet.fields.map(_.toESPath)
         val firstFacetField = fieldList.head
-        val pathComponents = (firstFacetField.split("\\.") toList)
+        val pathComponents = (firstFacetField.split("\\.").toList)
         val facetbuilder = pathComponents.size match {
           case s if s <= 1 => FacetBuilders.termsFacet(termFacet.name)
           case s if s > 1 => FacetBuilders.termsFacet(termFacet.name).nested(pathComponents.head)

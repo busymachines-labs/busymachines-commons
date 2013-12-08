@@ -7,6 +7,7 @@ import java.net.Inet4Address
 import com.busymachines.commons.domain.GeoPoint
 import spray.json.JsonWriter
 import scala.concurrent.duration.Duration
+import scala.reflect.ClassTag
 
 
 object ESMapping extends ESMappingConstants {
@@ -49,45 +50,68 @@ trait ESMappingConstants {
   val Analyzed = PropertyOption("index", "analyzed")
   val NotAnalyzed = PropertyOption("index", "not_analyzed")
   val IncludeInAll = PropertyOption("include_in_all", "true")
-  def Nested[T](properties: Properties[T]): Options[T] = Options(Nested, PropertyOption("properties", properties))
-  def Nested[T](mapping: ESMapping[T]): Options[T] = Nested(mapping.allProperties)
+  def Nested[T](mapping: ESMapping[T]): Options[T] = Options(Nested, PropertyOption("nested", mapping))
   val _all = new ESProperty("_all", "_all", String)
 }
 
-class ESMapping[A] extends ESMappingConstants with Logging {
+class ESMapping[A](implicit ct : ClassTag[A]) extends ESMappingConstants with Logging {
 
   import ESMapping._
 
-  private var _allProperties: Properties[A] = Properties(Nil)
+  val caseClassFields : Map[String, CaseClassField] = CaseClassFields.of[A]
+  
+  private var _allPropertiesVar = Properties[A](Nil)
+
+  def _allProperties = _allPropertiesVar.properties
+  def _propertiesByName = _allPropertiesVar.propertiesByName
+  def _propertiesByMappedName = _allPropertiesVar.propertiesByMappedName
 
   protected var ttl : Option[Duration] = None // enable ttl without a default ttl value: Some(Duration.Inf)
   
-  def allProperties = _allProperties
+  def _mappingName = getClass.getName.stripSuffix("$")
 
   def mappingConfiguration(doctype: String): String =
     print(mapping(doctype), "\n")
 
-  def mapping(doctype: String) = Properties[Any](List(new ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
-    Some(PropertyOption("_all", Map("enabled" -> true))),
-    Some(PropertyOption("_source", Map("enabled" -> true))),
-    ttl map {
-      case ttl if ttl.isFinite => PropertyOption("_ttl", Map("enabled" -> true, "default" -> ttl.toMillis))
-      case ttl => PropertyOption("_ttl", Map("enabled" -> true))
-    },
-    Some(Stored),
-    Some(PropertyOption("properties", allProperties))).flatten: _*)))))
-
+  def mapping(doctype: String) =  {
+    
+    val errors = check
+    if (errors.nonEmpty) {
+      throw new Exception(s"Mapping errors found:\n  ${errors.mkString("\n  ")}")
+    }
+    
+    Properties[Any](List(new ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
+      Some(PropertyOption("_all", Map("enabled" -> true))),
+      Some(PropertyOption("_source", Map("enabled" -> true))),
+      ttl map {
+        case ttl if ttl.isFinite => PropertyOption("_ttl", Map("enabled" -> true, "default" -> ttl.toMillis))
+        case ttl => PropertyOption("_ttl", Map("enabled" -> true))
+      },
+      Some(Stored),
+      Some(PropertyOption("nested", this))).flatten: _*)))))
+  }
+  
   implicit class RichName(name: String) extends RichMappedName(name, name)
 
   implicit class RichMappedName(name: (String, String)) {
     def as[T](options: Options[T]) = add(new ESProperty[A, T](name._1, name._2, options))
     def add[T](property: ESProperty[A, T]) = {
-      _allProperties = Properties(_allProperties.properties :+ property)
+      _allPropertiesVar = Properties(_allPropertiesVar.properties :+ property)
       property
     }
     implicit def toProperty = new ESProperty(name._1, name._2, Options())
   }
-  def print(obj: Any, indent: String): String = obj match {
+  
+  private def check : Iterable[String] = {
+    caseClassFields.keys.flatMap { fieldName =>
+      if (_propertiesByName.contains(fieldName)) Seq.empty
+      else Seq(s"Field '$fieldName' is not defined in mapping ${_mappingName}")
+    } ++ _allProperties.flatMap(_.options.options).map(_.value).collect { case es : ESMapping[_] => es.check }.flatten
+  }
+  
+  private def print(obj: Any, indent: String): String = obj match {
+    case mapping: ESMapping[A] =>
+      print(mapping._allPropertiesVar, indent)
     case properties: Properties[A] =>
       properties.properties.map(p => "\"" + p.mappedName + "\": " + print(p.options, indent + "    ")).mkString(indent + "{" + indent + "  ", "," + indent + "  ", indent + "}")
     case options: Options[_] =>
@@ -106,7 +130,7 @@ object ESProperty {
 
 class ESProperty[A, T](val name: String, val mappedName: String, val options: ESMapping.Options[T]) 
 extends PathElement[A, T](mappedName, options.options.contains(ESMapping.Nested)) {
-  val nestedProperties = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping.Properties[A]])
+  val nested = options.options.find(_.name == "nested").map(_.value.asInstanceOf[ESMapping[A]])
 
   def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
 

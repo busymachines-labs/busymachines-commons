@@ -15,7 +15,6 @@ import com.busymachines.commons.dao.VersionConflictException
 
 private[elasticsearch] object SequenceMapping extends ESMapping[Sequence] {
   val id = "id" -> "_id" as String & NotAnalyzed
-  val name = "name" as String & Analyzed
   val value = "value" as Long
 }
 
