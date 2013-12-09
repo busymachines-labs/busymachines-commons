@@ -10,7 +10,10 @@ import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.commons.elasticsearch.implicits.richJsValue
 
 import spray.json.pimpAny
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class RichJsValueTest extends FlatSpec with CommonJsonFormats {
 
   case class Property(
@@ -46,7 +49,7 @@ class RichJsValueTest extends FlatSpec with CommonJsonFormats {
 
   "RichJSValue" should "map fields of one non-nested object according to the mapping" in {
     val entity = Item(id = itemId, name = "item1").toJson.mapToES(ItemMapping)
-    assert(entity.toString === """{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2090","name":"item1","item_properties":[]}""")
+    assert(entity.toString === """{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2090","name":"item1"}""")
   }
 
   it should "map fields for nested objects according to the mapping" in {
