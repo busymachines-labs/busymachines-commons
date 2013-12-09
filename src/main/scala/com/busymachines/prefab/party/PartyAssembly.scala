@@ -34,11 +34,11 @@ trait PartyAssembly {
   // components
   lazy val sequenceDao = new ESSequenceDao(sequenceIndex)
   lazy val partyDao = new PartyDao(partyIndex)
-  lazy val partyCache = new PartyCache(partyDao)
   lazy val userDao = new UserDao(partyDao)
   lazy val credentialsDao = new ESCredentialsDao(partyIndex)
   lazy val authenticationDao = new ESAuthenticationDao(authenticationIndex)
   lazy val userAuthenticator = new UserAuthenticator(authenticationConfig, partyDao, credentialsDao, authenticationDao)
+  lazy val partyCache = new PartyCache(partyDao, userAuthenticator)
   lazy val partyManager = new PartyManager(partyDao, userDao, credentialsDao, userAuthenticator)
   lazy val authenticationApiV1 = new AuthenticationApiV1(userAuthenticator)
   lazy val usersApiV1 = new UsersApiV1(partyManager, userAuthenticator)

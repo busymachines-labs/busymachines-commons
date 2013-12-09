@@ -38,8 +38,14 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
    * Use this method when a security context is need, but there is no physical user that
    * goes through the login process. For example, a batch process.
    */
-  def securityContextFor(partyId : Id[Party], userId : Id[User]) = {
-    
+  def securityContextFor(partyId : Id[Party], userId : Id[User]) : Future[SecurityContext] = {
+    partyDao.retrieve(partyId).map { 
+      case Some(Versioned(party, version)) =>
+        val user = party.users.find(_.id == userId).getOrElse(throw new Exception(s"User $userId not found"))
+        val permissions = party.userRoles.filter(role => user.roles.contains(role.id)).flatMap(_.permissions).toSet
+        SecurityContext(tenantId = party.tenant, party.id, userId, party.describe, user.describe, Id(""), permissions)
+      case _ => throw new Exception(s"Party $partyId not found")
+    }    
   }
   
   override def devmodeSecurityContext(devmodeAuth : Option[String]) : Option[SecurityContext] =
