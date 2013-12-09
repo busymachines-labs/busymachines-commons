@@ -135,7 +135,7 @@ object ESProperty {
 
 class ESProperty[A, T](val name: String, val mappedName: String, val options: ESMapping.Options[T]) 
 extends PathElement[A, T](mappedName, options.options.contains(ESMapping.Nested)) {
-  val nested = options.options.find(_.name == "nested").map(_.value.asInstanceOf[ESMapping[A]])
+  val nested = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping[A]])
 
   def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
 

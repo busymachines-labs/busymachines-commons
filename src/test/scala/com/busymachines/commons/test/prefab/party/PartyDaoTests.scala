@@ -16,7 +16,10 @@ import com.busymachines.prefab.party.domain.Tenant
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.domain.Address
 import com.busymachines.prefab.party.domain.Party
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class PartyDaoTests extends FlatSpec with Logging {
 
   val esIndex = new EmptyESTestIndex(getClass, new DoNothingEventSystem)
