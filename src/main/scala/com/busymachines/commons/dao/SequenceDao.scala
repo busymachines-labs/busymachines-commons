@@ -6,7 +6,7 @@ import com.busymachines.commons.domain.Id
 
 trait SequenceDao extends RootDao[Sequence] {
 
-  def current(sequence : Id[Sequence]) : Future[Long] 
-  def next(sequence : Id[Sequence], incrementValue : Long = 1, retries : Int = 50): Future[Long]  
+  def current(sequence : Id[Sequence]): Future[Long] 
+  def next(sequence : Id[Sequence], incrementValue : Long = 1, minimumValue : Long = 1, retries : Int = 50): Future[Long]  
 
 }

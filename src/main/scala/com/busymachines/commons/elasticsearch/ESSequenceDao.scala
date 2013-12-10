@@ -24,8 +24,8 @@ class ESSequenceDao(index: ESIndex, `type` : String = "sequence")(implicit ec: E
   def current(sequence : Id[Sequence]) : Future[Long] = 
     retrieve(sequence).map(_.map(_.value).getOrElse(0))
     
-  def next(sequence : Id[Sequence], incrementValue : Long = 1, retries : Int = 50): Future[Long] = 
-    retry(increment(sequence,incrementValue), retries, 0)
+  def next(sequence : Id[Sequence], incrementValue : Long, minimumValue : Long, retries : Int): Future[Long] = 
+    retry(increment(sequence, incrementValue, minimumValue), retries, 0)
 
   private def retry(future: => Future[Long], maxAttempts: Int, attempt: Int): Future[Long] = 
     future.recoverWith {
@@ -35,7 +35,7 @@ class ESSequenceDao(index: ESIndex, `type` : String = "sequence")(implicit ec: E
         else retry(future, maxAttempts, attempt + 1)
     }
 
-  private def increment(sequence: Id[Sequence], incrementValue:Long=1): Future[Long] = 
-    getOrCreateAndModify(sequence, false)(Sequence(sequence, 0))(s => s.copy(value = s.value + incrementValue))
+  private def increment(sequence: Id[Sequence], incrementValue: Long, minimumValue : Long): Future[Long] = 
+    getOrCreateAndModify(sequence, false)(Sequence(sequence, 0))(s => s.copy(value = Math.min(s.value + incrementValue, minimumValue)))
     .map (_.entity.value)
 }
