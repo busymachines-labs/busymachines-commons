@@ -36,6 +36,6 @@ class ESSequenceDao(index: ESIndex, `type` : String = "sequence")(implicit ec: E
     }
 
   private def increment(sequence: Id[Sequence], incrementValue: Long, minimumValue : Long): Future[Long] = 
-    getOrCreateAndModify(sequence, false)(Sequence(sequence, 0))(s => s.copy(value = Math.min(s.value + incrementValue, minimumValue)))
+    getOrCreateAndModify(sequence, false)(Sequence(sequence, 0))(s => s.copy(value = Math.max(s.value + incrementValue, minimumValue)))
     .map (_.entity.value)
 }
