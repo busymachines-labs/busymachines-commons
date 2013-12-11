@@ -44,7 +44,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
         path =>
           val (doc, ext, shouldCache, shouldProcess) = extension(path) match {
             case "" => (rootDocument, extension(rootDocument), false, true)
-            case ext => (path, ext, false, false)
+            case ext => (path, ext, true, false)
           }
           val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
           if (mediaType.binary) {
