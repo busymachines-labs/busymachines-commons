@@ -55,7 +55,7 @@ class RichJsValueTest extends FlatSpec with CommonJsonFormats {
   it should "map fields for nested objects according to the mapping" in {
     val entity = Item(id = itemId, name = "item1", properties =
       Property(id = peopertyId1, mandatory = true, name = "p1") :: Property(id = peopertyId2, mandatory = false, name = "p2") :: Nil).toJson.mapToES(ItemMapping)
-      assert(entity.toString === """{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2090","name":"item1","item_properties":[{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2091","mandatory":true,"name":"p1","tag_counts":{}},{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2092","mandatory":false,"name":"p2","tag_counts":{}}]}""")
+      assert(entity.toString === """{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2090","name":"item1","item_properties":[{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2091","mandatory":true,"name":"p1"},{"_id":"64e9d0ee-3954-4d73-acfe-8237e01e2092","mandatory":false,"name":"p2"}]}""")
   }
 
   it should "map fields for nested objects with map type value according to the mapping" in {
