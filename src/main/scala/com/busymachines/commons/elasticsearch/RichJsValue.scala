@@ -41,6 +41,8 @@ object RichJsValue {
                 case None => jsValue
               }
               mappedJsValue match {
+                case JsString(s) if s.isEmpty => None
+                case JsObject(fields) if fields.isEmpty => None
                 case array : JsArray if array.elements.isEmpty => None
                 case jsValue => Some(property.mappedName -> jsValue)
               }
@@ -84,6 +86,7 @@ object RichJsValue {
                 case Some(c) if classOf[scala.collection.Map[_, _]].isAssignableFrom(c) => Some(property.name -> JsObject())
                 case Some(c) if classOf[scala.collection.Iterable[_]].isAssignableFrom(c) => Some(property.name -> JsArray())
                 case Some(c) if classOf[Option[_]].isAssignableFrom(c) => None
+                case _ if property.`type` == "string" => Some(property.name -> JsString(""))
                 case _ => throw new Exception(s"No value found for mandatory property '${property.mappedName}' in mapping '${mapping._mappingName}' in $value")
               } 
           }

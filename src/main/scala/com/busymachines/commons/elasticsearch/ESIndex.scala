@@ -40,7 +40,7 @@ class ESIndex(_client: ESClient, val name : String, eventBus:EventBus) {
   }
 
   def refresh {
-    _client.admin.indices().refresh(new RefreshRequest())
+    _client.admin.indices().refresh(new RefreshRequest()).actionGet
   }
   
   def drop {
