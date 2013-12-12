@@ -11,5 +11,6 @@ object Page {
     }
   def first(size: Int) = new Page(0, size)
   val all = new Page(0, 99999999)
+  val none = new Page(0, 0)
 }
 case class Page(from: Int, size: Int)

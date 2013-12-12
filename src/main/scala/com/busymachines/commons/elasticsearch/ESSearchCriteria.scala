@@ -9,6 +9,7 @@ import com.busymachines.commons.domain.GeoPoint
 import org.elasticsearch.common.unit.DistanceUnit
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.index.query.QueryBuilders
+import org.joda.time.DateTime
 
 trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def toFilter: FilterBuilder
@@ -83,8 +84,24 @@ object ESSearchCriteria {
     def prepend[A0](path : Path[A0, A]) = GeoDistance(path ++ this.path, geoPoint, radiusInKm)
   }
 
+  case class Range[A, T, V](path: Path[A, T], value: (V,V))(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
+    def toFilter = FilterBuilders.rangeFilter(path.toESPath).gt(value._1 match {
+      case theValue:DateTime => theValue.getMillis()
+      case theValue => theValue
+    }).lt(value._2 match {
+      case theValue:DateTime => theValue.getMillis()
+      case theValue => theValue
+    })
+    
+    def prepend[A0](path : Path[A0, A]) = Range(path ++ this.path, value)
+  }
+  
   case class Gt[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.rangeFilter(path.toESPath).gt(value)
+    def toFilter = FilterBuilders.rangeFilter(path.toESPath).gt(value match {
+      case theValue:DateTime => theValue.getMillis()
+      case theValue => theValue
+    })
+    
     def prepend[A0](path : Path[A0, A]) = Gt(path ++ this.path, value)
   }
 
@@ -94,7 +111,11 @@ object ESSearchCriteria {
   }
 
   case class Gte[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.rangeFilter(path.toESPath).gte(value)
+    def toFilter = FilterBuilders.rangeFilter(path.toESPath).gte(value match {
+      case theValue:DateTime => theValue.getMillis()
+      case theValue => theValue
+    })
+    
     def prepend[A0](path : Path[A0, A]) = Gte(path ++ this.path, value)
   }
 
@@ -104,7 +125,11 @@ object ESSearchCriteria {
   }
 
   case class Lt[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.rangeFilter(path.toESPath).lt(value)
+    def toFilter = FilterBuilders.rangeFilter(path.toESPath).lt(value match {
+      case theValue:DateTime => theValue.getMillis()
+      case theValue => theValue
+    })
+    
     def prepend[A0](path : Path[A0, A]) = Lt(path ++ this.path, value)
   }
 
@@ -114,7 +139,11 @@ object ESSearchCriteria {
   }
 
   case class Lte[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.rangeFilter(path.toESPath).lte(value)
+    def toFilter = FilterBuilders.rangeFilter(path.toESPath).lte(value match {
+      case theValue:DateTime => theValue.getMillis()
+      case theValue => theValue
+    })
+    
     def prepend[A0](path : Path[A0, A]) = Lte(path ++ this.path, value)
   }
 
@@ -182,6 +211,9 @@ case class Path[A, T](elements: List[PathElement[_, _]]) {
   def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Eq(this, value))
   def neq(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FNeq(this, path))
   def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Neq(this, value))
+
+  def range[V](value: (V,V))(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Range(this, value))
+  
   def gt(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FGt(this, path))
   def gt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Gt(this, value))
   def gte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Gte(this, value))

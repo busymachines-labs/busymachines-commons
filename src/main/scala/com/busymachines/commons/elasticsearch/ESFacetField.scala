@@ -12,3 +12,5 @@ object TermfacetOrders extends Enumeration {
 }
 
 case class ESTermFacet(name: String, searchCriteria:SearchCriteria[_], fields: List[Path[_, _]], size: Int = 10, ordering: TermfacetOrders.Value = TermfacetOrders.termDesc) extends Facet
+
+case class ESHistoryFacet(name:String, searchCriteria:SearchCriteria[_], keyScript:Option[String], valueScript:Option[String], interval:Option[Long]=None, size: Int = Int.MaxValue, ordering: TermfacetOrders.Value = TermfacetOrders.termDesc) extends Facet

@@ -21,11 +21,13 @@ import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Page
 import spray.json.JsArray
 import spray.json.RootJsonWriter
-import scala.concurrent.duration.{Duration, FiniteDuration, Deadline}
+import scala.concurrent.duration.{ Duration, FiniteDuration, Deadline }
 import org.joda.time.LocalDate
 import scala.collection.immutable.HashMap
 import com.busymachines.commons.dao.Facet
 import com.busymachines.commons.dao.FacetValue
+import com.busymachines.commons.dao.TermFacetValue
+import com.busymachines.commons.dao.HistogramFacetValue
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -40,7 +42,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
       case _ => deserializationError("Currency expected")
     }
   }
-  
+
   def enumFormat[E <: Enumeration](enum: E) = new JsonFormat[E#Value] {
     def write(value: E#Value) = JsString(value.toString)
     def read(value: JsValue): E#Value = value match {
@@ -61,9 +63,9 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   /**
    * String format for case classes that wrap a single string.
    */
-  def stringWrapperFormat[A <: Product](construct: String => A) : JsonFormat[A] = 
+  def stringWrapperFormat[A <: Product](construct: String => A): JsonFormat[A] =
     stringFormat(construct.getClass.getSimpleName, construct, _.productElement(0).toString)
-  
+
   def stringFormat[A](type_ : String, fromStr: String => A, toStr: A => String = (a: A) => a.toString) = new JsonFormat[A] {
     def write(value: A) = JsString(toStr(value))
     def read(value: JsValue): A = value match {
@@ -92,7 +94,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
 
   val jodaDateTimeParser = ISODateTimeFormat.dateOptionalTimeParser.withZoneUTC
   val jodaDateTimeParserFormatter = ISODateTimeFormat.dateTime.withZoneUTC
-  
+
   implicit val jodaDateTimeFormat = new JsonFormat[DateTime] {
     def write(value: DateTime) = JsString(jodaDateTimeParserFormatter.print(value))
     def read(value: JsValue): DateTime = value match {
@@ -106,7 +108,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   }
 
   implicit val jodaDurationFormat = new JsonFormat[org.joda.time.Duration] {
-    def write(value: org.joda.time.Duration) = JsString(value.getMillis()+"")
+    def write(value: org.joda.time.Duration) = JsString(value.getMillis() + "")
     def read(value: JsValue): org.joda.time.Duration = value match {
       case JsString(s) =>
         try org.joda.time.Duration.parse(s)
@@ -116,7 +118,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
       case s => deserializationError("Couldn't convert '" + s + "' to a duration")
     }
   }
-  
+
   implicit val geoPointFormat = new JsonFormat[GeoPoint] {
     def write(value: GeoPoint) = JsObject(
       "lat" -> JsNumber(value.lat),
@@ -139,7 +141,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
   }
 
   implicit val unitOfMeasureFormat = stringFormat("UnitOfMeasure", s => UnitOfMeasure(Nil))
-  
+
   implicit val localeJsonFormat = stringFormat[Locale]("Locale", _ match {
     case "" => Locale.ROOT
     case tag => Locale.forLanguageTag(tag)
@@ -147,14 +149,15 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     case locale if locale == Locale.ROOT => ""
     case locale => locale.getLanguage
   })
-    
+
   implicit def idFormat[A] = stringWrapperFormat(Id[A])
   implicit def mimeTypeFormat = stringWrapperFormat(MimeType)
   implicit val mediaFormat = jsonFormat4(Media)
   implicit val moneyFormat = jsonFormat2(Money)
-  
-  implicit val facetValueFormat = jsonFormat2(FacetValue)
-  
+
+  implicit val termFacetValueFormat = jsonFormat2(TermFacetValue)
+  implicit val histogramValueFormat = jsonFormat7(HistogramFacetValue)
+
   implicit val durationFormat = new JsonFormat[FiniteDuration] {
     def write(value: FiniteDuration) = JsObject(
       "length" -> JsNumber(value.length),
@@ -168,19 +171,23 @@ trait CommonJsonFormats extends DefaultJsonProtocol {
     }
   }
 
-  implicit def versionedFormat[T <: HasId[T]](implicit tFormat : JsonFormat[T]) = jsonFormat2(Versioned[T])
-  
-  class SearchResultFormat[T <: HasId[T]](fieldName : String)(implicit tFormat : JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
+  implicit def versionedFormat[T <: HasId[T]](implicit tFormat: JsonFormat[T]) = jsonFormat2(Versioned[T])
+
+  class SearchResultFormat[T <: HasId[T]](fieldName: String)(implicit tFormat: JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
     def write(result: SearchResult[T]) = {
       val jsonResult = JsArray(result.result.map(_.entity).map(tFormat.write(_)))
-      val jsonFacetResult = JsObject(result.facets.map(facet => facet._1 -> JsArray((facet._2).map(value=> facetValueFormat.write(value)))))
+      val jsonFacetResult = JsObject(result.facets.map(facet => facet._1 -> JsArray((facet._2).map(value =>
+        value match {
+          case v: HistogramFacetValue => histogramValueFormat.write(v)
+          case v: TermFacetValue => termFacetValueFormat.write(v)
+        }))))
       result.totalCount match {
         case Some(totalCount) => JsObject(fieldName -> jsonResult, "totalCount" -> JsNumber(totalCount), "facets" -> jsonFacetResult)
         case None => JsObject(fieldName -> jsonResult)
       }
-    } 
+    }
   }
-  
+
   implicit val sequenceFormat = jsonFormat2(Sequence)
 
 }

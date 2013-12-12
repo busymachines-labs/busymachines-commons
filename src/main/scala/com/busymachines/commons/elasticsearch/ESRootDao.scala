@@ -44,6 +44,9 @@ import org.elasticsearch.common.xcontent.XContentHelper
 import org.elasticsearch.common.bytes.BytesReference
 import org.elasticsearch.transport.RemoteTransportException
 import scala.concurrent.duration.Duration
+import org.elasticsearch.search.facet.histogram.HistogramFacet
+import com.busymachines.commons.dao.HistogramFacetValue
+import com.busymachines.commons.dao.TermFacetValue
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -85,9 +88,16 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  // TODO : Investigate if this is generic enough : http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html#_all_nested_matching_root_documents
   private def toESFacets(facets: Seq[Facet]): Map[Facet, FacetBuilder] =
     facets.map(facet => facet match {
+      case historyFacet: ESHistoryFacet =>
+        (historyFacet.keyScript,historyFacet.valueScript,historyFacet.interval) match {
+          case (Some(keyScript),Some(valueScript),Some(interval)) => 
+          	facet ->  FacetBuilders.histogramScriptFacet(historyFacet.name).facetFilter(facet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).keyScript(keyScript).valueScript(valueScript).interval(interval)	
+          case _ => throw new Exception(s"Only script histogram facets are supported for now")	
+        }
+    
+      // TODO : Investigate if this is generic enough : http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html#_all_nested_matching_root_documents
       case termFacet: ESTermFacet =>
         val fieldList = termFacet.fields.map(_.toESPath)
         val firstFacetField = fieldList.head
@@ -105,8 +115,18 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     response.getFacets.facetsAsMap.entrySet.map { entry =>
       val facet = facets.collectFirst { case x if x.name == entry.getKey => x }.getOrElse(throw new Exception(s"The ES response contains facet ${entry.getKey} that were not requested"))
       entry.getValue match {
+        case histogramFacet: HistogramFacet =>
+          facet.name -> histogramFacet.getEntries.map(histogramEntry => 
+            HistogramFacetValue(key = histogramEntry.getKey(),
+			  count = histogramEntry.getCount(),
+			  min = histogramEntry.getMin(),
+			  max = histogramEntry.getMax(),
+			  total = histogramEntry.getTotal(),
+			  total_count = histogramEntry.getTotalCount(),
+			  mean = histogramEntry.getMean())
+          ).toList
         case termFacet: TermsFacet =>
-          facet.name -> termFacet.getEntries.map(termEntry => FacetValue(termEntry.getTerm.string, termEntry.getCount)).toList
+          facet.name -> termFacet.getEntries.map(termEntry => TermFacetValue(termEntry.getTerm.string, termEntry.getCount)).toList
         case _ => throw new Exception(s"The ES reponse contains unknown facet ${entry.getValue}")
       }
     }.toMap
