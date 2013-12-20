@@ -3,9 +3,9 @@ package com.busymachines.commons.spray
 import akka.actor.ActorRefFactory
 import spray.http.StatusCodes
 
-class ApiDocService(resourceRoot : List[String] = "apidoc" :: Nil)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService {
-  val prefix = resourceRoot match {
-    case Nil => ""
+class ApiDocService(resourceRoot : String = "apidoc")(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService {
+  val prefix = resourceRoot.split("\\.").filter(_.nonEmpty) match {
+    case list if list.isEmpty => ""
     case list => list.mkString("", "/", "/")
   }
   val route = {

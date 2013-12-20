@@ -30,6 +30,7 @@ import com.busymachines.commons.ProfilingUtils.time
 
 class UiService(resourceRoot: String = "public", rootDocument: String = "index.html")(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService {
 
+  private val root = resourceRoot.split("\\.").filter(_.nonEmpty).mkString("/")
   private val pattern = """(['\"])([/a-zA-Z_0-9 \.]*)-\?\?\?.([a-zA-Z_0-9]*)(['\"])""".r
   private val cacheTime: Duration = 7 days
   private val cacheTimeSecs = cacheTime.toSeconds
@@ -105,12 +106,12 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
 
   lazy val resourceSourceRoots: List[File] = {
     val dirs = new File(".") :: new File(".").listFiles().filter(_.isDirectory()).toList
-    dirs.map(new File(_, "src/main/resources/" + resourceRoot)).filter(_.exists)
+    dirs.map(new File(_, "src/main/resources/" + root)).filter(_.exists)
   }
 
   def loadResource(basePath: String, relativePath: String, classLoader: ClassLoader): Option[Array[Byte]] = {
     val path = resolve(basePath, relativePath)
-    def readFromClassPath = Option(classLoader.getResource(resourceRoot + "/" + path)).map(resource => FileUtils.readAllBytes(resource.openStream))
+    def readFromClassPath = Option(classLoader.getResource(root + "/" + path)).map(resource => FileUtils.readAllBytes(resource.openStream))
     def readFromSourceRoots = resourceSourceRoots.collectFirst((f: File) => Option(FileUtils.readAllBytes(new File(f, path))))
     if (CommonConfig.devmode)
       readFromSourceRoots orElse readFromClassPath

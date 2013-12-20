@@ -10,6 +10,8 @@ import scala.concurrent.ExecutionContext
 import java.net.URL
 import scala.xml.factory.XMLLoader
 import scala.xml.Elem
+import scala.collection.{Map, Iterable}
+import scala.AnyVal
 
 package object implicits extends CommonImplicits
 
@@ -18,6 +20,8 @@ trait CommonImplicits {
   implicit def richConfig(config : Config) = new RichConfig(config)
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
   implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
+  implicit def richIterableMap[K, V, I <: Iterable[V]](map : Map[K, I]) = new RichIterableMap[K, V, I](map)
+  implicit def richListMap[K, V](map : Map[K, List[V]]) = new RichIterableMap[K, V, List[V]](map)
   implicit def richStringSeq(seq : Seq[String]) = new RichStringSeq(seq)
   implicit def richString(s : String) = new RichString(s)
   implicit def richByteArray(bytes : Array[Byte]) = new RichByteArray(bytes)

@@ -18,7 +18,7 @@ object CommonConfigFactory {
 
 object CommonConfig extends CommonConfig("") with Logging {
 
-  val devmode = booleanOption("busymachines.devmode") getOrElse false
+  val devmode = booleanOption("devmode") getOrElse false
   
   if (devmode) {
     info("Starting in development mode.")

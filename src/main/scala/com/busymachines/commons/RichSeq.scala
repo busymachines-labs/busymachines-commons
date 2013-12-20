@@ -14,7 +14,7 @@ class RichSeq[A](val seq: Seq[A]) extends AnyVal {
     val newSeq = seq.toList.map {
       case a if matches(a) =>
         val modA = modify(a)
-        found = Some(modA);
+        found = Some(modA)
         changed = a != modA
         modA
       case a =>
