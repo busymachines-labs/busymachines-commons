@@ -29,6 +29,7 @@ trait CommonImplicits {
   implicit def richXml(xml : XMLLoader[Elem]) = new RichXml(xml)
   implicit def richFunction[A, B](f : A => Option[B]) = new RichFunction(f)
   implicit def richFuture[A](f : Future[A]) = new RichFuture[A](f)
+  implicit def richFutureType[A](f : Future.type) = new RichFutureType(f)
   implicit def richAny[A](a : A) = new RichAny[A](a)
   implicit def convertToUnit(f : Future[_])(implicit ec : ExecutionContext) : Future[Unit] = f.map(_ => Unit)
 }
