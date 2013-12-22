@@ -13,7 +13,7 @@ import scala.concurrent.duration.Duration
  */
 trait RootDao[T <: HasId[T]] extends Dao[T] {
 
-  def retrieveAll(): Future[List[Versioned[T]]]
+  def retrieveAll: Future[List[Versioned[T]]]
 
   def create(entity: T, reindex : Boolean = true, ttl: Option[Duration] = None): Future[Versioned[T]]
 
