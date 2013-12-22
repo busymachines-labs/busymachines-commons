@@ -89,11 +89,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   }
 
   private def toESFacets(facets: Seq[Facet]): Map[Facet, FacetBuilder] =
-    facets.map(facet => facet match {
+    facets.map {
       case historyFacet: ESHistoryFacet =>
         (historyFacet.keyScript,historyFacet.valueScript,historyFacet.interval) match {
-          case (Some(keyScript),Some(valueScript),Some(interval)) => 
-          	facet ->  FacetBuilders.histogramScriptFacet(historyFacet.name).facetFilter(facet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).keyScript(keyScript).valueScript(valueScript).interval(interval)	
+          case (Some(keyScript),Some(valueScript),Some(interval)) =>
+            historyFacet ->  FacetBuilders.histogramScriptFacet(historyFacet.name).facetFilter(historyFacet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).keyScript(keyScript).valueScript(valueScript).interval(interval)
           case _ => throw new Exception(s"Only script histogram facets are supported for now")	
         }
     
@@ -101,15 +101,15 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       case termFacet: ESTermFacet =>
         val fieldList = termFacet.fields.map(_.toESPath)
         val firstFacetField = fieldList.head
-        val pathComponents = (firstFacetField.split("\\.").toList)
+        val pathComponents = firstFacetField.split("\\.").toList
         val facetbuilder = pathComponents.size match {
           case s if s <= 1 => FacetBuilders.termsFacet(termFacet.name)
           case s if s > 1 => FacetBuilders.termsFacet(termFacet.name).nested(pathComponents.head)
         }
 
-        facet -> facetbuilder.size(termFacet.size).facetFilter(facet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).fields(fieldList: _*)
+        termFacet -> facetbuilder.size(termFacet.size).facetFilter(termFacet.searchCriteria.asInstanceOf[ESSearchCriteria[_]].toFilter).fields(fieldList: _*)
       case _ => throw new Exception(s"Unknown facet type")
-    }).toMap
+    }.toMap
     
   private def convertESFacetResponse(facets: Seq[Facet], response: org.elasticsearch.action.search.SearchResponse) =
     response.getFacets.facetsAsMap.entrySet.map { entry =>
@@ -117,13 +117,13 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       entry.getValue match {
         case histogramFacet: HistogramFacet =>
           facet.name -> histogramFacet.getEntries.map(histogramEntry => 
-            HistogramFacetValue(key = histogramEntry.getKey(),
-			  count = histogramEntry.getCount(),
-			  min = histogramEntry.getMin(),
-			  max = histogramEntry.getMax(),
-			  total = histogramEntry.getTotal(),
-			  total_count = histogramEntry.getTotalCount(),
-			  mean = histogramEntry.getMean())
+            HistogramFacetValue(key = histogramEntry.getKey,
+			  count = histogramEntry.getCount,
+			  min = histogramEntry.getMin,
+			  max = histogramEntry.getMax,
+			  total = histogramEntry.getTotal,
+			  total_count = histogramEntry.getTotalCount,
+			  mean = histogramEntry.getMean)
           ).toList
         case termFacet: TermsFacet =>
           facet.name -> termFacet.getEntries.map(termEntry => TermFacetValue(termEntry.getTerm.string, termEntry.getCount)).toList
@@ -131,7 +131,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       }
     }.toMap
 
-  def reindexAll = {
+  def reindexAll() = {
     index.refresh
   }
     
@@ -162,13 +162,13 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
           request = request.addFacet(facet._2)
         }
 
-        debug(s"Search ${index.name}/${t.name}: ${request}")
+        debug(s"Search ${index.name}/${t.name}: $request")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
             Versioned(json.convertFromES(mapping), hit.version)
           }, Some(result.getHits.getTotalHits),
-            if (result.getFacets() != null) convertESFacetResponse(facets, result) else Map.empty)
+            if (result.getFacets != null) convertESFacetResponse(facets, result) else Map.empty)
         }
       case _ =>
         throw new Exception("Expected ElasticSearch search criteria")
@@ -207,7 +207,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   }
 
   def getOrCreateAndModify(id: Id[T], refreshAfterMutation: Boolean = true)(_create: => T)(_modify: T => T): Future[Versioned[T]] =
-    getOrCreate(id, false)(_create).flatMap(entity => update(entity.copy(entity = _modify(entity)), refreshAfterMutation))
+    getOrCreate(id, refreshAfterMutation = false)(_create).flatMap(entity => update(entity.copy(entity = _modify(entity)), refreshAfterMutation))
 
   def modify(id: Id[T], refreshAfterMutation: Boolean = true)(modify: T => T): Future[Versioned[T]] = {
     RetryVersionConflictAsync(10) {
@@ -249,11 +249,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     case t : Throwable =>
       val cause = t match {
         case t : RemoteTransportException => t.getCause
-        case t => t
+        case t2 => t2
       }
       val converted = cause match {
         case t: VersionConflictEngineException => new VersionConflictException(t)
-        case t => t
+        case t2 => t2
       }
       f(converted)
   }
@@ -272,10 +272,10 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
             }
         }
       } flatMap { _ =>
-        (entity match {
+        entity match {
           case None => Future.successful()
           case Some(e) => preMutate(e)
-        })
+        }
       }
     })
 
@@ -301,20 +301,17 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   }
 
   protected def retrieve(filter: FilterBuilder, error: => String): Future[Option[Versioned[T]]] = {
-    doSearch(filter).map(_ match {
+    doSearch(filter).map {
       case Nil => None
       case entity :: Nil => Some(entity)
       case entities => throw new Exception(error)
-    })
+    }
   }
 
   def retrieveAll: Future[List[Versioned[T]]] = retrieveAll(FilterBuilders.matchAllFilter())
 
   def retrieveAll(filter: FilterBuilder): Future[List[Versioned[T]]] = {
-    doSearch(filter).map(_ match {
-      case Nil => Nil
-      case entities => entities
-    })
+    doSearch(filter)
   }
 
   def onChange(f: Id[T] => Unit) {
