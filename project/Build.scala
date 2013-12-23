@@ -23,7 +23,7 @@ object BusyMachinesCommonsBuild extends Build {
     organization := "com.busymachines",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.10.3",
-    scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:reflectiveCall", "-language:higherKinds", "-language:existentials"),
+    scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:reflectiveCall", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
     resolvers += "spray repo" at "http://repo.spray.io",
