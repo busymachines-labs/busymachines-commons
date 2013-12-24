@@ -22,6 +22,22 @@ object JsValueConverter {
       }
   }
 
+  implicit val intConverter = new JsValueConverter[Int] {
+    def convert(value: JsValue): Int =
+      value match {
+        case JsNumber(n) => n.toInt
+        case other => other.toString.toInt
+      }
+  }
+
+  implicit val longConverter = new JsValueConverter[Long] {
+    def convert(value: JsValue): Long =
+      value match {
+        case JsNumber(n) => n.toLong
+        case other => other.toString.toLong
+      }
+  }
+
   implicit val booleanConverter = new JsValueConverter[Boolean] {
     def convert(value: JsValue): Boolean =
       value match {
