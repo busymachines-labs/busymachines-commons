@@ -6,7 +6,7 @@ import java.io.File
 /**
  * App that is intended to run as a server process. It will have standard commands:
  * 
- * -install  Installs the application on the system (Ubuntu is supported)
+ * -install  Installs the application on the system (Ubuntu is supported) 
  * 
  * It add support for graceful shutdowns.
  */
