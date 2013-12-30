@@ -71,6 +71,14 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
+ def retry(future: => Future[Versioned[T]], maxAttempts: Int = 3, attempt: Int = 1): Future[Versioned[T]] =
+    future.recoverWith {
+      case e: VersionConflictException =>
+        debug(s"Version conflict $attempt: " + e.getMessage)
+        if (attempt > maxAttempts) Future.failed(e) 
+        else retry(future, maxAttempts, attempt + 1)
+    }
+  
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
     query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id => id.toString): _*), Page.all) map { result => result.result }
 

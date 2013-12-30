@@ -39,7 +39,7 @@ trait SearchCriteria[T]
  * T - Entity Type
  */
 trait Dao[T <: HasId[T]] {
-
+  
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]]
 
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]]
