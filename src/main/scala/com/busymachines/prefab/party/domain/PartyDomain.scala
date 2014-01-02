@@ -50,7 +50,7 @@ case class Party (
 ) extends HasId[Party] {
 
   def describe = 
-    person.map(p => p.firstName :: p.middleName :: p.lastName :: Nil mkString(" "))
+    person.map(p => p.firstName :: p.middleName :: p.lastName :: Nil mkString " ")
     .orElse(company.map(_.name)).getOrElse("")
 }
   

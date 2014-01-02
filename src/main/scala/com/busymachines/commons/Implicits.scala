@@ -27,6 +27,7 @@ trait CommonImplicits {
   implicit def richByteArray(bytes : Array[Byte]) = new RichByteArray(bytes)
   implicit def richUrl(url : URL) = new RichUrl(url)
   implicit def richXml(xml : XMLLoader[Elem]) = new RichXml(xml)
+  implicit def richOption[A](option : Option[A]) = new RichOption(option)
   implicit def richFunction[A, B](f : A => Option[B]) = new RichFunction(f)
   implicit def richFuture[A](f : Future[A]) = new RichFuture[A](f)
   implicit def richFutureType[A](f : Future.type) = new RichFutureType(f)
