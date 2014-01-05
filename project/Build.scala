@@ -61,6 +61,7 @@ object BusyMachinesCommonsBuild extends Build {
     publishMavenStyle := true,
     publishArtifact in Test := false,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials_busymachines_snapshots"),
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials_busymachines_releases"),
     pomExtra := <scm>
                   <connection>scm:git:git@github.com:busymachines/busymachines-commons.git</connection>
                   <url>https://github.com/busymachines/busymachines-commons</url>
