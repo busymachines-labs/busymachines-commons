@@ -60,7 +60,8 @@ object BusyMachinesCommonsBuild extends Build {
     pomIncludeRepository := { _ => false },
     publishMavenStyle := true,
     publishArtifact in Test := false,
-    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials_busymachines_snapshots"),
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials_busymachines_releases"),
     pomExtra := <scm>
                   <connection>scm:git:git@github.com:busymachines/busymachines-commons.git</connection>
                   <url>https://github.com/busymachines/busymachines-commons</url>
@@ -78,11 +79,11 @@ object BusyMachinesCommonsBuild extends Build {
                   </developer>
                 </developers>,
     publishTo <<= version { (v: String) =>
-          val nexus = "https://oss.sonatype.org/"
+          val nexus = "http://archiva.busymachines.com"
           if (v.trim.endsWith("SNAPSHOT")) 
-            Some("snapshots" at nexus + "content/repositories/snapshots") 
+            Some("snapshots" at nexus + "/repository/snapshots/") 
           else
-            Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+            Some("releases"  at nexus + "/repository/releases/")
         })
                 
 }
