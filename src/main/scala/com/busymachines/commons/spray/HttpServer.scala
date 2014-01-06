@@ -51,7 +51,7 @@ abstract class HttpServer(implicit actorSystem : ActorSystem) extends CommonHttp
     def showRequest(request: HttpRequest) = LogEntry("URL: " + request.uri + "\n CONTENT: " + request.entity, DebugLevel)
   }
 
-  def start =
+  def start() =
     IO(Http) ! Http.Bind(actorSystem.actorOf(Props(new Actor), serverName), interface = interface, port = port)
 
   def commonRejectionHandler = RejectionHandler {

@@ -15,13 +15,13 @@ import com.busymachines.prefab.party.service.SecurityContext
 class PartyCache(partyDao : PartyDao, userAuthenticator : UserAuthenticator)(implicit ec: ExecutionContext) extends DaoCache[Party](partyDao, true) {
  
   private val relatedParties = TrieMap[Id[Party], List[RelatedParty]]()
-  private val staticSecurityContexts = TrieMap[(Id[Party], Id[User]), SecurityContext]()
+  private val staticSecurityContexts = TrieMap[Id[User], SecurityContext]()
   
   def relatedParties(partyId : Id[Party]) : List[RelatedParty] = 
     relatedParties.getOrElseUpdate(partyId, relatedParties(partyId, Set.empty))
     
-  def staticSecurityContext(partyId : Id[Party], userId : Id[User]) = 
-    staticSecurityContexts.getOrElseUpdate((partyId, userId), userAuthenticator.securityContextFor(partyId, userId).await(1.minute))
+  def staticSecurityContext(userId : Id[User]) =
+    staticSecurityContexts.getOrElseUpdate(userId, userAuthenticator.securityContextFor(userId).await(1.minute))
     
   private def relatedParties(partyId : Id[Party], exclude : Set[Id[Party]]) : List[RelatedParty] = {
     if (!exclude.contains(partyId)) 

@@ -45,5 +45,5 @@ trait PartyAssembly {
   lazy val partiesApiV1 = new PartiesApiV1(partyManager, userAuthenticator)
   
   // services
-  def createPartyFixture = PartyFixture.create(partyDao, credentialsDao)
+  def createPartyFixture() = PartyFixture.create(partyDao, credentialsDao)
 }

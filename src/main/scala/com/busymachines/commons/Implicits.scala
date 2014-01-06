@@ -12,6 +12,7 @@ import scala.xml.factory.XMLLoader
 import scala.xml.Elem
 import scala.collection.{Map, Iterable}
 import scala.AnyVal
+import java.util.Locale
 
 package object implicits extends CommonImplicits
 
@@ -31,6 +32,7 @@ trait CommonImplicits {
   implicit def richFunction[A, B](f : A => Option[B]) = new RichFunction(f)
   implicit def richFuture[A](f : Future[A]) = new RichFuture[A](f)
   implicit def richFutureType[A](f : Future.type) = new RichFutureType(f)
+  implicit def richLocale(a : Locale) = new RichLocale(a)
   implicit def richAny[A](a : A) = new RichAny[A](a)
   implicit def convertToUnit(f : Future[_])(implicit ec : ExecutionContext) : Future[Unit] = f.map(_ => Unit)
 }
