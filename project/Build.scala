@@ -26,6 +26,7 @@ object BusyMachinesCommonsBuild extends Build {
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:reflectiveCall", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
+    resolvers += Resolver.url("busymachines snapshots", url("http://archiva.busymachines.com/repository/snapshots/"))(Resolver.ivyStylePatterns),
     resolvers += "spray repo" at "http://repo.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "junit" % "junit" % "4.11" % "test" withSources(),
@@ -81,9 +82,9 @@ object BusyMachinesCommonsBuild extends Build {
     publishTo <<= version { (v: String) =>
           val nexus = "http://archiva.busymachines.com"
           if (v.trim.endsWith("SNAPSHOT")) 
-            Some("snapshots" at nexus + "/repository/snapshots/") 
+            Some(Resolver.url("snapshots", new URL(nexus + "/repository/snapshots/"))(Resolver.ivyStylePatterns))
           else
-            Some("releases"  at nexus + "/repository/releases/")
+            Some(Resolver.url("snapshots", new URL(nexus + "/repository/releases/"))(Resolver.ivyStylePatterns))
         })
                 
 }
