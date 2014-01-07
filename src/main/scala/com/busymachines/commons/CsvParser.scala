@@ -12,7 +12,7 @@ import java.io.BufferedReader
  */
 object CsvParser {
   
-  def parse(reader : Reader) : Array[Array[String]] = {
+  def parse(reader : Reader, separator: Char = ',') : Array[Array[String]] = {
     val bufferedReader = new BufferedReader(reader)
     val result = ArrayBuffer[Array[String]]()
     var currentLine = ArrayBuffer[String]()
@@ -37,12 +37,12 @@ object CsvParser {
           skipWhitespace()
         }
         else {
-          while (current != -1 && current != ',' && current != '\n') {
+          while (current != -1 && current != separator && current != '\n') {
             currentField append current.asInstanceOf[Char]
             goNext()
           }
         }
-        if (current == ',') goNext()
+        if (current == separator) goNext()
         skipWhitespace()
         currentLine += currentField.toString.trim
       }
