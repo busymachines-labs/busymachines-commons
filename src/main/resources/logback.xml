@@ -1,7 +1,5 @@
 <configuration>
 
-  <property name="debugLogFile" value="output.log" />
-
   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} %-5level %-60(%msg) [%.10thread:%logger{26}] %X{akkaSource}%n</pattern>
@@ -12,7 +10,7 @@
   </appender>
 
   <appender name="file" class="ch.qos.logback.core.FileAppender">
-    <file>${debugLogFile}</file>
+    <file>${logfile:-output.log}</file>
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} %-5level %-60(%msg) [%.10thread:%logger{26}] %X{akkaSource}%n</pattern>
     </encoder>
