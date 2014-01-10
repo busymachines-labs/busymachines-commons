@@ -12,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
 
 object CommonConfigFactory {
-  var usedPaths = TrieMap[String, Unit]()
+  private[commons] var usedPaths = TrieMap[String, Unit]()
   val configFiles = System.getProperty("config") match {
     case null => Nil
     case files => files.split(",").toList
@@ -33,20 +33,41 @@ object CommonConfig extends CommonConfig("") with Logging {
   import scala.collection.JavaConversions._
 
   override def mkString(sep: String) =
-    toSeq.sortWith(_ < _).map(x => x._1 + "=" + x._2).mkString(sep)
+    toStringSeq.mkString(sep)
 
-  def toSeq : Seq[(String, String)] = {
-    println("Paths: " + CommonConfigFactory.usedPaths)
+  def toStringSeq: Seq[String] =
+  toStringSeq2.map(x => x._1 + "=" + x._2).sorted
+
+  def toStringSeq2: Seq[(String, String)] =
     CommonConfigFactory.usedPaths.keys.filter(_.nonEmpty).filter(CommonConfigFactory.config.hasPath).toSeq.flatMap { path =>
-      CommonConfigFactory.config.getValue(path) match {
-          case config: Config => super.toSeq(path, config)
-          case config: ConfigObject => super.toSeq(path, config.toConfig)
-        //        case config: Config => super.toSeq(path, config)
-        case value =>
-          println(value.getClass)
-          Seq((path.replace("\"", ""), "Q:"+value.toString))
-      }
+        CommonConfigFactory.config.getValue(path) match {
+          case config: ConfigObject => toStringSeq4(config, path)
+          case other => Seq.empty
+        }
     }
+
+//  def toStringSeq3(config: Config, path: String): Seq[(String, String)] =
+//    if (path == "")
+//      CommonConfigFactory.usedPaths.keys.filter(_.nonEmpty).filter(config.hasPath).toSeq.flatMap { path =>
+//        config.getValue(path) match {
+////          case config: Config => toStringSeq3(config, path)
+//          case config: ConfigObject => toStringSeq3(config.toConfig, path)
+//          case other => Seq.empty
+//        }
+//      }
+//    else
+//    config.entrySet.toSeq.flatMap { entry =>
+//      entry.getValue match {
+//      }
+//    }
+
+  def toStringSeq4(value: ConfigValue, path: String) : Seq[(String, String)] =
+    value match {
+      case config: ConfigObject => config.entrySet.toSeq.flatMap { e =>
+        toStringSeq4(e.getValue, path + "." + e.getKey.replace("\"", ""))
+      }
+      case list: ConfigList => Seq((path, list.map(_.render).mkString("[", ",", "]")))
+      case value => Seq((path, value.render))
     }
 }
 
@@ -79,10 +100,10 @@ class CommonConfig2(config : Config) extends RichConfig(new ConfigDelegate(confi
   def this(baseName : String) = this(CommonConfigFactory.config(baseName).theConfig)
 }
 
+// Not used now
 class ConfigDelegate(delegate: Config) extends Config {
 
   def p(path: String) = {
-    CommonConfigFactory.usedPaths += (path -> ())
     path
   }
 
