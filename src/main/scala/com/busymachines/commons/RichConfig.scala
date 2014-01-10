@@ -102,24 +102,6 @@ class RichConfig(val theConfig: Config) {
     if (path.isEmpty) this :: Nil
     else theConfig.getConfigList(path).map(new RichConfig(_))
 
-  def as[A](construct : Config => A) = 
-    construct(theConfig)
-
-  def asSeq[A](construct : Config => A) = {
-    val result = ArrayBuffer[A]()
-    var foundMore = true
-    var index = 0
-    while (foundMore) {
-      if (theConfig.hasPath(index.toString)) {
-        result += construct(theConfig.getConfig(index.toString))
-        index += 1
-      } else {
-        foundMore = false
-      }
-    }
-    result.toSeq
-  }
-
   def mkString(sep: String) =
     toSortedStringSeq.mkString(sep)
 
@@ -132,7 +114,7 @@ class RichConfig(val theConfig: Config) {
   def toString(prefixFilter : String) = 
     "\n  " + CommonConfig.toSortedStringSeq.filter(_.startsWith(prefixFilter)).mkString("\n  ")
     
-  private def toSeq(prefix: String, config: Config): Seq[(String, String)] = {
+  protected def toSeq(prefix: String, config: Config): Seq[(String, String)] = {
     config.entrySet.toSeq.flatMap { entry =>
       entry.getValue match {
         case config: Config => toSeq(entry.getKey.replace("\"", "") + ".", config)

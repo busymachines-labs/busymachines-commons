@@ -19,6 +19,7 @@ package object implicits extends CommonImplicits
 trait CommonImplicits {
   implicit def toOption[A](a: A) = Option(a)
   implicit def richConfig(config : Config) = new RichConfig(config)
+  implicit def richCommonConfigType[A <: CommonConfig](f : String => A) = new RichCommonConfigType[A](f)
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
   implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
   implicit def richIterableMap[K, V, I <: Iterable[V]](map : Map[K, I]) = new RichIterableMap[K, V, I](map)
