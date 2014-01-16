@@ -17,14 +17,14 @@ object CsvParser {
     val result = ArrayBuffer[Array[String]]()
     var currentLine = ArrayBuffer[String]()
     val currentField = new StringBuilder
-    var peek = bufferedReader.read
     var current = bufferedReader.read
-    def goNext() { current = peek; peek = bufferedReader.read; if (current == '\r') goNext() }
+    var peek = bufferedReader.read
+    def goNext() { current = peek; peek = bufferedReader.read; if (current == '\r') if (peek == '\n') goNext() else current = '\n' }
     def skipWhitespace() = while (current == ' ' || current == '\t') goNext()
     while (current != -1) {
       currentLine.clear()
       skipWhitespace()
-      while (current != '\n') {
+      while (current != '\n' && current != -1) {
         currentField.clear()
         if (current == '"') {
           goNext()
