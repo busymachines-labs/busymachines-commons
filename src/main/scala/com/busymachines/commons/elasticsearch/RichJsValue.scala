@@ -86,6 +86,7 @@ object RichJsValue {
                 case Some(c) if classOf[scala.collection.Map[_, _]].isAssignableFrom(c) => Some(property.name -> JsObject())
                 case Some(c) if classOf[scala.collection.Iterable[_]].isAssignableFrom(c) => Some(property.name -> JsArray())
                 case Some(c) if classOf[Option[_]].isAssignableFrom(c) => None
+                case Some(c) if classOf[Product].isAssignableFrom(c) && property.nested.isDefined => Some(property.name -> mapFromES(JsObject(), property.nested.get))
                 case _ if property.`type` == "string" => Some(property.name -> JsString(""))
                 case _ => throw new Exception(s"No value found for mandatory property '${property.mappedName}' in mapping '${mapping._mappingName}' in $value")
               } 
