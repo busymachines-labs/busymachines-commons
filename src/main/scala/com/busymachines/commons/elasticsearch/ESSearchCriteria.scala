@@ -10,6 +10,7 @@ import org.elasticsearch.common.unit.DistanceUnit
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.index.query.QueryBuilders
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 
 trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def toFilter: FilterBuilder
@@ -86,7 +87,7 @@ object ESSearchCriteria {
 
   case class Range[A, T, V](path: Path[A, T], value: (V,V))(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter = FilterBuilders.rangeFilter(path.toESPath).gt(value._1 match {
-      case theValue:DateTime => theValue.getMillis()
+      case theValue:DateTime => theValue.toDateTime(DateTimeZone.UTC).getMillis()
       case theValue => theValue
     }).lt(value._2 match {
       case theValue:DateTime => theValue.getMillis()
@@ -98,7 +99,7 @@ object ESSearchCriteria {
   
   case class Gt[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter = FilterBuilders.rangeFilter(path.toESPath).gt(value match {
-      case theValue:DateTime => theValue.getMillis()
+      case theValue:DateTime => theValue.toDateTime(DateTimeZone.UTC).getMillis()
       case theValue => theValue
     })
     
@@ -112,7 +113,7 @@ object ESSearchCriteria {
 
   case class Gte[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter = FilterBuilders.rangeFilter(path.toESPath).gte(value match {
-      case theValue:DateTime => theValue.getMillis()
+      case theValue:DateTime => theValue.toDateTime(DateTimeZone.UTC).getMillis()
       case theValue => theValue
     })
     
@@ -126,7 +127,7 @@ object ESSearchCriteria {
 
   case class Lt[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter = FilterBuilders.rangeFilter(path.toESPath).lt(value match {
-      case theValue:DateTime => theValue.getMillis()
+      case theValue:DateTime => theValue.toDateTime(DateTimeZone.UTC).getMillis()
       case theValue => theValue
     })
     
@@ -140,7 +141,7 @@ object ESSearchCriteria {
 
   case class Lte[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter = FilterBuilders.rangeFilter(path.toESPath).lte(value match {
-      case theValue:DateTime => theValue.getMillis()
+      case theValue:DateTime => theValue.toDateTime(DateTimeZone.UTC).getMillis()
       case theValue => theValue
     })
     
