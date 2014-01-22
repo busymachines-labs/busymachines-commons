@@ -45,7 +45,8 @@ trait PartyFixture {
       addresses = Address(street = Some("Street 1")) :: Nil)
 
     (partyDao.getOrCreateAndModify(testParty1Id)(Party(testParty1Id, testTenantId)) { party =>
-      party.copy(tenant = testTenantId, users = user1 :: Nil, company = Some(Company("Test Company")))
+      party.copy(tenant = testTenantId, users = user1 :: Nil, company = Some(Company("Test Company")),
+          addresses = Address(street = Some("Korenmolen"), houseNumber = Some("3"), postalCode = Some("1541RW"), city = Some("Koog aan de Zaan")) :: Nil)
     }).await
     
     (credentialsDao.getOrCreateAndModify(testUser1CredentialsId)(Credentials(testUser1CredentialsId)) { credentials =>
