@@ -1,5 +1,8 @@
 package com.busymachines.commons
 
+import scala.concurrent.{ExecutionContext, Future}
+import scala.collection.generic.CanBuildFrom
+
 class RichSeq[A](val seq: Seq[A]) extends AnyVal {
   def nonEmptyOrElse(ss: Seq[A]) =
     if (seq.nonEmpty) seq

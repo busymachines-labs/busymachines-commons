@@ -13,6 +13,7 @@ import scala.xml.Elem
 import scala.collection.{Map, Iterable}
 import scala.AnyVal
 import java.util.Locale
+import com.busymachines.RichCollection
 
 package object implicits extends CommonImplicits
 
@@ -21,6 +22,7 @@ trait CommonImplicits {
   implicit def richConfig(config : Config) = new RichConfig(config)
   implicit def richCommonConfigType[A <: CommonConfig](f : String => A) = new RichCommonConfigType[A](f)
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
+  implicit def richCollection[A, C[A] <: Iterable[A]](collection : C[A]) = new RichCollection[A, C](collection)
   implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
   implicit def richIterableMap[K, V, I <: Iterable[V]](map : Map[K, I]) = new RichIterableMap[K, V, I](map)
   implicit def richListMap[K, V](map : Map[K, List[V]]) = new RichIterableMap[K, V, List[V]](map)
