@@ -96,6 +96,15 @@ object ESSearchCriteria {
     
     def prepend[A0](path : Path[A0, A]) = Range(path ++ this.path, value)
   }
+
+  case class QueryString[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
+    def toFilter = FilterBuilders.queryFilter(QueryBuilders.fieldQuery(path.toESPath, value match {
+      case theValue:DateTime => theValue.toDateTime(DateTimeZone.UTC).getMillis()
+      case theValue => theValue
+    }))
+    
+    def prepend[A0](path : Path[A0, A]) = QueryString(path ++ this.path, value)
+  }
   
   case class Gt[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
     def toFilter = FilterBuilders.rangeFilter(path.toESPath).gt(value match {
@@ -214,6 +223,7 @@ case class Path[A, T](elements: List[PathElement[_, _]]) {
   def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Neq(this, value))
 
   def range[V](value: (V,V))(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Range(this, value))
+  def queryString[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.QueryString(this, value))
   
   def gt(path: Path[A, T]) = nest(Nil, this, ESSearchCriteria.FGt(this, path))
   def gt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = nest(Nil, this, ESSearchCriteria.Gt(this, value))

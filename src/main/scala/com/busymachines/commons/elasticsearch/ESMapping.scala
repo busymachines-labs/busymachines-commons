@@ -143,6 +143,7 @@ extends PathElement[A, T](mappedName, options.options.contains(ESMapping.Nested)
   def equ(path: Path[A, T]) = ESSearchCriteria.FEq(this, path)
   def equ(property: ESProperty[A, T]) = ESSearchCriteria.FEq(this, property)
   def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Eq(this, value)
+  def queryString[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.QueryString(this, value)
 
   def neq(path: Path[A, T]) = ESSearchCriteria.FNeq(this, path)
   def neq(property: ESProperty[A, T]) = ESSearchCriteria.FNeq(this, property)
