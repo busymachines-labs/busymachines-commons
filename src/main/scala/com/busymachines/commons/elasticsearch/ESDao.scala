@@ -16,6 +16,29 @@ import com.busymachines.commons.dao.SearchSort
 
 abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit ec: ExecutionContext) extends Dao[T] with Logging {
 
+  def escapeQueryText(queryText:String) =     
+    new StringBuilder(queryText).
+    replaceAllLiterally("\\", "\\\\").
+    replaceAllLiterally("/", "\\/").
+    replaceAllLiterally(" ", "\\ ").
+    replaceAllLiterally("+", "\\+").
+    replaceAllLiterally("-", "\\-").
+    replaceAllLiterally("&&", "\\&&").
+    replaceAllLiterally("||", "\\||").
+    replaceAllLiterally("!", "\\!").
+    replaceAllLiterally("(", "\\(").
+    replaceAllLiterally(")", "\\)").
+    replaceAllLiterally("{", "\\{").
+    replaceAllLiterally("}", "\\}").
+    replaceAllLiterally("[", "\\[").
+    replaceAllLiterally("]", "\\]").
+    replaceAllLiterally("^", "\\^").
+    replaceAllLiterally("\"", "\\\"").
+    replaceAllLiterally("~", "\\~").
+    replaceAllLiterally("*", "\\*").
+    replaceAllLiterally("?", "\\?").
+    replaceAllLiterally(":", "\\:").toString
+  
   def all:SearchCriteria[T] = ESSearchCriteria.All[T]
   
   def defaultSort:SearchSort = ESSearchSort.asc("_id")
