@@ -54,8 +54,10 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
             }
           } else {
             if (shouldCache) {
+              debug(s"Caching enabled for $path")
               cache(theCache) {
                 respondWithHeader(`Cache-Control`(`max-age`(cacheTimeSecs))) {
+                  debug(s"Cache miss for $path")
                   getFromResource(doc, ext, mediaType, shouldProcess)
                 }
               }
