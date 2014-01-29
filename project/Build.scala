@@ -51,6 +51,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "com.typesafe" % "config" % "1.0.0" withSources(),
     libraryDependencies += "joda-time" % "joda-time" % "2.3" withSources(),
     libraryDependencies += "org.joda" % "joda-convert" % "1.5" withSources(), // for class file error in joda-time
+    libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.2" withSources(),
     libraryDependencies += "com.google.guava" % "guava" % "14.0.1" withSources(),
     libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1" // for class file error in guava
 ))

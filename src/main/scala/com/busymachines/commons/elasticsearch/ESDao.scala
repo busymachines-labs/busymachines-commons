@@ -44,19 +44,28 @@ abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit e
       replaceAllLiterally(":", "\\:").toString
 
   def allSearchTextOrSearchQuery(searchText: Option[String], searchQuery: Option[String]):Option[SearchCriteria[T]] =
+  	propertySearchTextOrSearchQuery(ESMapping._all,searchText,searchQuery)
+
+  def allSearchText(searchText: String): SearchCriteria[T] =
+    propertySearchText(ESMapping._all,searchText)
+
+  def allSearchQuery(searchQuery: String): SearchCriteria[T] =
+    propertySearchQuery(ESMapping._all,searchQuery)
+  
+  def propertySearchTextOrSearchQuery(property:ESProperty[_,String],searchText: Option[String], searchQuery: Option[String]):Option[SearchCriteria[T]] =
     (searchText, searchQuery) match {
-      case (Some(qT), None) => Some(allSearchText(qT))
-      case (None, Some(q)) => Some(allSearchQuery(q))
-      case (Some(qT), Some(q)) => Some(allSearchQuery(q))
+      case (Some(qT), None) => Some(propertySearchText(property,qT))
+      case (None, Some(q)) => Some(propertySearchQuery(property,q))
+      case (Some(qT), Some(q)) => Some(propertySearchQuery(property,q))
       case _ => None
     }
 
-  def allSearchText(searchText: String): SearchCriteria[T] =
-    allSearchQuery(s"*${escapeQueryText(searchText)}*")
+  def propertySearchText(property:ESProperty[_,String],searchText: String): SearchCriteria[T] =
+    propertySearchQuery(property,s"*${escapeQueryText(searchText)}*")
 
-  def allSearchQuery(searchQuery: String): SearchCriteria[T] =
-    (ESMapping._all queryString searchQuery).asInstanceOf[ESSearchCriteria[T]]
-
+  def propertySearchQuery(property:ESProperty[_,String],searchQuery: String): SearchCriteria[T] =
+    (property queryString searchQuery).asInstanceOf[ESSearchCriteria[T]]
+  
   def all: SearchCriteria[T] = ESSearchCriteria.All[T]
 
   def defaultSort: SearchSort = ESSearchSort.asc("_id")
