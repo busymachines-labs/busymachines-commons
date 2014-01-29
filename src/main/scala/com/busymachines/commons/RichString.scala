@@ -4,7 +4,7 @@ import com.typesafe.config.Config
 import scala.math.Ordering.Implicits._
 import scala.collection.JavaConversions._
 import java.security.MessageDigest
-import java.lang.{ Long => JLong }
+import java.lang.{ Long => JLong, Double => JDouble }
 
 class RichString(val s: String) extends AnyVal {
   def sha256Hash: Array[Byte] =
@@ -32,4 +32,12 @@ class RichString(val s: String) extends AnyVal {
     } catch {
       case e: NumberFormatException => None
     }
+
+  def toDoubleOption: Option[Double] =
+    try {
+      Some(JDouble.parseDouble(s.trim))
+    } catch {
+      case e: NumberFormatException => None
+    }
+
 }
