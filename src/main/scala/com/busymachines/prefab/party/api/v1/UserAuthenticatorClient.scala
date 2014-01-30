@@ -3,7 +3,6 @@ package com.busymachines.prefab.party.api.v1
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import com.busymachines.commons.Logging
-import com.busymachines.commons.implicits.richStringSeq
 import com.busymachines.prefab.authentication.spray.AuthenticationDirectives
 import com.busymachines.prefab.party.api.v1.model.AuthenticationRequest
 import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse

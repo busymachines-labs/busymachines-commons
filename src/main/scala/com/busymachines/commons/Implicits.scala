@@ -14,6 +14,7 @@ import scala.collection.{Map, Iterable}
 import scala.AnyVal
 import java.util.Locale
 import com.busymachines.RichCollection
+import scala.collection.generic.CanBuildFrom
 
 package object implicits extends CommonImplicits
 
@@ -23,10 +24,10 @@ trait CommonImplicits {
   implicit def richCommonConfigType[A <: CommonConfig](f : String => A) = new RichCommonConfigType[A](f)
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
   implicit def richCollection[A, C[A] <: Iterable[A]](collection : C[A]) = new RichCollection[A, C](collection)
+  implicit def richStringCollection[C <: Iterable[String]](collection : C)(implicit cbf: CanBuildFrom[C, String, C]) = new RichStringCollection[C](collection)
   implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
   implicit def richIterableMap[K, V, I <: Iterable[V]](map : Map[K, I]) = new RichIterableMap[K, V, I](map)
   implicit def richListMap[K, V](map : Map[K, List[V]]) = new RichIterableMap[K, V, List[V]](map)
-  implicit def richStringSeq(seq : Seq[String]) = new RichStringSeq(seq)
   implicit def richString(s : String) = new RichString(s)
   implicit def richByteArray(bytes : Array[Byte]) = new RichByteArray(bytes)
   implicit def richUrl(url : URL) = new RichUrl(url)

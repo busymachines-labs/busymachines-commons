@@ -32,7 +32,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "junit" % "junit" % "4.11" % "test" withSources(),
     libraryDependencies += "org.scalatest" %% "scalatest" % "2.0" % "test" withSources(),
     libraryDependencies += "org.pegdown" % "pegdown" % "1.4.1" % "test" withSources(), // used by scalatest
-    libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.90.7" withSources(),
+    libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.90.10" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.3" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.2.3" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.2.3" withSources(),

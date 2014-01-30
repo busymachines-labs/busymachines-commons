@@ -6,7 +6,7 @@ import scala.collection.generic.CanBuildFrom
 /**
  * Created by ruud on 21/01/14.
  */
-class RichCollection[A, C[A] <: Iterable[A]](val collection: C[A]) {
+class RichCollection[A, C[A] <: Iterable[A]](val collection: C[A]) extends AnyVal {
 
   def mapWhere(pred: A => Boolean)(fn: A => A)(implicit cbf: CanBuildFrom[C[A], A, C[A]]): C[A] = {
     val builder = cbf()
