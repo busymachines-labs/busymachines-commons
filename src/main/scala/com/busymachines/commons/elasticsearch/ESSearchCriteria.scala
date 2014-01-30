@@ -5,7 +5,7 @@ import org.elasticsearch.index.query.FilterBuilders
 import com.busymachines.commons.dao.SearchCriteria
 import spray.json.JsonWriter
 import org.elasticsearch.index.query.QueryStringQueryBuilder
-import com.busymachines.commons.domain.GeoPoint
+import com.busymachines.commons.domain.{Id, GeoPoint}
 import org.elasticsearch.common.unit.DistanceUnit
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.index.query.QueryBuilders

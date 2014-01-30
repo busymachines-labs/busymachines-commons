@@ -11,9 +11,7 @@ import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.index.engine.VersionConflictEngineException
 import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
-import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.index.query.QueryStringQueryBuilder
 import org.elasticsearch.search.sort.SortOrder
 import com.busymachines.commons.Logging
 import com.busymachines.commons.dao.IdNotFoundException
@@ -39,9 +37,7 @@ import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.facet.FacetBuilder
 import collection.JavaConversions._
 import org.elasticsearch.search.facet.terms.TermsFacet
-import com.busymachines.commons.dao.FacetValue
 import org.elasticsearch.common.xcontent.XContentHelper
-import org.elasticsearch.common.bytes.BytesReference
 import org.elasticsearch.transport.RemoteTransportException
 import scala.concurrent.duration.Duration
 import org.elasticsearch.search.facet.histogram.HistogramFacet
@@ -80,7 +76,10 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
-    query(QueryBuilders.idsQuery(t.name).addIds(ids.map(id => id.toString): _*), Page.all) map { result => result.result }
+    search(new ESSearchCriteria[T] {
+      def toFilter = FilterBuilders.idsFilter(typeName).addIds(ids.map(_.value):_*)
+      def prepend[A0](path : Path[A0, T]) = ???
+    }, page = Page.all).map(_.result)
 
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]] = {
     val request = new GetRequest(index.name, t.name, id.toString)
@@ -146,13 +145,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
-        val searchCriteria = criteria.toFilter
-       
+
         var request =
           client.javaClient.prepareSearch(index.name)
             .setTypes(t.name)
             .setQuery(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), criteria.toFilter))
-            //.setFilter(criteria.toFilter)
             .setSearchType(SearchType.DFS_QUERY_AND_FETCH)
             .setFrom(page.from)
             .setSize(page.size)
@@ -287,18 +284,18 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       }
     })
 
-  def query(queryBuilder: QueryBuilder, page: Page): Future[SearchResult[T]] = {
-    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).addSort("_id", SortOrder.ASC).setFrom(page.from).setSize(page.size).setVersion(true).request
-    client.execute(request).map { result =>
-      SearchResult(result.getHits.hits.toList.map { hit =>
-        val json = hit.sourceAsString.asJson
-        Versioned(json.convertFromES(mapping), hit.getVersion)
-      }, Some(result.getHits.getTotalHits))
-    }
-  }
-
-  def queryWithString(queryStr: String, page: Page): Future[SearchResult[T]] =
-    query(new QueryStringQueryBuilder(queryStr), page)
+//  def query(queryBuilder: QueryBuilder, page: Page): Future[SearchResult[T]] = {
+//    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).addSort("_id", SortOrder.ASC).setFrom(page.from).setSize(page.size).setVersion(true).request
+//    client.execute(request).map { result =>
+//      SearchResult(result.getHits.hits.toList.map { hit =>
+//        val json = hit.sourceAsString.asJson
+//        Versioned(json.convertFromES(mapping), hit.getVersion)
+//      }, Some(result.getHits.getTotalHits))
+//    }
+//  }
+//
+//  def queryWithString(queryStr: String, page: Page): Future[SearchResult[T]] =
+//    query(new QueryStringQueryBuilder(queryStr), page)
 
   protected def doSearch(filter: FilterBuilder): Future[List[Versioned[T]]] = {
     val request = client.javaClient.prepareSearch(index.name).addSort("_id", SortOrder.ASC).setTypes(t.name).setPostFilter(filter).setVersion(true).request
@@ -308,19 +305,17 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     })
   }
 
-  protected def retrieve(filter: FilterBuilder, error: => String): Future[Option[Versioned[T]]] = {
-    doSearch(filter).map {
-      case Nil => None
-      case entity :: Nil => Some(entity)
-      case entities => throw new Exception(error)
-    }
-  }
+//  protected def retrieve(filter: FilterBuilder, error: => String): Future[Option[Versioned[T]]] = {
+//    doSearch(filter).map {
+//      case Nil => None
+//      case entity :: Nil => Some(entity)
+//      case entities => throw new Exception(error)
+//    }
+//  }
 
-  def retrieveAll: Future[List[Versioned[T]]] = retrieveAll(FilterBuilders.matchAllFilter())
+  def retrieveAll: Future[List[Versioned[T]]] =
+    search(all, page = Page.all).map(_.result)
 
-  def retrieveAll(filter: FilterBuilder): Future[List[Versioned[T]]] = {
-    doSearch(filter)
-  }
 
   def onChange(f: Id[T] => Unit) {
     index.bus.subscribe {
