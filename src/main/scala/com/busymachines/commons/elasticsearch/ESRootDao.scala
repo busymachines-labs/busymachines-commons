@@ -183,7 +183,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  def create(entity: T, refreshAfterMutation: Boolean = true, ttl: Option[Duration] = None): Future[Versioned[T]] = {
+  def create(entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration] = None): Future[Versioned[T]] = {
     val json = entity.convertToES(mapping)
     val request = new IndexRequest(index.name, t.name)
       .id(entity.id.toString)
@@ -207,17 +207,17 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     })
   }
 
-  def getOrCreate(id: Id[T], refreshAfterMutation: Boolean = true)(_create: => T): Future[Versioned[T]] = {
+  def getOrCreate(id: Id[T], refreshAfterMutation: Boolean)(_create: => T): Future[Versioned[T]] = {
     retrieve(id) flatMap {
       case Some(entity) => Future.successful(entity)
       case None => create(_create, refreshAfterMutation)
     }
   }
 
-  def getOrCreateAndModify(id: Id[T], refreshAfterMutation: Boolean = true)(_create: => T)(_modify: T => T): Future[Versioned[T]] =
+  def getOrCreateAndModify(id: Id[T], refreshAfterMutation: Boolean)(_create: => T)(_modify: T => T): Future[Versioned[T]] =
     getOrCreate(id, refreshAfterMutation = false)(_create).flatMap(entity => update(entity.copy(entity = _modify(entity)), refreshAfterMutation))
 
-  def modify(id: Id[T], refreshAfterMutation: Boolean = true)(modify: T => T): Future[Versioned[T]] = {
+  def modify(id: Id[T], refreshAfterMutation: Boolean)(modify: T => T): Future[Versioned[T]] = {
     RetryVersionConflictAsync(10) {
       retrieve(id).flatMap {
         case None => throw new IdNotFoundException(id.toString, t.name)
@@ -230,7 +230,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   /**
    * @throws VersionConflictException
    */
-  def update(entity: Versioned[T], refreshAfterMutation: Boolean = true): Future[Versioned[T]] = {
+  def update(entity: Versioned[T], refreshAfterMutation: Boolean): Future[Versioned[T]] = {
     val newJson = entity.entity.convertToES(mapping)
     
     val request = new IndexRequest(index.name, t.name)
@@ -266,7 +266,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       f(converted)
   }
 
-  def delete(id: Id[T], refreshAfterMutation: Boolean = true): Future[Unit] =
+  def delete(id: Id[T], refreshAfterMutation: Boolean): Future[Unit] =
     retrieve(id) map (entity => {
       val request = new DeleteRequest(index.name, t.name, id.toString).refresh(refreshAfterMutation)
       (entity match {
