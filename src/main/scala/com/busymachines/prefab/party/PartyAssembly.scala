@@ -16,6 +16,7 @@ import akka.actor.ActorSystem
 import com.busymachines.commons.elasticsearch.ESSequenceDao
 import com.busymachines.prefab.party.logic.PartyFixture
 import com.busymachines.prefab.party.logic.PartyCache
+import com.busymachines.prefab.party.service.PartyService
 
 trait PartyAssembly {
 
@@ -39,10 +40,10 @@ trait PartyAssembly {
   lazy val authenticationDao = new ESAuthenticationDao(authenticationIndex)
   lazy val userAuthenticator = new UserAuthenticator(authenticationConfig, partyDao, credentialsDao, authenticationDao)
   lazy val partyCache = new PartyCache(partyDao, userAuthenticator)
-  lazy val partyManager = new PartyManager(partyDao, userDao, credentialsDao, userAuthenticator)
+  lazy val partyService: PartyService = new PartyManager(partyDao, userDao, credentialsDao, userAuthenticator)
   lazy val authenticationApiV1 = new AuthenticationApiV1(userAuthenticator)
-  lazy val usersApiV1 = new UsersApiV1(partyManager, userAuthenticator)
-  lazy val partiesApiV1 = new PartiesApiV1(partyManager, userAuthenticator)
+  lazy val usersApiV1 = new UsersApiV1(partyService, userAuthenticator)
+  lazy val partiesApiV1 = new PartiesApiV1(partyService, userAuthenticator)
   
   // services
   def createPartyFixture() = PartyFixture.create(partyDao, credentialsDao)
