@@ -27,6 +27,8 @@ import spray.routing.directives.ContentTypeResolver
 import spray.util.actorSystem
 import com.busymachines.commons.CommonConfig
 import com.busymachines.commons.ProfilingUtils.time
+import com.busymachines.commons.cache.AsyncCache
+import scala.collection.concurrent.TrieMap
 
 class UiService(resourceRoot: String = "public", rootDocument: String = "index.html")(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService {
 
@@ -34,7 +36,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   private val pattern = """(['\"])([/a-zA-Z_0-9 \.]*)-\?\?\?.([a-zA-Z_0-9]*)(['\"])""".r
   private val cacheTime: Duration = 7 days
   private val cacheTimeSecs = cacheTime.toSeconds
-  private val theCache = routeCache(timeToLive = cacheTime)
+  private val cache = TrieMap[String, Route]()
   
   if (CommonConfig.devmode)
     info("Resources are read from source folders (devmode)")
@@ -43,6 +45,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
     get {
       path(Rest) {
         path =>
+          cache.getOrElseUpdate(path, {
           val (doc, ext, shouldCache, shouldProcess) = extension(path) match {
             case "" => (rootDocument, extension(rootDocument), false, true)
             case ext => (path, ext, true, false)
@@ -54,11 +57,9 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
             }
           } else {
             if (shouldCache) {
-              alwaysCache(theCache) {
-                debug(s"Caching resource : ${doc}")
-                respondWithHeader(`Cache-Control`(`max-age`(cacheTimeSecs))) {
-                  getFromResource(doc, ext, mediaType, shouldProcess)
-                }
+              debug(s"Caching resource : ${doc}")
+              respondWithHeader(`Cache-Control`(`max-age`(cacheTimeSecs))) {
+                getFromResource(doc, ext, mediaType, shouldProcess)
               }
             } else {
               respondWithHeader(`Cache-Control`(`no-cache`)) {
@@ -66,12 +67,13 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
               }
             }
           }
+          })
       }
     }
 
   def getFromResource(path: String, ext: String, mediaType: MediaType, shouldProcess: Boolean)(implicit refFactory: ActorRefFactory, resolver: ContentTypeResolver): Route = {
     
-    time("Fetching resource " + path + "." + ext) {
+    time("Fetching resource " + path) {
     val contentType = if (mediaType.binary) ContentType(mediaType) else ContentType(mediaType, HttpCharsets.`UTF-8`)
     val classLoader = actorSystem(refFactory).dynamicAccess.classLoader
 
