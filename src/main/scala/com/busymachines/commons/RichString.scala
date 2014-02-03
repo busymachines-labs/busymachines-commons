@@ -7,6 +7,11 @@ import java.security.MessageDigest
 import java.lang.{ Long => JLong, Double => JDouble }
 
 class RichString(val s: String) extends AnyVal {
+
+  def nonEmptyOrElse(other: String) =
+    if (s.trim.nonEmpty) s
+    else other
+
   def sha256Hash: Array[Byte] =
     MessageDigest.getInstance("SHA-256").digest(s.getBytes("UTF-8"))
 
