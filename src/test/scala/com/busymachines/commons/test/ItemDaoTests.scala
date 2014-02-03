@@ -242,7 +242,7 @@ class ItemDaoTests extends FlatSpec with Logging {
     assert(dao.search((ItemMapping.name equ "311 - Sample item") and (ItemMapping.properties / PropertyMapping.likes missing)).await.size === 2)
 
   }
-  
+
   it should "search with exists" in {
     val item1 = Item(name = "411 - Sample item", expectedProfit = Some(10), priceSale = 0.5, priceNormal = 1.0, validUntil = now, location = GeoPoint(10, 10), properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
     val item2 = Item(name = "411 - Sample item", priceSale = 3.0, priceNormal = 4.0, validUntil = now, location = GeoPoint(11, 11), properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
@@ -256,5 +256,57 @@ class ItemDaoTests extends FlatSpec with Logging {
     assert(dao.search((ItemMapping.name equ "411 - Sample item") and (ItemMapping.properties / PropertyMapping.likes exists)).await.size === 1)
 
   }
-  
+
+  it should "search with geo_distance Alex" in {
+    val item1 = Item(name = "212 - Sample item", priceSale = 0.5, priceNormal = 1.0, validUntil = now, location = GeoPoint(10, 10), properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "212 - Sample item", priceSale = 3.0, priceNormal = 4.0, validUntil = now, location = GeoPoint(11, 11), properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item3 = Item(name = "212 - Sample item", priceSale = 6.0, priceNormal = 6.0, validUntil = now, location = GeoPoint(20, 20), properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+
+    dao.create(item1, true).await
+    dao.create(item2, true).await
+    dao.create(item3, true).await
+
+    assert(dao.search((ItemMapping.name equ "212 - Sample item") and (ItemMapping.location geo_distance (GeoPoint(10.20, 10.30), 110))).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "212 - Sample item") and (ItemMapping.location geo_distance (GeoPoint(9.7, 10.002), 1000))).await.size === 2)
+    assert(dao.search((ItemMapping.name equ "212 - Sample item") and (ItemMapping.location geo_distance (GeoPoint(20, 20), 1500))).await.size === 2)
+    assert(dao.search((ItemMapping.name equ "212 - Sample item") and (ItemMapping.location geo_distance (GeoPoint(20, 20), 10000))).await.size === 3)
+  }
+
+  it should "search with range Alex" in {
+    val item1 = Item(name = "3211 - Sample item", priceSale = 0.5, priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "3211 - Sample item", priceSale = 3.0, priceNormal = 4.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item3 = Item(name = "3211 - Sample item", priceSale = 6.0, priceNormal = 6.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+
+    dao.create(item1, true).await
+    dao.create(item2, true).await
+    dao.create(item3, true).await
+
+    assert(dao.search((ItemMapping.name equ "3211 - Sample item") and (ItemMapping.priceNormal range(0.5,1.0))).await.size === 0)
+    assert(dao.search((ItemMapping.name equ "3211 - Sample item") and (ItemMapping.priceNormal range(0.5,1.01))).await.size === 1)
+
+    assert(dao.search((ItemMapping.name equ "3211 - Sample item") and (ItemMapping.priceNormal range(4.0,6.0))).await.size === 0)
+    assert(dao.search((ItemMapping.name equ "3211 - Sample item") and (ItemMapping.priceNormal range(0.5,4.01))).await.size === 2)
+  }
+
+  it should "search with query strings Alex" in {
+    val item1 = Item(name = "3212 - Sample item", priceSale = 0.01, priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "3212 - Sample item", priceSale = 0.02, priceNormal = 4.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item3 = Item(name = "3212 - Sample item", priceSale = 6.0, priceNormal = 6.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+
+    dao.create(item1, true).await
+    dao.create(item2, true).await
+    dao.create(item3, true).await
+
+    assert(dao.search((ItemMapping.name queryString("priceSale:0.01"))).await.size === 1)
+    assert(dao.search((ItemMapping.name equ "3212 - Sample item") and (ItemMapping.name queryString("priceSale:<=0.02"))).await.size ==2)
+    assert(dao.search((ItemMapping.name queryString("priceSale:(<=0.02 AND >=0.01) "))).await.size === 2)
+  }
+
+  it should "search with facets Alex" in {
+    val item1 = Item(name = "3212 - Sample item", priceSale = 0.01, priceNormal = 1.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item2 = Item(name = "3212 - Sample item", priceSale = 0.02, priceNormal = 4.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+    val item3 = Item(name = "3212 - Sample item", priceSale = 6.0, priceNormal = 6.0, validUntil = now, location = geoPoint, properties = Property(name = "Property3") :: Property(name = "Property4") :: Nil)
+
+  }
+
 }
