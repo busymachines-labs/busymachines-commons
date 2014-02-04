@@ -3,28 +3,21 @@ package com.busymachines.commons.test
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 import org.scalatest.FlatSpec
-import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.CommonJsonFormats._
-import com.busymachines.commons.elasticsearch.ESSearchCriteria.Delegate
 import com.busymachines.commons.elasticsearch._
 import com.busymachines.commons.implicits.richFuture
 import com.busymachines.commons.test.DomainJsonFormats.itemFormat
-import com.busymachines.commons.test.DomainJsonFormats.propertyFormat
 import com.busymachines.commons.testing.EmptyESTestIndex
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import com.busymachines.commons.domain.GeoPoint
-import com.busymachines.commons.domain.Id
-import com.busymachines.commons.dao.{TermFacetValue, SearchCriteria, Versioned, Page}
-import scala.concurrent.Future
+import com.busymachines.commons.dao.TermFacetValue
 import com.busymachines.commons.Logging
 import com.busymachines.commons.event.DoNothingEventSystem
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import scala.Some
 import com.busymachines.commons.domain.GeoPoint
 import com.busymachines.commons.elasticsearch.ESType
-import org.scalatest
+
 
 @RunWith(classOf[JUnitRunner])
 class ItemDaoFacetsTests extends FlatSpec with Logging {
