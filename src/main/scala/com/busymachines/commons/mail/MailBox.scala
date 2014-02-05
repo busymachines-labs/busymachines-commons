@@ -1,13 +1,12 @@
 package com.busymachines.commons.mail
 
-import java.io.ByteArrayOutputStream
 import java.util.Properties
 
 import scala.Some
 import scala.concurrent.Future
 
 import com.busymachines.commons.Logging
-import com.busymachines.commons.domain.{MimeTypes, Media, MimeType}
+import com.busymachines.commons.domain.{Media, MimeType, MimeTypes}
 import com.busymachines.commons.mail.model.MailMessage
 import javax.mail._
 import javax.mail.Message.RecipientType
