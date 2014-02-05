@@ -108,7 +108,7 @@ class MailBox(mailConfig: MailConfig) extends Logging {
    * @param flagTerm the flag based search criteria
    * @return
    */
-  def getMessages(folderName: String = inboxFolder,flagTerm:Option[FlagTerm]=None,messageRange:Option[(Int,Int)]=None): Future[List[MailMessage]] =
+  def getMessages(folderName: String = inboxFolder,flagTerm:Option[FlagTerm]=None,dateRange:Option[(DateTime,DateTime)] = None,messageRange:Option[(Int,Int)]=None): Future[List[MailMessage]] =
   Future.successful(
   {
     connectOrReconnect
@@ -117,9 +117,10 @@ class MailBox(mailConfig: MailConfig) extends Logging {
     val folder = store.getFolder(folderName)
     folder.open(Folder.READ_ONLY)
     val messages =
-      (flagTerm,messageRange) match {
-        case (Some(flagTermValue),None) => folder.search(flagTermValue)
-        case (None,Some(range)) => folder.getMessages(range._1,range._2)
+      (flagTerm,dateRange,messageRange) match {
+        case (Some(flagTermValue),None,None) => folder.search(flagTermValue)
+        case (None,None,Some(range)) => folder.getMessages(range._1,range._2)
+        case (None,Some(dateRangeValue),None) => folder.search(new AndTerm(new ReceivedDateTerm(ComparisonTerm.LT, dateRangeValue._2.toDate), new ReceivedDateTerm(ComparisonTerm.GT, dateRangeValue._1.toDate)))
         case _ => throw new Exception(s"Unknown mail query")
       }
 
