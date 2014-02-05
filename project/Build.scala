@@ -53,8 +53,10 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "org.joda" % "joda-convert" % "1.5" withSources(), // for class file error in joda-time
     libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.2" withSources(),
     libraryDependencies += "com.google.guava" % "guava" % "14.0.1" withSources(),
-    libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1" // for class file error in guava
-))
+    libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1", // for class file error in guava
+    libraryDependencies += "org.apache.pdfbox" % "pdfbox" % "1.8.3" withSources(),
+    libraryDependencies += "com.google.zxing" % "javase" % "2.3.0" withSources()
+  ))
 
   def publishSettings = Seq(
     licenses := Seq("The Apache Software Licence, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
