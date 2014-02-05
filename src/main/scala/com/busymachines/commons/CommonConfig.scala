@@ -91,6 +91,22 @@ class RichCommonConfigType[A <: CommonConfig](f: String => A) {
 
 class CommonConfig(baseName: String) extends RichConfig(CommonConfigFactory.config(baseName).theConfig) {
   CommonConfigFactory.usedPaths += (baseName -> ())
+
+  def seq[A <: CommonConfig](f: String => A, name : String): Seq[A] = {
+    val result = ArrayBuffer[A]()
+    var foundMore = true
+    var index = 0
+    val config = CommonConfigFactory.config(baseName + "." + name).theConfig
+    while (foundMore) {
+      if (config.hasPath(index.toString)) {
+        result += f(baseName + "." + name + "." + index.toString)
+        index += 1
+      } else {
+        foundMore = false
+      }
+    }
+    result.toSeq
+  }
 }
 
 class RichCommonConfig[A, T <: String => CommonConfig](config: T) {
@@ -100,7 +116,7 @@ class CommonConfig2(config : Config) extends RichConfig(new ConfigDelegate(confi
   def this(baseName : String) = this(CommonConfigFactory.config(baseName).theConfig)
 }
 
-// Not used now
+// Not used now, but it was too much work to throw away...
 class ConfigDelegate(delegate: Config) extends Config {
 
   def p(path: String) = {
