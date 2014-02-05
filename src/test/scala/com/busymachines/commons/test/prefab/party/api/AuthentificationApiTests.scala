@@ -1,60 +1,63 @@
 package com.busymachines.commons.test.prefab.party.api
 
-import org.scalatest.FlatSpec
 import com.busymachines.commons.Logging
-import com.busymachines.prefab.party.domain.{PhoneNumber, Address, User}
-import com.busymachines.commons.domain.Id
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.test.AssemblyTestBase
+import com.busymachines.prefab.party.api.v1.PartyApiV1Directives
+import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
+import org.scalatest.FlatSpec
 import spray.http._
-import spray.http.StatusCodes
 import spray.json.JsonParser
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.duration.span
-import spray.json.AdditionalFormats
-import spray.json.JsonFormat
-import spray.json.JsValue
-import spray.json.JsObject
-import spray.json.JsonParser
-import spray.json.pimpString
 
-import com.busymachines.commons.domain.Id
-import com.busymachines.commons.implicits._
+class AuthentificationApiTests extends FlatSpec with Logging with AssemblyTestBase with PartyApiV1Directives {
 
-import spray.http.StatusCodes
-import spray.json.JsonParser
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.duration.span
-import spray.json.AdditionalFormats
-import spray.json.JsonFormat
-import spray.json.JsValue
-import spray.json.JsObject
-import spray.json.JsonParser
-import spray.json.pimpString
-import spray.testkit.ScalatestRouteTest
-import spray.routing.HttpService
+  val userAuthRequestBodyJson = """
+    {
+      "loginName": "user1@test.com",
+      "password": "test"
+    }
+    """
 
-class AuthentificationApiTests extends FlatSpec with Logging  with ScalatestRouteTest{
-
-  debug("*********--- Running AuthentificationApiV1Tests TESTS --- **********")
-
-  "AuthentificationApi" should "authentificate" in {
-
-    val user = User(
-      id = Id.static[User]("user1"),
-      lastName = Option("Tester"),
-      firstName = Option("First"),
-      addresses = Address(street = Option("Gen. Henri Berthelot")) :: Nil,
-      phoneNumbers = PhoneNumber(phoneNumber="0745123412") :: Nil
-    )
-/*
-    Post("/users/authentication", user) ~> authToken ~> route ~> check {
-      assert(status === StatusCodes.OK)
-      debug(body.toString)
-      debug("Created user with ID: " + Id[User](body.asString))
-
+  "AuthentificationApi" should "authentificate with username and password" in {
+      Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
+        assert(status === StatusCodes.OK)
+        assert(body.toString.contains("authToken"))
+      }
   }
-*/
 
-    pending
-}
+  it should "inform whether an authentication token is valid or not" in {
+    var authResponse:AuthenticationResponse = null
+    Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
+      assert(status === StatusCodes.OK)
+      authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
+    }
+
+    Get(s"/users/authentication/${authResponse.authToken}") ~> authenticationApiV1.route ~>  check {
+      assert(status === StatusCodes.OK)
+    }
+
+    Get(s"/users/authentication/justARandomText") ~> authenticationApiV1.route ~>  check {
+      assert(status === StatusCodes.NotFound)
+    }
+  }
+
+    it should "invalidate the auth token on logout" in {
+      var authResponse:AuthenticationResponse = null
+      Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
+        assert(status === StatusCodes.OK)
+        authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
+      }
+
+      Get(s"/users/authentication/${authResponse.authToken}") ~> authenticationApiV1.route ~>  check {
+        assert(status === StatusCodes.OK)
+      }
+
+      Delete(s"/users/authentication/${authResponse.authToken}") ~> authenticationApiV1.route ~>  check {
+        assert(status === StatusCodes.OK)
+      }
+
+      Get(s"/users/authentication/${authResponse.authToken}") ~> authenticationApiV1.route ~>  check {
+        assert(status === StatusCodes.NotFound)
+      }
+  }
+
 }
