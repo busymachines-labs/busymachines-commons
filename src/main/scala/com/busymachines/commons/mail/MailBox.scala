@@ -4,21 +4,22 @@ import java.io.ByteArrayOutputStream
 import java.util.Properties
 
 import scala.Some
+import scala.concurrent.Future
 
-import com.busymachines.commons.domain.{Media, MimeType}
+import com.busymachines.commons.Logging
+import com.busymachines.commons.domain.{MimeTypes, Media, MimeType}
 import com.busymachines.commons.mail.model.MailMessage
 import javax.mail._
 import javax.mail.Message.RecipientType
 import javax.mail.internet.MimeBodyPart
 import javax.mail.search._
 import org.joda.time.DateTime
-import scala.concurrent.Future
 
 /**
  * Facilitates mail related services.
  * @param mailConfig the mail configuration
  */
-class MailBox(mailConfig: MailConfig) {
+class MailBox(mailConfig: MailConfig) extends Logging {
 
   val inboxFolder = "INBOX"
 
@@ -47,22 +48,15 @@ class MailBox(mailConfig: MailConfig) {
   }
 
   private def attachmentToMedia(attachment: MimeBodyPart): Media = {
-
-    // Read the content
-    val buffer = new Array[Byte](4096)
-    val output = new ByteArrayOutputStream
-    var byteRead = 0
-
-    while ((byteRead = attachment.getInputStream.read(buffer)) != -1) {
-      output.write(buffer, 0, byteRead)
+    val is = attachment.getInputStream
+    val fileName:Option[String] = attachment.getFileName match {
+      case null => None
+      case name:String => Some(name)
     }
-
-    // Build the media
     Media(
-      mimeType = MimeType("text/plain"),
-      name = Some(attachment.getFileName),
-      data = output.toByteArray)
-
+      mimeType = fileName.map(MimeTypes.fromResourceName(_)).getOrElse(MimeType("unknown")),
+      name = fileName,
+      data = Stream.continually(is.read).takeWhile(-1 !=).map(_.toByte).toArray)
   }
 
   private def connectOrReconnect = synchronized {
@@ -74,8 +68,13 @@ class MailBox(mailConfig: MailConfig) {
    * @param messages the messages to be marked as seen
    * @return
    */
-  def markInboxMessagesAsSeen(messages:List[MailMessage]):Future[Unit] =
-    markWithFlag(inboxFolder,messages,new Flags(Flags.Flag.SEEN),true)
+  def markInboxMessagesAsSeen(messages:List[MailMessage],seenPolarity:Boolean=true):Future[Unit] = {
+    mailConfig.protocol.equalsIgnoreCase("imap") match {
+      case true => markWithFlag(inboxFolder,messages,new Flags(Flags.Flag.SEEN),seenPolarity)
+      case false => throw new Exception(s"Only IMAP protocol supports setting the messages as SEEN")
+    }
+
+  }
 
   /**
    * Marks specific folder messages with flag.
@@ -109,7 +108,7 @@ class MailBox(mailConfig: MailConfig) {
    * @param flagTerm the flag based search criteria
    * @return
    */
-  def getMessages(folderName: String = inboxFolder,flagTerm:Option[FlagTerm]=None): Future[List[MailMessage]] =
+  def getMessages(folderName: String = inboxFolder,flagTerm:Option[FlagTerm]=None,messageRange:Option[(Int,Int)]=None): Future[List[MailMessage]] =
   Future.successful(
   {
     connectOrReconnect
@@ -118,17 +117,18 @@ class MailBox(mailConfig: MailConfig) {
     val folder = store.getFolder(folderName)
     folder.open(Folder.READ_ONLY)
     val messages =
-      flagTerm match {
-        case Some(flagTermValue) => folder.search(flagTermValue)
-        case None => folder.getMessages(0,10)
+      (flagTerm,messageRange) match {
+        case (Some(flagTermValue),None) => folder.search(flagTermValue)
+        case (None,Some(range)) => folder.getMessages(range._1,range._2)
+        case _ => throw new Exception(s"Unknown mail query")
       }
 
     messages.map(m =>
       MailMessage(
         messageNumber = m.getMessageNumber,
-        from = m.getFrom.toList,
-        to = m.getRecipients(RecipientType.TO).toList,
-        cc = m.getRecipients(RecipientType.CC).toList,
+        from = m.getFrom match {case null => Nil case list => list.toList},
+        to = m.getRecipients(RecipientType.TO) match {case null => Nil case list => list.toList},
+        cc = m.getRecipients(RecipientType.CC) match {case null => Nil case list => list.toList},
         sendDate = Some(new DateTime(m.getSentDate)),
         subject = Some(m.getSubject),
         contentType = None,
@@ -143,10 +143,21 @@ class MailBox(mailConfig: MailConfig) {
             case true =>
               val multiPart = m.getContent.asInstanceOf[Multipart]
               (0).until(multiPart.getCount) flatMap (partIndex =>
-                Part.ATTACHMENT.equalsIgnoreCase(multiPart.getBodyPart(partIndex).asInstanceOf[MimeBodyPart].getDisposition()) match {
-                  case true => Some(attachmentToMedia(multiPart.getBodyPart(partIndex).asInstanceOf[MimeBodyPart]))
-                  case false => None
+                multiPart.getBodyPart(partIndex).asInstanceOf[MimeBodyPart].getSize match {
+                  case -1 => None
+                  case _ =>
+                    Some(attachmentToMedia(multiPart.getBodyPart(partIndex).asInstanceOf[MimeBodyPart]))
                 }) toList
-          })) toList    
+          })) toList
+  })
+
+  def getMessageCount(folderName: String = inboxFolder):Future[Int] = Future.successful({
+    connectOrReconnect
+
+    // Retrieve messages from the mail folder
+    val folder = store.getFolder(folderName)
+    folder.open(Folder.READ_ONLY)
+    folder.getMessageCount
+
   })
 }
