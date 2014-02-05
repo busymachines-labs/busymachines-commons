@@ -54,6 +54,7 @@ class AuthentificationApiTests extends FlatSpec with Logging  with ScalatestRout
 
   }
 */
+
     pending
 }
 }
