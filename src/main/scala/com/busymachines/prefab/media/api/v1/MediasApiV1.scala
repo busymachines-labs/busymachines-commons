@@ -51,14 +51,19 @@ class MediasApiV1(mediaDao: MediaDao, authenticator: UserAuthenticator)(implicit
         } ~
         get {
             parameters(
-              'raw.as[Boolean]) { raw =>
+              'raw.as[Boolean]?) { raw =>
                 mediaDao.retrieve(mediaId).await match {
                   case None => complete {
                     throw new EntityNotFoundException(mediaId.toString, "media")
                   }
                   case Some(media) => respondWithMediaType(MediaType.custom(media.mimeType.value)) {
                     complete {
-                      HttpEntity(media.data)
+                      raw match {
+                        case Some(true) => HttpEntity(media.data)
+                        case Some(false) => media
+                        case None => media
+                      }
+
                     }
                   }
                 }

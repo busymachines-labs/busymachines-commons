@@ -22,42 +22,40 @@ class MediasApiTests extends FlatSpec with AssemblyTestBase with MediaApiV1Direc
       "password": "test"
     }
                                 """
-
+  /* The data payload is "hello world" encoded as base64. */
   val mediaInputRequestBodyJson="""
       {
       "id": "41a6d07c-9c09-44e9-a3f7-4ea3d533727e",
       "mimeType": "text/html",
       "name": "media1.text",
-      "data": "data:;base64,"
+      "data": "data:text/plain;base64,aGVsbG8gd29ybGQ="
       }
                            """
   
-  var authResponse:AuthenticationResponse=null;
-  var mediaId:String=null
-"MediasApi" should "post a new media item" in{
-//
-//  //authentificate first
-//  Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
-//    assert(status === StatusCodes.OK)
-//    assert(body.toString.contains("authToken"))
-//    authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
-//  }
-//  Post(s"/medias",HttpEntity(ContentTypes.`application/json`,mediaInputRequestBodyJson))~>addHeader("Auth-Token", authResponse.authToken)~>mediasApiV1.route~>check{
-//    println(body.toString)
-//    mediaId=body.asInstanceOf[HttpEntity].data.asString
-//  }
+  "it" should "create & get raw & complete a media item based on its id" in{
+    var authResponse:AuthenticationResponse=null
+    var mediaId:String=null
 
-}
-  "it" should "get a media item based on its id" in{
-//    //authentificate first
-//    Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
-//      assert(status === StatusCodes.OK)
-//      assert(body.toString.contains("authToken"))
-//      authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
-//    }
-//    Get(s"/medias/$mediaId/?raw='true'")~>addHeader("Auth-Token", authResponse.authToken)~>mediasApiV1.route~>check{
-//      println(body.toString)
-//    }
+    //authentificate first
+    Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
+      assert(status === StatusCodes.OK)
+      assert(body.toString.contains("authToken"))
+      authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
+    }
+
+      Post(s"/medias",HttpEntity(ContentTypes.`application/json`,mediaInputRequestBodyJson))~>addHeader("Auth-Token", authResponse.authToken)~>mediasApiV1.route~>check{
+        mediaId=body.asInstanceOf[HttpEntity].data.asString
+      }
+
+    // Can get the complete media object
+    Get(s"/medias/$mediaId")~>addHeader("Auth-Token", authResponse.authToken)~>mediasApiV1.route~>check{
+      assert(body.toString.contains(mediaId))
+    }
+
+    // Can get the raw media object (ie. only it's data)
+    Get(s"/medias/$mediaId?raw=true")~>addHeader("Auth-Token", authResponse.authToken)~>mediasApiV1.route~>check{
+      println(body.toString === "hello world")
+    }
 
  }
 }
