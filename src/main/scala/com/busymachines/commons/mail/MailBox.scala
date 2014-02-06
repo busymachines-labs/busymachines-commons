@@ -40,8 +40,7 @@ object MailBox {
     if (message.to.nonEmpty) messageToSend.addRecipients(RecipientType.TO, message.to.toArray)
     if (message.cc.nonEmpty) messageToSend.addRecipients(RecipientType.CC, message.cc.toArray)
     messageToSend.setSentDate(message.sendDate.getOrElse(DateTime.now).toDate)
-    messageToSend.setSubject(message.subject.getOrElse(null))
-
+    if (message.subject != None) messageToSend.setSubject(message.subject.get)
     // Content is set in a different way depending whether it has attachments or not
     if (message.attachments.nonEmpty) {
       val multipart = new MimeMultipart
@@ -49,6 +48,7 @@ object MailBox {
       // Set the mail body
       val messageBodyPart = new MimeBodyPart
       messageBodyPart.setText(new String(message.content.get), null, "html")
+      messageBodyPart.setHeader("Content-Type", "text/html; charset=ISO-8859-1")
       multipart.addBodyPart(messageBodyPart)
 
       // Add each attachment
@@ -63,7 +63,8 @@ object MailBox {
       messageToSend.setContent(multipart)
 
     } else {
-      if (message.content != None) messageToSend.setText(new String(message.content.get), null, "html")
+      messageToSend.setHeader("Content-Type", "text/html; charset=ISO-8859-1")
+      messageToSend.setText(new String(message.content.getOrElse("".getBytes)), null, "html")
     }
 
     messageToSend

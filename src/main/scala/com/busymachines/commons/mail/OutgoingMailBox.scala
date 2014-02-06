@@ -11,8 +11,6 @@ import javax.mail.Session
  */
 class OutgoingMailBox(mailConfig: OutgoingMailConfig) extends Logging {
 
-  val session = Session.getInstance(serverProperties)
-
   private def serverProperties: Properties = {
 
     val properties = new Properties
@@ -32,10 +30,11 @@ class OutgoingMailBox(mailConfig: OutgoingMailConfig) extends Logging {
   }
 
   def send(message: MailMessage) = {
+    val session = Session.getInstance(serverProperties)
     val messageToSend = MailBox.mailMessageToMessage(session,message)
     val transport = session.getTransport("smtp")
     try {
-      transport.connect(mailConfig.userName, mailConfig.password)
+      transport.connect(mailConfig.host, mailConfig.port, mailConfig.userName, mailConfig.password)
       transport.sendMessage(messageToSend, messageToSend.getAllRecipients)
     } finally {
       transport.close()
