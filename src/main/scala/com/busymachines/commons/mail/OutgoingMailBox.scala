@@ -28,7 +28,6 @@ class OutgoingMailBox(mailConfig: OutgoingMailConfig) extends Logging {
     properties.put("mail.smtp.host", mailConfig.host)
     properties.put("mail.smtp.port", String.valueOf(mailConfig.port))
 
-    println(properties)
     properties
   }
 

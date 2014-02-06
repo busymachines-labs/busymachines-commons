@@ -18,8 +18,8 @@ class MailBoxTests extends FlatSpec {
   val outgoingMailBox = new OutgoingMailBox(new OutgoingMailConfig("test.busymachines.mail.outgoing"))
 
   "MailBox" should "receive max 10 mails from a mailbox" in {
-//    val initialMessages = incommingMailBox.getMessages(messageRange = (1, mailBox.getMessageCount().await)).await
-//    assert(initialMessages.size == 6)
+    val initialMessages = incommingMailBox.getMessages(messageRange = (1, incommingMailBox.getMessageCount().await)).await
+    assert(initialMessages.size == 6)
   }
 
   it should "receive messages within a specific date range from a mailbox" in {
