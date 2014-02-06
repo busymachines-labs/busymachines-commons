@@ -3,15 +3,10 @@ package com.busymachines.commons
 import com.typesafe.config.Config
 import _root_.spray.json.JsValue
 import scala.concurrent.Future
-import scala.concurrent.Await
-import scala.concurrent.duration.DurationInt
-import _root_.spray.json.JsObject
 import scala.concurrent.ExecutionContext
 import java.net.URL
 import scala.xml.factory.XMLLoader
 import scala.xml.Elem
-import scala.collection.{Map, Iterable}
-import scala.AnyVal
 import java.util.Locale
 import com.busymachines.RichCollection
 import scala.collection.generic.CanBuildFrom

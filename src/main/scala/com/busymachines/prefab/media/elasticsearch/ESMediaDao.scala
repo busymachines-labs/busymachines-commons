@@ -51,22 +51,28 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao
       }
     }
 
-  /**
-   * The returned Media might have a different id.
-   */
-  def store(mimeType: MimeType, name: Option[String], data: Array[Byte]): Future[Media] = {
+  def retrieve(mimeType: MimeType, name: Option[String], data: Array[Byte]): Future[Option[Media]] = {
     def hash = hasher.hashBytes(data).toString
     val stringData = encoding.encode(data)
-    dao.search((MediaMapping.mimeType equ mimeType.value) or (MediaMapping.hash equ hash)) flatMap {
+    dao.search((MediaMapping.mimeType equ mimeType.value) or (MediaMapping.hash equ hash)) map {
       _.find(m => m.data == stringData && m.name == name) match {
         case Some(Versioned(HashedMedia(id, mimeType, name, hash, data), version)) =>
-          Future.successful(Media(Id(id.toString), mimeType, name, encoding.decode(data)))
-        case None =>
-          val id = Id.generate[Media]
-          dao.create(HashedMedia(Id(id.toString), mimeType, name, hash, stringData)).map(_ => Media(id, mimeType, name, data))
+          Some(Media(Id(id.toString), mimeType, name, encoding.decode(data)))
+        case None => None
       }
     }
   }
+
+  def store(mimeType: MimeType, name: Option[String], data: Array[Byte]): Future[Media] =
+    retrieve(mimeType,name,data) flatMap {
+        case Some(media) =>
+          Future.successful(media)
+        case None =>
+          val id = Id.generate[Media]
+          def hash = hasher.hashBytes(data).toString
+          val stringData = encoding.encode(data)
+          dao.create(HashedMedia(Id(id.toString), mimeType, name, hash, stringData)).map(_ => Media(id, mimeType, name, data))
+      }
 
   def importUrl(url: String): Future[Option[Media]] = {
     Future(readUrl(url)) flatMap {

@@ -6,7 +6,7 @@ import com.busymachines.commons.domain.MimeType
 import com.busymachines.commons.domain.Media
 
 case class MailMessage(
-  messageNumber:Int,
+  messageNumber:Int = 0,
   from: List[Address] = Nil,
   to: List[Address] = Nil,
   cc: List[Address] = Nil,
