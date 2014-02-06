@@ -46,18 +46,6 @@ class IncommingMailBox(mailConfig: IncommingMailConfig) extends Logging {
     properties
   }
 
-  private def attachmentToMedia(attachment: MimeBodyPart): Media = {
-    val is = attachment.getInputStream
-    val fileName:Option[String] = attachment.getFileName match {
-      case null => None
-      case name:String => Some(name)
-    }
-    Media(
-      mimeType = fileName.map(MimeTypes.fromResourceName(_)).getOrElse(MimeType("unknown")),
-      name = fileName,
-      data = Stream.continually(is.read).takeWhile(-1 !=).map(_.toByte).toArray)
-  }
-
   private def connectOrReconnect = synchronized {
     if (!store.isConnected) store.connect(mailConfig.userName, mailConfig.password)
   }
@@ -123,32 +111,7 @@ class IncommingMailBox(mailConfig: IncommingMailConfig) extends Logging {
         case _ => throw new Exception(s"Unknown mail query")
       }
 
-    messages.map(m =>
-      MailMessage(
-        messageNumber = m.getMessageNumber,
-        from = m.getFrom match {case null => Nil case list => list.toList},
-        to = m.getRecipients(RecipientType.TO) match {case null => Nil case list => list.toList},
-        cc = m.getRecipients(RecipientType.CC) match {case null => Nil case list => list.toList},
-        sendDate = Some(new DateTime(m.getSentDate)),
-        subject = Some(m.getSubject),
-        contentType = None,
-        content =
-          if ((m.getContentType.contains("text/plain") || m.getContentType.contains("text/html")) &&
-            (m.getContent != null))
-            Some(m.getContent.toString.getBytes)
-          else None,
-        attachments = // Read all attachments as Media objects
-          m.getContentType.contains("multipart") match {
-            case false => Nil
-            case true =>
-              val multiPart = m.getContent.asInstanceOf[Multipart]
-              (0).until(multiPart.getCount) flatMap (partIndex =>
-                multiPart.getBodyPart(partIndex).asInstanceOf[MimeBodyPart].getSize match {
-                  case -1 => None
-                  case _ =>
-                    Some(attachmentToMedia(multiPart.getBodyPart(partIndex).asInstanceOf[MimeBodyPart]))
-                }) toList
-          })) toList
+    messages.map(MailBox.messageToMailMessage(_)) toList
   })
 
   def getMessageCount(folderName: String = inboxFolder):Future[Int] = Future.successful({
