@@ -28,6 +28,7 @@ trait CommonImplicits {
   implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
   implicit def richIterableMap[K, V, I <: Iterable[V]](map : Map[K, I]) = new RichIterableMap[K, V, I](map)
   implicit def richListMap[K, V](map : Map[K, List[V]]) = new RichIterableMap[K, V, List[V]](map)
+  implicit def richDouble(value : Double) = new RichDouble(value)
   implicit def richString(s : String) = new RichString(s)
   implicit def richByteArray(bytes : Array[Byte]) = new RichByteArray(bytes)
   implicit def richUrl(url : URL) = new RichUrl(url)
