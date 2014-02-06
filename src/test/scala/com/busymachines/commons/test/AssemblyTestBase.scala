@@ -8,9 +8,10 @@ import com.busymachines.prefab.party.PartyAssembly
 import com.busymachines.prefab.party.logic.PartyFixture
 import org.scalatest.FlatSpec
 import spray.testkit.{RouteTest, ScalatestRouteTest}
+import com.busymachines.prefab.media.MediaAssembly
 
 
-trait AssemblyTestBase extends FlatSpec with PartyAssembly with RouteTest with ScalatestRouteTest {
+trait AssemblyTestBase extends FlatSpec with PartyAssembly with MediaAssembly with RouteTest with ScalatestRouteTest {
 
   // system setup
   lazy implicit val actorSystem = ActorSystem("Commons")
