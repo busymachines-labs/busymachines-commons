@@ -31,10 +31,6 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao
   private val encoding = BaseEncoding.base64Url
   private val dao = new ESRootDao[HashedMedia](index, ESType[HashedMedia]("media", MediaMapping))
 
-  /**
-   * Retrieves all medias stored.
-   * @return
-   */
   def retrieveAll: Future[List[Media]] =
     dao.retrieveAll map { medias =>
       medias.map(media =>
@@ -44,19 +40,9 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao
         })
     }
 
-  /**
-   * Deletes media by id.
-   * @param id the media id
-   * @return
-   */
   def delete(id: Id[Media]): Future[Unit] =
     dao.delete(Id[HashedMedia](id.toString))
 
-  /**
-   * Retrieves a media object by id
-   * @param id the media id
-   * @return the media or None
-   */
   def retrieve(id: Id[Media]): Future[Option[Media]] =
     dao.retrieve(Id[HashedMedia](id.toString)).map {
       _ map {
@@ -65,13 +51,6 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao
       }
     }
 
-  /**
-   * Retrieves media by mime type & name & hashed data
-   * @param mimeType the media mime type
-   * @param name the media name
-   * @param data the data
-   * @return the media found or None
-   */
   def retrieve(mimeType: MimeType, name: Option[String], data: Array[Byte]): Future[Option[Media]] = {
     def hash = hasher.hashBytes(data).toString
     val stringData = encoding.encode(data)
@@ -84,13 +63,6 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao
     }
   }
 
-  /**
-   * Stores a media object that contains the specified data. Does automatic deduplication by name, mimeType & data hash.
-   * @param mimeType the media mime type
-   * @param name the media name
-   * @param data the data
-   * @return the media found or stored
-   */
   def store(mimeType: MimeType, name: Option[String], data: Array[Byte]): Future[Media] =
     retrieve(mimeType,name,data) flatMap {
         case Some(media) =>
@@ -102,11 +74,6 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao
           dao.create(HashedMedia(Id(id.toString), mimeType, name, hash, stringData)).map(_ => Media(id, mimeType, name, data))
       }
 
-  /**
-   * Imports a media object from a url. Does automatic deduplication.
-   * @param url
-   * @return
-   */
   def importUrl(url: String): Future[Option[Media]] = {
     Future(readUrl(url)) flatMap {
       case Some(bytes) =>
@@ -117,11 +84,6 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao
     }
   }
 
-  /**
-   * Reads the a byte array from the specified url.
-   * @param url the url
-   * @return the byte array or None (if url not found)
-   */
   def readUrl(url: String): Option[Array[Byte]] = {
     try {
       if (url.toString.isEmpty()) None
