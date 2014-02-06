@@ -93,8 +93,8 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao
    */
   def store(mimeType: MimeType, name: Option[String], data: Array[Byte]): Future[Media] =
     retrieve(mimeType,name,data) flatMap {
-        case Some(Versioned(HashedMedia(id, mimeType, name, hash, data), version)) =>
-          Future.successful(Media(Id(id.toString), mimeType, name, encoding.decode(data)))
+        case Some(media) =>
+          Future.successful(media)
         case None =>
           val id = Id.generate[Media]
           def hash = hasher.hashBytes(data).toString
