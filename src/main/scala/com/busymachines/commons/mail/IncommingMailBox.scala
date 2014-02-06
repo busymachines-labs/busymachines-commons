@@ -110,7 +110,7 @@ class IncommingMailBox(mailConfig: IncommingMailConfig) extends Logging {
   def getMessages(folderName: String = inboxFolder,flagTerm:Option[FlagTerm]=None,dateRange:Option[(DateTime,DateTime)] = None,messageRange:Option[(Int,Int)]=None): Future[List[MailMessage]] =
   Future.successful(
   {
-    connectOrReconnect
+  //  connectOrReconnect
 
     // Retrieve messages from the mail folder
     val folder = store.getFolder(folderName)
