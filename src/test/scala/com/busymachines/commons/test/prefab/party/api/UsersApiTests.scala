@@ -7,6 +7,7 @@ import com.busymachines.prefab.party.logic.PartyFixture
 import org.scalatest.FlatSpec
 import spray.http._
 import spray.json.JsonParser
+import com.busymachines.prefab.party.domain.User
 
 /**
  * Created by alex on 2/6/14.
@@ -22,20 +23,20 @@ class UsersApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Direct
 
   val userRequestBodyJson = """
     {
-      "id": "usr1",
-      "credentials": "cred1",
-      "firstname": "User",
-      "middlename": "",
-      "lastname": "1",
-      "addresses": "",
-      "phoneNumbers": "",
-      "emailAddresses": "",
-      "roles":""
+      "id": "test-user-1",
+      "credentials": "test-user-1-credentials",
+      "firstName": "User",
+      "middleName": "",
+      "lastName": "1",
+      "addresses": [],
+      "phoneNumbers": [],
+      "emailAddresses": [],
+      "roles":[]
     }"""
 
-  "UsersApi" should "get one user" in {
+  var authResponse:AuthenticationResponse=null;
 
-    var authResponse:AuthenticationResponse=null;
+  "UsersApi" should "get one user" in {
     Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
       assert(status === StatusCodes.OK)
       assert(body.toString.contains("authToken"))
@@ -45,7 +46,37 @@ class UsersApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Direct
     Get(s"/users/$testUser1Id") ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
       assert(status === StatusCodes.OK)
       assert(body.toString.contains("test-user-1"))
-      println(body.asString)
+      //println(body.asString)
+    }
+  }
+
+  "UsersApi" should "get all users" in {
+      Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
+        assert(status === StatusCodes.OK)
+        assert(body.toString.contains("authToken"))
+        authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
+      }
+      Get("/users") ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
+        assert(status === StatusCodes.OK)
+        //assert(body.toString.contains("test-user-1"))
+        println(body.asString)
+        val response = JsonParser(body.asString).convertTo[List[User]]
+        assert(response.count(p=>true) === 1)
+      }
+  }
+
+  "UsersApi" should "update user" in {
+    Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
+      assert(status === StatusCodes.OK)
+      assert(body.toString.contains("authToken"))
+      authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
+    }
+
+    Post(s"/users/$testUser1Id",HttpEntity(ContentTypes.`application/json`,userRequestBodyJson)) ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
+      //assert(status === StatusCodes.OK)
+      //assert(body.toString.contains("test-user-1"))
+      //println(body.asString)
+      pending
     }
   }
 }
