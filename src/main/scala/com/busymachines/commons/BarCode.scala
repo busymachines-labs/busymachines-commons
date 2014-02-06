@@ -2,7 +2,7 @@ package com.busymachines.commons
 
 import java.awt.image.BufferedImage
 import com.google.zxing.client.j2se.{MatrixToImageConfig, MatrixToImageWriter}
-import com.google.zxing.oned.EAN13Writer
+import com.google.zxing.oned.{Code39Writer, EAN13Writer}
 import com.google.zxing.BarcodeFormat
 import java.io.ByteArrayOutputStream
 
@@ -20,8 +20,17 @@ object BarCode {
     else throw new Exception("Unrecognized bar code format: " + code)
   }
 
+  def apply(code: String, format: String) = {
+    if (format.contains("39")) new BarCode39(code)
+    else if (format.contains("13")) new BarCodeEAN13(code)
+    else throw new Exception("Unrecognized bar code format: " + format)
+  }
+
   def ean13(code: String) =
     new BarCodeEAN13(code)
+
+  def code39(code: String) =
+    new BarCode39(code)
 
   def ean13(value : Long): BarCodeEAN13 = {
     import Character.digit
@@ -62,6 +71,23 @@ class BarCodeEAN13(val code: String) extends BarCode {
     val o = new ByteArrayOutputStream()
     MatrixToImageWriter.writeToStream(
       new EAN13Writer().encode(code, BarcodeFormat.EAN_13, width, height),
+      format.format,
+      o)
+    o.toByteArray
+  }
+
+}
+
+class BarCode39(val code: String) extends BarCode {
+  def toImage(width: Int, height: Int): BufferedImage =
+    MatrixToImageWriter.toBufferedImage(
+      new Code39Writer().encode(code, BarcodeFormat.CODE_39, width, height),
+      new MatrixToImageConfig)
+
+  def toImage(width: Int, height: Int, format: BarCode.ImageFormat): Array[Byte] = {
+    val o = new ByteArrayOutputStream()
+    MatrixToImageWriter.writeToStream(
+      new Code39Writer().encode(code, BarcodeFormat.CODE_39, width, height),
       format.format,
       o)
     o.toByteArray
