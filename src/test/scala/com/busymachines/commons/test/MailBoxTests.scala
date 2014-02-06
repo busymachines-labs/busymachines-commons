@@ -1,7 +1,7 @@
 package com.busymachines.commons.test
 
 import org.scalatest.FlatSpec
-import com.busymachines.commons.mail.{MailBox, MailConfig}
+import com.busymachines.commons.mail.{IncommingMailBox, IncommingMailConfig}
 import com.busymachines.commons.implicits._
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -11,7 +11,7 @@ import org.joda.time.format.DateTimeFormat
  */
 class MailBoxTests extends FlatSpec {
 
-  val mailBox = new MailBox(new MailConfig("test.busymachines.mail"))
+  val mailBox = new IncommingMailBox(new IncommingMailConfig("test.busymachines.mail"))
   "MailBox" should "receive max 10 mails from a mailbox" in {
     val initialMessages = mailBox.getMessages(messageRange = (1, mailBox.getMessageCount().await)).await
     assert(initialMessages.size == 6)
