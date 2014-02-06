@@ -67,7 +67,7 @@ class MailBox(mailConfig: MailConfig) extends Logging {
    * @param messages the messages to be marked as seen
    * @return
    */
-  def markInboxMessagesAsSeen(messages:List[MailMessage],seenPolarity:Boolean=true):Future[Unit] = {
+  def markInboxMessagesAsSeen(messages: List[MailMessage], seenPolarity: Boolean = true):Future[Unit] = {
     mailConfig.protocol.equalsIgnoreCase("imap") match {
       case true => markWithFlag(inboxFolder,messages,new Flags(Flags.Flag.SEEN),seenPolarity)
       case false => throw new Exception(s"Only IMAP protocol supports setting the messages as SEEN")
