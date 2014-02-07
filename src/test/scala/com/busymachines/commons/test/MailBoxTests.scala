@@ -25,7 +25,7 @@ class MailBoxTests extends FlatSpec {
 
   it should "receive messages within a specific date range from a mailbox" in {
     val formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss")
-    val dateTimeRange = (formatter.parseDateTime("06/02/2014 00:00:00"), formatter.parseDateTime("08/02/2014 00:00:00"))
+    val dateTimeRange = (Some(formatter.parseDateTime("06/02/2014 00:00:00")), Some(formatter.parseDateTime("08/02/2014 00:00:00")))
     val initialMessages = incommingMailBox.getMessages(dateRange = dateTimeRange).await
     assert(initialMessages.size == 5)
     incommingMailBox.markInboxMessagesAsSeen(initialMessages, false).await
