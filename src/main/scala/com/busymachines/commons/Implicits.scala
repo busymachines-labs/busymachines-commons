@@ -8,7 +8,6 @@ import java.net.URL
 import scala.xml.factory.XMLLoader
 import scala.xml.Elem
 import java.util.Locale
-import com.busymachines.RichCollection
 import scala.collection.generic.CanBuildFrom
 
 package object implicits extends CommonImplicits
