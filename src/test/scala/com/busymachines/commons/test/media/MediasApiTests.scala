@@ -31,11 +31,10 @@ class MediasApiTests extends FlatSpec with AssemblyTestBase with MediaApiV1Direc
       "data": "data:text/plain;base64,aGVsbG8gd29ybGQ="
       }
                            """
-  
-  "it" should "create & get raw & complete a media item based on its id" in{
-    var authResponse:AuthenticationResponse=null
-    var mediaId:String=null
+  var authResponse:AuthenticationResponse=null
+  var mediaId:String=null
 
+  "MediasApi" should "create & get raw & complete a media item based on its id" in{
     //authentificate first
     Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
       assert(status === StatusCodes.OK)
@@ -54,8 +53,26 @@ class MediasApiTests extends FlatSpec with AssemblyTestBase with MediaApiV1Direc
 
     // Can get the raw media object (ie. only it's data)
     Get(s"/medias/$mediaId?raw=true")~>addHeader("Auth-Token", authResponse.authToken)~>mediasApiV1.route~>check{
-      println(body.toString === "hello world")
+      assert(body.asInstanceOf[HttpEntity].data.asString === "hello world")
     }
 
  }
+  "it" should "delete a media item based on its id" in{
+    //authentificate first
+    Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
+      assert(status === StatusCodes.OK)
+      assert(body.toString.contains("authToken"))
+      authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
+    }
+
+    // Can delete media object
+    Delete(s"/medias/$mediaId")~>addHeader("Auth-Token", authResponse.authToken)~>mediasApiV1.route~>check{
+      assert(status === StatusCodes.OK)
+    }
+
+    // Should not get the complete media object
+    Get(s"/medias/$mediaId")~>addHeader("Auth-Token", authResponse.authToken)~>mediasApiV1.route~>check{
+      assert(status === StatusCodes.InternalServerError)
+    }
+  }
 }
