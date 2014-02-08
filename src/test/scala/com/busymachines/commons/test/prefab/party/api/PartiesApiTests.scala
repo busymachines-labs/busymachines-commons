@@ -19,7 +19,9 @@ import com.busymachines.commons.domain.Id
  */
 class PartiesApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Directives with PartyFixture {
 
-  case class PostPartyResponse(id:String)
+  case class PartyPostResponse(id:String)
+  implicit val partyPostResponseFormat=jsonFormat1(PartyPostResponse)
+
   val userAuthRequestBodyJson = """
     {
       "loginName": "user1@test.com",
@@ -76,8 +78,8 @@ class PartiesApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Dire
       assert(party.id === Id[Party]("test-party-1"))
     }
   }
-  "it" should "create and retrieve and delete a new party" in {
-    var testParty2Id:Id[Party]=null;
+  it should "create and retrieve and delete a new party" in {
+    var testParty2:PartyPostResponse=null;
     Post("/users/authentication", HttpEntity(ContentTypes.`application/json`, userAuthRequestBodyJson)) ~> authenticationApiV1.route ~> check {
       assert(status === StatusCodes.OK)
       assert(body.toString.contains("authToken"))
@@ -85,27 +87,25 @@ class PartiesApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Dire
     }
     Post("/parties", HttpEntity(ContentTypes.`application/json`, partyRequestBodyJson)) ~> addHeader("Auth-Token", authResponse.authToken) ~> partiesApiV1.route ~> check {
       assert(status === StatusCodes.OK)
+      testParty2=JsonParser(body.asString).convertTo[PartyPostResponse]
     }
-    //TODO FIX hardcoded value
-    Get(s"/parties/test-party-2")~> addHeader("Auth-Token", authResponse.authToken) ~> partiesApiV1.route ~> check {
+    Get(s"/parties/${testParty2.id}")~> addHeader("Auth-Token", authResponse.authToken) ~> partiesApiV1.route ~> check {
       assert(status === StatusCodes.OK)
       val party = JsonParser(body.asString).convertTo[Party]
       assert(party.id === Id[Party]("test-party-2"))
     }
-    //TODO FIX hardcoded value
-    Delete(s"/parties/test-party-2")~> addHeader("Auth-Token", authResponse.authToken) ~> partiesApiV1.route ~> check {
+    Delete(s"/parties/${testParty2.id}")~> addHeader("Auth-Token", authResponse.authToken) ~> partiesApiV1.route ~> check {
       assert(status === StatusCodes.OK)
     }
     /*
     //TODO FIX ATTENTION Current implementation doesn't delete a party
-    //TODO FIX hardcoded value
-    Get(s"/parties/test-party-2")~> addHeader("Auth-Token", authResponse.authToken) ~> partiesApiV1.route ~> check {
+    Get(s"/parties/${testParty2.id}")~> addHeader("Auth-Token", authResponse.authToken) ~> partiesApiV1.route ~> check {
       //assert(status === StatusCodes.InternalServerError)
       //println(body.toString)
     }
     */
   }
-  "it" should "get all parties" in {
+  it should "get all parties" in {
     /*
     Post("/users/authentication", HttpEntity(ContentTypes.`application/json`, userAuthRequestBodyJson)) ~> authenticationApiV1.route ~> check {
       assert(status === StatusCodes.OK)
