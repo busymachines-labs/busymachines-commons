@@ -42,7 +42,6 @@ class UsersApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Direct
       assert(body.toString.contains("authToken"))
       authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
     }
-
     Get(s"/users/$testUser1Id") ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
       assert(status === StatusCodes.OK)
       assert(body.toString.contains("test-user-1"))
@@ -50,7 +49,7 @@ class UsersApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Direct
     }
   }
 
-  "UsersApi" should "get all users" in {
+  it should "get all users" in {
       Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
         assert(status === StatusCodes.OK)
         assert(body.toString.contains("authToken"))
@@ -59,24 +58,25 @@ class UsersApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Direct
       Get("/users") ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
         assert(status === StatusCodes.OK)
         //assert(body.toString.contains("test-user-1"))
-        println(body.asString)
         val response = JsonParser(body.asString).convertTo[List[User]]
         assert(response.count(p=>true) === 1)
       }
   }
 
-  "UsersApi" should "update user" in {
+  //TODO FIX update - current implementation of the API doesn't update a user
+  it should "update user" in {
+    /*
     Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
       assert(status === StatusCodes.OK)
       assert(body.toString.contains("authToken"))
       authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
     }
-
-    Post(s"/users/$testUser1Id",HttpEntity(ContentTypes.`application/json`,userRequestBodyJson)) ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
-      //assert(status === StatusCodes.OK)
-      //assert(body.toString.contains("test-user-1"))
-      //println(body.asString)
-      pending
+    Post(s"/users/{$testUser1Id}",HttpEntity(ContentTypes.`application/json`,userRequestBodyJson)) ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
+      assert(status === StatusCodes.OK)
+      assert(body.toString.contains("test-user-1"))
+      println(body.asString)
     }
+    */
+    pending
   }
 }
