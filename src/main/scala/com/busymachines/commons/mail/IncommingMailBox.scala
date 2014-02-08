@@ -95,7 +95,7 @@ class IncommingMailBox(mailConfig: IncommingMailConfig) extends Logging {
    * @param flagTerm the flag based search criteria
    * @return
    */
-  def getMessages(folderName: String = inboxFolder,flagTerm:Option[FlagTerm]=None,dateRange:Option[(DateTime,DateTime)] = None,messageRange:Option[(Int,Int)]=None): Future[List[MailMessage]] =
+  def getMessages(folderName: String = inboxFolder,flagTerm:Option[FlagTerm]=None,dateRange:Option[(Option[DateTime],Option[DateTime])] = None,messageRange:Option[(Int,Int)]=None): Future[List[MailMessage]] =
   Future.successful(
   {
   //  connectOrReconnect
@@ -107,7 +107,13 @@ class IncommingMailBox(mailConfig: IncommingMailConfig) extends Logging {
       (flagTerm,dateRange,messageRange) match {
         case (Some(flagTermValue),None,None) => folder.search(flagTermValue)
         case (None,None,Some(range)) => folder.getMessages(range._1,range._2)
-        case (None,Some(dateRangeValue),None) => folder.search(new AndTerm(new ReceivedDateTerm(ComparisonTerm.LT, dateRangeValue._2.toDate), new ReceivedDateTerm(ComparisonTerm.GT, dateRangeValue._1.toDate)))
+        case (None,Some(dateRangeValue),None) =>
+          dateRangeValue match {
+            case (None,None) => throw new Exception(s"Cannot search mail for date range and not specify at least one end of the range")
+            case (Some(dateRangeStartValue),None) => folder.search(new ReceivedDateTerm(ComparisonTerm.GT, dateRangeStartValue.toDate))
+            case (None,Some(dateRangeEndValue)) => folder.search(new ReceivedDateTerm(ComparisonTerm.LT, dateRangeEndValue.toDate))
+            case (Some(dateRangeStartValue),Some(dateRangeEndValue)) => folder.search(new AndTerm(new ReceivedDateTerm(ComparisonTerm.LT, dateRangeEndValue.toDate), new ReceivedDateTerm(ComparisonTerm.GT, dateRangeStartValue.toDate)))
+          }
         case _ => throw new Exception(s"Unknown mail query")
       }
 

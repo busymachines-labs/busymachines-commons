@@ -10,6 +10,7 @@ import java.util.Map.Entry
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
+import java.io.File
 
 object CommonConfigFactory {
   private[commons] var usedPaths = TrieMap[String, Unit]()
@@ -18,7 +19,7 @@ object CommonConfigFactory {
     case files => files.split(",").toList
   }
   val defaultConfig = ConfigFactory.load(getClass.getClassLoader)
-  val fileConfigs = configFiles.map(config => ConfigFactory.parseURL(new URL(config)))
+  val fileConfigs = configFiles.map(config => ConfigFactory.parseFile(new File(config)))
   val config = fileConfigs.foldRight(defaultConfig)((config, defaultConfig) => config.withFallback(defaultConfig))
 }
 
