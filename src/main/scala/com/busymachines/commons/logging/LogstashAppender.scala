@@ -10,19 +10,16 @@ import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.CommonJsonFormats
 import com.busymachines.commons.elasticsearch.ESMapping
-import com.busymachines.commons.event.DoNothingEventSystem
 import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
-import DomainJsonFormats.logMessageFormat
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.event.DoNothingEventSystem
-import spray.httpx.SprayJsonSupport
-import spray.json.DefaultJsonProtocol
 
-object DomainJsonFormats extends DefaultJsonProtocol with CommonJsonFormats {
+object DomainJsonFormats extends CommonJsonFormats {
   implicit val logMessageFormat = jsonFormat(LogMessage, "id", "@message", "@fields", "@source", "@source_host", "@source_path", "@tags", "@type", "@timestamp")
 }
+import DomainJsonFormats._
 
 case class LogMessage(
   id: Id[LogMessage] = Id.generate[LogMessage],
