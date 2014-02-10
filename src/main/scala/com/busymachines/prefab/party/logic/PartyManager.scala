@@ -19,6 +19,7 @@ import com.busymachines.prefab.party.db.UserDao
 import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.service.PartyService
+import com.busymachines.commons.implicits._
 
 class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCredentialsDao, userAuthenticator : UserAuthenticator)(implicit ec: ExecutionContext) extends PartyService with Logging {
 
@@ -33,7 +34,8 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
           credentials.copy(passwordCredentials = PasswordCredentials(loginName, password) :: Nil)
         }
     }
-  
+
+
   def listParties(implicit sc: SecurityContext): Future[List[Party]] = 
     partyDao.retrieveAll		  
   
@@ -41,27 +43,28 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
   /**
    * Create a party based on specific fields received.
    */
-  def createParty(party: Party)(implicit sc: SecurityContext): Future[Party] = {
+  def createParty(party: Party)(implicit sc: SecurityContext): Future[Party] =
     partyDao.create(party).map(_.entity)
-  }
+
 
   /**
    * Find a specific party by id.
    */
-  def getParty(partyId: Id[Party])(implicit sc: SecurityContext): Future[Option[Party]] = {
+  def getParty(partyId: Id[Party])(implicit sc: SecurityContext): Future[Option[Party]] =
     partyCache(partyId, () => partyDao.retrieve(partyId).map(_.map(_.entity)))
-  }
+
 
   /**
    * Delete a specific party based on its id.
    */
-  def deleteParty(entityId: Id[Party])(implicit sc: SecurityContext): String = {
-    ""
-  }
+  def deleteParty(entityId: Id[Party])(implicit sc: SecurityContext): Future[Unit] =
+    partyDao.delete(entityId).map(_=>partyCache.remove(entityId))
 
-  def updateUser(id: Id[User], user : User)(implicit sc: SecurityContext): String = 
-    ""
-    
+
+  def updateUser(id: Id[User], user : User)(implicit sc: SecurityContext): Future[Unit] =
+   userDao.modify(id)(_user=> user).map(_=>Unit)
+
+
   def findUser(id: Id[User])(implicit sc: SecurityContext): Future[Option[User]] = 
     userDao.retrieve(id)
 
@@ -69,7 +72,8 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
    * To check if user has enough rights to use a specific party id for specific operations (eg. to create a location for this partyId) we have to
    * check if that party is the party of current user OR if it's a child party.
    */
-  def userHasEnoughRights(partyId: Id[Party], user: User) = {
-    false
+  def userHasEnoughRights(partyId: Id[Party], user: User): Future[Boolean] = partyDao.findUserById(user.id) map {
+    case Some(tup) => tup._1.id == partyId.value ||( tup._1.owner !=None && tup._1.owner.get == partyId)
+    case None => false
   }
 }
