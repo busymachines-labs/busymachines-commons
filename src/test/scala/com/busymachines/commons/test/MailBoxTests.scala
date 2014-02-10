@@ -18,9 +18,18 @@ class MailBoxTests extends FlatSpec {
   val incommingMailBox = new IncommingMailBox(new IncommingMailConfig("test.busymachines.mail.incomming"))
   val outgoingMailBox = new OutgoingMailBox(new OutgoingMailConfig("test.busymachines.mail.outgoing"))
 
-  "MailBox" should "receive max 10 mails from a mailbox" in {
+  "MailBox" should "receive max 10 mails from a mailbox & can properly read the mail fields" in {
     val initialMessages = incommingMailBox.getMessages(messageRange = (1, incommingMailBox.getMessageCount().await)).await
     assert(initialMessages.size == 5)
+
+    val threeTipsMail = initialMessages.collectFirst({case x if x.subject == Some("Three tips to get the most out of Gmail") => x}).get
+    assert(threeTipsMail.subject === Some("Three tips to get the most out of Gmail"))
+    assert(threeTipsMail.from === List(new InternetAddress("mail-noreply@google.com")))
+    assert(threeTipsMail.to === List(new InternetAddress("busymachines.test@gmail.com")))
+
+    val mailWithAttachment = initialMessages.collectFirst({case x if x.subject == Some("Fwd: BAXTER-MIRA-01050951-Apotheek Oud-Vossemeer") => x}).get
+    assert(mailWithAttachment.attachments.head.name === Some("WEIJER - VOSSEN1"))
+
   }
 
   it should "receive messages within a specific date range from a mailbox" in {
