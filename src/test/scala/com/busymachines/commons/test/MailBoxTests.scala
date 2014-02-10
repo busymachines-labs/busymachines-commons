@@ -29,7 +29,6 @@ class MailBoxTests extends FlatSpec {
 
     val mailWithAttachment = initialMessages.collectFirst({case x if x.subject == Some("Fwd: BAXTER-MIRA-01050951-Apotheek Oud-Vossemeer") => x}).get
     assert(mailWithAttachment.attachments.head.name === Some("WEIJER - VOSSEN1"))
-
   }
 
   it should "receive messages within a specific date range from a mailbox" in {
