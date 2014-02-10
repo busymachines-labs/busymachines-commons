@@ -3,35 +3,25 @@ package com.busymachines.commons.domain
 import java.util.Currency
 import java.util.Locale
 import org.joda.time.DateTime
-import org.joda.time.Duration
 import org.joda.time.format.ISODateTimeFormat
-import spray.json.DefaultJsonProtocol
-import spray.json.JsObject
-import spray.json.JsString
-import spray.json.JsValue
-import spray.json.JsonFormat
-import spray.json.RootJsonFormat
-import spray.json.deserializationError
-import spray.json.JsObject
-import spray.json.JsNumber
-import spray.json.JsonWriter
+import spray.json._
 import com.busymachines.commons.dao.SearchResult
-import spray.json.JsonWriter
 import com.busymachines.commons.dao.Versioned
-import com.busymachines.commons.dao.Page
-import spray.json.JsArray
-import spray.json.RootJsonWriter
-import scala.concurrent.duration.{ Duration, FiniteDuration, Deadline }
+import scala.concurrent.duration.FiniteDuration
 import org.joda.time.LocalDate
-import scala.collection.immutable.HashMap
-import com.busymachines.commons.dao.Facet
-import com.busymachines.commons.dao.FacetValue
+import com.busymachines.commons.CommonProductFormats
+import scala.Some
 import com.busymachines.commons.dao.TermFacetValue
 import com.busymachines.commons.dao.HistogramFacetValue
 
 object CommonJsonFormats extends CommonJsonFormats
 
-trait CommonJsonFormats extends DefaultJsonProtocol {
+trait CommonJsonFormats
+  extends BasicFormats
+  with StandardFormats
+  with CollectionFormats
+  with CommonProductFormats
+  with AdditionalFormats {
 
   implicit object currencyJsonFormat extends RootJsonFormat[Currency] {
     def write(c: Currency) =
