@@ -72,7 +72,8 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
    * To check if user has enough rights to use a specific party id for specific operations (eg. to create a location for this partyId) we have to
    * check if that party is the party of current user OR if it's a child party.
    */
-  def userHasEnoughRights(partyId: Id[Party], user: User) =
-    false
-
+  def userHasEnoughRights(partyId: Id[Party], user: User): Future[Boolean] = partyDao.findUserById(user.id) map {
+    case Some(tup) => tup._1.id == partyId.value ||( tup._1.owner !=None && tup._1.owner.get == partyId)
+    case None => false
+  }
 }
