@@ -8,6 +8,7 @@ import javax.mail.internet.{MimeMultipart, MimeMessage, MimeBodyPart}
 import com.busymachines.commons.domain.{MimeType, MimeTypes, Media}
 import javax.activation.{DataHandler, DataSource}
 import javax.mail.util.ByteArrayDataSource
+import scala.collection.JavaConversions._
 
 /**
  * Created by paul on 2/6/14.
@@ -25,11 +26,19 @@ object MailBox {
   private def attachmentToMedia(attachment: MimeBodyPart): Media = {
     val is = attachment.getInputStream
     val fileName:Option[String] = attachment.getFileName match {
-      case null => None
+      case null =>
+        attachment.getHeader("Content-Disposition") match {
+          case header if header != null =>
+            header.headOption match {
+              case None => None
+              case Some(value) => Some(value.replaceAllLiterally("attachment; filename=",""))
+            }
+          case null => None
+        }
       case name:String => Some(name)
     }
     Media(
-      mimeType = fileName.map(MimeTypes.fromResourceName(_)).getOrElse(MimeType("unknown")),
+      mimeType = fileName.map(MimeTypes.fromResourceName(_)).getOrElse(MimeTypes.text),
       name = fileName,
       data = Stream.continually(is.read).takeWhile(-1 !=).map(_.toByte).toArray)
   }
