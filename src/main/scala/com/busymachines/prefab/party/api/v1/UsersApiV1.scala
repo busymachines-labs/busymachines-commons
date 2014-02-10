@@ -23,10 +23,9 @@ class UsersApiV1(partyService : PartyService, authenticator : UserAuthenticator)
       authenticate(authenticator) { implicit securityContext =>  
         put {
           entity(as[User]) { userUpdate =>
-            partyService.updateUser(userId, userUpdate)
             respondWithStatus(StatusCodes.OK) {
               complete {
-                ""
+                partyService.updateUser(userId, userUpdate) map (_=>"OK")
               }
             }
           }

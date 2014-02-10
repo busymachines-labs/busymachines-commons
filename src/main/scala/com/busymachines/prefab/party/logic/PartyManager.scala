@@ -19,6 +19,7 @@ import com.busymachines.prefab.party.db.UserDao
 import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.service.PartyService
+import com.busymachines.commons.implicits._
 
 class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCredentialsDao, userAuthenticator : UserAuthenticator)(implicit ec: ExecutionContext) extends PartyService with Logging {
 
@@ -33,7 +34,8 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
           credentials.copy(passwordCredentials = PasswordCredentials(loginName, password) :: Nil)
         }
     }
-  
+
+
   def listParties(implicit sc: SecurityContext): Future[List[Party]] = 
     partyDao.retrieveAll		  
   
@@ -60,8 +62,9 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
 
 
   def updateUser(id: Id[User], user : User)(implicit sc: SecurityContext): Future[Unit] =
-    userDao.update(Versioned[User](user,1)).map(_=>Unit)
-    
+   userDao.modify(id)(_user=> user).map(_=>Unit)
+
+
   def findUser(id: Id[User])(implicit sc: SecurityContext): Future[Option[User]] = 
     userDao.retrieve(id)
 
