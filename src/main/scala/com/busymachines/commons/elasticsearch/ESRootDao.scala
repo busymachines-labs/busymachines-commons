@@ -180,7 +180,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  def create(entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration] = None): Future[Versioned[T]] = {
+  def create(entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration]): Future[Versioned[T]] = {
     val json = entity.convertToES(mapping)
     val request = new IndexRequest(index.name, t.name)
       .id(entity.id.toString)
