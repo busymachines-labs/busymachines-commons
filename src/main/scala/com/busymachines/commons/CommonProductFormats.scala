@@ -827,7 +827,7 @@ trait CommonProductFormats { self: StandardFormats =>
       fromField[W](value, w))
   }
 
-  private def fromField[T](value: JsValue, fieldAndDefault: Field)(implicit reader: JsonReader[T]) = {
+  def fromField[T](value: JsValue, fieldAndDefault: Field)(implicit reader: JsonReader[T]) = {
     value match {
       case x: JsObject =>
         x.fields.get(fieldAndDefault.name) match {
