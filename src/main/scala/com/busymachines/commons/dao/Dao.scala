@@ -50,6 +50,8 @@ trait Dao[T <: HasId[T]] {
 
   def modify(id: Id[T], reindex: Boolean = true)(f: T => T): Future[Versioned[T]]
 
+  def modifyOptionally(id: Id[T], reindex: Boolean = true)(f: T => Option[T]): Future[Versioned[T]]
+
   def update(entity: Versioned[T], reindex: Boolean = true): Future[Versioned[T]]
 
   def delete(id: Id[T], reindex: Boolean = true): Future[Unit]

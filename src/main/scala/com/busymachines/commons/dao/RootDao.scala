@@ -22,6 +22,8 @@ trait RootDao[T <: HasId[T]] extends Dao[T] {
   def getOrCreate(id : Id[T], reindex : Boolean = true)(create : => T): Future[Versioned[T]] 
   
   def getOrCreateAndModify(id : Id[T], reindex : Boolean = true)(create : => T)(modify : T => T): Future[Versioned[T]]
+
+  def getOrCreateAndModifyOptionally(id : Id[T], reindex : Boolean = true)(create : => T)(modify : T => Option[T]): Future[Versioned[T]]
   
   def reindexAll()
 }

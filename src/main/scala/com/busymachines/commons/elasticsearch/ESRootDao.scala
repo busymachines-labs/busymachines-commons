@@ -211,8 +211,30 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
-  def getOrCreateAndModify(id: Id[T], refreshAfterMutation: Boolean)(_create: => T)(_modify: T => T): Future[Versioned[T]] =
-    getOrCreate(id, refreshAfterMutation = false)(_create).flatMap(entity => update(entity.copy(entity = _modify(entity)), refreshAfterMutation))
+  def getOrCreateAndModify(id: Id[T], refreshAfterMutation: Boolean)(_create: => T)(_modify: T => T): Future[Versioned[T]] = {
+    RetryVersionConflictAsync(10) {
+      retrieve(id).flatMap {
+        case None => create(_modify(_create), refreshAfterMutation)
+        case Some(Versioned(entity, version)) =>
+          update(Versioned(_modify(entity), version), refreshAfterMutation)
+      }
+    }
+  }
+
+  def getOrCreateAndModifyOptionally(id: Id[T], refreshAfterMutation: Boolean)(_create: => T)(_modify: T => Option[T]): Future[Versioned[T]] = {
+    RetryVersionConflictAsync(10) {
+      retrieve(id).flatMap {
+        case None => 
+          val created : T = _create
+          create(_modify(created).getOrElse(created), refreshAfterMutation)
+        case Some(Versioned(entity, version)) =>
+          _modify(entity) match {
+            case Some(newEntity) => update(Versioned(newEntity, version), refreshAfterMutation)
+            case None => Future.successful(Versioned(entity, version))
+          }
+      }
+    }
+  }
 
   def modify(id: Id[T], refreshAfterMutation: Boolean)(modify: T => T): Future[Versioned[T]] = {
     RetryVersionConflictAsync(10) {
@@ -220,6 +242,19 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
         case None => throw new IdNotFoundException(id.toString, t.name)
         case Some(Versioned(entity, version)) =>
           update(Versioned(modify(entity), version), refreshAfterMutation)
+      }
+    }
+  }
+
+  def modifyOptionally(id: Id[T], refreshAfterMutation: Boolean)(modify: T => Option[T]): Future[Versioned[T]] = {
+    RetryVersionConflictAsync(10) {
+      retrieve(id).flatMap {
+        case None => throw new IdNotFoundException(id.toString, t.name)
+        case Some(Versioned(entity, version)) =>
+          modify(entity) match {
+            case Some(newEntity) => update(Versioned(newEntity, version), refreshAfterMutation)
+            case None => Future.successful(Versioned(entity, version))
+          }
       }
     }
   }

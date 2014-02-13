@@ -94,6 +94,31 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
     }
   }
   
+  def modifyOptionally(id : Id[T], refreshAfterMutation : Boolean = true)(f : T => Option[T]) : Future[Versioned[T]] = {
+    retrieveParent(id) flatMap {
+      case None => throw new IdNotFoundException(id.toString, typeName)
+      case Some(Versioned(parent, version)) =>
+        val found = new Found
+        var modified = false
+        val modifiedParent = modifyEntity(parent, id, found, e => f(e) match {
+          case Some(e2) => e2
+          case None =>
+            modified = true
+            e
+        })
+        found.entity match {
+          case Some(entity) =>
+            if (modified) 
+              parentDao.update(Versioned(modifiedParent, version), refreshAfterMutation)
+                .map(_.copy(entity = entity))
+            else
+              Future.successful(Versioned(entity, version))  
+          case None =>
+            throw new IdNotFoundException(id.toString, typeName)
+        }
+    }
+  }
+  
   def update(entity: Versioned[T], refreshAfterMutation : Boolean = true): Future[Versioned[T]] = {
     retrieveParent(entity.entity.id) flatMap {
       case None => throw new IdNotFoundException(entity.entity.id.toString, typeName)

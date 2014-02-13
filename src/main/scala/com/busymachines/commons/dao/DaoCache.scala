@@ -10,9 +10,11 @@ import scala.concurrent.duration.Duration
 
 /**
  * This cache has unbounded size and lifetime. Mainly exists for use inside mutator.
+ * TODO make async
  */
 class DaoCache[T <: HasId[T]](dao: Dao[T], autoInvalidate : Boolean = false, onInvalidate : Id[T] => Unit = (id : Id[T]) => ())(implicit ec: ExecutionContext) {
 
+  private val maxSearchResultSize = 1000
   private val _idCache = TrieMap.empty[Id[T], Option[Versioned[T]]] 
   private val _searchCache = TrieMap.empty[(SearchCriteria[T], Page), List[Versioned[T]]]
 
@@ -34,22 +36,27 @@ class DaoCache[T <: HasId[T]](dao: Dao[T], autoInvalidate : Boolean = false, onI
       case Seq() => List()
       case ids => Await.result(dao.retrieve(ids), timeout)
     }
-    val result = cached.collect { case (id, Some(v)) => (id -> v) } ++ retrieved.map(v => v.entity.id -> Some(v))
+    val result = cached.collect { case (id, Some(v)) => id -> v } ++ retrieved.map(v => v.entity.id -> Some(v))
     _idCache ++= result
     result.collect { case (_, Some(v)) => v }
   }
 
-  def search(criteria: SearchCriteria[T], page : Page, timeout: Duration): List[Versioned[T]] =
-    _searchCache.getOrElseUpdate((criteria, page), Await.result(dao.search(criteria, page), timeout).map {
-      case v @ Versioned(obj, version) => _idCache.getOrElseUpdate(obj.id, Some(v)) match {
-        case Some(v) => v
-        case None => v
-      }
-    })
+  def search(criteria: SearchCriteria[T], page : Page = Page.all, timeout: Duration, maxSearchResultSize: Int = this.maxSearchResultSize): List[Versioned[T]] = {
+    val key = (criteria, page)
+    val result = _searchCache.getOrElseUpdate(key, Await.result(dao.search(criteria, page), timeout).map {
+        case v @ Versioned(obj, version) => _idCache.getOrElseUpdate(obj.id, Some(v)) match {
+          case Some(v) => v
+          case None => v
+        }
+      })
+    if (result.size > maxSearchResultSize)
+      _searchCache.remove(key)
+    result
+  }
     
   def invalidate(id: Id[T]) : Unit = {
     _idCache.remove(id)
-    _searchCache.clear
+    _searchCache.clear()
     onInvalidate(id)
   }
 }
