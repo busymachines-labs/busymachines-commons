@@ -33,12 +33,15 @@ class IncomingMailBox(mailConfig: IncommingMailConfig) extends Logging {
     properties.put(String.format("mail.%s.port", mailConfig.protocol), String.valueOf(mailConfig.port))
 
     // SSL setting
-    properties.setProperty(
-      String.format("mail.%s.socketFactory.class", mailConfig.protocol),
-      "javax.net.ssl.SSLSocketFactory")
-    properties.setProperty(
-      String.format("mail.%s.socketFactory.fallback", mailConfig.protocol),
-      "false")
+    if (mailConfig.ssl) {
+      properties.setProperty(
+        String.format("mail.%s.socketFactory.class", mailConfig.protocol),
+        "javax.net.ssl.SSLSocketFactory")
+      properties.setProperty(
+        String.format("mail.%s.socketFactory.fallback", mailConfig.protocol),
+        "false")
+    }
+
     properties.setProperty(
       String.format("mail.%s.socketFactory.port", mailConfig.protocol),
       String.valueOf(mailConfig.port))
@@ -98,6 +101,7 @@ class IncomingMailBox(mailConfig: IncommingMailConfig) extends Logging {
   def getMessages(folderName: String = inboxFolder,flagTerm:Option[FlagTerm]=None,dateRange:Option[(Option[DateTime],Option[DateTime])] = None,messageRange:Option[(Int,Int)]=None): Future[List[MailMessage]] =
   Future.successful(
   {
+    try {
     connectOrReconnect
 
     // Retrieve messages from the mail folder
@@ -117,8 +121,14 @@ class IncomingMailBox(mailConfig: IncommingMailConfig) extends Logging {
         case _ => throw new Exception(s"Unknown mail query")
       }
 
-    messages.map(MailBox.messageToMailMessage(_)) toList
-  })
+      messages.map(MailBox.messageToMailMessage(_)) toList
+    } catch {
+      case e:Throwable =>
+        error("Error searching & converting the received mails to a normalized mail message format",e)
+        throw e
+    }
+  }
+  )
 
   def getMessageCount(folderName: String = inboxFolder):Future[Int] = Future.successful({
     connectOrReconnect
