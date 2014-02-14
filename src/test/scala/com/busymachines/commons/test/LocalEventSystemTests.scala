@@ -4,7 +4,10 @@ import org.scalatest.FlatSpec
 import akka.actor.ActorSystem
 import com.busymachines.commons.event.LocalEventBus
 import com.busymachines.commons.event.BusEvent
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class LocalEventSystemTests extends FlatSpec  {
   "LocalEventSystemTests" should "send and receive events" in {
 
@@ -27,6 +30,8 @@ class LocalEventSystemTests extends FlatSpec  {
     }
 
     localEventBus.publish(new BusEvent {})
+
+    Thread.sleep(1000)
 
     assert(enpoint1Received)
     assert(enpoint2Received)

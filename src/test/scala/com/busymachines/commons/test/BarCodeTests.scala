@@ -2,7 +2,10 @@ package com.busymachines.commons.test
 
 import org.scalatest.FlatSpec
 import com.busymachines.commons.{BarCode, Logging}
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class BarCodeTests extends FlatSpec with Logging {
 
   "BarCode" should "create EAN13 checksum" in {

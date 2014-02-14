@@ -9,10 +9,13 @@ import com.busymachines.commons.mail.model.MailMessage
 import javax.mail.Address
 import javax.mail.internet.InternetAddress
 import com.busymachines.commons.domain.{MimeTypes, Id, Media}
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 /**
  * Created by paul on 2/4/14.
  */
+@RunWith(classOf[JUnitRunner])
 class MailBoxTests extends FlatSpec {
 
   val incommingMailBox = new IncomingMailBox(new IncommingMailConfig("test.busymachines.mail.incomming"))

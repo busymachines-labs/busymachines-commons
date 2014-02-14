@@ -4,7 +4,10 @@ import org.scalatest.FlatSpec
 import akka.actor.ActorSystem
 import com.busymachines.commons.event.LocalEventBus
 import com.busymachines.commons.event.BusEvent
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class EventBusEndpointTests extends FlatSpec  {
   "EventBusEndpoint" should "be able to accept multiple registrations & complete them all" in {
 

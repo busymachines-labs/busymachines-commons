@@ -10,7 +10,10 @@ import com.busymachines.commons.Logging
 import com.busymachines.prefab.authentication.elasticsearch.ESCredentialsDao
 import com.busymachines.prefab.authentication.model.SecurityJsonFormats._
 import com.busymachines.commons.implicits.richFuture
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class CredentialsTests extends FlatSpec with Logging {
 
   val esIndex = new EmptyESTestIndex(getClass, new DoNothingEventSystem)

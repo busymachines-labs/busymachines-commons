@@ -5,6 +5,8 @@ import com.busymachines.commons.domain.CommonJsonFormats._
 import org.scalatest.FlatSpec
 import com.busymachines.commons.{Extension, Extensions}
 import spray.json._
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 object ExtensionTestsFixture {
   case class Thing(name: String, size: Int, extensions: Extensions = Extensions.empty)
@@ -29,6 +31,7 @@ object ExtensionTestsFixture {
   OrderThingExtension.register()
 }
 
+@RunWith(classOf[JUnitRunner])
 class ExtensionTests extends FlatSpec {
 
   import ExtensionTestsFixture._

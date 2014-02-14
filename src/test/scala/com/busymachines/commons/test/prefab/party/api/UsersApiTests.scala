@@ -8,10 +8,13 @@ import org.scalatest.FlatSpec
 import spray.http._
 import spray.json.JsonParser
 import com.busymachines.prefab.party.domain.User
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 /**
  * Created by alex on 2/6/14.
  */
+@RunWith(classOf[JUnitRunner])
 class UsersApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Directives with PartyFixture {
 
   val userAuthRequestBodyJson = """
@@ -68,24 +71,23 @@ class UsersApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Direct
       }
   }
 
-// TODO Fix as it blocks on dev
-//  it should "update user" in {
-//    var authResponse:AuthenticationResponse=null;
-//
-//    //authenticate
-//    Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
-//      assert(status === StatusCodes.OK)
-//      assert(body.toString.contains("authToken"))
-//      authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
-//    }
-//    //update
-//    Put(s"/users/$testUser1Id",HttpEntity(ContentTypes.`application/json`,userRequestBodyJson)) ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
-//      assert(status === StatusCodes.OK)
-//    }
-//    //get updated user
-//    Get(s"/users/$testUser1Id") ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
-//      assert(status === StatusCodes.OK)
-//      assert(body.toString.contains("Test User Updated"))
-//    }
-//  }
+  it should "update user" in {
+    var authResponse:AuthenticationResponse=null;
+
+    //authenticate
+    Post("/users/authentication", HttpEntity(ContentTypes.`application/json`,userAuthRequestBodyJson)) ~> authenticationApiV1.route ~>  check {
+      assert(status === StatusCodes.OK)
+      assert(body.toString.contains("authToken"))
+      authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
+    }
+    //update
+    Put(s"/users/$testUser1Id",HttpEntity(ContentTypes.`application/json`,userRequestBodyJson)) ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
+      assert(status === StatusCodes.OK)
+    }
+    //get updated user
+    Get(s"/users/$testUser1Id") ~> addHeader("Auth-Token", authResponse.authToken) ~> usersApiV1.route ~> check {
+      assert(status === StatusCodes.OK)
+      assert(body.toString.contains("Test User Updated"))
+    }
+  }
 }

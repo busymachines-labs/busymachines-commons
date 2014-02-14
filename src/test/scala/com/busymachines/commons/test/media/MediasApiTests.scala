@@ -10,10 +10,13 @@ import spray.json.JsonParser
 import com.busymachines.prefab.media.api.v1.MediaApiV1Directives
 import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
 import com.busymachines.prefab.party.logic.PartyFixture
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 /**
  * Created by alex on 2/6/14.
  */
+@RunWith(classOf[JUnitRunner])
 class MediasApiTests extends FlatSpec with AssemblyTestBase with MediaApiV1Directives with PartyApiV1Directives {
 
   val userAuthRequestBodyJson = """
@@ -56,24 +59,23 @@ class MediasApiTests extends FlatSpec with AssemblyTestBase with MediaApiV1Direc
 
   }
 
-// TODO FIX IT as it fails on dev
-//  it should "delete a media item based on its id" in {
-//    var authResponse: AuthenticationResponse = null
-//    var mediaId: String = null
-//
-//    //authentificate first
-//    Post("/users/authentication", HttpEntity(ContentTypes.`application/json`, userAuthRequestBodyJson)) ~> authenticationApiV1.route ~> check {
-//      assert(status === StatusCodes.OK)
-//      assert(body.toString.contains("authToken"))
-//      authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
-//    }
-//    // Can delete media object
-//    Delete(s"/medias/$mediaId") ~> addHeader("Auth-Token", authResponse.authToken) ~> mediasApiV1.route ~> check {
-//      assert(status === StatusCodes.OK)
-//    }
-//    // Should not get the complete media object
-//    Get(s"/medias/$mediaId") ~> addHeader("Auth-Token", authResponse.authToken) ~> mediasApiV1.route ~> check {
-//      assert(status === StatusCodes.InternalServerError)
-//    }
-//  }
+  it should "delete a media item based on its id" in {
+    var authResponse: AuthenticationResponse = null
+    var mediaId: String = null
+
+    //authentificate first
+    Post("/users/authentication", HttpEntity(ContentTypes.`application/json`, userAuthRequestBodyJson)) ~> authenticationApiV1.route ~> check {
+      assert(status === StatusCodes.OK)
+      assert(body.toString.contains("authToken"))
+      authResponse = JsonParser(body.asString).convertTo[AuthenticationResponse]
+    }
+    // Can delete media object
+    Delete(s"/medias/$mediaId") ~> addHeader("Auth-Token", authResponse.authToken) ~> mediasApiV1.route ~> check {
+      assert(status === StatusCodes.OK)
+    }
+    // Should not get the complete media object
+    Get(s"/medias/$mediaId") ~> addHeader("Auth-Token", authResponse.authToken) ~> mediasApiV1.route ~> check {
+      assert(status === StatusCodes.InternalServerError)
+    }
+  }
 }

@@ -6,7 +6,10 @@ import com.busymachines.commons.time.slicer.MonthSlicer
 import org.joda.time.Months
 import org.joda.time.Days
 import org.joda.time.Duration
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class MonthSlicerTest extends FlatSpec {
 
   // March has 31 days

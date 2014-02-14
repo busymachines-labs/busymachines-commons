@@ -4,6 +4,9 @@ import org.scalatest.FlatSpec
 import com.busymachines.commons.implicits._
 import com.busymachines.commons.domain.CommonJsonFormats._
 import spray.json._
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+
 /**
  * Created by ruud on 09/02/14.
  */
@@ -11,6 +14,7 @@ import spray.json._
 object CommonProductformatsTests {
   case class Thing(name: String = "The Thing", map: Map[String, String] = Map.empty)
 }
+@RunWith(classOf[JUnitRunner])
 class CommonProductformatsTests extends FlatSpec {
 
   import CommonProductformatsTests._

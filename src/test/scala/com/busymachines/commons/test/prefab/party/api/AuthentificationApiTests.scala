@@ -7,7 +7,10 @@ import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
 import org.scalatest.FlatSpec
 import spray.http._
 import spray.json.JsonParser
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class AuthentificationApiTests extends FlatSpec with Logging with AssemblyTestBase with PartyApiV1Directives {
 
   val userAuthRequestBodyJson = """
