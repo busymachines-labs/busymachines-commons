@@ -28,9 +28,8 @@ class LocalEventSystemTests extends FlatSpec  {
 
     localEventBus.publish(new BusEvent {})
 
-// TODO : FIx
-//    assert(enpoint1Received)
-//    assert(enpoint2Received)
+    assert(enpoint1Received)
+    assert(enpoint2Received)
     
   }
 }
