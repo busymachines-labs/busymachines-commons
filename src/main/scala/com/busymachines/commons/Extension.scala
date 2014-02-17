@@ -4,6 +4,8 @@ import _root_.spray.json.{JsValue, JsField, JsObject, JsonFormat}
 import scala.collection.concurrent.TrieMap
 import scala.reflect.ClassTag
 
+trait ExtensionFor[A]
+
 object Extensions {
   val empty = new Extensions(Map.empty)
 

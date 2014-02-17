@@ -1,10 +1,11 @@
 package com.busymachines.prefab.party.domain
 
-import com.busymachines.commons.domain.CommonJsonFormats
+//import com.busymachines.commons.domain.CommonJsonFormats._
+import com.busymachines.commons.implicits._
 
 object PartyDomainJsonFormats extends PartyDomainJsonFormats
 
-trait PartyDomainJsonFormats extends CommonJsonFormats {
+trait PartyDomainJsonFormats {
 
   implicit val phoneNumberKindFormat = stringFormat[PhoneNumberKind]("PhoneNumberKind", PhoneNumberKind, _.name)
   implicit val addressKindFormat = stringFormat[AddressKind]("AddressKind", AddressKind(_), _.name)

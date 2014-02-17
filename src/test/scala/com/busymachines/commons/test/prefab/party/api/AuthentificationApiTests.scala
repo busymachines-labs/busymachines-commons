@@ -1,9 +1,11 @@
 package com.busymachines.commons.test.prefab.party.api
 
 import com.busymachines.commons.Logging
+import com.busymachines.commons.implicits._
 import com.busymachines.commons.test.AssemblyTestBase
 import com.busymachines.prefab.party.api.v1.PartyApiV1Directives
 import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
+import com.busymachines.prefab.party.implicits._
 import org.scalatest.FlatSpec
 import spray.http._
 import spray.json.JsonParser

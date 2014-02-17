@@ -7,6 +7,7 @@ import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.logic.UserAuthenticator
 import com.busymachines.prefab.party.service.PartyService
 import com.busymachines.commons.implicits._
+import com.busymachines.prefab.party.implicits._
 
 class PartiesApiV1(partyService : PartyService, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with PartyApiV1Directives {
   val route =

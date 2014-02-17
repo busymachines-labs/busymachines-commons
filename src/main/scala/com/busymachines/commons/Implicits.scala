@@ -1,18 +1,20 @@
 package com.busymachines.commons
 
-import com.typesafe.config.Config
-import _root_.spray.json.JsValue
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
 import java.net.URL
-import scala.xml.factory.XMLLoader
-import scala.xml.Elem
 import java.util.Locale
+
 import scala.collection.generic.CanBuildFrom
+import scala.concurrent.ExecutionContext
+import scala.xml.Elem
+import scala.xml.factory.XMLLoader
 
-package object implicits extends CommonImplicits
+import com.busymachines.commons.domain.CommonJsonFormats
+import com.typesafe.config.Config
 
-trait CommonImplicits {
+import scala.concurrent.Future
+import _root_.spray.json.JsValue
+
+trait Implicits extends CommonJsonFormats {
   implicit def toOption[A](a: A) = Option(a)
   implicit def richConfig(config : Config) = new RichConfig(config)
   implicit def richCommonConfigType[A <: CommonConfig](f : String => A) = new RichCommonConfigType[A](f)
@@ -35,3 +37,6 @@ trait CommonImplicits {
   implicit def richAny[A](a : A) = new RichAny[A](a)
   implicit def convertToUnit(f : Future[_])(implicit ec : ExecutionContext) : Future[Unit] = f.map(_ => Unit)
 }
+
+package object implicits extends Implicits
+

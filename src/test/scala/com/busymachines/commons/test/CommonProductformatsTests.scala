@@ -2,7 +2,6 @@ package com.busymachines.commons.test
 
 import org.scalatest.FlatSpec
 import com.busymachines.commons.implicits._
-import com.busymachines.commons.domain.CommonJsonFormats._
 import spray.json._
 /**
  * Created by ruud on 09/02/14.

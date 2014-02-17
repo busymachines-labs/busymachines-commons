@@ -8,6 +8,10 @@ class RichSeq[A](val seq: Seq[A]) extends AnyVal {
     if (seq.nonEmpty) seq
     else ss
 
+  def isEmptyOrElse(ss: Seq[A] => Seq[A]) =
+    if (seq.isEmpty) seq
+    else ss(seq)
+
   def modify(matches: A => Boolean, newA: => A, modify: A => A = (a: A) => a): List[A] =
     modifyFull(matches, newA, modify)._1
     

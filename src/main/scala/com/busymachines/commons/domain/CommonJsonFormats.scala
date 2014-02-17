@@ -25,7 +25,7 @@ trait CommonJsonFormats
 
   implicit object currencyJsonFormat extends RootJsonFormat[Currency] {
     def write(c: Currency) =
-      JsString(c.toString())
+      JsString(c.toString)
 
     def read(value: JsValue) = value match {
       case JsString(x) => Currency.getInstance(x)
@@ -69,7 +69,7 @@ trait CommonJsonFormats
     }
   }
 
-  implicit val jodaDateFormat = new JsonFormat[LocalDate] {
+  implicit val jodaLocalDateFormat = new JsonFormat[LocalDate] {
     val format = ISODateTimeFormat.date
     def write(value: LocalDate) = JsString(format.print(value))
     def read(value: JsValue): LocalDate = value match {

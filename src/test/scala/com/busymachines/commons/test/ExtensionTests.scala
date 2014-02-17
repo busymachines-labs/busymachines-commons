@@ -12,9 +12,6 @@ object ExtensionTestsFixture {
   case class PharmaThing(ziNumber: String = "")
   case class OrderThing(orderNr: String = "", name: String = "")
 
-  object PharmaThingExtension extends Extension[Thing, PharmaThing](PharmaThing())
-  object OrderThingExtension extends Extension[Thing, OrderThing](OrderThing())
-
   implicit val thingFormat = jsonFormat2Ext(Thing)
   implicit val pharmaThingFormat = jsonFormat1(PharmaThing, true)
   implicit def toPharmaThing(thing: Thing) = thing.extensions(PharmaThingExtension)
@@ -25,6 +22,9 @@ object ExtensionTestsFixture {
     def copyOrder(f: OrderThing => OrderThing) =
       thing.copy(extensions = thing.extensions.copy(OrderThingExtension, f))
   }
+
+  object PharmaThingExtension extends Extension[Thing, PharmaThing](PharmaThing())
+  object OrderThingExtension extends Extension[Thing, OrderThing](OrderThing())
 
   OrderThingExtension.register()
 }

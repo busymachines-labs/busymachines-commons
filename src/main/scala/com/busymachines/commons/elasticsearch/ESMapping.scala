@@ -1,14 +1,15 @@
 package com.busymachines.commons.elasticsearch
 
-import com.busymachines.commons.domain.HasId
+import com.busymachines.commons.implicits._
 import com.busymachines.commons.Logging
 import org.joda.time.DateTime
 import java.net.Inet4Address
 import com.busymachines.commons.domain.GeoPoint
-import spray.json.JsonWriter
+import _root_.spray.json.JsonWriter
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 import com.busymachines.commons.domain.Money
+import _root_.spray.json.JsonFormat
 
 object MoneyMapping extends ESMapping[Money] {
   val currency = "currency" as String & Analyzed

@@ -20,10 +20,26 @@ trait CommonProductFormats { self: StandardFormats =>
     def read(value: JsValue) = construct()
   }
 
+  def jsonFormat1Ext[A :JFmt, T <: Product :ClassTag](construct: (A, Extensions) => T, allowOptionalFields: Boolean = false): RootJsonFormat[T] = {
+    val Array(a, _) = extractFieldNames(classTag[T], allowOptionalFields)
+    jsonFormat((a: A) => construct(a, Extensions.empty), a)
+    new RootJsonFormat[T] {
+      def write(p: T) =
+        JsObject(
+          Extensions.write(p.productElement(2).asInstanceOf[Extensions]) ++
+          productElement2Field[A](a.name, p, 0))
+
+      def read(value: JsValue) = construct(
+        fromField[A](value, a),
+        Extensions.read[T](value))
+    }
+  }
+
   def jsonFormat1[A :JFmt, T <: Product :ClassTag](construct: A => T, allowOptionalFields: Boolean = false): RootJsonFormat[T] = {
     val Array(a) = extractFieldNames(classTag[T], allowOptionalFields)
     jsonFormat(construct, a)
   }
+    
   def jsonFormat[A :JFmt, T <: Product](construct: A => T, a : Field): RootJsonFormat[T] = new RootJsonFormat[T]{
     def write(p: T) = JsObject(
       productElement2Field[A](a.name, p, 0)

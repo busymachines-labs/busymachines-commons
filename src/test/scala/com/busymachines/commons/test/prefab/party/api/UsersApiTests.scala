@@ -8,6 +8,9 @@ import org.scalatest.FlatSpec
 import spray.http._
 import spray.json.JsonParser
 import com.busymachines.prefab.party.domain.User
+import com.busymachines.commons.implicits._
+import com.busymachines.prefab.party.implicits._
+
 
 /**
  * Created by alex on 2/6/14.

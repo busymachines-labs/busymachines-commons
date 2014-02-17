@@ -13,6 +13,8 @@ import com.busymachines.commons.elasticsearch
 import com.busymachines.commons.elasticsearch.RichJsValue
 import com.busymachines.prefab.party.db.PartyMapping
 import com.busymachines.commons.domain.Id
+import com.busymachines.commons.implicits._
+import com.busymachines.prefab.party.implicits._
 
 /**
  * Created by alex on 2/7/14.

@@ -10,6 +10,7 @@ import com.busymachines.commons.spray.CommonHttpService
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import com.busymachines.commons.domain.Id
+import com.busymachines.prefab.party.implicits._
 import com.busymachines.prefab.party.logic.UserAuthenticator
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.api.v1.model.AuthenticationRequest
@@ -17,6 +18,8 @@ import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.prefab.authentication.model.Authentication
 import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
 import com.busymachines.prefab.authentication.spray.AuthenticationDirectives
+import com.busymachines.commons.implicits._
+import com.busymachines.prefab.party.implicits._
 
 /**
  * Handling authentication before using API.
