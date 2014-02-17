@@ -10,10 +10,13 @@ import spray.json.JsonParser
 import com.busymachines.prefab.media.api.v1.MediaApiV1Directives
 import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
 import com.busymachines.prefab.party.logic.PartyFixture
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 /**
  * Created by alex on 2/6/14.
  */
+@RunWith(classOf[JUnitRunner])
 class MediasApiTests extends FlatSpec with AssemblyTestBase with MediaApiV1Directives with PartyApiV1Directives {
 
   val userAuthRequestBodyJson = """
@@ -55,6 +58,7 @@ class MediasApiTests extends FlatSpec with AssemblyTestBase with MediaApiV1Direc
     }
 
   }
+
   it should "delete a media item based on its id" in {
     var authResponse: AuthenticationResponse = null
     var mediaId: String = null

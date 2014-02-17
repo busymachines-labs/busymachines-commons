@@ -5,7 +5,10 @@ import org.scalatest.FlatSpec
 import com.busymachines.commons.time.slicer.YearSlicer
 import org.joda.time.Days
 import org.joda.time.Duration
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class YearSlicerTest extends FlatSpec {
 
   // 2012 has 366 days (leap year)

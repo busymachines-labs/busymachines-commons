@@ -15,10 +15,13 @@ import com.busymachines.prefab.party.db.PartyMapping
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.implicits._
 import com.busymachines.prefab.party.implicits._
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 /**
  * Created by alex on 2/7/14.
  */
+@RunWith(classOf[JUnitRunner])
 class PartiesApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Directives with PartyFixture {
 
   case class PartyPostResponse(id:String)

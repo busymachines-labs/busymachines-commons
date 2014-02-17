@@ -5,7 +5,10 @@ import org.scalatest.FlatSpec
 import com.busymachines.commons.time.slicer.HourSlicer
 import org.joda.time.Minutes
 import org.joda.time.Duration
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class HourSlicerTest extends FlatSpec {
 
   val time = DateTime.parse("2013-01-15T10:00:00Z")

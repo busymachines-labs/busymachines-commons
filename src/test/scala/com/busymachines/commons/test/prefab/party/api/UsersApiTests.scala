@@ -11,10 +11,13 @@ import com.busymachines.prefab.party.domain.User
 import com.busymachines.commons.implicits._
 import com.busymachines.prefab.party.implicits._
 
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 /**
  * Created by alex on 2/6/14.
  */
+@RunWith(classOf[JUnitRunner])
 class UsersApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Directives with PartyFixture {
 
   val userAuthRequestBodyJson = """

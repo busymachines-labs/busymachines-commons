@@ -2,7 +2,10 @@ package com.busymachines.commons.test.time
 import org.scalatest.FlatSpec
 import com.busymachines.commons.time.DateTimeUtils
 import org.joda.time.DateTime
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class DateTimeUtilsTest extends FlatSpec {
   //  DateTime.parse("2013-02-15T10:35:10Z") is Friday
 
