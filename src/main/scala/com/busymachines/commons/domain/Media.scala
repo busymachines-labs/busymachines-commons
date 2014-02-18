@@ -22,6 +22,7 @@ object MimeTypes {
   val zip  = MimeType("application/zip")
   val gzip  = MimeType("application/gzip")
   val json  = MimeType("application/json")
+  val zpl  = MimeType("application/zpl")
   val javascript  = MimeType("application/javascript")
   val postscript  = MimeType("application/postscript")
     
