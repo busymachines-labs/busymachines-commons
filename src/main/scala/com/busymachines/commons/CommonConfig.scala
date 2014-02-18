@@ -37,7 +37,7 @@ object CommonConfig extends CommonConfig("") with Logging {
     toStringSeq.mkString(sep)
 
   def toStringSeq: Seq[String] =
-  toStringSeq2.map(x => x._1 + "=" + x._2).sorted
+  toStringSeq2.map(x => x._1 + "=" + x._2).sorted.distinct
 
   def toStringSeq2: Seq[(String, String)] =
     CommonConfigFactory.usedPaths.keys.filter(_.nonEmpty).filter(CommonConfigFactory.config.hasPath).toSeq.flatMap { path =>

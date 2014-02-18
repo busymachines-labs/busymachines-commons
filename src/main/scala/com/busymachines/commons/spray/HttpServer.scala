@@ -1,39 +1,40 @@
 package com.busymachines.commons.spray
 
-import com.busymachines.commons.Logging
+import _root_.spray.http.HttpRequest
+import com.busymachines.commons._
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.event.Logging.DebugLevel
 import akka.io.IO
-import spray.can.Http
-import spray.http.HttpRequest
-import spray.http.StatusCodes
-import spray.routing.Directive.pimpApply
-import spray.routing.HttpService.pimpRouteWithConcatenation
-import spray.routing.HttpServiceActor
-import spray.routing.Route
-import spray.routing.RoutingSettings
-import spray.routing.directives.LogEntry
-import spray.routing.ExceptionHandler
-import spray.routing.HttpService
-import spray.routing.RejectionHandler
-import spray.http.StatusCodes
-import com.busymachines.commons.EntityNotFoundException
-import com.busymachines.commons.NotAuthorizedException
-import com.busymachines.commons.EntityNotFoundException
+import _root_.spray.can.Http
+import _root_.spray.http.HttpRequest
+import _root_.spray.http.StatusCodes
+import _root_.spray.routing.Directive.pimpApply
+import _root_.spray.routing.HttpService.pimpRouteWithConcatenation
+import _root_.spray.routing.HttpServiceActor
+import _root_.spray.routing.Route
+import _root_.spray.routing.RoutingSettings
+import _root_.spray.routing.directives.LogEntry
+import _root_.spray.routing.ExceptionHandler
+import _root_.spray.routing.HttpService
+import _root_.spray.routing.RejectionHandler
+import _root_.spray.http.StatusCodes
 import com.busymachines.commons.domain.CommonJsonFormats._
-import spray.http.IllegalRequestException
+import _root_.spray.http.IllegalRequestException
 import scala.util.control.NonFatal
-import spray.util.LoggingContext
-import spray.http._
-import spray.json._
+import _root_.spray.util.LoggingContext
+import _root_.spray.http._
+import _root_.spray.json._
 import StatusCodes._
-import spray.routing.AuthorizationFailedRejection
+import _root_.spray.routing.AuthorizationFailedRejection
 
-abstract class HttpServer(implicit actorSystem : ActorSystem) extends CommonHttpService with CORSDirectives with Logging {
+case class HttpServerConfig(baseName: String) extends CommonConfig(baseName) {
+  val interface = string("interface")
+  val port = int("port")
+}
 
-  val interface : String = "localhost"
-  val port : Int = 8080
+abstract class HttpServer(config: HttpServerConfig)(implicit actorSystem : ActorSystem) extends CommonHttpService with CORSDirectives with Logging {
+
   val serverName : String = "http-server"
   val exceptionHandler : ExceptionHandler = commonExceptionHandler
   def rejectionHandler : RejectionHandler = commonRejectionHandler
@@ -52,7 +53,7 @@ abstract class HttpServer(implicit actorSystem : ActorSystem) extends CommonHttp
   }
 
   def start() =
-    IO(Http) ! Http.Bind(actorSystem.actorOf(Props(new Actor), serverName), interface = interface, port = port)
+    IO(Http) ! Http.Bind(actorSystem.actorOf(Props(new Actor), serverName), interface = config.interface, port = config.port)
 
   def commonRejectionHandler = RejectionHandler {
     case rejections if rejections.nonEmpty => 
