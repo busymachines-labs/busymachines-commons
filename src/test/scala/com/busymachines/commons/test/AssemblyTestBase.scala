@@ -11,7 +11,7 @@ import spray.testkit.{RouteTest, ScalatestRouteTest}
 import com.busymachines.prefab.media.MediaAssembly
 
 
-trait AssemblyTestBase extends FlatSpec with PartyAssembly with MediaAssembly with RouteTest with ScalatestRouteTest {
+trait AssemblyTestBase extends FlatSpec with MediaAssembly with RouteTest with ScalatestRouteTest {
 
   // system setup
   lazy implicit val actorSystem = ActorSystem("Commons")
