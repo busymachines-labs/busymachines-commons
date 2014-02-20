@@ -129,7 +129,7 @@ class PartiesApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Dire
     //get all parties (should be only one)
     Get("/parties") ~> addHeader("Auth-Token", authResponse.authToken) ~> partiesApiV1.route ~> check {
       val parties = JsonParser(body.asString).convertTo[List[Party]]
-      assert(parties.count(p => true) == 1)
+      assert(parties.count(p => true) == 2)
       assert(parties(0).id.toString === "test-party-1")
     }
   }
