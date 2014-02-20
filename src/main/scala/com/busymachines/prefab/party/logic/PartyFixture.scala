@@ -27,6 +27,8 @@ trait PartyFixture {
   val testUser1Username = "user1@test.com"
   val testUser1Password = "test"
 
+  //TODO after full migration, use custom UIDs for party and user ID
+  //These are used for machinexs project, since ES users and parties are mapped 1 - 1 with SQL parties and users
   val testTenant2Id = Id.static[Tenant]("test-tenant-1")
   val testParty2Id = Id.static[Party]("-1")
   val testUser2Id = Id.static[User]("14")

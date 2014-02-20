@@ -36,6 +36,11 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
     }
 
 
+
+  def listChildParties(implicit sc: SecurityContext): Future[List[Party]] =
+    partyDao.retrieve(sc.partyId).flatMap(party=>partyDao.retrieve(party.get.entity.relations.map(_.relatedParty)).map(_.map(_.entity)))
+
+
   def listParties(implicit sc: SecurityContext): Future[List[Party]] = 
     partyDao.retrieveAll		  
   
