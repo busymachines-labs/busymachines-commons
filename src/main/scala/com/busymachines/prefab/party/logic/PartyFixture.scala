@@ -20,8 +20,13 @@ object PartyFixture extends PartyFixture
 trait PartyFixture {
 
   val testTenantId = Id.static[Tenant]("test-tenant-1")
-  val testParty1Id = Id.static[Party]("test-party-1")
-  val testUser1Id = Id.static[User]("test-user-1")
+
+  //TODO create UID's for IDs when machinexs adopts full ES persistence
+  //changed to match machinexs 1-1 mapping ES-SQL
+  //refer to TestData.scala in machinexs to see the initial mappings to SQL
+  val testParty1Id = Id.static[Party]("-1")
+  val testUser1Id = Id.static[User]("14")
+
   val testUser1CredentialsId = Id.static[Credentials]("test-user-1-credentials")
 
   val testUser1Username = "user1@test.com"
