@@ -20,17 +20,20 @@ object PartyFixture extends PartyFixture
 trait PartyFixture {
 
   val testTenantId = Id.static[Tenant]("test-tenant-1")
-
-  //TODO create UID's for IDs when machinexs adopts full ES persistence
-  //changed to match machinexs 1-1 mapping ES-SQL
-  //refer to TestData.scala in machinexs to see the initial mappings to SQL
-  val testParty1Id = Id.static[Party]("-1")
-  val testUser1Id = Id.static[User]("14")
-
+  val testParty1Id = Id.static[Party]("test-party-1")
+  val testUser1Id = Id.static[User]("test-user-1")
   val testUser1CredentialsId = Id.static[Credentials]("test-user-1-credentials")
 
   val testUser1Username = "user1@test.com"
   val testUser1Password = "test"
+
+  val testTenant2Id = Id.static[Tenant]("test-tenant-1")
+  val testParty2Id = Id.static[Party]("-1")
+  val testUser2Id = Id.static[User]("14")
+  val testUser2CredentialsId = Id.static[Credentials]("test-user-2-credentials")
+
+  val testUser2Username = "user2@test.com"
+  val testUser2Password = "test"
   
   private[party] def create(partyDao : PartyDao, credentialsDao : ESCredentialsDao) {
     if (CommonConfig.devmode) {
@@ -49,6 +52,13 @@ trait PartyFixture {
       lastName = Some("Doe"),
       addresses = Address(street = Some("Street 1")) :: Nil)
 
+    val user2 = User(
+      id = testUser2Id,
+      credentials = testUser2CredentialsId,
+      firstName = Some("John 2"),
+      lastName = Some("Doe"),
+      addresses = Address(street = Some("Street 2")) :: Nil)
+
     (partyDao.getOrCreateAndModify(testParty1Id)(Party(testParty1Id, testTenantId)) { party =>
       party.copy(tenant = testTenantId, users = user1 :: Nil, company = Some(Company("Test Company")),
           addresses = Address(street = Some("Korenmolen"), houseNumber = Some("3"), postalCode = Some("1541RW"), city = Some("Koog aan de Zaan")) :: Nil)
@@ -56,6 +66,15 @@ trait PartyFixture {
     
     (credentialsDao.getOrCreateAndModify(testUser1CredentialsId)(Credentials(testUser1CredentialsId)) { credentials =>
       credentials.copy(passwordCredentials = PasswordCredentials(testUser1Username, testUser1Password) :: Nil)
+    }).await
+
+    (partyDao.getOrCreateAndModify(testParty2Id)(Party(testParty2Id, testTenant2Id)) { party =>
+      party.copy(tenant = testTenant2Id, users = user2 :: Nil, company = Some(Company("Test 2 Company")),
+        addresses = Address(street = Some("Korenmolen"), houseNumber = Some("3"), postalCode = Some("1541RW"), city = Some("Koog aan de Zaan")) :: Nil)
+    }).await
+
+    (credentialsDao.getOrCreateAndModify(testUser2CredentialsId)(Credentials(testUser2CredentialsId)) { credentials =>
+      credentials.copy(passwordCredentials = PasswordCredentials(testUser2Username, testUser2Password) :: Nil)
     }).await
   }
 }
