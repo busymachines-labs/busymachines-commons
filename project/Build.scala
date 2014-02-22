@@ -31,6 +31,7 @@ object BusyMachinesCommonsBuild extends Build {
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "junit" % "junit" % "4.11" % "test" withSources(),
     libraryDependencies += "org.scalatest" %% "scalatest" % "2.0" % "test" withSources(),
+    libraryDependencies += "org.specs2" %% "specs2" % "2.3.8" % "test" withSources(),
     libraryDependencies += "org.pegdown" % "pegdown" % "1.4.1" % "test" withSources(), // used by scalatest
     libraryDependencies += "org.elasticsearch" % "elasticsearch" % "0.90.10" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.3" withSources(),
