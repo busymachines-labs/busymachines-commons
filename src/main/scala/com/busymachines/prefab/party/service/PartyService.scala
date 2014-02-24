@@ -65,6 +65,14 @@ trait PartyService {
   def updateUser(id: Id[User], user: User)(implicit sc: SecurityContext): Future[Unit]
 
   /**
+   * Retrieves a single party by email address
+   * @param email - the email address
+   * @param sc - implicit SecurityContext
+   * @return - the party, if it exists
+   */
+  def getPartyByEmail(email:String)(implicit sc: SecurityContext): Future[Option[Party]]
+  
+  /**
    *Retrieves a user by ID
    * @param id - the user ID
    * @param sc - implicit SecurityContext

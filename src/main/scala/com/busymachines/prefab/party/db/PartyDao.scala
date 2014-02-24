@@ -19,6 +19,9 @@ class PartyDao(index : ESIndex)(implicit ec: ExecutionContext) extends ESRootDao
   
   def findByUserId(userId : Id[User]) = 
     searchSingle(PartyMapping.users / UserMapping.id equ userId)
+  
+  def findByEmailId(email : String) = 
+    searchSingle(PartyMapping.emailAddresses / EmailMapping.emailAddress equ email)
 
   def findByCredentialsId(credentialsId : Id[Credentials]) = 
     searchSingle(PartyMapping.users / UserMapping.credentials equ credentialsId)

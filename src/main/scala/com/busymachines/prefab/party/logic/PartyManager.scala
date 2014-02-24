@@ -58,6 +58,8 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
   def getParty(partyId: Id[Party])(implicit sc: SecurityContext): Future[Option[Party]] =
     partyCache(partyId, () => partyDao.retrieve(partyId).map(_.map(_.entity)))
 
+  def getPartyByEmail(email:String)(implicit sc: SecurityContext): Future[Option[Party]] =
+    partyDao.findByEmailId(email)
 
   /**
    * Delete a specific party based on its id.
