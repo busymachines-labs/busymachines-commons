@@ -22,5 +22,5 @@ trait PartyDomainJsonFormats {
   implicit val tenantFormat = jsonFormat2(Tenant)
   implicit val companyFormat = jsonFormat1(Company)
   implicit val personFormat = jsonFormat3(Person)
-  implicit val partyFormat = jsonFormat11(Party)
+  implicit val partyFormat = jsonFormat12(Party)
 }

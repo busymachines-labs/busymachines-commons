@@ -37,6 +37,9 @@ case class Party (
   emailAddresses : List[EmailAddress] = Nil,
 
   relations : List[RelatedParty] = Nil,
+
+  // TDOD : Move this to extensions
+  wmsClientNumber : Option[String] = None,
   
   /**
    * Users of the party
