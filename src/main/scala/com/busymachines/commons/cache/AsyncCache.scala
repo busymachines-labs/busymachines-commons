@@ -16,6 +16,12 @@ object AsyncCache {
     new AsyncCache[K, V](new ExpiringLruCache[V](maxCapacity, initialCapacity, timeToLive, timeToIdle))
 }
 
+/**
+ * Async
+ * @param cache
+ * @tparam K
+ * @tparam V
+ */
 class AsyncCache[K, V](val cache: SprayCache[V]) {
 
   def apply(key: K) =
@@ -40,6 +46,6 @@ class AsyncCache[K, V](val cache: SprayCache[V]) {
     keys.flatMap(key => cache.remove(key).map(key -> _)).toMap
   }
 
-  def clear =
-    cache.clear
+  def clear() =
+    cache.clear()
 }

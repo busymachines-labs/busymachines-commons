@@ -20,7 +20,8 @@ trait CommonJsonFormats
   extends BasicFormats
   with StandardFormats
   with CollectionFormats
-  with CommonProductFormats
+  with ProductFormats
+//  with CommonProductFormats
   with AdditionalFormats {
 
   implicit object currencyJsonFormat extends RootJsonFormat[Currency] {
