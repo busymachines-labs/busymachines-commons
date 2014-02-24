@@ -21,6 +21,7 @@ object PartyMapping extends ESMapping[Party] {
   val phoneNumbers = "phoneNumbers" as Nested(PhoneNumberMapping)
   val emailAddresses = "emailAddresses" as Nested(EmailMapping)
   val relations = "relations" as Nested(RelatedPartyMapping)
+  val wmsClientNumber = "wmsClientNumber" as String & NotAnalyzed
   val users = "users" as Nested(UserMapping)
   val userRoles = "userRoles" as Nested(UserRoleMapping)
 }
