@@ -8,13 +8,13 @@ import scala.language.higherKinds
 /**
  * Makes sure that applied futures are executed serially.
  */
-class SerializedFutures {
+class FutureSerializer {
 
   private var _currentFuture: Future[Any] = Future.successful(null)
 
   def apply[A](future: => Future[A])(implicit ec: ExecutionContext): Future[A] =
     this.synchronized {
-      val p = Promise[A]
+      val p = Promise[A]()
       _currentFuture.onComplete { _ =>
         // by-name parameter future can throw an exception
         try {

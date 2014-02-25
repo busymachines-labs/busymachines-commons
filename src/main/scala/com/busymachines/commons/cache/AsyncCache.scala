@@ -17,10 +17,8 @@ object AsyncCache {
 }
 
 /**
- * Async
- * @param cache
- * @tparam K
- * @tparam V
+ * Asynchronous cache. Instead of values, this cache stores futures. It wraps a spray-cache, but it has a more
+ * familiar interface.
  */
 class AsyncCache[K, V](val cache: SprayCache[V]) {
 

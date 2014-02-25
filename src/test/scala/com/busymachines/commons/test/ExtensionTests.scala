@@ -14,11 +14,11 @@
 //  case class PharmaThing(ziNumber: String = "")
 //  case class OrderThing(orderNr: String = "", name: String = "")
 //
-//  implicit val thingFormat = jsonFormat2Ext(Thing)
-//  implicit val pharmaThingFormat = jsonFormat1(PharmaThing, true)
+//  implicit val thingFormat = jsonFormat3(Thing)
+//  implicit val pharmaThingFormat = jsonFormat1(PharmaThing)
 //  implicit def toPharmaThing(thing: Thing) = thing.extensions(PharmaThingExtension)
 //
-//  implicit val orderThingFormat = jsonFormat2(OrderThing, true)
+//  implicit val orderThingFormat = jsonFormat2(OrderThing)
 //  implicit def toOrderThing(thing: Thing) = thing.extensions(OrderThingExtension)
 //  implicit class RichOrderThing(thing: Thing) {
 //    def copyOrder(f: OrderThing => OrderThing) =

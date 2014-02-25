@@ -9,6 +9,9 @@ import scala.xml.Elem
 
 class RichXml(val xml : XMLLoader[Elem]) extends AnyVal {
 
+  /**
+   * Loads XML from a url using basic authentication.
+   */
   def fromURL(username : String, password : String, url : String) : Elem =
     xml.load(new URL(url).openStream(username, password))
 }
