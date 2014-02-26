@@ -16,6 +16,10 @@ object AsyncCache {
     new AsyncCache[K, V](new ExpiringLruCache[V](maxCapacity, initialCapacity, timeToLive, timeToIdle))
 }
 
+/**
+ * Asynchronous cache. Instead of values, this cache stores futures. It wraps a spray-cache, but it has a more
+ * familiar interface.
+ */
 class AsyncCache[K, V](val cache: SprayCache[V]) {
 
   def apply(key: K) =
@@ -40,6 +44,6 @@ class AsyncCache[K, V](val cache: SprayCache[V]) {
     keys.flatMap(key => cache.remove(key).map(key -> _)).toMap
   }
 
-  def clear =
-    cache.clear
+  def clear() =
+    cache.clear()
 }

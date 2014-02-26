@@ -18,7 +18,7 @@ import org.joda.time.DateTime
  * Facilitates mail related services.
  * @param mailConfig the mail configuration
  */
-class IncomingMailBox(mailConfig: IncommingMailConfig) extends Logging {
+class IncomingMailBox(mailConfig: IncomingMailConfig) extends Logging {
 
   val inboxFolder = "INBOX"
 

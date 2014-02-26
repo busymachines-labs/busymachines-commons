@@ -14,13 +14,13 @@ import spray.http.HttpRequest
 import spray.http.StatusCodes
 import spray.httpx.SprayJsonSupport.sprayJsonMarshaller
 import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
-import com.busymachines.commons.concurrent.SerializedFutures
-import com.busymachines.commons.cache.SyncRef
+import com.busymachines.commons.concurrent.FutureSerializer
+import com.busymachines.commons.cache.SynchronizedOptional
 
 class UserAuthenticatorClient(url : String, user : String, password : String)(implicit actorSystem: ActorSystem, ec: ExecutionContext) extends Logging {
 
   private val callAuthenticate: HttpRequest => Future[AuthenticationResponse] = sendReceive ~> unmarshal[AuthenticationResponse]
-  private val authenticateFuture = new SyncRef[Future[String]]
+  private val authenticateFuture = new SynchronizedOptional[Future[String]]
 
   def apply[A](pipeline : HttpRequest => Future[A], request : HttpRequest) : Future[A] = 
     authenticate(pipeline, request, true)

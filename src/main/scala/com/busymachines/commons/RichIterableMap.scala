@@ -1,6 +1,9 @@
 package com.busymachines.commons
 
 /**
+ * Usefulness probably too specific to 'fields' structures, which will be replaced by extensions.
+ * This class will go soon, or at least the applyUpdate.
+ *
  * Created by Ruud on 20/12/13.
  */
 class RichIterableMap[K, V, I <: Iterable[V]](val map : Map[K, I]) extends AnyVal {

@@ -49,10 +49,8 @@ object Printing extends Logging {
 
   def printZpl(printer: String, data: Array[Byte]) {
     val clientSocket = new Socket(printer, 9100)
-    val outToServer = new DataOutputStream(clientSocket.getOutputStream())
-    outToServer.writeBytes("^XA")
+    val outToServer = new DataOutputStream(clientSocket.getOutputStream)
     outToServer.writeBytes(new String(data))
-    outToServer.writeBytes("^XZ")
-    clientSocket.close();
+    clientSocket.close()
   }
 }

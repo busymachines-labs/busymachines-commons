@@ -16,17 +16,10 @@ class RichStringCollection[C <: Iterable[String]](collection: C)(implicit cbf: C
   }
 
   def mkPath : String = {
-    collection match {
-      case Seq() => ""
-      case Seq(s) => s.trim
-      case ss => 
-        val result = new StringBuilder
-        var lastIsSlash = false
-        ss.map(_.trim).filterNot(_.isEmpty).foreach { s =>
-          result.append(if (lastIsSlash && s.startsWith("/")) s.substring(1) else s)
-          lastIsSlash = s.endsWith("/")
-        }
-        result.toString
+    collection.map(_.trim).filterNot(_.isEmpty).foldLeft("") { (prev, s) =>
+      if (prev.endsWith("/") && s.startsWith("/")) prev + s.substring(1)
+      else if (!prev.isEmpty && !prev.endsWith("/") && !s.startsWith("/")) prev + "/" + s
+      else prev + s
     }
   }
 }

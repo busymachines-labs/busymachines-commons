@@ -19,7 +19,7 @@ trait Implicits extends CommonJsonFormats {
   implicit def richConfig(config : Config) = new RichConfig(config)
   implicit def richCommonConfigType[A <: CommonConfig](f : String => A) = new RichCommonConfigType[A](f)
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
-  implicit def richCollection[A, C[A] <: Iterable[A]](collection : C[A]) = new RichCollection[A, C](collection)
+  implicit def richIterable[A, C[A] <: Iterable[A]](collection : C[A]) = new RichIterable[A, C](collection)
   implicit def richStringCollection[C <: Iterable[String]](collection : C)(implicit cbf: CanBuildFrom[C, String, C]) = new RichStringCollection[C](collection)
   implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
   implicit def richIterableMap[K, V, I <: Iterable[V]](map : Map[K, I]) = new RichIterableMap[K, V, I](map)

@@ -93,6 +93,10 @@ class RichCommonConfigType[A <: CommonConfig](f: String => A) {
 class CommonConfig(baseName: String) extends RichConfig(CommonConfigFactory.config(baseName).theConfig) {
   CommonConfigFactory.usedPaths += (baseName -> ())
 
+  def config[A <: CommonConfig](f: String => A, name : String): A = {
+    f(baseName + "." + name)
+  }
+
   def seq[A <: CommonConfig](f: String => A, name : String): Seq[A] = {
     val result = ArrayBuffer[A]()
     var foundMore = true

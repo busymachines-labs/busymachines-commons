@@ -3,7 +3,7 @@ package com.busymachines.commons.mail
 import com.busymachines.commons.implicits._
 import com.busymachines.commons.CommonConfig
 
-class IncommingMailConfig(baseName: String) extends CommonConfig(baseName) {
+case class IncomingMailConfig(baseName: String) extends CommonConfig(baseName) {
   def ssl = boolean("ssl")
   def protocol = string("protocol")
   def host = string("host") 

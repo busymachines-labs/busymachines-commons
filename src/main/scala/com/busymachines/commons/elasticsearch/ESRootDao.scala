@@ -307,7 +307,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       }) flatMap { _ =>
         client.execute(request) map {
           response =>
-            if (response.isNotFound) {
+            if (!response.isFound()) {
               throw new IdNotFoundException(id.toString, t.name)
             }
         }

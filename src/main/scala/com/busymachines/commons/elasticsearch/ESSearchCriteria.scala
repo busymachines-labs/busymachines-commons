@@ -98,10 +98,10 @@ object ESSearchCriteria {
   }
 
   case class QueryString[A, T, V](path: Path[A, T], value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.queryFilter(QueryBuilders.fieldQuery(path.toESPath, value match {
-      case theValue:DateTime => theValue.toDateTime(DateTimeZone.UTC).getMillis()
-      case theValue => theValue
-    }))
+    def toFilter = FilterBuilders.queryFilter(new QueryStringQueryBuilder(value match {
+      case theValue:DateTime => s"${theValue.toDateTime(DateTimeZone.UTC).getMillis()}"
+      case theValue => theValue.toString
+    }).defaultField(path.toESPath))
     
     def prepend[A0](path : Path[A0, A]) = QueryString(path ++ this.path, value)
   }

@@ -1,6 +1,10 @@
 package com.busymachines.commons.cache
 
-class SyncRef[A] {
+/**
+ * Synchronized optional.  
+ * @tparam A
+ */
+class SynchronizedOptional[A] {
 
   private var value : Option[A] = None
   
