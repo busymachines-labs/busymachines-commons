@@ -30,5 +30,7 @@ class RichFutureType(future: Future.type) {
 
 class RichFuture[A](future: Future[A]) {
   def await[A](duration: Duration) = Await.result(future, duration)
+  
+  @deprecated("use await(duration)", "25-2-1024")
   def await[A] = Await.result(future, 1.minute)
 } 
