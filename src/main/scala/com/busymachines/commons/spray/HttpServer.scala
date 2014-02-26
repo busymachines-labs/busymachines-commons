@@ -18,7 +18,6 @@ import _root_.spray.routing.directives.LogEntry
 import _root_.spray.routing.ExceptionHandler
 import _root_.spray.routing.HttpService
 import _root_.spray.routing.RejectionHandler
-import _root_.spray.http.StatusCodes
 import com.busymachines.commons.domain.CommonJsonFormats._
 import _root_.spray.http.IllegalRequestException
 import scala.util.control.NonFatal
