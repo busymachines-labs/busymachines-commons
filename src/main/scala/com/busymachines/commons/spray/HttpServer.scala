@@ -33,7 +33,7 @@ case class HttpServerConfig(baseName: String) extends CommonConfig(baseName) {
   val port = int("port")
 }
 
-abstract class HttpServer(config: HttpServerConfig)(implicit actorSystem : ActorSystem) extends CommonHttpService with CORSDirectives with Logging {
+abstract class HttpServer(config: HttpServerConfig = None)(implicit actorSystem : ActorSystem) extends CommonHttpService with CORSDirectives with Logging {
 
   val serverName : String = "http-server"
   val exceptionHandler : ExceptionHandler = commonExceptionHandler
