@@ -23,7 +23,7 @@ object AuthenticationDirectives {
 }
 
 trait AuthenticationDirectives extends Logging {
-  val tokenKeyLower = AuthenticationDirectives.tokenKey.toLowerCase
+  val tokenKey = AuthenticationDirectives.tokenKey
   implicit def toAuthentication[SecurityContext](authenticator: PrefabAuthenticator[_, SecurityContext])(implicit ec: ExecutionContext) = {
     AuthMagnet.fromContextAuthenticator {
       new HttpAuthenticator[SecurityContext] {
@@ -33,8 +33,8 @@ trait AuthenticationDirectives extends Logging {
             else None
           }
 
-          ctx.request.headers.find(_.is(tokenKeyLower)).map(_.value).
-            orElse(ctx.request.uri.query.get(tokenKeyLower)).map(Id[Authentication](_)) match {
+          ctx.request.headers.find(_.is(tokenKey.toLowerCase)).map(_.value).
+            orElse(ctx.request.uri.query.get(tokenKey)).map(Id[Authentication]) match {
               case Some(authenticationId) =>
                 debug(s"Request ${ctx.request.uri} with auth id $authenticationId")
                 authenticator.authenticate(authenticationId) map {

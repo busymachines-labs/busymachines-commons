@@ -31,12 +31,18 @@ class RichString(val s: String) extends AnyVal {
       case e: NumberFormatException => None
     }
 
+  def toIntOrElse(alt: Int) =
+    toIntOption.getOrElse(alt)
+
   def toLongOption: Option[Long] =
     try {
       Some(JLong.parseLong(s.trim))
     } catch {
       case e: NumberFormatException => None
     }
+
+  def toLongOrElse(alt: Long) =
+    toLongOption.getOrElse(alt)
 
   def toDoubleOption: Option[Double] =
     try {
@@ -45,4 +51,6 @@ class RichString(val s: String) extends AnyVal {
       case e: NumberFormatException => None
     }
 
+  def toDoubleOrElse(alt: Double) =
+    toDoubleOption.getOrElse(alt)
 }

@@ -6,64 +6,14 @@ import scala.reflect.ClassTag
 import scala.reflect.classTag
 import scala.Some
 
-trait CommonProductFormats { self: StandardFormats =>
+case class ProductFormatField(name: String, jsonName: Option[String] = None, default: Option[() => Any] = None, jsonFormat: Option[JsonFormat[_]] = None)
 
-  type JFmt[A] = JsonFormat[A]
-  case class Field(name: String, getDefault: Option[() => Any], option: Boolean = false, optionalSeq: Boolean = false, optionalMap: Boolean = false, extension: Boolean = false)
+object ProductFormat {
 
+  case class Field(name: String, jsonName: Option[String] = None, default: Option[() => Any] = None, jsonFormat: Option[JsonFormat[_]], isOption: Boolean = false, isSeq: Boolean = false, isMap: Boolean = false, isExtension: Boolean = false)
 
-  def jsonFormat0[P <: Product :ClassTag](construct: () => P) = new RootJsonFormat[P] {
-    def write(p: P) = JsObject()
-    def read(value: JsValue) = construct()
-  }
-
-  def jsonFormat2[P <: Product :ClassTag, F1 :JFmt, F2 :JFmt](construct: (F1, F2) => P, useDefaultValues: Boolean = false, excludeEmptyCollections: Boolean = true) = new RootJsonFormat[P] {
-    val Array(f1, f2) = extractFields(classTag[P], useDefaultValues, excludeEmptyCollections)
-    def write(p: P) = JsObject(
-      toJson[F1](f1, p, 0,
-      toJson[F2](f2, p, 1,
-      Nil))
-    )
-    def read(value: JsValue) = construct(
-      fromJson[P, F1](f1, value),
-      fromJson[P, F2](f2, value)
-    )
-  }
-
-  def jsonFormat3[P <: Product :ClassTag, F1 :JFmt, F2 :JFmt, F3 :JFmt](construct: (F1, F2, F3) => P, useDefaultValues: Boolean = false, excludeEmptyCollections: Boolean = true) = new RootJsonFormat[P] {
-    val Array(f1, f2, f3) = extractFields(classTag[P], useDefaultValues, excludeEmptyCollections)
-    def write(p: P) = JsObject(
-      toJson[F1](f1, p, 0,
-      toJson[F2](f2, p, 1,
-      toJson[F3](f3, p, 1,
-      Nil)))
-    )
-    def read(value: JsValue) = construct(
-      fromJson[P, F1](f1, value),
-      fromJson[P, F2](f2, value),
-      fromJson[P, F3](f3, value)
-    )
-  }
-
-  def jsonFormat4[P <: Product :ClassTag, F1 :JFmt, F2 :JFmt, F3 :JFmt, F4 :JFmt](construct: (F1, F2, F3, F4) => P, useDefaultValues: Boolean = false, excludeEmptyCollections: Boolean = true) = new RootJsonFormat[P] {
-    val Array(f1, f2, f3, f4) = extractFields(classTag[P], useDefaultValues, excludeEmptyCollections)
-    def write(p: P) = JsObject(
-      toJson[F1](f1, p, 0,
-      toJson[F2](f2, p, 1,
-      toJson[F3](f3, p, 1,
-      toJson[F4](f4, p, 1,
-      Nil))))
-    )
-    def read(value: JsValue) = construct(
-      fromJson[P, F1](f1, value),
-      fromJson[P, F2](f2, value),
-      fromJson[P, F3](f3, value),
-      fromJson[P, F4](f4, value)
-    )
-  }
-
-  protected def extractFields(classManifest: ClassTag[_], useDefaultValues: Boolean, excludeEmptyCollections: Boolean): Array[Field] = {
-    val clazz = classManifest.runtimeClass
+  protected def extractFields[P <: Product :ClassTag]: Array[Field] = {
+    val clazz = classTag[P].runtimeClass
     try {
       // Need companion class for default arguments.
       lazy val companionClass = Class.forName(clazz.getName + "$")
@@ -86,23 +36,32 @@ trait CommonProductFormats { self: StandardFormats =>
       }
       if (fields.zip(copyDefaultMethods).exists { case (f, m) => f.getType != m.getReturnType })
         sys.error("Cannot determine field order of case class " + clazz.getName)
-      if (useDefaultValues) {
-        fields.zip(applyDefaultMethods).map { case (f, m) => Field(f.getName, m, classOf[Option[_]].isAssignableFrom(f.getType), excludeEmptyCollections && classOf[Seq[_]].isAssignableFrom(f.getType), excludeEmptyCollections && classOf[Map[_, _]].isAssignableFrom(f.getType), classOf[Extensions].isAssignableFrom(f.getType)) }
-      } else {
-        fields.map { f => Field(f.getName, None, classOf[Option[_]].isAssignableFrom(f.getType), excludeEmptyCollections && classOf[Seq[_]].isAssignableFrom(f.getType), excludeEmptyCollections && classOf[Map[_, _]].isAssignableFrom(f.getType), classOf[Extensions].isAssignableFrom(f.getType)) }
+      fields.zip(applyDefaultMethods).map { case (f, m) =>
+        Field(f.getName, jsonName = None, default = m, jsonFormat = None, classOf[Option[_]].isAssignableFrom(f.getType), classOf[Seq[_]].isAssignableFrom(f.getType), classOf[Map[_, _]].isAssignableFrom(f.getType), classOf[Extensions].isAssignableFrom(f.getType))
       }
     } catch {
       case ex : Throwable => throw new RuntimeException("Cannot automatically determine case class field names and order " +
         "for '" + clazz.getName + "', please use the 'jsonFormat' overload with explicit field name specification", ex)
     }
   }
+}
 
-  private def toJson[F](field: Field, p: Product, fieldIndex: Int, rest: List[JsField])(implicit writer: JsonWriter[F]): List[JsField] = {
+abstract class ProductFormat[P <: Product :ClassTag](fieldOverrides: Iterable[ProductFormatField] = Nil, calculatedFields: P => Iterable[JsField] = (_: P) => Nil) extends RootJsonFormat[P] {
+
+  import ProductFormat._
+
+  protected val fields = for {
+    f <- extractFields
+    update = fieldOverrides.find(_.name == f.name).getOrElse(ProductFormatField(f.name))
+  } yield f.copy(jsonName = update.jsonName.orElse(f.jsonName), default = update.default.orElse(f.default), jsonFormat = update.jsonFormat.orElse(f.jsonFormat))
+
+
+  protected def toJson[F](field: Field, p: Product, fieldIndex: Int, rest: List[JsField])(implicit writer: JsonWriter[F]): List[JsField] = {
     val value = p.productElement(fieldIndex)
-    if (field.option && value == None) rest
-    else if (field.optionalMap && value == Map.empty) rest
-    else if (field.optionalSeq && value == Seq.empty) rest
-    else if (field.extension) toJson(value.asInstanceOf[Extensions]) ++ rest
+    if (field.isOption && value == None) rest
+    else if (field.isSeq && field.default.isDefined && value == Seq.empty) rest
+    else if (field.isMap && field.default.isDefined && value == Map.empty) rest
+    else if (field.isExtension) toJson(value.asInstanceOf[Extensions]) ++ rest
     else (field.name, writer.write(value.asInstanceOf[F])) :: rest
   }
 
@@ -116,20 +75,18 @@ trait CommonProductFormats { self: StandardFormats =>
     }
   }
 
-  private def fromJson[P :ClassTag, F](field: Field, value: JsValue)(implicit reader: JsonReader[F]) : F = {
-    if (!field.extension) {
+  protected def fromJson[P :ClassTag, F :JsonReader](field: Field, value: JsValue) : F = {
+    if (!field.isExtension) {
       value match {
         case x: JsObject =>
           x.fields.get(field.name) match {
             case Some(value) =>
-              reader.read(value)
-            case None => field.getDefault match {
+              implicitly[JsonReader[F]].read(value)
+            case None => field.default match {
               case Some(defarg) =>
                 defarg().asInstanceOf[F]
               case None =>
-                if (field.option) None.asInstanceOf[F]
-                else if (field.optionalSeq) Seq.empty.asInstanceOf[F]
-                if (reader.isInstanceOf[OptionFormat[_]]) None.asInstanceOf[F]
+                if (field.isOption) None.asInstanceOf[F]
                 else deserializationError("Object is missing required member '" + field.name + "'")
             }
           }
@@ -141,5 +98,37 @@ trait CommonProductFormats { self: StandardFormats =>
       }.toMap).asInstanceOf[F]
 
     }
+  }
+}
+
+trait CommonProductFormats { self: StandardFormats =>
+
+  type JFmt[A] = JsonFormat[A]
+
+  implicit val extensionsFormat = new RootJsonFormat[Extensions] {
+    override def write(obj: Extensions): JsValue = JsNull
+    override def read(json: JsValue): Extensions = Extensions.empty
+  }
+
+  def jsonFormat1a[P <: Product :ClassTag, F1 :JFmt](construct: (F1) => P) = new ProductFormat[P] {
+    def write(p: P) = JsObject(
+      toJson[F1](fields(0), p, 0,
+          Nil)
+    )
+    def read(value: JsValue) = construct(
+      fromJson[P, F1](fields(0), value)
+    )
+  }
+
+  def jsonFormat2a[P <: Product :ClassTag, F1 :JFmt, F2 :JFmt](construct: (F1, F2) => P) = new ProductFormat[P] {
+    def write(p: P) = JsObject(
+      toJson[F1](fields(0), p, 0,
+        toJson[F2](fields(1), p, 1,
+          Nil))
+    )
+    def read(value: JsValue) = construct(
+      fromJson[P, F1](fields(0), value),
+      fromJson[P, F2](fields(1), value)
+    )
   }
 }
