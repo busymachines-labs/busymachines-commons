@@ -16,8 +16,10 @@ import com.busymachines.commons.domain.Id
 import spray.http.MediaType
 import com.busymachines.commons.EntityNotFoundException
 import spray.http.HttpEntity
+import com.busymachines.prefab.media.service.MimeTypeDetector
+import com.busymachines.prefab.media.logic.DefaultMimeTypeDetector
 
-class MediasApiV1(mediaDao: MediaDao, authenticator: UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with MediaApiV1Directives {
+class MediasApiV1(mediaDao: MediaDao, authenticator: UserAuthenticator,mimeTypeDetector:MimeTypeDetector)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with MediaApiV1Directives {
 
   private def decodeWebBase64(src: String): Option[Array[Byte]] = {
     val base64 = "data:(.*);base64,(.*)".r
@@ -35,7 +37,7 @@ class MediasApiV1(mediaDao: MediaDao, authenticator: UserAuthenticator)(implicit
           post {
             entity(as[MediaInput]) { mediaInput =>
               complete {
-                mediaDao.store(MimeTypes.fromResourceName(mediaInput.name.getOrElse(throw new Exception("The file must have a name."))), mediaInput.name, decodeWebBase64(mediaInput.data).getOrElse(throw new Exception("The file data could not be properly web base64 decoded."))) map (_.id.value)
+                mediaDao.store(mimeTypeDetector.mimeTypeOf(Some(mediaInput.name.getOrElse(throw new Exception("The file must have a name."))),None).getOrElse(throw new Exception(s"Cannot detect the mime type of the file from it's filename.")), mediaInput.name, decodeWebBase64(mediaInput.data).getOrElse(throw new Exception("The file data could not be properly web base64 decoded."))) map (_.id.value)
               }
             }
           }
