@@ -18,7 +18,7 @@ import org.joda.time.DateTime
  * Facilitates mail related services.
  * @param mailConfig the mail configuration
  */
-class IncomingMailBox(mailConfig: IncomingMailConfig) extends Logging {
+class IncomingMailBox(val mailConfig: IncomingMailConfig) extends Logging {
 
   val inboxFolder = "INBOX"
 
@@ -110,7 +110,9 @@ class IncomingMailBox(mailConfig: IncomingMailConfig) extends Logging {
     val messages =
       (flagTerm,dateRange,messageRange) match {
         case (Some(flagTermValue),None,None) => folder.search(flagTermValue)
-        case (None,None,Some(range)) => folder.getMessages(range._1,range._2)
+        case (None,None,Some(range)) => 
+          debug(s"Retrieving messages by range $range")
+          folder.getMessages(range._1,range._2)
         case (None,Some(dateRangeValue),None) =>
           dateRangeValue match {
             case (None,None) => throw new Exception(s"Cannot search mail for date range and not specify at least one end of the range")
@@ -124,7 +126,7 @@ class IncomingMailBox(mailConfig: IncomingMailConfig) extends Logging {
       messages.map(MailBox.messageToMailMessage(_)) toList
     } catch {
       case e:Throwable =>
-        error("Error searching & converting the received mails to a normalized mail message format",e)
+        error(s"Error searching & converting the received mails to a normalized mail message format. Range is $messageRange",e)
         throw e
     }
   }
