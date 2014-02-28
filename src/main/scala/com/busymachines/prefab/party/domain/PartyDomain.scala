@@ -40,7 +40,7 @@ case class Party (
 
   // TDOD : Move this to extensions
   wmsClientNumber : Option[String] = None,
-  
+  idfNumber : Option[String] = None,
   /**
    * Users of the party
    */
