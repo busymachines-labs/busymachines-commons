@@ -92,7 +92,7 @@ class Extension[P, A](val getExt: P => Extensions[P], val cp: (P, Extensions[P])
    * Registering an extension too late will result in an exception being thrown.
    */
   def register() {
-    println(s"Registered extension $this")
+    println(s"Registered $this")
     registered.set(true)
     Extensions.register(this)
   }
