@@ -3,6 +3,7 @@ package com.busymachines.commons.test.media
 import com.busymachines.commons.test.AssemblyTestBase
 import com.busymachines.prefab.party.api.v1.PartyApiV1Directives
 import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
+import com.busymachines.prefab.party.implicits._
 import com.busymachines.prefab.media.api.v1
 import org.scalatest.FlatSpec
 import spray.http._

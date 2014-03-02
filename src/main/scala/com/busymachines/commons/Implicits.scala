@@ -14,7 +14,7 @@ import com.typesafe.config.Config
 import scala.concurrent.Future
 import _root_.spray.json.JsValue
 
-trait Implicits extends CommonJsonFormats {
+trait Implicits extends CommonJsonFormats with ExtensionsImplicits {
   implicit def toOption[A](a: A) = Option(a)
   implicit def richConfig(config : Config) = new RichConfig(config)
   implicit def richCommonConfigType[A <: CommonConfig](f : String => A) = new RichCommonConfigType[A](f)

@@ -6,6 +6,7 @@ import scala.util.Random
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
 import com.busymachines.prefab.authentication.model.Credentials
+import com.busymachines.commons.Extensions
 
 case class Tenant(
   id : Id[Tenant], 
@@ -49,7 +50,9 @@ case class Party (
   /**
    * The user roles that available for the users in this party.
    */ 
-  userRoles : List[UserRole] = Nil
+  userRoles : List[UserRole] = Nil,
+
+  extensions: Extensions[Party] = Extensions.empty
 ) extends HasId[Party] {
 
   def describe = 
@@ -62,6 +65,8 @@ case class Company(
 )
 
 case class Person(
+  title : Option[String] = None,
+  initials : Option[String] = None,
   firstName : Option[String] = None,
   middleName : Option[String] = None,
   lastName : Option[String] = None

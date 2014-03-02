@@ -14,7 +14,7 @@ import com.busymachines.prefab.authentication.model.Credentials
 import com.busymachines.prefab.authentication.model.PasswordCredentials
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.db.PartyDao
-import com.busymachines.prefab.party.domain.PartyDomainJsonFormats._
+import com.busymachines.prefab.party.implicits._
 import com.busymachines.prefab.party.db.UserDao
 import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.prefab.party.domain.User

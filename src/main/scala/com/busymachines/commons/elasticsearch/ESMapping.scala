@@ -60,7 +60,7 @@ trait ESMappingConstants {
   val _all = new ESProperty("_all", "_all", String)
 }
 
-class ESMapping[A](implicit ct : ClassTag[A]) extends ESMappingConstants with Logging {
+class ESMapping[A](extensionMappings: ESMapping[_]*)(implicit ct : ClassTag[A]) extends ESMappingConstants with Logging {
 
   import ESMapping._
 
@@ -71,6 +71,8 @@ class ESMapping[A](implicit ct : ClassTag[A]) extends ESMappingConstants with Lo
   def _allProperties = _allPropertiesVar.properties
   def _propertiesByName = _allPropertiesVar.propertiesByName
   def _propertiesByMappedName = _allPropertiesVar.propertiesByMappedName
+
+  private def _allPlusExtProperties = Properties[A]((this :: extensionMappings.map(_.asInstanceOf[ESMapping[A]]).toList).flatMap(_._allProperties))
 
   protected var ttl : Option[Duration] = None // enable ttl without a default ttl value: Some(Duration.Inf)
   
@@ -94,7 +96,7 @@ class ESMapping[A](implicit ct : ClassTag[A]) extends ESMappingConstants with Lo
         case ttl => PropertyOption("_ttl", Map("enabled" -> true))
       },
       Some(Stored),
-      Some(PropertyOption("properties", this))).flatten: _*)))))
+      Some(PropertyOption("properties", _allPlusExtProperties))).flatten: _*)))))
   }
   
   implicit class RichName(name: String) extends RichMappedName(name, name)

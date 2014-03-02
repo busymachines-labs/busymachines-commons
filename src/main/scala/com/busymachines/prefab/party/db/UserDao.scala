@@ -2,15 +2,12 @@ package com.busymachines.prefab.party.db
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import com.busymachines.commons.elasticsearch.ESIndex
-import com.busymachines.commons.elasticsearch.ESType
-import com.busymachines.commons.elasticsearch.ESNestedDao
 import com.busymachines.commons.elasticsearch.ESNestedDao
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.domain.User
-import com.busymachines.prefab.party.domain.PartyDomainJsonFormats._
+import com.busymachines.prefab.party.implicits._
 
 class UserDao(val parentDao : PartyDao)(implicit ec: ExecutionContext) extends ESNestedDao[Party, User]("user") {
     

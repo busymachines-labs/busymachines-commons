@@ -27,6 +27,8 @@ object PartyMapping extends ESMapping[Party] {
 }
 
 object PersonMapping extends ESMapping[Person] {
+  val title = "title" as String & NotAnalyzed
+  val initials = "initials" as String & NotAnalyzed
   val firstName = "firstName" as String & NotAnalyzed
   val middleName = "middleName" as String & NotAnalyzed
   val lastName = "lastName" as String & NotAnalyzed

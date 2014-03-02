@@ -9,10 +9,10 @@ import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.Versioned
 import scala.concurrent.duration.FiniteDuration
 import org.joda.time.LocalDate
-import com.busymachines.commons.CommonProductFormats
 import scala.Some
 import com.busymachines.commons.dao.TermFacetValue
 import com.busymachines.commons.dao.HistogramFacetValue
+import com.busymachines.commons.spray.ProductJsonFormats
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -21,7 +21,7 @@ trait CommonJsonFormats
   with StandardFormats
   with CollectionFormats
   with ProductFormats
-  with CommonProductFormats
+  with ProductJsonFormats
   with AdditionalFormats {
 
   implicit object currencyJsonFormat extends RootJsonFormat[Currency] {
@@ -179,5 +179,4 @@ trait CommonJsonFormats
   }
 
   implicit val sequenceFormat = jsonFormat2(Sequence)
-
 }
