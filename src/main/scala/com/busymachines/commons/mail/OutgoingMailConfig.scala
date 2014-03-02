@@ -5,7 +5,7 @@ import com.busymachines.commons.CommonConfig
 /**
  * Created by paul on 2/6/14.
  */
-class OutgoingMailConfig(baseName: String) extends CommonConfig(baseName) {
+case class OutgoingMailConfig(baseName: String) extends CommonConfig(baseName) {
   def auth = boolean("auth")
   def starttls = boolean("starttls")
   def ssl = boolean("ssl")

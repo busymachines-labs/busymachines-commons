@@ -9,7 +9,7 @@ import javax.mail.Session
 /**
  * Created by paul on 2/6/14.
  */
-class OutgoingMailBox(mailConfig: OutgoingMailConfig) extends Logging {
+class OutgoingMailBox(val mailConfig: OutgoingMailConfig) extends Logging {
 
   private def serverProperties: Properties = {
 
