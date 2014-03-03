@@ -24,8 +24,9 @@ import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.prefab.media.domain.HashedMedia
 import com.busymachines.prefab.media.domain.MediaDomainJsonFormats.hashMediaFormat
+import com.busymachines.prefab.media.service.MimeTypeDetector
 
-class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao with Logging {
+class ESMediaDao(index: ESIndex,mimeTypeDetector:MimeTypeDetector)(implicit ec: ExecutionContext) extends MediaDao with Logging {
 
   private val hasher = Hashing.md5
   private val encoding = BaseEncoding.base64Url
@@ -78,7 +79,7 @@ class ESMediaDao(index: ESIndex)(implicit ec: ExecutionContext) extends MediaDao
     Future(readUrl(url)) flatMap {
       case Some(bytes) =>
         val name = url.substring(url.lastIndexOf('/') + 1)
-        store(MimeTypes.fromResourceName(name), Some(name), bytes).map(Option(_))
+        store(mimeTypeDetector.mimeTypeOf(Some(name),Some(bytes)).getOrElse(MimeTypes.fromResourceName(name)), Some(name), bytes).map(Option(_))
       case None =>
         Future.successful(None)
     }
