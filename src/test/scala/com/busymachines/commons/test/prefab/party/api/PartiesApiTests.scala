@@ -65,7 +65,8 @@ class PartiesApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Dire
           }],
           "roles":[]
       }],
-      "userRoles": []
+      "userRoles": [],
+      "extensions":""
       }
                              """
 
