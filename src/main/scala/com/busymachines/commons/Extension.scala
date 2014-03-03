@@ -1,10 +1,11 @@
 package com.busymachines.commons
 
-import _root_.spray.json.{JsValue, JsField, JsObject, JsonFormat}
+import _root_.spray.json._
 import scala.collection.concurrent.TrieMap
 import scala.reflect.ClassTag
 import java.util.concurrent.atomic.AtomicBoolean
 import com.busymachines.commons.spray.{ProductFieldJsonFormat, ProductJsonFormat}
+import scala.Some
 
 object Extensions {
   val emptyInstance = new Extensions[Any](Map.empty)
@@ -113,8 +114,8 @@ class Extension[P, A](val getExt: P => Extensions[P], val cp: (P, Extensions[P])
  */
 trait ExtensionsImplicits {
   implicit def extensionFormat[P :ClassTag] = new ProductFieldJsonFormat[Extensions[P]] {
-    def write(extensions: Extensions[P]) : JsValue = throw new IllegalStateException
-    def read(value: JsValue) : Extensions[P] = throw new IllegalStateException
+    def write(extensions: Extensions[P]) : JsValue = JsNull // TODO throw new IllegalStateException
+    def read(value: JsValue) : Extensions[P] = Extensions.empty // TODO throw new IllegalStateException
     override def writeField(name: String, extensions: Extensions[P], rest: List[JsField]) =
       extensions.map.toList.flatMap {
         case (e, a) =>

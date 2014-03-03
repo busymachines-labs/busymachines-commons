@@ -25,6 +25,7 @@ object PartyMapping extends ESMapping[Party] {
   val idfNumber = "idfNumber" as String & NotAnalyzed
   val users = "users" as Nested(UserMapping)
   val userRoles = "userRoles" as Nested(UserRoleMapping)
+  val extensions = "extensions" as String // no extension support yet in mapping framework
 }
 
 object PersonMapping extends ESMapping[Person] {
