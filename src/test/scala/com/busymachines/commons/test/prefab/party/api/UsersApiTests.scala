@@ -10,7 +10,6 @@ import spray.json.JsonParser
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.commons.implicits._
 import com.busymachines.prefab.party.implicits._
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
