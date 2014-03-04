@@ -153,9 +153,9 @@ case class Thing(name: String, extensions: Extensions[Thing])
 case class BigThing(size: Int)
 
 object Implicits {
-implicit val thingFormat = format2(Thing)
-implicit val thingBoxFormat = format1(ThingBox)
-implicit val bigThingFormat = format1(BigThing)
+implicit val thingFormat = productFormat2(Thing)
+implicit val thingBoxFormat = productFormat1(ThingBox)
+implicit val bigThingFormat = productFormat1(BigThing)
 
   abstract class ESMapping2[A <: Product :ClassTag :ProductJsonFormat, Type] extends ESMapping[A]
 

@@ -19,16 +19,16 @@ object ProductJsonFormatTests {
   case class Colored(color: String = "")
   case class Big(size: Int)
 
-  implicit val thing1Format = format2(Thing1)
-  implicit val thing2Format = format2(Thing2)
-  implicit val thing3Format = format2(Thing3)
-  implicit val coloredFormat = format1(Colored)
-  implicit val bigFormat = format1(Big)
+  implicit val thing1Format = productFormat2(Thing1)
+  implicit val thing2Format = productFormat2(Thing2)
+  implicit val thing3Format = productFormat2(Thing3)
+  implicit val coloredFormat = productFormat1(Colored)
+  implicit val bigFormat = productFormat1(Big)
 
   implicit object Thing3ColoredExtension extends Extension[Thing3, Colored](_.ext, (a, b) => a.copy(ext = b))
   implicit object BigExtension extends Extension[Thing3, Big](_.ext, (a, b) => a.copy(ext = b))
 
-  implicit def toColored[A](a: A)(implicit ext: Extension[A, Colored]) = ext(a)
+  implicit def toColored[A](a: A)(implicit ext: Extension[A, Colored]): Colored = ext(a)
   implicit def toBig[A](a: A)(implicit ext: Extension[A, Big]) = ext(a)
 
   Thing3ColoredExtension.register()
@@ -67,7 +67,7 @@ class ProductJsonFormatTests extends FlatSpec {
   }
 
   "Extensions without values" should "not be instantiated" in {
-    val json = """{"name":"Colored Thing"}""".asJson
+    val json = """{"name":"A Thing"}""".asJson
     val thing = json.convertTo[Thing3]
     assert(thing.ext.map.size === 0)
   }
