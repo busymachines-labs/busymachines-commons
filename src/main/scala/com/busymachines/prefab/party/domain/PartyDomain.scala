@@ -39,9 +39,6 @@ case class Party (
 
   relations : List[RelatedParty] = Nil,
 
-  // TDOD : Move this to extensions
-  wmsClientNumber : Option[String] = None,
-  idfNumber : Option[String] = None,
   /**
    * Users of the party
    */
