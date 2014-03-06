@@ -27,7 +27,7 @@ object implicits {
   implicit val emailKindFormat = stringFormat[EmailAddressKind]("EmailKind", EmailAddressKind, _.name)
   implicit val relationFormat = stringFormat[RelationKind]("RelationKind", RelationKind, _.name)
   implicit val permissionFormat = stringFormat[Permission]("Permission", Permission, _.name)
-  implicit val addressFormat = jsonFormat8(Address)
+  implicit val addressFormat = jsonFormat9(Address)
   implicit val phoneNumberFormat = jsonFormat2(PhoneNumber)
   implicit val emailFormat = jsonFormat3(EmailAddress)
   implicit val userFormat = jsonFormat9(User)
