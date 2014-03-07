@@ -15,12 +15,13 @@ import spray.json.JsValue
 import org.joda.time.DateTime
 import com.busymachines.commons.implicits._
 import com.busymachines.commons.spray.ProductField
-import com.busymachines.commons.spray.ProductJsonFormat
+import com.busymachines.commons.spray.ProductFormat
+import com.busymachines.commons.Extension
 
 /**
 * Base class for mapping objects.
 */
-abstract class ESMapping[A <: Product :ClassTag :ProductJsonFormat] {
+abstract class ESMapping[A <: Product :ClassTag :ProductFormat] {
 
   private var _explicitFields = Map[String, ESField[A, _]]()
   private val caseClassFields : Map[String, CaseClassField] = CaseClassFields.of[A]
@@ -120,7 +121,7 @@ sealed trait ESPath[A, T] {
 }
 
 object ESPath {
-  implicit def fromExt[A, E, T](path: ESPath[E, T])(implicit e: com.busymachines.commons.Extension[A, E]) = path.asInstanceOf[ESPath[A, T]]
+  implicit def fromExt[A, E, T](path: ESPath[E, T])(implicit e: Extension[A, E]) = path.asInstanceOf[ESPath[A, T]]
 }
 
 case class ESMultiPath[A, T](fields: Seq[ESField[_, _]]) extends ESPath[A, T]
@@ -129,7 +130,7 @@ case class ESField[A, T] protected (name: String, propertyName: String, options:
   extends ESPath[A, T] { def fields = Seq(this) }
 
 object ESField {
-  implicit def fromExt[A, E, T](field: ESField[E, T])(implicit e: com.busymachines.commons.Extension[A, E]) = field.asInstanceOf[ESField[A, T]]
+  implicit def fromExt[A, E, T](field: ESField[E, T])(implicit e: Extension[A, E]) = field.asInstanceOf[ESField[A, T]]
 }
 
 case class ESFieldOption(name: String, value: JsValue)
@@ -146,18 +147,18 @@ import com.busymachines.commons.implicits._
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.Extension
 import scala.reflect.ClassTag
-import com.busymachines.commons.spray.ProductJsonFormat
+import com.busymachines.commons.spray.ProductFormat
 
 case class ThingBox(things: List[Thing])
 case class Thing(name: String, extensions: Extensions[Thing])
 case class BigThing(size: Int)
 
 object Implicits {
-implicit val thingFormat = productFormat2(Thing)
-implicit val thingBoxFormat = productFormat1(ThingBox)
-implicit val bigThingFormat = productFormat1(BigThing)
+implicit val thingFormat = format2(Thing)
+implicit val thingBoxFormat = format1(ThingBox)
+implicit val bigThingFormat = format1(BigThing)
 
-  abstract class ESMapping2[A <: Product :ClassTag :ProductJsonFormat, Type] extends ESMapping[A]
+  abstract class ESMapping2[A <: Product :ClassTag :ProductFormat, Type] extends ESMapping[A]
 
   implicit object ThingMapping extends ESMapping2[Thing, Thing.type] {
     val name = "name" :: String & Analyzed

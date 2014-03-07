@@ -19,11 +19,11 @@ object ProductJsonFormatTests {
   case class Colored(color: String = "")
   case class Big(size: Int)
 
-  implicit val thing1Format = productFormat2(Thing1)
-  implicit val thing2Format = productFormat2(Thing2)
-  implicit val thing3Format = productFormat2(Thing3)
-  implicit val coloredFormat = productFormat1(Colored)
-  implicit val bigFormat = productFormat1(Big)
+  implicit val thing1Format = format2(Thing1)
+  implicit val thing2Format = format2(Thing2)
+  implicit val thing3Format = format2(Thing3)
+  implicit val coloredFormat = format1(Colored)
+  implicit val bigFormat = format1(Big)
 
   implicit object Thing3ColoredExtension extends Extension[Thing3, Colored](_.ext, (a, b) => a.copy(ext = b))
   implicit object BigExtension extends Extension[Thing3, Big](_.ext, (a, b) => a.copy(ext = b))
@@ -33,7 +33,6 @@ object ProductJsonFormatTests {
 
   Thing3ColoredExtension.register()
   BigExtension.register()
-
 }
 
 @RunWith(classOf[JUnitRunner])

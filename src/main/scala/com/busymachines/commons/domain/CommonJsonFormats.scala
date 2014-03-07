@@ -12,7 +12,7 @@ import org.joda.time.LocalDate
 import scala.Some
 import com.busymachines.commons.dao.TermFacetValue
 import com.busymachines.commons.dao.HistogramFacetValue
-import com.busymachines.commons.spray.ProductJsonFormats
+import com.busymachines.commons.spray.ProductFormatsInstances
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -21,7 +21,7 @@ trait CommonJsonFormats
   with StandardFormats
   with CollectionFormats
   with ProductFormats
-  with ProductJsonFormats
+  with ProductFormatsInstances
   with AdditionalFormats {
 
   implicit object currencyJsonFormat extends RootJsonFormat[Currency] {

@@ -4,7 +4,7 @@ import _root_.spray.json._
 import scala.collection.concurrent.TrieMap
 import scala.reflect.ClassTag
 import java.util.concurrent.atomic.AtomicBoolean
-import com.busymachines.commons.spray.{ProductFieldJsonFormat, ProductJsonFormat}
+import com.busymachines.commons.spray.{DefaultProductFieldFormat, ProductField, ProductFieldFormat, ProductFormat}
 import scala.Some
 
 object Extensions {
@@ -39,13 +39,13 @@ object Extensions {
   /**
    * Returns the registered extensions of parent type P.
    */
-  def of[P :ClassTag] : Seq[Extension[P, _]] =
-    extensions.getOrElse(scala.reflect.classTag[P], Nil).asInstanceOf[Seq[Extension[P, _]]]
+  def of[P :ClassTag] : Seq[Extension[P, Product]] =
+    extensions.getOrElse(scala.reflect.classTag[P], Nil).asInstanceOf[Seq[Extension[P, Product]]]
 
   /**
    * Implicitly converts an extension instance to an extensions container.
    */
-  implicit def toExtensions[P, A](instance: A)(implicit e: Extension[P, A]) =
+  implicit def toExtensions[P, A <: Product](instance: A)(implicit e: Extension[P, A]) =
     new Extensions[P](Map(e -> instance))
 }
 
@@ -83,9 +83,13 @@ class Extensions[P](val map: Map[Extension[P, _], _]) {
  * Extensions should be registered during application startup using #register().
  * Instances of this class should be marked implicit.
  */
-class Extension[P, A](val getExt: P => Extensions[P], val cp: (P, Extensions[P]) => P)(implicit val parentClass: ClassTag[P], val extensionClass: ClassTag[A], val format: ProductJsonFormat[A]) {
+class Extension[P, A](val getExt: P => Extensions[P], val cp: (P, Extensions[P]) => P)(implicit val parentClass: ClassTag[P], val extensionClass: ClassTag[A], val format: ProductFormat[A]) {
 
   private val registered = new AtomicBoolean(false)
+
+  val jsonNames: Set[String] = format.fields.map(_.format).collect {
+    case DefaultProductFieldFormat(jsonName, default, format) => jsonName
+  }.flatten.toSet
 
   /**
    * Registers an extension. Extensions should be registered before any of the extension functionality is used,
@@ -113,10 +117,10 @@ class Extension[P, A](val getExt: P => Extensions[P], val cp: (P, Extensions[P])
  * Json format for extensions. Extensions can only be used as fields withing a ProductJsonFormat.
  */
 trait ExtensionsImplicits {
-  implicit def extensionFormat[P :ClassTag] = new ProductFieldJsonFormat[Extensions[P]] {
+  implicit def extensionFormat[P :ClassTag] = new ProductFieldFormat[Extensions[P]] {
     def write(extensions: Extensions[P]) : JsValue = JsNull // TODO throw new IllegalStateException
     def read(value: JsValue) : Extensions[P] = Extensions.empty // TODO throw new IllegalStateException
-    override def writeField(name: String, extensions: Extensions[P], rest: List[JsField]) =
+    override def writeField(field: ProductField, extensions: Extensions[P], rest: List[JsField]) =
       extensions.map.toList.flatMap {
         case (e, a) =>
           e.checkRegistered.format.asInstanceOf[JsonFormat[Any]].write(a.asInstanceOf[Any]) match {
@@ -125,18 +129,18 @@ trait ExtensionsImplicits {
           }
       } ++ rest
 
-    override def readField(name: String, obj: JsObject) : Option[Extensions[P]] =
-      Some(Extensions.of[P].flatMap { ext =>
-        if (!obj.fields.exists(f => ext.format.jsonNames.contains(f._1))) Seq.empty
-        else Seq(ext.asInstanceOf[Extension[P, Any]] -> ext.format.read(obj))
+    override def readField(field: ProductField, obj: JsObject) : Extensions[P] =
+      Extensions.of[P].flatMap { ext =>
+        if (!obj.fields.exists(f => ext.jsonNames.contains(f._1))) Seq.empty
+        else Seq(ext.asInstanceOf[Extension[P, Product]] -> ext.format.read(obj))
       } match {
         case Seq() => Extensions.empty[P]
         case instances => new Extensions[P](instances.toMap)
-      })
+      }
   }
 
   implicit class RichProductWithExtensions[P](p: P) {
-    def copyExt[A](cp: A => A)(implicit e: Extension[P, A]) =
+    def copyExt[A <: Product](cp: A => A)(implicit e: Extension[P, A]) =
       e.cp(p, e.getExt(p).copy(cp))
   }
 }
