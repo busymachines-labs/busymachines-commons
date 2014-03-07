@@ -60,17 +60,6 @@ class ProductJsonFormatTests extends FlatSpec {
     assert(Thing2("The Thing", Map.empty).toJson === """{"name":"The Thing", "map":{}}""".asJson)
   }
 
-  "Extensions" should "be merged into json" in {
-    val thing = Thing3("Colored Thing", Colored("red"))
-    assert(thing.toJson == """{"name":"Colored Thing","color":"red"}""".asJson)
-  }
-
-  "Extensions without values" should "not be instantiated" in {
-    val json = """{"name":"A Thing"}""".asJson
-    val thing = json.convertTo[Thing3]
-    assert(thing.ext.map.size === 0)
-  }
-
   "Multiple extensions " should "be instantiated" in {
     val json = """{"name":"Colored Thing","size" : 12, "color":"red"}""".asJson
     val thing = json.convertTo[Thing3]

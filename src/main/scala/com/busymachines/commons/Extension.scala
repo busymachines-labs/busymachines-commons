@@ -75,7 +75,7 @@ class Extensions[P](val map: Map[Extension[P, _], _]) {
   /**
    * Prints the extension instances.
    */
-  override def toString = map.values.toString
+  override def toString = "Extensions(" + map.values.mkString(",") + ")"
 }
 
 /**
@@ -87,9 +87,12 @@ class Extension[P, A](val getExt: P => Extensions[P], val cp: (P, Extensions[P])
 
   private val registered = new AtomicBoolean(false)
 
-  val jsonNames: Set[String] = format.fields.map(_.format).collect {
-    case DefaultProductFieldFormat(jsonName, default, format) => jsonName
-  }.flatten.toSet
+  val jsonNames: Set[String] = format.fields.map { field =>
+    field.format match {
+      case DefaultProductFieldFormat(jsonName, default, format) => jsonName.getOrElse(field.name)
+      case _ => field.name
+    }
+  }.toSet
 
   /**
    * Registers an extension. Extensions should be registered before any of the extension functionality is used,
@@ -134,7 +137,7 @@ class ExtensionsProductFieldFormat[P: ClassTag] extends ProductFieldFormat[Exten
       case Seq() => Extensions.empty[P]
       case instances => new Extensions[P](instances.toMap)
     }
-  protected def formatOf[A](ext: Extension[P, A]): ProductFormat[A] = ext.format
+  protected def formatOf[A](ext: Extension[P, A]) = ext.format
 }
 
 /**

@@ -51,9 +51,9 @@ case class Party (
   extensions: Extensions[Party] = Extensions.empty
 ) extends HasId[Party] {
 
-  def describe = 
-    person.map(p => p.firstName :: p.middleName :: p.lastName :: Nil mkString " ")
-    .orElse(company.map(_.name)).getOrElse("")
+  def describe =
+    company.map(_.name).getOrElse(
+    person.map(p => p.title :: p.initials :: p.middleName :: p.lastName :: Nil).flatMap(_.toSeq).mkString(" "))
 }
   
 case class Company(
