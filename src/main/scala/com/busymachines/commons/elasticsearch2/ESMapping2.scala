@@ -14,24 +14,51 @@ import spray.json.{JsString, JsonFormat}
 import spray.json.JsValue
 import org.joda.time.DateTime
 import com.busymachines.commons.implicits._
-import com.busymachines.commons.spray.ProductField
-import com.busymachines.commons.spray.ProductFormat
-import com.busymachines.commons.Extension
+import com.busymachines.commons.spray.{DefaultProductFieldFormat, ProductFieldFormat, ProductFormat}
+import com.busymachines.commons.{ExtensionsProductFieldFormat, Extension}
+import scala.collection.concurrent.TrieMap
 
 /**
 * Base class for mapping objects.
 */
-abstract class ESMapping[A <: Product :ClassTag :ProductFormat] {
+abstract class ESMapping[A :ClassTag :ProductFormat] {
 
+  private val registeredExtensions = new TrieMap[Extension[A, _], ESMapping[_]]
+
+  /**
+   * Will be filled during construction of the mapping object.
+   */
   private var _explicitFields = Map[String, ESField[A, _]]()
   private val caseClassFields : Map[String, CaseClassField] = CaseClassFields.of[A]
 
   lazy val fieldsByName = _explicitFields
   lazy val fieldsByPropertyName = _explicitFields.values.groupBy(_.propertyName).mapValues(_.head)
-//  lazy val jsonFormat = new ProductFormat[A](_explicitFields.values.map(f => ProductFormatField(f.propertyName, Some(f.name), None, Some(f.jsonFormat)))) {}
+
+  lazy val format: ProductFormat[A] = {
+    val extensions = registeredExtensions.toMap
+    implicitly[ProductFormat[A]]
+      .withJsonNames(fields.map(f => f.propertyName -> f.name).toSeq:_*)
+      .withFieldFormats {
+        case (name, format: ExtensionsProductFieldFormat[_]) =>
+          new ExtensionsProductFieldFormat[A] {
+            override def formatOf[E](ext: Extension[A, E]) =
+              extensions.getOrElse(ext, throw new Exception(s"No mapping registered for extension $ext")).format.asInstanceOf[ProductFormat[E]]
+          }
+        case (name, format) =>
+          val field = fieldsByName.getOrElse(name, throw new Exception(s"Field $name was not mapped"))
+          field.childMapping match {
+            case Some(childMapping) => format.asInstanceOf[ProductFieldFormat[Any]].withJsonFormat(childMapping.format.asInstanceOf[ProductFormat[Any]])
+            case None => format.asInstanceOf[ProductFieldFormat[Any]].withJsonFormat(field.jsonFormat.asInstanceOf[JsonFormat[Any]])
+          }
+      }
+  }
 
   lazy val fields = _explicitFields.values
   lazy val mappingName = classTag[A].runtimeClass.getName.stripSuffix("$")
+
+  def registerExtension[E](extensionMapping: ESMapping[E])(implicit extension: Extension[A, E]) {
+    registeredExtensions.put(extension, extensionMapping)
+  }
 
   // Mapping options
   protected var ttl : Option[Duration] = None // enable ttl without a default ttl value: Some(Duration.Inf)
@@ -89,7 +116,7 @@ abstract class ESMapping[A <: Product :ClassTag :ProductFormat] {
   }
 
   private def toProperties : JsObject =
-    JsObject(_explicitFields.values.map(f =>
+    JsObject((_explicitFields.values ++ registeredExtensions.values.flatMap(_._explicitFields.values.asInstanceOf[Seq[ESField[A, _]]])).map(f =>
       f.name -> JsObject(
         f.options.map(o => o.name -> o.value) ++
         f.childMapping.flatMap("properties" -> _.toProperties) toMap)).toMap)
@@ -126,7 +153,7 @@ object ESPath {
 
 case class ESMultiPath[A, T](fields: Seq[ESField[_, _]]) extends ESPath[A, T]
 
-case class ESField[A, T] protected (name: String, propertyName: String, options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T with Product]])(implicit val classTag: ClassTag[T], val jsonFormat: JsonFormat[T])
+case class ESField[A, T] protected (name: String, propertyName: String, options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T]])(implicit val classTag: ClassTag[T], val jsonFormat: JsonFormat[T])
   extends ESPath[A, T] { def fields = Seq(this) }
 
 object ESField {

@@ -4,6 +4,7 @@ import _root_.spray.json._
 import java.lang.reflect.Modifier
 import scala.reflect.ClassTag
 import scala.reflect.classTag
+import com.busymachines.commons.spray
 
 /**
  * A field format allows
@@ -12,8 +13,8 @@ trait ProductFieldFormat[F] {
   def writeField(field: ProductField, value: F, rest: List[JsField]) : List[JsField]
   def readField(field: ProductField, obj: JsObject) : F
   def withJsonName(jsonName: String): ProductFieldFormat[F] = throw new IllegalStateException
+  def withJsonFormat(format: JsonFormat[F]): ProductFieldFormat[F] = throw new IllegalStateException
   def withDefault(default: Option[() => Any]): ProductFieldFormat[F] = throw new IllegalStateException
-  def withFormat(format: JsonFormat[F]): ProductFieldFormat[F] = throw new IllegalStateException
 }
 
 object ProductFieldFormat {
@@ -46,7 +47,7 @@ case class DefaultProductFieldFormat[F](jsonName: Option[String], default: Optio
     }
   override def withJsonName(jsonName: String) = this.copy(jsonName = Some(jsonName))
   override def withDefault(default: Option[() => Any]) = this.copy(default = default)
-  override def withFormat(format: JsonFormat[F]) = this.copy(format = format)
+  override def withJsonFormat(format: JsonFormat[F]) = this.copy(format = format)
 }
 
 case class ProductField(name: String, default: Option[() => Any] = None, isOption: Boolean = false, isSeq: Boolean = false, isMap: Boolean = false, format: ProductFieldFormat[Any])
@@ -61,14 +62,17 @@ abstract class ProductFormat[P :ClassTag] extends RootJsonFormat[P] { outer =>
   def write(fields: Seq[ProductField], p: P) : JsValue
   def read(fields: Seq[ProductField], value: JsValue) : P
 
-  def withJsonNames(jsonNames: Map[String, String]) = decorate(
-    fields.map(f => jsonNames.get(f.name).map(s => f.copy(format = f.format.withJsonName(s))).getOrElse(f)))
+  def withJsonNames(jsonNames: (String, String)*) = decorate(
+    fields.map(f => jsonNames.find(_._1 == f.name).map(s => f.copy(format = f.format.withJsonName(s._2))).getOrElse(f)))
 
-  def withJsonFormats(jsonFormats: Map[String, JsonFormat[Any]]) = decorate(
-    fields.map(f => jsonFormats.get(f.name).map(s => f.copy(format = f.format.withFormat(s))).getOrElse(f)))
+  def withJsonFormats(jsonFormats: (String, JsonFormat[Any])*) = decorate(
+    fields.map(f => jsonFormats.find(_._1 == f.name).map(s => f.copy(format = f.format.withJsonFormat(s._2))).getOrElse(f)))
 
-  def withDefaults(defaults: Map[String, () => Any]) = decorate(
-    fields.map(f => f.copy(default = defaults.get(f.name).orElse(f.default))))
+  def withDefaults(defaults: (String, () => Any)*) = decorate(
+    fields.map(f => f.copy(default = defaults.find(_._1 == f.name).map(_._2).orElse(f.default))))
+
+  def withFieldFormats(cp: (String, ProductFieldFormat[_]) => ProductFieldFormat[_]) = decorate(
+    fields.map(f => f.copy(format = cp(f.name, f.format).asInstanceOf[ProductFieldFormat[Any]])))
 
   private def decorate(_fields: Array[ProductField]) = new ProductFormat[P] {
     val fields = _fields
