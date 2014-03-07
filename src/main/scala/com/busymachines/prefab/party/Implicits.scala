@@ -19,7 +19,7 @@ import com.busymachines.prefab.party.domain.Tenant
 import com.busymachines.prefab.party.domain.Address
 import com.busymachines.prefab.party.domain.PhoneNumberKind
 import com.busymachines.prefab.party.api.v1.model.{AuthenticationResponse, AuthenticationRequest}
-import spray.json.{JsValue, RootJsonFormat}
+import spray.json.{JsNull, JsValue, RootJsonFormat}
 import com.busymachines.commons.Extensions
 
 object implicits {
@@ -39,13 +39,7 @@ object implicits {
   implicit val tenantFormat = jsonFormat2(Tenant)
   implicit val companyFormat = jsonFormat1(Company)
   implicit val personFormat = jsonFormat5(Person)
-
-  // TODO remove
-  implicit def extFormat[A] = new RootJsonFormat[Extensions[A]] {
-    override def read(json: JsValue): Extensions[A] = ???
-    override def write(obj: Extensions[A]): JsValue = ???
-  }
-  implicit val partyFormat = jsonFormat12(Party)
+  implicit val partyFormat = format12(Party)
 
   implicit val authenticationRequestFormat = jsonFormat2(AuthenticationRequest)
   implicit val authenticationResponseFormat = jsonFormat3(AuthenticationResponse)

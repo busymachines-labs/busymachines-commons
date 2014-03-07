@@ -37,7 +37,7 @@ case class DefaultProductFieldFormat[F](jsonName: Option[String], default: Optio
 
   def readField(field: ProductField, obj: JsObject) =
     obj.fields.get(jsonName.getOrElse(field.name)) match {
-      case Some(value) => value.asInstanceOf[F]
+      case Some(value) => format.read(value)
       case None => default.orElse(field.default) match {
         case Some(defarg) => defarg().asInstanceOf[F]
         case None =>
