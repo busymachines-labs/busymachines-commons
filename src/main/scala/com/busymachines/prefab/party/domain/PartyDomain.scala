@@ -3,8 +3,7 @@ package com.busymachines.prefab.party.domain
 import com.busymachines.commons
 import com.busymachines.commons.implicits._
 import scala.util.Random
-import com.busymachines.commons.domain.Id
-import com.busymachines.commons.domain.HasId
+import com.busymachines.commons.domain.{GeoPoint, Id, HasId}
 import com.busymachines.prefab.authentication.model.Credentials
 import com.busymachines.commons.Extensions
 
@@ -117,7 +116,9 @@ case class Address (
   postalCode: Option[String] = None, 
   city: Option[String] = None, 
   country : Option[String] = None,
-  comment : Option[String] = None)
+  comment : Option[String] = None,
+  geoLocation : Option[GeoPoint] = None
+)
 
 case class PhoneNumber (
   kind : Option[PhoneNumberKind] = None,

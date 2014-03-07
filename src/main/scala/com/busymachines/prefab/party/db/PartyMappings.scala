@@ -47,6 +47,7 @@ object AddressMapping extends ESMapping[Address] {
   val country = "country" as String & NotAnalyzed
   val kind = "kind" as String & NotAnalyzed
   val comment = "comment" as String & Analyzed
+  val geoLocation = "geoLocation" as GeoPoint
 }
 
 object PhoneNumberMapping extends ESMapping[PhoneNumber] {
