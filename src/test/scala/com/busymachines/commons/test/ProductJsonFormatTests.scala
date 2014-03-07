@@ -30,15 +30,15 @@ object ProductJsonFormatTests {
 
   implicit def toColored[A](a: A)(implicit ext: Extension[A, Colored]): Colored = ext(a)
   implicit def toBig[A](a: A)(implicit ext: Extension[A, Big]) = ext(a)
-
-  Thing3ColoredExtension.register()
-  BigExtension.register()
 }
 
 @RunWith(classOf[JUnitRunner])
 class ProductJsonFormatTests extends FlatSpec {
 
   import ProductJsonFormatTests._
+
+  Thing3ColoredExtension.register()
+  BigExtension.register()
 
   "Default field value" should "be used when missing in json" in {
     val json = "{}".asJson
