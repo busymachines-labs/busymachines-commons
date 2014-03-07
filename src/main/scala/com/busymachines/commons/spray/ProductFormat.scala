@@ -23,7 +23,8 @@ object ProductFieldFormat {
 
 class NullProductFieldFormat[F] extends ProductFieldFormat[F] {
   def writeField(field: ProductField, value: F, rest: List[JsField])  = rest
-  def readField(field: ProductField, obj: JsObject) : F = null.asInstanceOf[F]
+  def readField(field: ProductField, obj: JsObject) : F =
+    field.default.getOrElse(throw new IllegalStateException(s"Field $field.name should have a default value")).apply().asInstanceOf[F]
 }
 
 case class DefaultProductFieldFormat[F](jsonName: Option[String], default: Option[() => Any], format: JsonFormat[F]) extends ProductFieldFormat[F] {

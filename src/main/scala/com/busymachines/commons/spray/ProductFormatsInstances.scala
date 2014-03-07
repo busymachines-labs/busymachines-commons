@@ -1,8 +1,7 @@
 package com.busymachines.commons.spray
 
-import spray.json.{JsonFormat, JsValue, JsObject}
+import spray.json.{JsValue, JsObject}
 import scala.reflect.ClassTag
-import com.busymachines.commons.domain.CommonJsonFormats
 
 trait ProductFormatsInstances {
   type Fields = Seq[ProductField]
@@ -702,13 +701,4 @@ trait ProductFormatsInstances {
       read[F21](fields(21), value)
     )
   }
-}
-
-object I extends CommonJsonFormats
-object A {
-  import I._
-
-  case class X(name: String)
-//  implicit def toJfmt[F](implicit format: JsonFormat[F]) = DefaultProductFieldFormat[F](None, None, format)
-  val f = format1(X)//.withJsonNames("name" -> "")
 }
