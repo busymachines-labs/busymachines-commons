@@ -39,13 +39,13 @@ object Extensions {
   /**
    * Returns the registered extensions of parent type P.
    */
-  def registeredExtensionsOf[P :ClassTag] : Seq[Extension[P, Product]] =
-    extensions.getOrElse(scala.reflect.classTag[P], Nil).asInstanceOf[Seq[Extension[P, Product]]]
+  def registeredExtensionsOf[P :ClassTag] : Seq[Extension[P, _]] =
+    extensions.getOrElse(scala.reflect.classTag[P], Nil).asInstanceOf[Seq[Extension[P, _]]]
 
   /**
    * Implicitly converts an extension instance to an extensions container.
    */
-  implicit def toExtensions[P, A <: Product](instance: A)(implicit e: Extension[P, A]) =
+  implicit def toExtensions[P, A](instance: A)(implicit e: Extension[P, A]) =
     new Extensions[P](Map(e -> instance))
 }
 
@@ -119,7 +119,7 @@ class Extension[P, A](val getExt: P => Extensions[P], val cp: (P, Extensions[P])
 class ExtensionsProductFieldFormat[P: ClassTag] extends ProductFieldFormat[Extensions[P]] {
   def write(extensions: Extensions[P]): JsValue = JsNull // TODO throw new IllegalStateException
   def read(value: JsValue): Extensions[P] = Extensions.empty // TODO throw new IllegalStateException
-  override def writeField(field: ProductField, extensions: Extensions[P], rest: List[JsField]) =
+  override def write(field: ProductField, extensions: Extensions[P], rest: List[JsField]) =
     extensions.map.toList.flatMap {
       case (e, a) =>
         formatOf(e.checkRegistered).asInstanceOf[JsonFormat[Any]].write(a.asInstanceOf[Any]) match {
@@ -128,7 +128,7 @@ class ExtensionsProductFieldFormat[P: ClassTag] extends ProductFieldFormat[Exten
         }
     } ++ rest
 
-  override def readField(field: ProductField, obj: JsObject): Extensions[P] =
+  override def read(field: ProductField, obj: JsObject): Extensions[P] =
     Extensions.registeredExtensionsOf[P].flatMap {
       ext =>
         if (!obj.fields.exists(f => ext.jsonNames.contains(f._1))) Seq.empty

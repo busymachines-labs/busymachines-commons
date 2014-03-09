@@ -1,7 +1,7 @@
 //package com.busymachines.commons.test
 //
 //
-//import com.busymachines.commons.domain.CommonJsonFormats._
+//import com.busymachines.commons.implicits._
 //import org.scalatest.FlatSpec
 //import com.busymachines.commons.{Extension, Extensions}
 //import spray.json._
@@ -9,16 +9,16 @@
 //import org.scalatest.junit.JUnitRunner
 //
 //object ExtensionTestsFixture {
-//  case class Thing(name: String, size: Int, extensions: Extensions = Extensions.empty)
+//  case class Thing(name: String, size: Int, extensions: Extensions[Thing] = Extensions.empty)
 //
 //  case class PharmaThing(ziNumber: String = "")
 //  case class OrderThing(orderNr: String = "", name: String = "")
 //
-//  implicit val thingFormat = jsonFormat3(Thing)
-//  implicit val pharmaThingFormat = jsonFormat1(PharmaThing)
+//  implicit val thingFormat = format3(Thing)
+//  implicit val pharmaThingFormat = format1(PharmaThing)
 //  implicit def toPharmaThing(thing: Thing) = thing.extensions(PharmaThingExtension)
 //
-//  implicit val orderThingFormat = jsonFormat2(OrderThing)
+//  implicit val orderThingFormat = format2(OrderThing)
 //  implicit def toOrderThing(thing: Thing) = thing.extensions(OrderThingExtension)
 //  implicit class RichOrderThing(thing: Thing) {
 //    def copyOrder(f: OrderThing => OrderThing) =
