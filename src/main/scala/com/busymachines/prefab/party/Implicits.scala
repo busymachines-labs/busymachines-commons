@@ -39,7 +39,8 @@ object implicits {
   implicit val tenantFormat = jsonFormat2(Tenant)
   implicit val companyFormat = jsonFormat1(Company)
   implicit val personFormat = jsonFormat5(Person)
-  implicit val partyFormat = format15(Party)
+  implicit val partyLocationFormat = jsonFormat5(PartyLocation)
+  implicit val partyFormat = format16(Party)
 
   implicit val authenticationRequestFormat = jsonFormat2(AuthenticationRequest)
   implicit val authenticationResponseFormat = jsonFormat3(AuthenticationResponse)

@@ -1,15 +1,16 @@
 package com.busymachines.prefab.party.db
 
 import com.busymachines.commons.elasticsearch.ESMapping
-import com.busymachines.prefab.party.domain.RelatedParty
-import com.busymachines.prefab.party.domain.PhoneNumber
-import com.busymachines.prefab.party.domain.UserRole
-import com.busymachines.prefab.party.domain.EmailAddress
+import com.busymachines.prefab.party.domain._
 import com.busymachines.prefab.party.domain.Party
-import com.busymachines.prefab.party.domain.Address
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.domain.Person
+import com.busymachines.prefab.party.domain.PhoneNumber
 import com.busymachines.prefab.party.domain.Company
+import com.busymachines.prefab.party.domain.UserRole
+import com.busymachines.prefab.party.domain.EmailAddress
+import com.busymachines.prefab.party.domain.RelatedParty
+import com.busymachines.prefab.party.domain.Address
 
 object PartyMapping extends ESMapping[Party] {
   val id = "id" -> "_id" as String & NotAnalyzed
@@ -23,6 +24,7 @@ object PartyMapping extends ESMapping[Party] {
   val person = "person" as Nested(PersonMapping)
   val company = "company" as Nested(CompanyMapping)
   val addresses = "addresses" as Nested(AddressMapping)
+  val locations = "locations" as Nested(PartyLocationMapping)
   val phoneNumbers = "phoneNumbers" as Nested(PhoneNumberMapping)
   val emailAddresses = "emailAddresses" as Nested(EmailMapping)
   val relations = "relations" as Nested(RelatedPartyMapping)
@@ -53,6 +55,14 @@ object AddressMapping extends ESMapping[Address] {
   val kind = "kind" as String & NotAnalyzed
   val comment = "comment" as String & Analyzed
   val geoLocation = "geoLocation" as GeoPoint
+}
+
+object PartyLocationMapping extends ESMapping[PartyLocation] {
+  val id = "id" as String & NotAnalyzed
+  val description= "description" as String & NotAnalyzed
+  val address= "address" as Nested(AddressMapping)
+  val contactPerson= "contactPerson" as String & NotAnalyzed
+  val mainLocation="mainLocation" as Boolean & NotAnalyzed
 }
 
 object PhoneNumberMapping extends ESMapping[PhoneNumber] {

@@ -31,6 +31,8 @@ case class Party (
    * always use the first one.
    */
   addresses : List[Address] = Nil,
+
+  locations : List[PartyLocation] = Nil,
   
   phoneNumbers : List[PhoneNumber] = Nil,
   
