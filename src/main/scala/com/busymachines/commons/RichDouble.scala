@@ -9,8 +9,8 @@ class RichDouble(val value : Double) extends AnyVal {
     Math.abs(value - other) < delta
 
   def lt(other: Double, delta: Double) =
-    value - delta < other
+    value + delta < other
 
   def gt(other: Double, delta: Double) =
-    value + delta > other
+    value - delta > other
 }
