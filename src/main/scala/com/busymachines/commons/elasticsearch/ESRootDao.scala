@@ -52,7 +52,8 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
   val client = index.client
   val mapping = t.mapping
-  
+
+  println("Starting dao " + t.name)
   // Add mapping.
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
