@@ -4,9 +4,11 @@ import _root_.spray.json._
 import java.lang.reflect.{ParameterizedType, Modifier}
 import scala.reflect.ClassTag
 import scala.reflect.classTag
+import scala.collection.mutable
 
 /**
- * A field format allows
+ * A field format provides a more generic way to translate a field value to json and visa versa.
+ * It allows for field renaming, multi-field mappings etc.
  */
 trait ProductFieldFormat[F] {
   def write(field: ProductField, value: F, rest: List[JsField]) : List[JsField]
@@ -16,13 +18,20 @@ trait ProductFieldFormat[F] {
   def withDefault(default: Option[() => Any]) = this
 }
 
+/**
+ * Implicitly converts a JsonFormat to a ProductFieldFormat. This implicit
+ * makes the new product formats drop-in compatible with the original ones.
+ */
 object ProductFieldFormat {
   implicit def of[F](implicit jsonFormat: JsonFormat[F]) =
     DefaultProductFieldFormat[F](None, None, jsonFormat)
-  implicit def fromUnit(unit: Unit) =
-    NullProductFieldFormat
 }
 
+/**
+ * Do not serialize the field to and from json. Should only be used when the
+ * field has a default value. Instead of using this class directly, one can also
+ * use ProductFormat#excludeField.
+ */
 class NullProductFieldFormat[F] extends ProductFieldFormat[F] {
   def write(field: ProductField, value: F, rest: List[JsField])  = rest
   def read(field: ProductField, obj: JsObject) : F =
@@ -31,6 +40,9 @@ class NullProductFieldFormat[F] extends ProductFieldFormat[F] {
 
 object NullProductFieldFormat extends NullProductFieldFormat[Any]
 
+/**
+ * A normal field format that will serialize a product field one to one to a json field.
+ */
 case class DefaultProductFieldFormat[F](jsonName: Option[String], default: Option[() => Any], jsonFormat: JsonFormat[F]) extends ProductFieldFormat[F] {
   def write(field: ProductField, value: F, rest: List[JsField]) =
     if (field.isOption && value == None) rest
@@ -53,18 +65,38 @@ case class DefaultProductFieldFormat[F](jsonName: Option[String], default: Optio
   override def withJsonFormat(format: JsonFormat[F]) = this.copy(jsonFormat = format)
 }
 
-case class ProductField(
- name: String,
- default: Option[() => Any] = None,
- isOption: Boolean = false,
- isSeq: Boolean = false,
- isMap: Boolean = false,
- fieldType: Class[_],
- genericParameterTypes: Array[Class[_]],
- format: ProductFieldFormat[_])
+class EmbeddedProductFieldFormat[F](originalFormat: ProductFieldFormat[F]) extends ProductFieldFormat[F] {
+  def write(field: ProductField, value: F, rest: List[JsField]) =
+    originalFormat.write(field, value, Nil).map(_._2).collect{case JsObject(fields) => fields}.flatten ++ rest
+  def read(field: ProductField, obj: JsObject) : F =
+    originalFormat match {
+      case DefaultProductFieldFormat(jsonName, default, jsonFormat) =>
+        jsonFormat.read(obj)
+      case _ => throw new Exception(s"Can't embed a non-default product field ${field.name}")
+    }
+}
 
+/**
+ * Represents a case-class field.
+ */
+case class ProductField(
+   name: String,
+   default: Option[() => Any] = None,
+   isOption: Boolean = false,
+   isSeq: Boolean = false,
+   isMap: Boolean = false,
+   fieldType: Class[_],
+   genericParameterTypes: Array[Class[_]],
+   format: ProductFieldFormat[_])
+
+/**
+ * Base class for product formats, mainly used as json formats for case-classes.
+ */
 abstract class ProductFormat[P :ClassTag] extends RootJsonFormat[P] { outer =>
 
+  /**
+   * Discovered fields of the product class.
+   */
   val fields: Array[ProductField]
   protected val delegate: ProductFormat[P]
 
@@ -73,23 +105,49 @@ abstract class ProductFormat[P :ClassTag] extends RootJsonFormat[P] { outer =>
   protected def write(fields: Seq[ProductField], p: P) : JsValue
   protected def read(fields: Seq[ProductField], value: JsValue) : P
 
+  /**
+   * Returns a new format that overrides the json name for given fields (identified by name).
+   */
   def withJsonNames(jsonNames: (String, String)*) = decorate(
     fields.map(f => jsonNames.find(_._1 == f.name).map(s => f.copy(format = f.format.withJsonName(s._2))).getOrElse(f)))
 
+  /**
+   * Returns a new format that overrides the json formats for given fields (identified by name).
+   */
   def withJsonFormats(jsonFormats: (String, JsonFormat[_])*) = decorate(
     fields.map(f => jsonFormats.find(_._1 == f.name).map(s => f.copy(format = f.format.asInstanceOf[ProductFieldFormat[Any]].withJsonFormat(s._2.asInstanceOf[JsonFormat[Any]]))).getOrElse(f)))
 
+  /**
+   * Returns a new format that overrides the default value for given fields (identified by name).
+   */
   def withDefaults(defaults: (String, () => Any)*) = decorate(
     fields.map(f => f.copy(default = defaults.find(_._1 == f.name).map(_._2).orElse(f.default))))
 
+  /**
+   * Returns a new format that overrides the field formats for given fields (identified by name).
+   */
   def withFieldFormats(formats: (String, ProductFieldFormat[_])*) = decorate(
     fields.map(f => f.copy(format = formats.find(_._1 == f.name).map(_._2).getOrElse(f.format))))
 
-  def withExcludedFields(fields: String*) =
-    withFieldFormats(fields.map(_ -> NullProductFieldFormat):_*)
-
+  /**
+   * Returns a new format with transformed product fields.
+   */
   def mapFields(cp: ProductField => ProductField) = decorate(
     fields.map(cp))
+
+  /**
+   * Returns a new format that excludes given fields when serializing to json.
+   */
+  def excludeFields(fields: String*) =
+    withFieldFormats(fields.map(_ -> NullProductFieldFormat):_*)
+
+  /**
+   * Returns a new format that embeds nested fields in the root json object.
+   */
+  def embed(fields: String*) = mapFields {
+    case field if !fields.contains(field.name) => field
+    case field => field.copy(format = new EmbeddedProductFieldFormat[Any](field.format.asInstanceOf[ProductFieldFormat[Any]]))
+  }
 
   private def decorate(_fields: Array[ProductField]) = new ProductFormat[P] {
     val fields = _fields
@@ -113,6 +171,22 @@ abstract private[spray] class ProductFormatImpl[P <: Product :ClassTag, F0 :Prod
     }
   }
 
+  protected def jsObject(fields: Iterable[JsField]): JsObject = {
+    JsObject(fields.toMap match {
+      case map if map.size == fields.size => map
+      case map =>
+        val builder = mutable.Map[String, JsValue]()
+        for ((name, value) <- fields) {
+          (builder.get(name), value) match {
+            case (Some(JsObject(oldFields)), JsObject(fields)) =>
+              builder += (name -> jsObject(oldFields ++ fields))
+            case _ => builder += (name -> value)
+          }
+        }
+        builder.toMap
+    })
+  }
+
   private def fmt[F](implicit f: ProductFieldFormat[F]) = f.asInstanceOf[ProductFieldFormat[Any]]
 
   val fields = {
@@ -134,7 +208,7 @@ abstract private[spray] class ProductFormatImpl[P <: Product :ClassTag, F0 :Prod
       // that lexical sorting of ...8(), ...9(), ...10() is not correct, so we extract N and sort by N.toInt
       val copyDefaultMethods = runtimeClass.getMethods.filter(_.getName.startsWith("copy$default$")).sortBy(
         _.getName.drop("copy$default$".length).takeWhile(_ != '(').toInt)
-      val fields = runtimeClass.getDeclaredFields.filterNot(f => f.getName.startsWith("$") || Modifier.isTransient(f.getModifiers))
+      val fields = runtimeClass.getDeclaredFields.filterNot(f => f.getName.startsWith("$") || Modifier.isTransient(f.getModifiers) || Modifier.isStatic(f.getModifiers))
       if (copyDefaultMethods.length != fields.length)
         sys.error("Case class " + runtimeClass.getName + " declares additional fields")
       val applyDefaultMethods = copyDefaultMethods.map { method =>

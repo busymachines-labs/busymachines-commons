@@ -10,7 +10,7 @@ trait ProductFormatsInstances {
   private[spray] implicit val fNull = new NullProductFieldFormat[FNull]
 
   def format1[P <: Product :ClassTag, F0 :JFmt](construct: (F0) => P) = new ProductFormatImpl[P, F0, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       Nil)
     )
@@ -20,7 +20,7 @@ trait ProductFormatsInstances {
   }
 
   def format2[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt](construct: (F0, F1) => P) = new ProductFormatImpl[P, F0, F1, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       Nil))
@@ -32,7 +32,7 @@ trait ProductFormatsInstances {
   }
 
   def format3[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt](construct: (F0, F1, F2) => P) = new ProductFormatImpl[P, F0, F1, F2, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -46,7 +46,7 @@ trait ProductFormatsInstances {
   }
 
   def format4[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt, F3 :JFmt](construct: (F0, F1, F2, F3) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -62,7 +62,7 @@ trait ProductFormatsInstances {
   }
 
   def format5[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt, F3 :JFmt, F4 :JFmt](construct: (F0, F1, F2, F3, F4) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -80,7 +80,7 @@ trait ProductFormatsInstances {
   }
 
   def format6[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt, F3 :JFmt, F4 :JFmt, F5 :JFmt](construct: (F0, F1, F2, F3, F4, F5) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -100,7 +100,7 @@ trait ProductFormatsInstances {
   }
 
   def format7[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt, F3 :JFmt, F4 :JFmt, F5 :JFmt, F6 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -122,7 +122,7 @@ trait ProductFormatsInstances {
   }
 
   def format8[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt, F3 :JFmt, F4 :JFmt, F5 :JFmt, F6 :JFmt, F7 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -146,7 +146,7 @@ trait ProductFormatsInstances {
   }
 
   def format9[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt, F3 :JFmt, F4 :JFmt, F5 :JFmt, F6 :JFmt, F7 :JFmt, F8 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -172,7 +172,7 @@ trait ProductFormatsInstances {
   }
 
   def format10[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt, F3 :JFmt, F4 :JFmt, F5 :JFmt, F6 :JFmt, F7 :JFmt, F8 :JFmt, F9 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -200,7 +200,7 @@ trait ProductFormatsInstances {
   }
 
   def format11[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt, F3 :JFmt, F4 :JFmt, F5 :JFmt, F6 :JFmt, F7 :JFmt, F8 :JFmt, F9 :JFmt, F10 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -230,7 +230,7 @@ trait ProductFormatsInstances {
   }
 
   def format12[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt,F11 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -263,7 +263,7 @@ trait ProductFormatsInstances {
   }
 
   def format13[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -298,7 +298,7 @@ trait ProductFormatsInstances {
   }
 
   def format14[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt, F13 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, FNull, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -335,7 +335,7 @@ trait ProductFormatsInstances {
   }
 
   def format15[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt, F13 :JFmt, F14 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, FNull, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -374,7 +374,7 @@ trait ProductFormatsInstances {
   }
 
   def format16[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt, F13 :JFmt, F14 :JFmt, F15 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, FNull, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -415,7 +415,7 @@ trait ProductFormatsInstances {
   }
 
   def format17[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt, F13 :JFmt, F14 :JFmt, F15 :JFmt, F16 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, FNull, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -458,7 +458,7 @@ trait ProductFormatsInstances {
   }
 
   def format18[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt, F13 :JFmt, F14 :JFmt, F15 :JFmt, F16 :JFmt, F17 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, FNull, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -503,7 +503,7 @@ trait ProductFormatsInstances {
   }
 
   def format19[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt, F13 :JFmt, F14 :JFmt, F15 :JFmt, F16 :JFmt, F17 :JFmt, F18 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, FNull, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -550,7 +550,7 @@ trait ProductFormatsInstances {
   }
 
   def format20[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt, F13 :JFmt, F14 :JFmt, F15 :JFmt, F16 :JFmt, F17 :JFmt, F18 :JFmt, F19 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, FNull, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -599,7 +599,7 @@ trait ProductFormatsInstances {
   }
 
   def format21[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt, F13 :JFmt, F14 :JFmt, F15 :JFmt, F16 :JFmt, F17 :JFmt, F18 :JFmt, F19 :JFmt, F20 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20, FNull] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,
@@ -650,7 +650,7 @@ trait ProductFormatsInstances {
   }
 
   def format22[P <: Product :ClassTag, F0 :JFmt, F1 :JFmt, F2 :JFmt,F3 :JFmt,F4 :JFmt,F5 :JFmt,F6 :JFmt,F7 :JFmt,F8 :JFmt,F9 :JFmt,F10 :JFmt, F11 :JFmt, F12 :JFmt, F13 :JFmt, F14 :JFmt, F15 :JFmt, F16 :JFmt, F17 :JFmt, F18 :JFmt, F19 :JFmt, F20 :JFmt, F21 :JFmt](construct: (F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20, F21) => P) = new ProductFormatImpl[P, F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20, F21] {
-    def write(fields: Fields, p: P) = JsObject(
+    def write(fields: Fields, p: P) = jsObject(
       write[F0](fields(0), p, 0,
       write[F1](fields(1), p, 1,
       write[F2](fields(2), p, 2,

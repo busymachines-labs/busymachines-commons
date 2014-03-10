@@ -56,11 +56,6 @@ object Extensions {
 class Extensions[P](val map: Map[Extension[P, _], _]) {
 
   /**
-   * Add an extension instance this extensions container.
-   */
-  def &[A](instance : A)(implicit e: Extension[P, A]) = new Extensions[P](map ++ Map(e -> instance))
-
-  /**
    * Gets the extension instance for given type A.
    */
   def apply[A](implicit e: Extension[P, A]) : A =
@@ -148,5 +143,9 @@ trait ExtensionsImplicits {
   implicit class RichProductWithExtensions[P](p: P) {
     def copyExt[A <: Product](cp: A => A)(implicit e: Extension[P, A]) =
       e.cp(p, e.getExt(p).copy(cp))
+  }
+  implicit class ConcatExtension[A](val a: A) {
+    def & [P, A2](a2: A2)(implicit ext1: Extension[P, A], ext2: Extension[P, A2]) =
+      new Extensions[P](Map(ext1 -> a, ext2 -> a2))
   }
 }

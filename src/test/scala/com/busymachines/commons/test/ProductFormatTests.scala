@@ -5,7 +5,6 @@ import spray.json._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import com.busymachines.commons.spray
-import com.busymachines.commons.spray.NullProductFieldFormat
 
 object ProductFormatTestsFixture extends DefaultJsonProtocol with spray.ProductFormatsInstances {
 
@@ -70,9 +69,9 @@ class ProductFormatTests extends FlatSpec {
 
   {
     implicit val thingFormat = format2(Thing)
-      .withFieldFormats("properties" -> NullProductFieldFormat)
+      .excludeFields("properties")
 
-    "A field with a NullProductFieldFormat" should "not be serialized to json" in {
+    "An excluded field" should "not be serialized to json" in {
       val thing = Thing("egg", Map("color" -> "red"))
       val json = """{"name":"egg"}"""
       assert(thing.toJson === json.asJson)
@@ -87,9 +86,9 @@ class ProductFormatTests extends FlatSpec {
 
   {
     implicit val thingFormat = format2(Thing)
-      .withFieldFormats("name" -> NullProductFieldFormat)
+      .excludeFields("name")
 
-    "A field with a NullProductFieldFormat without a default" should "not be deserialized from json" in {
+    "An excluded field without a default" should "not be deserialized from json" in {
       val thing = Thing("egg", Map("color" -> "red"))
       val json = """{"properties" : {"color" : "red"}}"""
       assert(thing.toJson === json.asJson)
@@ -101,7 +100,7 @@ class ProductFormatTests extends FlatSpec {
 
   {
     implicit val thingFormat = format2(Thing)
-      .withExcludedFields("name")
+      .excludeFields("name")
       .withDefaults("name" -> (() => "ball"))
 
     "An excluded field with an explicit default" should "not be serialized to json" in {

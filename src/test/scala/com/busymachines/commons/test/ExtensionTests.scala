@@ -1,72 +1,66 @@
-//package com.busymachines.commons.test
-//
-//
-//import com.busymachines.commons.implicits._
-//import org.scalatest.FlatSpec
-//import com.busymachines.commons.{Extension, Extensions}
-//import spray.json._
-//import org.junit.runner.RunWith
-//import org.scalatest.junit.JUnitRunner
-//
-//object ExtensionTestsFixture {
-//  case class Thing(name: String, size: Int, extensions: Extensions[Thing] = Extensions.empty)
-//
-//  case class PharmaThing(ziNumber: String = "")
-//  case class OrderThing(orderNr: String = "", name: String = "")
-//
-//  implicit val thingFormat = format3(Thing)
-//  implicit val pharmaThingFormat = format1(PharmaThing)
-//  implicit def toPharmaThing(thing: Thing) = thing.extensions(PharmaThingExtension)
-//
-//  implicit val orderThingFormat = format2(OrderThing)
-//  implicit def toOrderThing(thing: Thing) = thing.extensions(OrderThingExtension)
-//  implicit class RichOrderThing(thing: Thing) {
-//    def copyOrder(f: OrderThing => OrderThing) =
-//      thing.copy(extensions = thing.extensions.copy(OrderThingExtension, f))
-//  }
-//
-//  object PharmaThingExtension extends Extension[Thing, PharmaThing](PharmaThing())
-//  object OrderThingExtension extends Extension[Thing, OrderThing](OrderThing())
-//
-//  OrderThingExtension.register()
-//}
-//
-//@RunWith(classOf[JUnitRunner])
-//class ExtensionTests extends FlatSpec {
-//
-//  import ExtensionTestsFixture._
-//
-//  "An extension" should "can be changed and read" in {
-//    val t = Thing("hi", 3)
-//    assert(t.orderNr === "")
-//    val t2 = t.copyOrder(_.copy(orderNr = "12"))
-//    assert(t2.orderNr === "12")
-//  }
-//
-//  it should "be merged into one json document" in {
-//    val t = Thing("hi", 3, Extensions(OrderThingExtension -> OrderThing("23")))
-//    val json = thingFormat.write(t)
-//    assert(json.isInstanceOf[JsObject])
-//    assert(json.asInstanceOf[JsObject].fields("size").asInstanceOf[JsNumber].value === 3)
-//    assert(json.asInstanceOf[JsObject].fields("orderNr").asInstanceOf[JsString].value === "23")
-//  }
-//
-//  it should "be correctly deserialized" in {
-//    val json = """{"name":"Test","size":5,"orderNr":"25"}"""
-//    val t = thingFormat.read(json.asJson)
-//    assert(t.name === "Test")
-//    assert(t.size === 5)
-//    assert(t.orderNr === "25")
-//    assert(t.extensions(OrderThingExtension).orderNr === "25")
-//    assert(t.extensions(OrderThingExtension).name === "Test")
-//  }
-//
-//  it should "prioritize parent fields" in {
-//    val t = Thing("Parent Name", 3, Extensions(OrderThingExtension -> OrderThing("23", "Order Name")))
-//    val json = thingFormat.write(t)
-//    assert(json.isInstanceOf[JsObject])
-//    assert(json.asInstanceOf[JsObject].fields("name").asInstanceOf[JsString].value === "Parent Name")
-//    assert(json.asInstanceOf[JsObject].fields("size").asInstanceOf[JsNumber].value === 3)
-//    assert(json.asInstanceOf[JsObject].fields("orderNr").asInstanceOf[JsString].value === "23")
-//  }
-//}
+package com.busymachines.commons.test
+
+
+import com.busymachines.commons.implicits._
+import org.scalatest.FlatSpec
+import com.busymachines.commons.{ExtensionsImplicits, Extension, Extensions}
+import spray.json._
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+
+object ExtensionTestsFixture {
+  case class Thing(name: String, extensions: Extensions[Thing] = Extensions.empty)
+  case class Big(size: Int = 10, name: Option[String] = None)
+  case class Colored(color: String = "red")
+
+  implicit val thingFormat = format2(Thing)
+  implicit val bigFormat = format2(Big)
+  implicit val coloredFormat = format1(Colored)
+
+  implicit val BigThingExtension = new Extension[Thing, Big](_.extensions, (a, b) => a.copy(extensions = b))
+  implicit def toBigThing(thing: Thing) = thing.extensions[Big]
+  BigThingExtension.register()
+
+  implicit object ColoredThingExtension extends Extension[Thing, Colored](_.extensions, (a, b) => a.copy(extensions = b))
+  implicit def toColoredThing(thing: Thing) = thing.extensions[Colored]
+  ColoredThingExtension.register()
+}
+
+@RunWith(classOf[JUnitRunner])
+class ExtensionTests extends FlatSpec {
+
+  import ExtensionTestsFixture._
+
+  "An extension" should "be converted to Extensions" in {
+    val t = Thing("egg", Big(3))
+    assert(t.size === 3)
+  }
+
+  "An extension" should "be concatenated to Extensions" in {
+    val t = Thing("egg", Big(3) & Colored("yellow"))
+    assert(t.size === 3)
+    assert(t.color === "yellow")
+  }
+
+  it should "be merged into one json document" in {
+    val t = Thing("egg", Big(3) & Colored("yellow"))
+    val json = """{"name":"egg","size":3,"color":"yellow"}"""
+    assert(t.toJson === json.asJson)
+  }
+
+  it should "be correctly deserialized" in {
+    val json = """{"name":"egg","size":3,"color":"yellow"}"""
+    val t = Thing("egg", Big(3) & Colored("yellow"))
+    assert(json.asJson.convertTo[Thing] === t)
+    assert(json.asJson.convertTo[Thing].name === "egg")
+    assert(json.asJson.convertTo[Thing].size === 3)
+    assert(json.asJson.convertTo[Thing].color === "yellow")
+    assert(json.asJson.convertTo[Thing].extensions[Big] === Big(3))
+  }
+
+  it should "prioritize parent fields" in {
+    val t = Thing("Parent name", Big(12, "Big name"))
+    val json = """{"name":"Parent name","size":12}"""
+    assert(t.toJson == json.asJson)
+  }
+}
