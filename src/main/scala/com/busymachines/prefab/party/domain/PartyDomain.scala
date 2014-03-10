@@ -38,6 +38,10 @@ case class Party (
 
   relations : List[RelatedParty] = Nil,
 
+  fdcWmsClientNumber : Option[String] = None,
+  fdcIdfNumber : Option[String] = None,
+  fdcDeliveryAddressCustomerNumber : Option[String] = None,
+  
   /**
    * Users of the party
    */

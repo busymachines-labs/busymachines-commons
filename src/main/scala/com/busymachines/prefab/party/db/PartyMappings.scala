@@ -15,6 +15,11 @@ object PartyMapping extends ESMapping[Party] {
   val id = "id" -> "_id" as String & NotAnalyzed
   val tenant = "tenant" as String & NotAnalyzed
   val owner = "owner" as String & NotAnalyzed
+  
+  val fdcWmsClientNumber = "fdcWmsClientNumber" as String & NotAnalyzed
+  val fdcIdfNumber = "fdcIdfNumber" as String & NotAnalyzed
+  val fdcDeliveryAddressCustomerNumber = "fdcDeliveryAddressCustomerNumber" as String & NotAnalyzed
+
   val person = "person" as Nested(PersonMapping)
   val company = "company" as Nested(CompanyMapping)
   val addresses = "addresses" as Nested(AddressMapping)
