@@ -107,7 +107,15 @@ case class User (
       getOrElse((firstName ++ middleName ++ lastName).mkString(" "))
 
 }
-  
+
+case class PartyLocation(
+                          id: Id[PartyLocation],
+                          description: String,
+                          address: Address,
+                          contactPersonId: Option[Id[User]] = None,
+                          mainLocation: Boolean
+                          )extends HasId[PartyLocation]
+
 case class Address (
   kind : Option[AddressKind] = None,
   street: Option[String] = None,
