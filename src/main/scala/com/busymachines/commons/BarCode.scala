@@ -62,15 +62,16 @@ trait BarCode {
 }
 
 class BarCodeEAN13(val code: String) extends BarCode {
+  val paddedCode = code.reverse.padTo(13, '0').reverse
   def toImage(width: Int, height: Int): BufferedImage =
     MatrixToImageWriter.toBufferedImage(
-      new EAN13Writer().encode(code, BarcodeFormat.EAN_13, width, height),
+      new EAN13Writer().encode(paddedCode, BarcodeFormat.EAN_13, width, height),
       new MatrixToImageConfig)
 
   def toImage(width: Int, height: Int, format: BarCode.ImageFormat): Array[Byte] = {
     val o = new ByteArrayOutputStream()
     MatrixToImageWriter.writeToStream(
-      new EAN13Writer().encode(code, BarcodeFormat.EAN_13, width, height),
+      new EAN13Writer().encode(paddedCode, BarcodeFormat.EAN_13, width, height),
       format.format,
       o)
     o.toByteArray
