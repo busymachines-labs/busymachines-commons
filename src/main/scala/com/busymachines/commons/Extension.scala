@@ -26,7 +26,7 @@ object Extensions {
    * in particular before any case classes with extensions are convert to or from json.
    */
   private[commons] def register(ext: Extension[_, _]) {
-    if (extensionsUsed.get) throw new IllegalStateException(s"Extension $ext was registered after extensions were used. Try to register it earlier.")
+//    if (extensionsUsed.get) throw new IllegalStateException(s"Extension $ext was registered after extensions were used. Try to register it earlier.")
     registeredExtensions.put(ext, ext)
   }
 
