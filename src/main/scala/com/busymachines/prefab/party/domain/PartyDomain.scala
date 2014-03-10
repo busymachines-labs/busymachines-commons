@@ -112,7 +112,7 @@ case class PartyLocation(
                           id: Id[PartyLocation],
                           description: String,
                           address: Address,
-                          contactPersonId: Option[Id[User]] = None,
+                          contactPerson: Option[Id[User]] = None,
                           mainLocation: Boolean
                           )extends HasId[PartyLocation]
 
