@@ -62,7 +62,7 @@ object Mappings extends CommonJsonFormats {
     val expectedProfit = "expectedProfit" :: Double
     val priceSale = "priceSale" :: Double
     val validUntil = "validUntil" :: Date & NotAnalyzed
-     val properties = "item_properties" -> "properties" :: Nested(PropertyMapping)
+    val properties = "item_properties" -> "properties" :: Nested(PropertyMapping)
   }
 
 }
