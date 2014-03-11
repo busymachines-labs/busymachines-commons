@@ -1,17 +1,11 @@
 package com.busymachines.commons.test
 
+import com.busymachines.commons.domain.CommonJsonFormats
+import com.busymachines.commons.domain.GeoPoint
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.elasticsearch2.ESMapping
 import org.joda.time.DateTime
-import com.busymachines.commons.domain.GeoPoint
-import scala.reflect.ClassTag
-import com.busymachines.commons.implicits._
-import com.busymachines.commons.spray._
-import spray.json.JsValue
-import spray.json.{ JsString, JsonFormat }
-
-import com.busymachines.commons.domain.CommonJsonFormats
 
 case class PropertyExternalReference(
   id: Id[PropertyExternalReference] = Id.generate[PropertyExternalReference],

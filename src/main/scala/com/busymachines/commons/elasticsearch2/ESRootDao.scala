@@ -169,7 +169,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
           request = request.addFacet(facet._2)
         }
 
-        info(s"Search ${index.name}/${t.name}: $request")
+        debug(s"Search ${index.name}/${t.name}: $request")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
