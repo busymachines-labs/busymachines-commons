@@ -10,8 +10,7 @@ import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.commons.elasticsearch.ESSearchSort
 import com.busymachines.commons.implicits.richFuture
-import com.busymachines.commons.test.DomainJsonFormats.itemFormat
-import com.busymachines.commons.test.DomainJsonFormats.propertyFormat
+import com.busymachines.commons.test.Mappings._
 import com.busymachines.commons.testing.EmptyESTestIndex
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone

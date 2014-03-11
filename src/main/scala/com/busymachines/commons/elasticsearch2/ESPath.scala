@@ -30,9 +30,9 @@ trait ESPath[A, T] {
   def missing = nest(Nil, this, Missing(this))
   def exists = nest(Nil, this, Exists(this))
 
-  def geoDistance(geoPoint: GeoPoint, radiusKm: Double) = nest(Nil, this, GeoDistance(this, geoPoint, radiusKm))
+  def geo_distance(geoPoint: GeoPoint, radiusKm: Double) = nest(Nil, this, GeoDistance(this, geoPoint, radiusKm))
   def range(value: (T, T), radiusKm: Double) = nest(Nil, this, Range(this, value))
-  def query(query: String) = nest(Nil, this, Query(this, query))
+  def queryString(query: String) = nest(Nil, this, Query(this, query))
 
   /**
    * Nest given (usually compound) criteria inside a single nested filter.
