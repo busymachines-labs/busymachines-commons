@@ -25,6 +25,9 @@ import spray.json.{JsString, JsonFormat}
 */
 abstract class ESMapping[A :ClassTag :ProductFormat] {
 
+  private val classTag = implicitly[ClassTag[A]]
+  private val originalFormat = implicitly[ProductFormat[A]]
+
   private val registeredExtensions = new TrieMap[Extension[A, _], ESMapping[_]]
 
   /**
@@ -32,7 +35,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
    */
   private var _explicitFields = Map[String, ESField[A, _]]()
 
-  private lazy val mappingName = classTag[A].runtimeClass.getName.stripSuffix("$")
+  private lazy val mappingName = classTag.runtimeClass.getName.stripSuffix("$")
 
   /**
    * Mapped fields.
@@ -109,8 +112,8 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
    * Nested type: values are stored as nested objects, the fields of which should be mapped
    * using given mapping.
    */
-  protected def Nested[B :ClassTag :JsonFormat](mapping: ESMapping[B]) =
-    new FieldType[B]("type" -> "nested", Some(mapping), isNested = true)
+  protected def Nested[B](mapping: ESMapping[B]) =
+    new FieldType[B]("type" -> "nested", Some(mapping), isNested = true)(mapping.classTag, mapping.originalFormat)
 
   // Field options
   protected object Analyzed extends ESFieldOption("index", JsString("analyzed"))
