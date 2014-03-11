@@ -1,6 +1,5 @@
 package com.busymachines.commons.elasticsearch
 
-import com.busymachines.commons.implicits._
 import com.busymachines.commons.CommonConfig
 
 class ESConfig(baseName: String) extends CommonConfig(baseName) {

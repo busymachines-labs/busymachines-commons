@@ -1,22 +1,17 @@
 package com.busymachines.commons.elasticsearch
 
-import scala.collection.mutable.Buffer
-import scala.language.postfixOps
+import akka.actor.ActorSystem
+import com.busymachines.commons.event.EventBus
+import com.busymachines.commons.event.LocalEventBus
+import java.util.concurrent.atomic.AtomicBoolean
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
+import scala.collection.concurrent.TrieMap
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
-import org.elasticsearch.client.Client
-import org.elasticsearch.node.NodeBuilder.nodeBuilder
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
-import scala.collection.concurrent.TrieMap
-import java.util.concurrent.atomic.AtomicBoolean
-import com.busymachines.commons.event.EventBus
-import com.busymachines.commons.event.BusEvent
-import com.busymachines.commons.event.LocalEventBus
-import akka.actor.ActorSystem
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
+import scala.language.postfixOps
 
 class ESIndex(_client: ESClient, val name : String, eventBus:EventBus) {
   def this(config : ESConfig, name : String, eventBus:EventBus) = this(new ESClient(config), name, eventBus)
@@ -39,11 +34,11 @@ class ESIndex(_client: ESClient, val name : String, eventBus:EventBus) {
     _client
   }
 
-  def refresh {
+  def refresh() {
     _client.admin.indices().refresh(new RefreshRequest()).actionGet
   }
   
-  def drop {
+  def drop() {
     initialized.set(false)
     val indicesExistsReponse = _client.execute(new IndicesExistsRequest(name))
     val exists = Await.result(indicesExistsReponse, 30 seconds).isExists
@@ -52,7 +47,7 @@ class ESIndex(_client: ESClient, val name : String, eventBus:EventBus) {
     }
   }
 
-  def initialize {
+  def initialize() {
     val indicesExistsReponse = _client.execute(new IndicesExistsRequest(name))
     val exists = Await.result(indicesExistsReponse, 30 seconds).isExists
     if (!exists) {

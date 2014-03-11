@@ -179,14 +179,14 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
         f.options.map(o => o.name -> o.value) ++
         f.childMapping.flatMap("properties" -> _.toProperties) toMap)).toMap)
 
-  private[elasticsearch2] class FieldType[T :ClassTag :JsonFormat](val options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T with Product]] = None) {
+  private[elasticsearch2] class FieldType[T :ClassTag :JsonFormat](val options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T with Product]] = None, isNested: Boolean = false) {
     def as[T2](implicit jsonFormat: JsonFormat[T2], classTag: ClassTag[T2]) =
       if (childMapping.isDefined) throw new Exception("Can't convert a field with a child mapping to another type")
       else new FieldType[T2](options, None)
     def ::(name: String) = new Field(name, name, options, childMapping)
     def ::(name: (String, String)) = new Field(name._1, name._2, options, childMapping)
     class Field(name: String, propertyName: String, options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T with Product]])
-      extends ESField[A, T](name, propertyName, options, false, childMapping)(implicitly[ClassTag[T]], implicitly[JsonFormat[T]]) {
+      extends ESField[A, T](name, propertyName, options, isDerived = false, isNested, childMapping)(implicitly[ClassTag[T]], implicitly[JsonFormat[T]]) {
       _explicitFields += (name -> this)
       def & (option: ESFieldOption) = new Field(name, propertyName, options :+ option, childMapping)
     }
@@ -196,7 +196,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
 /**
  * Mapped field.
  */
-case class ESField[A, T] protected (name: String, propertyName: String, options: Seq[ESFieldOption], isDerived: Boolean, childMapping: Option[ESMapping[_ <: T]])(implicit val classTag: ClassTag[T], val jsonFormat: JsonFormat[T])
+case class ESField[A, T] protected (name: String, propertyName: String, options: Seq[ESFieldOption], isDerived: Boolean, isNested: Boolean, childMapping: Option[ESMapping[_ <: T]])(implicit val classTag: ClassTag[T], val jsonFormat: JsonFormat[T])
   extends ESPath[A, T] { def fields = Seq(this) }
 
 object ESField {
@@ -205,26 +205,9 @@ object ESField {
 
 case class ESFieldOption(name: String, value: JsValue)
 
-sealed trait ESPath[A, T] {
-  def fields: Seq[ESField[_, _]]
-  def /[T2](field: ESField[T, T2]) = ESCompoundPath[A, T2](fields :+ field)
-  def ++[T2] (other : ESPath[T, T2]) = ESCompoundPath[A, T2](fields ++ other.fields)
-
-  def equ(value: T) = ESCriteria.Equ(this, value)
-
-  override def toString = fields.map(_.name).mkString(".")
-}
-
-object ESPath {
-  implicit def fromExt[A, E, T](path: ESPath[E, T])(implicit e: Extension[A, E]) = path.asInstanceOf[ESPath[A, T]]
-}
-
-case class ESCompoundPath[A, T](fields: Seq[ESField[_, _]]) extends ESPath[A, T]
-
-
-
 
 }
+
 package test {
 
 import Implicits._

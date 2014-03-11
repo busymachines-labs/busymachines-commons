@@ -71,7 +71,7 @@ abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit e
   def defaultSort: SearchSort = ESSearchSort.asc("_id")
 
   def searchSingle(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T]): Future[Option[Versioned[T]]] = {
-    search(criteria).map(_ match {
+    search(criteria).map {
       case SearchResult(Nil, _, _) => None
       case SearchResult(first :: Nil, _, _) => Some(first)
       case SearchResult(many, _, _) =>
@@ -81,6 +81,6 @@ abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit e
           case t: MoreThanOneResultException =>
             throw new MoreThanOneResultException(s"Search criteria $criteria returned more than one result and should return at most one result. Database probably inconsistent.")
         }
-    })
+    }
   }
 } 
