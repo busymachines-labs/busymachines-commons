@@ -51,7 +51,7 @@ object Mappings extends CommonJsonFormats {
     val name = "name" :: String & NotAnalyzed
     val value = "value" :: Double
     val likes = "likes" :: Integer
-    val externalReferences = "externalReferences" :: Nested[PropertyExternalReference]
+    val externalReferences = "externalReferences" :: Nested(PropertyExternalReferenceMapping)
   }
 
   implicit object ItemMapping extends ESMapping[Item] {
@@ -62,7 +62,7 @@ object Mappings extends CommonJsonFormats {
     val expectedProfit = "expectedProfit" :: Double
     val priceSale = "priceSale" :: Double
     val validUntil = "validUntil" :: Date & NotAnalyzed
-     val properties = "item_properties" -> "properties"  :: Nested[Property]
+     val properties = "item_properties" -> "properties"  :: Nested(PropertyMapping)
   }
 
 }
