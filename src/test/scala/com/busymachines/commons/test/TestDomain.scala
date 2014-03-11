@@ -56,13 +56,13 @@ object Mappings extends CommonJsonFormats {
 
   object ItemMapping extends ESMapping[Item] {
     val id = "_id" -> "id" :: String.as[Id[Item]] & NotAnalyzed
-    val location = "location" :: String.as[GeoPoint]
+    val location = "location" :: GeoPoint
     val name = "name" :: String & NotAnalyzed
     val priceNormal = "priceNormal" :: Double
     val expectedProfit = "expectedProfit" :: Double
     val priceSale = "priceSale" :: Double
     val validUntil = "validUntil" :: Date & NotAnalyzed
-     val properties = "item_properties" -> "properties"  :: Nested(PropertyMapping)
+     val properties = "item_properties" -> "properties" :: Nested(PropertyMapping)
   }
 
 }

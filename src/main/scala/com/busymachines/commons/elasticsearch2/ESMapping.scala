@@ -19,6 +19,7 @@ import scala.reflect.ClassTag
 import scala.reflect.classTag
 import spray.json.JsValue
 import spray.json.{JsString, JsonFormat}
+import com.busymachines.commons.domain.GeoPoint
 
 /**
 * Base class for mapping objects.
@@ -100,6 +101,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
   protected object Date extends FieldType[DateTime]("type" -> "date")
   protected object Boolean extends FieldType[Boolean]("type" -> "boolean")
   protected object Binary extends FieldType[Array[Byte]]("type" -> "binary")
+  protected object GeoPoint extends FieldType[GeoPoint]("type" -> "geo_point")
 
   /**
    * Object type: values are stored as a embedded objects, but individual fields
@@ -148,8 +150,15 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
         case format =>
           fieldsByName.get(field.name).orElse(determineMappingField(field, errors)) match {
             case Some(mappingField) =>
-              val newFormat = mappingField.childMapping.map(_.format).getOrElse(mappingField.jsonFormat).asInstanceOf[JsonFormat[Any]]
-              format.asInstanceOf[ProductFieldFormat[Any]].withJsonName(mappingField.name).withJsonFormat(newFormat)
+              mappingField.childMapping
+                // get & case json format of child mapping
+                .map(_.format.asInstanceOf[JsonFormat[Any]])
+                // decorate field format with child mapping json format
+                .map(format.asInstanceOf[ProductFieldFormat[Any]].withJsonFormat)
+                // fallback to original format when there is no child mapping
+                .getOrElse(format)
+                // use json name from field
+                .withJsonName(mappingField.name)
             case None =>
               format
           }
