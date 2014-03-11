@@ -9,4 +9,6 @@ class RichOption[A](val option : Option[A]) extends AnyVal {
     case Some(value) => false
     case None => true
   }
+
+  def mapTo[B] = option.map(_.asInstanceOf[B])
 }

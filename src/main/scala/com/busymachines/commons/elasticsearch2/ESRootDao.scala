@@ -93,7 +93,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
         None
       case response =>
         val json = response.getSourceAsString.asJson
-        Some(Versioned(mapping.format.read(json), response.getVersion))
+        Some(Versioned(mapping.jsonFormat.read(json), response.getVersion))
     }
   }
 
@@ -169,11 +169,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
           request = request.addFacet(facet._2)
         }
 
-        debug(s"Search ${index.name}/${t.name}: $request")
+        info(s"Search ${index.name}/${t.name}: $request")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
-            Versioned(mapping.format.read(json), hit.version)
+            Versioned(mapping.jsonFormat.read(json), hit.version)
           }, Some(result.getHits.getTotalHits),
             if (result.getFacets != null) convertESFacetResponse(facets, result) else Map.empty)
         }
@@ -183,7 +183,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   }
 
   def create(entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration]): Future[Versioned[T]] = {
-    val json = mapping.format.write(entity)
+    val json = mapping.jsonFormat.write(entity)
     val request = new IndexRequest(index.name, t.name)
       .id(entity.id.toString)
       .create(true)
@@ -265,7 +265,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
    * @throws VersionConflictException
    */
   def update(entity: Versioned[T], refreshAfterMutation: Boolean): Future[Versioned[T]] = {
-    val newJson = mapping.format.write(entity.entity)
+    val newJson = mapping.jsonFormat.write(entity.entity)
 
     val request = new IndexRequest(index.name, t.name)
       .refresh(refreshAfterMutation)
@@ -338,7 +338,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     val request = client.javaClient.prepareSearch(index.name).addSort("_id", SortOrder.ASC).setTypes(t.name).setPostFilter(filter).setVersion(true).request
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
       val json = hit.sourceAsString.asJson
-      Versioned(mapping.format.read(json), hit.getVersion)
+      Versioned(mapping.jsonFormat.read(json), hit.getVersion)
     })
   }
 

@@ -30,4 +30,6 @@ class RichIterable[A, C[A] <: Iterable[A]](val collection: C[A]) extends AnyVal 
         } yield previousResults += next
     } map { builder => builder.result() }
   }
+
+  def mapTo[B] = collection.asInstanceOf[C[B]]
 }

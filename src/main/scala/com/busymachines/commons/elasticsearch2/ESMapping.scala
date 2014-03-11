@@ -1,25 +1,21 @@
+package com.busymachines.commons.elasticsearch2
+
 import com.busymachines.commons.Extensions
-import scala.concurrent.duration.Duration
-import spray.json.JsNumber
-import spray.json.JsObject
-import spray.json.JsTrue
-
-package com.busymachines.commons.elasticsearch2 {
-
+import com.busymachines.commons.domain.GeoPoint
 import com.busymachines.commons.implicits._
-import com.busymachines.commons.spray.DefaultProductFieldFormat
-import com.busymachines.commons.spray.ProductField
 import com.busymachines.commons.spray._
 import com.busymachines.commons.{ExtensionsProductFieldFormat, Extension}
 import org.joda.time.DateTime
 import scala.Some
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
-import scala.reflect.classTag
+import spray.json.JsNumber
+import spray.json.JsObject
+import spray.json.JsTrue
 import spray.json.JsValue
 import spray.json.{JsString, JsonFormat}
-import com.busymachines.commons.domain.GeoPoint
 
 /**
 * Base class for mapping objects.
@@ -48,7 +44,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
   /**
    * Use this format to convert case classes to and from json.
    */
-  lazy val format: ProductFormat[A] = {
+  lazy val jsonFormat: ProductFormat[A] = {
     val errors = new ArrayBuffer[String]
     val result = format(errors)
     if (errors.nonEmpty)
@@ -68,7 +64,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
    */
   def mappingDefinition(docType: String): JsObject = {
     // Eager mapping validation
-    format
+    jsonFormat
 
     JsObject(docType ->
       JsObject(
@@ -148,11 +144,15 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
               extensions.getOrElse(ext, throw new Exception(s"No mapping registered for extension $ext")).format(errors).asInstanceOf[ProductFormat[E]]
           }
         case format =>
-          fieldsByName.get(field.name).orElse(determineMappingField(field, errors)) match {
+          fieldsByPropertyName.get(field.name).orElse(determineMappingField(field, errors)) match {
             case Some(mappingField) =>
               mappingField.childMapping
                 // get & case json format of child mapping
-                .map(_.format.asInstanceOf[JsonFormat[Any]])
+                .map(_.jsonFormat)
+                // decorate with seq mapping
+                .map(m => if (field.isSeq) listFormat(m) else m)
+                // convert to Any
+                .mapTo[JsonFormat[Any]]
                 // decorate field format with child mapping json format
                 .map(format.asInstanceOf[ProductFieldFormat[Any]].withJsonFormat)
                 // fallback to original format when there is no child mapping
@@ -204,83 +204,4 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
       def & (option: ESFieldOption) = new Field(name, propertyName, options :+ option, childMapping)
     }
   }
-}
-
-/**
- * Mapped field.
- */
-case class ESField[A, T] protected (name: String, propertyName: String, options: Seq[ESFieldOption], isDerived: Boolean, isNested: Boolean, childMapping: Option[ESMapping[_ <: T]])(implicit val classTag: ClassTag[T], val jsonFormat: JsonFormat[T])
-  extends ESPath[A, T] { def fields = Seq(this) }
-
-object ESField {
-  implicit def fromExt[A, E, T](field: ESField[E, T])(implicit e: Extension[A, E]) = field.asInstanceOf[ESField[A, T]]
-}
-
-case class ESFieldOption(name: String, value: JsValue)
-
-
-}
-
-package test {
-
-import Implicits._
-import com.busymachines.commons.Extension
-import com.busymachines.commons.domain.Id
-import com.busymachines.commons.elasticsearch2._
-import com.busymachines.commons.implicits._
-import com.busymachines.commons.spray.ProductFormat
-import com.busymachines.prefab.party.domain.Party
-import scala.reflect.ClassTag
-
-case class ThingBox(things: List[Thing])
-case class Thing(name: String, extensions: Extensions[Thing])
-case class BigThing(size: Int)
-
-object Implicits {
-implicit val thingFormat = format2(Thing)
-implicit val thingBoxFormat = format1(ThingBox)
-implicit val bigThingFormat = format1(BigThing)
-
-  abstract class ESMapping2[A <: Product :ClassTag :ProductFormat, Type] extends ESMapping[A]
-
-  object ThingMapping extends ESMapping2[Thing, Thing.type] {
-    val name = "name" :: String & Analyzed
-    val owner = "owner" :: String.as[Id[Party]] & Analyzed
-  }
-
-  implicit def thingMapping(t: Thing.type) = ThingMapping
-  implicit def bigThingMapping(t: BigThing.type) = BigThingMapping
-  implicit def thingBoxMapping(t: ThingBox.type) = ThingBoxMapping
-
-
-  object ThingBoxMapping extends ESMapping2[ThingBox, ThingBox.type] {
-    val things = "things" :: Nested(ThingMapping)
-  }
-
-
-  object BigThingMapping extends ESMapping2[BigThing, BigThing.type] {
-    val size = "size" :: Integer & Analyzed
-  }
-
-//  implicit def toMapping1[A, F1](companion: F1 => A)(implicit mapping: ESMapping[A]) = mapping
-//  implicit def toMapping1[A <: ThingBox, F1, M <: ESMapping[A]](companion: ThingBox.type)(implicit mapping: M) = mapping
-}
-
-
-object App {
-
-  implicit object BigThingExtension extends Extension[Thing, BigThing](_.extensions, (a, b) => a.copy(extensions = b))
-
-
-//  implicit def toMapping1[M <: ESMapping[ThingBox]](companion: ThingBox.type)(implicit mapping: M) = mapping
-
-  //  implicit def toBigThing(thing: Thing) = new BigThing(100)
-  val p1: ESField[BigThing, Int] = BigThing.size
-  val p2: ESPath[BigThing, Int] = BigThing.size
-  val p3: ESPath[ThingBox, String] = ThingBox.things / Thing.name
-  val p3x: ESPath[ThingBox, String] = ThingBox.things / Thing.name
-  val p4: ESField[Thing, Int] = BigThing.size
-  val p5: ESPath[ThingBox, Int] = ThingBox.things / BigThing.size
-  val p6: ESPath[ThingBox, Int] = ThingBox.things ++ BigThing.size
-}
 }

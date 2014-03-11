@@ -4,6 +4,7 @@ import com.busymachines.commons.domain.GeoPoint
 import org.elasticsearch.common.unit.DistanceUnit
 import org.elasticsearch.index.query.{QueryStringQueryBuilder, FilterBuilder, FilterBuilders}
 import com.busymachines.commons.dao.SearchCriteria
+import spray.json.{JsObject, JsString}
 
 trait ESSearchCriteria[A] extends SearchCriteria[A] {
 
@@ -46,7 +47,7 @@ object ESSearchCriteria {
   }
 
   case class Equ[A, T](path: ESPath[A, T], value: T) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.termFilter(path.toString, path.last.jsonFormat.write(value))
+    def toFilter = FilterBuilders.termFilter(path.toString, toESValue(path, value))
     def prepend[A0](path : ESPath[A0, A]) = Equ(path ++ this.path, value)
   }
 
@@ -66,7 +67,7 @@ object ESSearchCriteria {
   }
 
   case class Gt[A, T](path: ESPath[A, T], value: T) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.rangeFilter(ESPath.toString).gt(path.last.jsonFormat.write(value))
+    def toFilter = FilterBuilders.rangeFilter(path.toString).gt(toESValue(path, value))
     def prepend[A0](ESPath : ESPath[A0, A]) = Gt(ESPath ++ this.path, value)
   }
 
@@ -76,7 +77,7 @@ object ESSearchCriteria {
   }
 
   case class Gte[A, T](path: ESPath[A, T], value: T) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.rangeFilter(ESPath.toString).gte(path.last.jsonFormat.write(value))
+    def toFilter = FilterBuilders.rangeFilter(path.toString).gte(toESValue(path, value))
     def prepend[A0](ESPath : ESPath[A0, A]) = Gte(ESPath ++ this.path, value)
   }
 
@@ -86,7 +87,7 @@ object ESSearchCriteria {
   }
 
   case class Lt[A, T](path: ESPath[A, T], value: T) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.rangeFilter(ESPath.toString).lt(path.last.jsonFormat.write(value))
+    def toFilter = FilterBuilders.rangeFilter(path.toString).lt(toESValue(path, value))
     def prepend[A0](ESPath : ESPath[A0, A]) = Lt(ESPath ++ this.path, value)
   }
 
@@ -96,7 +97,7 @@ object ESSearchCriteria {
   }
 
   case class Lte[A, T](path: ESPath[A, T], value: T) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.rangeFilter(ESPath.toString).lte(path.last.jsonFormat.write(value))
+    def toFilter = FilterBuilders.rangeFilter(path.toString).lte(toESValue(path, value))
     def prepend[A0](ESPath : ESPath[A0, A]) = Lte(ESPath ++ this.path, value)
   }
 
@@ -106,12 +107,12 @@ object ESSearchCriteria {
   }
 
   case class In[A, T](path: ESPath[A, T], values: Seq[T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.inFilter(ESPath.toString, values.map(path.last.jsonFormat.write): _*)
+    def toFilter = FilterBuilders.inFilter(path.toString, values.map(toESValue(path, _)): _*)
     def prepend[A0](ESPath : ESPath[A0, A]) = In(ESPath ++ this.path, values)
   }
 
   case class Missing[A, T](path: ESPath[A, T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.missingFilter(ESPath.toString).existence(true)
+    def toFilter = FilterBuilders.missingFilter(path.toString).existence(true)
     def prepend[A0](ESPath : ESPath[A0, A]) = Missing(ESPath ++ this.path)
   }
 
@@ -126,7 +127,7 @@ object ESSearchCriteria {
   }
 
   case class Range[A, T](path: ESPath[A, T], value: (T, T)) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.rangeFilter(path.toString).gt(path.last.jsonFormat.write(value._1)).lt(path.last.jsonFormat.write(value._2))
+    def toFilter = FilterBuilders.rangeFilter(path.toString).gt(toESValue(path, value._1)).lt(toESValue(path, value._2))
     def prepend[A0](path : ESPath[A0, A]) = Range(path ++ this.path, value)
   }
 
@@ -146,6 +147,14 @@ object ESSearchCriteria {
         val untilNow = prefix ++ List(head)
         Nested[A, T](ESPath(untilNow))(nest(untilNow, ESPath(tail), criteria))
       case _ => criteria
+    }
+  }
+
+  private def toESValue[T](field: ESPath[_, T], value: T) = {
+    field.last.jsonFormat.write(value) match {
+      case JsString(s) => s
+      case JsObject(fields) => fields
+      case value => value
     }
   }
 }
