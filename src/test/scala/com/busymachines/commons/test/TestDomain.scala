@@ -40,12 +40,12 @@ object Mappings extends CommonJsonFormats {
   implicit val propertyFormat = format6(Property)
   implicit val itemFormat = format8(Item)
 
-  implicit object PropertyExternalReferenceMapping extends ESMapping[PropertyExternalReference] {
+  object PropertyExternalReferenceMapping extends ESMapping[PropertyExternalReference] {
     val id = "_id" -> "id" :: String.as[Id[PropertyExternalReference]] & NotAnalyzed
     val name = "name" :: String & NotAnalyzed
   }
 
-  implicit object PropertyMapping extends ESMapping[Property] {
+  object PropertyMapping extends ESMapping[Property] {
     val id = "_id" -> "id" :: String.as[Id[Property]] & NotAnalyzed
     val mandatory = "mandatory" :: Boolean
     val name = "name" :: String & NotAnalyzed
@@ -54,7 +54,7 @@ object Mappings extends CommonJsonFormats {
     val externalReferences = "externalReferences" :: Nested(PropertyExternalReferenceMapping)
   }
 
-  implicit object ItemMapping extends ESMapping[Item] {
+  object ItemMapping extends ESMapping[Item] {
     val id = "_id" -> "id" :: String.as[Id[Item]] & NotAnalyzed
     val location = "location" :: String.as[GeoPoint]
     val name = "name" :: String & NotAnalyzed
