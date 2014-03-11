@@ -34,6 +34,12 @@ trait ESPath[A, T] {
   def range(value: (T, T), radiusKm: Double) = nest(Nil, this, Range(this, value))
   def query(query: String) = nest(Nil, this, Query(this, query))
 
+  /**
+   * Nest given (usually compound) criteria inside a single nested filter.
+   */
+  def apply(criteria : ESSearchCriteria[T]) =
+    ESSearchCriteria.Nested(this)(criteria.prepend(this))
+
   override def toString = fields.map(_.name).mkString(".")
 }
 

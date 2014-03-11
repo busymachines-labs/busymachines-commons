@@ -109,8 +109,8 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
    * Nested type: values are stored as nested objects, the fields of which should be mapped
    * using given mapping.
    */
-  protected def Nested[B <: Product :ClassTag :JsonFormat](implicit mapping: ESMapping[B]) =
-    new FieldType[B]("type" -> "nested", Some(mapping))
+  protected def Nested[B :ClassTag :JsonFormat](mapping: ESMapping[B]) =
+    new FieldType[B]("type" -> "nested", Some(mapping), isNested = true)
 
   // Field options
   protected object Analyzed extends ESFieldOption("index", JsString("analyzed"))
@@ -180,13 +180,13 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
         f.options.map(o => o.name -> o.value) ++
         f.childMapping.flatMap("properties" -> _.toProperties) toMap)).toMap)
 
-  private[elasticsearch2] class FieldType[T :ClassTag :JsonFormat](val options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T with Product]] = None, isNested: Boolean = false) {
+  private[elasticsearch2] class FieldType[T :ClassTag :JsonFormat](val options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T]] = None, isNested: Boolean = false) {
     def as[T2](implicit jsonFormat: JsonFormat[T2], classTag: ClassTag[T2]) =
       if (childMapping.isDefined) throw new Exception("Can't convert a field with a child mapping to another type")
       else new FieldType[T2](options, None)
     def ::(name: String) = new Field(name, name, options, childMapping)
     def ::(name: (String, String)) = new Field(name._1, name._2, options, childMapping)
-    class Field(name: String, propertyName: String, options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T with Product]])
+    class Field(name: String, propertyName: String, options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T]])
       extends ESField[A, T](name, propertyName, options, isDerived = false, isNested, childMapping)(implicitly[ClassTag[T]], implicitly[JsonFormat[T]]) {
       _explicitFields += (name -> this)
       def & (option: ESFieldOption) = new Field(name, propertyName, options :+ option, childMapping)
@@ -231,7 +231,7 @@ implicit val bigThingFormat = format1(BigThing)
 
   abstract class ESMapping2[A <: Product :ClassTag :ProductFormat, Type] extends ESMapping[A]
 
-  implicit object ThingMapping extends ESMapping2[Thing, Thing.type] {
+  object ThingMapping extends ESMapping2[Thing, Thing.type] {
     val name = "name" :: String & Analyzed
     val owner = "owner" :: String.as[Id[Party]] & Analyzed
   }
@@ -241,8 +241,8 @@ implicit val bigThingFormat = format1(BigThing)
   implicit def thingBoxMapping(t: ThingBox.type) = ThingBoxMapping
 
 
-    implicit object ThingBoxMapping extends ESMapping2[ThingBox, ThingBox.type] {
-    val things = "things" :: Nested[Thing]
+  object ThingBoxMapping extends ESMapping2[ThingBox, ThingBox.type] {
+    val things = "things" :: Nested(ThingMapping)
   }
 
 

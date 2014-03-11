@@ -14,7 +14,7 @@ trait ESSearchCriteria[A] extends SearchCriteria[A] {
   def or(other: ESSearchCriteria[A]): ESSearchCriteria[A] = Or(Seq(this, other))
   def or(other: Option[ESSearchCriteria[A]]): ESSearchCriteria[A] = other.map(or).getOrElse(this)
   def toFilter: FilterBuilder
-  protected def prepend[A0](path: ESPath[A0, A]): ESSearchCriteria[A0]
+  def prepend[A0](path: ESPath[A0, A]): ESSearchCriteria[A0]
 }
 
 object ESSearchCriteria {
@@ -26,7 +26,7 @@ object ESSearchCriteria {
         case f :: Nil => f.toFilter
         case _ => FilterBuilders.andFilter(children.map(_.toFilter): _*)
       }
-    protected def prepend[A0](path: ESPath[A0, A]) = And(children.map(_.prepend(path)))
+    def prepend[A0](path: ESPath[A0, A]) = And(children.map(_.prepend(path)))
   }
 
   case class Or[A](children: Seq[ESSearchCriteria[A]]) extends ESSearchCriteria[A] {
@@ -37,7 +37,7 @@ object ESSearchCriteria {
         case f :: Nil => f.toFilter
         case _ => FilterBuilders.orFilter(children.map(_.toFilter): _*)
       }
-    protected def prepend[A0](path: ESPath[A0, A]) = Or(children.map(_.prepend(path)))
+    def prepend[A0](path: ESPath[A0, A]) = Or(children.map(_.prepend(path)))
   }
 
   case class Not[A](children: Seq[ESSearchCriteria[A]]) extends ESSearchCriteria[A] {
@@ -144,7 +144,7 @@ object ESSearchCriteria {
     path.fields match {
       case head :: tail if head.isNested =>
         val untilNow = prefix ++ List(head)
-        ESSearchCriteria.Nested[A, T](ESPath(untilNow))(nest(untilNow, ESPath(tail), criteria))
+        Nested[A, T](ESPath(untilNow))(nest(untilNow, ESPath(tail), criteria))
       case _ => criteria
     }
   }

@@ -238,7 +238,7 @@ case class Path[A, T](elements: List[PathElement[_, _]]) {
   /**
    * Nest given (usually compound) criteria inside a single nested filter.
    */
-  def apply(criteria : ESSearchCriteria[T]) = 
+  def apply(criteria : ESSearchCriteria[T]) =
     ESSearchCriteria.Nested(this)(criteria.prepend(this))
   
   /**
