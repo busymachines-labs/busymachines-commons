@@ -57,7 +57,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   println("Starting dao " + t.name)
   // Add mapping.
   index.onInitialize { () =>
-    val mappingConfiguration = t.mapping.mappingDefinition(t.name)
+    val mappingConfiguration = t.mapping.mappingDefinition(t.name).toString
     try {
       client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
       debug(s"Schema for ${index.name}/${t.name}: $mappingConfiguration")
