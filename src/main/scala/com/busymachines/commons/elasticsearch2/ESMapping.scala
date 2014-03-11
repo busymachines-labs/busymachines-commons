@@ -62,19 +62,20 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
   /**
    * Retrieves the mapping definition to be passed to ES during initialization of a root dao.
    */
-  def mappingDefinition: JsObject = {
+  def mappingDefinition(docType: String): JsObject = {
     // Eager mapping validation
     format
 
-    JsObject(
-      "_all" -> JsObject("enabled" -> JsTrue) ::
+    JsObject(docType ->
+      JsObject(
+        "_all" -> JsObject("enabled" -> JsTrue) ::
         "_source" -> JsObject("enabled" -> JsTrue) ::
         "store" -> JsTrue ::
         "properties" -> toProperties ::
-        ttl.toList.map {
-          case ttl if ttl.isFinite => "_ttl" -> JsObject("enabled" -> JsTrue, "default" -> JsNumber(ttl.toMillis))
-          case ttl => "_ttl" -> JsObject("enabled" -> JsTrue)
-        })
+          ttl.toList.map {
+            case ttl if ttl.isFinite => "_ttl" -> JsObject("enabled" -> JsTrue, "default" -> JsNumber(ttl.toMillis))
+            case ttl => "_ttl" -> JsObject("enabled" -> JsTrue)
+          }))
   }
 
   /**

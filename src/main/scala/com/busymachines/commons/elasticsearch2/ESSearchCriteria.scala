@@ -3,8 +3,9 @@ package com.busymachines.commons.elasticsearch2
 import com.busymachines.commons.domain.GeoPoint
 import org.elasticsearch.common.unit.DistanceUnit
 import org.elasticsearch.index.query.{QueryStringQueryBuilder, FilterBuilder, FilterBuilders}
+import com.busymachines.commons.dao.SearchCriteria
 
-trait ESSearchCriteria[A] {
+trait ESSearchCriteria[A] extends SearchCriteria[A] {
 
   import ESSearchCriteria._
 
@@ -12,14 +13,14 @@ trait ESSearchCriteria[A] {
   def and(other: Option[ESSearchCriteria[A]]): ESSearchCriteria[A] = other.map(and).getOrElse(this)
   def or(other: ESSearchCriteria[A]): ESSearchCriteria[A] = Or(Seq(this, other))
   def or(other: Option[ESSearchCriteria[A]]): ESSearchCriteria[A] = other.map(or).getOrElse(this)
-  protected def toFilter: FilterBuilder
+  def toFilter: FilterBuilder
   protected def prepend[A0](path: ESPath[A0, A]): ESSearchCriteria[A0]
 }
 
 object ESSearchCriteria {
   case class And[A](children: Seq[ESSearchCriteria[A]]) extends ESSearchCriteria[A] {
     override def and(other: ESSearchCriteria[A]) = And(children :+ other)
-    protected def toFilter =
+    def toFilter =
       children match {
         case Nil => FilterBuilders.matchAllFilter
         case f :: Nil => f.toFilter
@@ -30,7 +31,7 @@ object ESSearchCriteria {
 
   case class Or[A](children: Seq[ESSearchCriteria[A]]) extends ESSearchCriteria[A] {
     override def and(other: ESSearchCriteria[A]) = Or(children :+ other)
-    protected def toFilter =
+    def toFilter =
       children match {
         case Nil => FilterBuilders.matchAllFilter
         case f :: Nil => f.toFilter
@@ -45,7 +46,7 @@ object ESSearchCriteria {
   }
 
   case class Equ[A, T](path: ESPath[A, T], value: T) extends ESSearchCriteria[A] {
-    protected def toFilter = FilterBuilders.termFilter(path.toString, path.last.jsonFormat.write(value))
+    def toFilter = FilterBuilders.termFilter(path.toString, path.last.jsonFormat.write(value))
     def prepend[A0](path : ESPath[A0, A]) = Equ(path ++ this.path, value)
   }
 
