@@ -55,12 +55,12 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingDefinition(t.name).toString
     try {
-      client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
       debug(s"Schema for ${index.name}/${t.name}: $mappingConfiguration")
+      client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
     }
     catch {
       case e : Throwable =>
-      error(s"Invalid schema for ${index.name}/${t.name}: $mappingConfiguration", e)
+      error(s"Invalid schema for ${index.name}/${t.name}: $mappingConfiguration: ${e.getMessage}", e)
       throw e
     }
   }

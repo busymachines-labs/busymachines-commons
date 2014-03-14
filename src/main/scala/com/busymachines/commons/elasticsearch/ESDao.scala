@@ -16,7 +16,7 @@ import com.busymachines.commons.dao.SearchSort
 
 object MoneyMapping extends ESMapping[Money] {
   val currency = "currency" :: String & NotAnalyzed
-  val amount = "amount" :: Double & NotAnalyzed
+  val amount = "amount" :: Double
 }
 
 abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit ec: ExecutionContext) extends Dao[T] with Logging {
