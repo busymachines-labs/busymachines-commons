@@ -1,175 +1,212 @@
 package com.busymachines.commons.elasticsearch
 
-import com.busymachines.commons.implicits._
-import com.busymachines.commons.Logging
-import org.joda.time.DateTime
-import java.net.Inet4Address
+import com.busymachines.commons.Extensions
 import com.busymachines.commons.domain.GeoPoint
-import _root_.spray.json.JsonWriter
+import com.busymachines.commons.implicits._
+import com.busymachines.commons.spray._
+import com.busymachines.commons.{ExtensionsProductFieldFormat, Extension}
+import org.joda.time.DateTime
+import scala.Some
+import scala.collection.concurrent.TrieMap
+import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
-import com.busymachines.commons.domain.Money
-import _root_.spray.json.JsonFormat
+import spray.json.JsNumber
+import spray.json.JsObject
+import spray.json.JsTrue
+import spray.json.{JsString, JsonFormat}
 
-object MoneyMapping extends ESMapping[Money] {
-  val currency = "currency" as String & Analyzed
-  val amount = "amount" as Double & Analyzed
-}
+/**
+* Base class for mapping objects.
+*/
+abstract class ESMapping[A :ClassTag :ProductFormat] {
 
-object ESMapping extends ESMappingConstants {
+  private val classTag = implicitly[ClassTag[A]]
+  private val originalFormat = implicitly[ProductFormat[A]]
 
-  case class Properties[A](properties: List[ESProperty[A, _]]) {
-    lazy val propertiesByName = properties.groupBy(_.name).mapValues(_.head)
-    lazy val propertiesByMappedName = properties.groupBy(_.mappedName).mapValues(_.head)
+  private val registeredExtensions = new TrieMap[Extension[A, _], ESMapping[_]]
+
+  /**
+   * Will be filled during construction of the mapping object.
+   */
+  private var _explicitFields = Map[String, ESField[A, _]]()
+
+  private lazy val mappingName = classTag.runtimeClass.getName.stripSuffix("$")
+
+  /**
+   * Mapped fields.
+   */
+//  lazy val fields = _explicitFields.values
+  lazy val fieldsByName = _explicitFields
+  lazy val fieldsByPropertyName = _explicitFields.values.groupBy(_.propertyName).mapValues(_.head)
+
+  // Predefined fields
+  val _all = ESField[Any, String]("_all", "", String.options, false, false, None)
+
+  /**
+   * Use this format to convert case classes to and from json.
+   */
+  lazy val jsonFormat: ProductFormat[A] = {
+    val errors = new ArrayBuffer[String]
+    val result = format(errors)
+    if (errors.nonEmpty)
+      throw new Exception(s"Errors in mapping $mappingName: \n  ${errors.mkString("\n  ")}")
+    result
   }
 
-  case class PropertyOption(name: String, value: Any)
-  case class Options[T](options: PropertyOption*) {
-    options.groupBy(_.name).collect {
-      case (name, values) if values.size > 1 =>
-        throw new Exception("Incompatible options: " + values.mkString(", "))
-    }
-    def &(option: PropertyOption) = Options[T]((options.toSeq ++ Seq(option)): _*)
+  /**
+   * Call this method during application start-up to register mappings for extensions
+   */
+  def registerExtension[E](extensionMapping: ESMapping[E])(implicit extension: Extension[A, E]) {
+    registeredExtensions.put(extension, extensionMapping)
   }
-}
 
-trait ESMappingConstants {
-  
-  import ESMapping._
-  
-  val String = Options[String](PropertyOption("type", "string"))
-  val Date = Options[DateTime](PropertyOption("type", "date"))
-  def Object[T] = Options[T](PropertyOption("type", "object"))
-  val Float = Options[Float](PropertyOption("type", "float"))
-  val Double = Options[Double](PropertyOption("type", "double"))
-  val Integer = Options[Int](PropertyOption("type", "integer"))
-  val Long = Options[Long](PropertyOption("type", "long"))
-  val Short = Options[Short](PropertyOption("type", "short"))
-  val Byte = Options[Byte](PropertyOption("type", "byte"))
-  val Boolean = Options[Boolean](PropertyOption("type", "boolean"))
-  val Binary = Options[Array[Byte]](PropertyOption("type", "binary"))
-  val Ipv4 = Options[Inet4Address](PropertyOption("type", "ip"))
-  val GeoPoint = Options[GeoPoint](PropertyOption("type", "geo_point"))
-  val Nested = PropertyOption("type", "nested")
-  val Stored = PropertyOption("store", true)
-  val NotIndexed = PropertyOption("index", "no")
-  val Analyzed = PropertyOption("index", "analyzed")
-  val NotAnalyzed = PropertyOption("index", "not_analyzed")
-  val IncludeInAll = PropertyOption("include_in_all", "true")
-  def Nested[T](mapping: ESMapping[T]): Options[T] = Options(Nested, PropertyOption("properties", mapping))
-  val _all = new ESProperty("_all", "_all", String)
-}
+  /**
+   * Retrieves the mapping definition to be passed to ES during initialization of a root dao.
+   */
+  def mappingDefinition(docType: String): JsObject = {
+    // Eager mapping validation
+    jsonFormat
 
-class ESMapping[A](extensionMappings: ESMapping[_]*)(implicit ct : ClassTag[A]) extends ESMappingConstants with Logging {
+    JsObject(docType ->
+      JsObject(
+        "_all" -> JsObject("enabled" -> JsTrue) ::
+        "_source" -> JsObject("enabled" -> JsTrue) ::
+        "store" -> JsTrue ::
+        "properties" -> toProperties ::
+          ttl.toList.map {
+            case ttl if ttl.isFinite => "_ttl" -> JsObject("enabled" -> JsTrue, "default" -> JsNumber(ttl.toMillis))
+            case ttl => "_ttl" -> JsObject("enabled" -> JsTrue)
+          }))
+  }
 
-  import ESMapping._
-
-  val caseClassFields : Map[String, CaseClassField] = CaseClassFields.of[A]
-  
-  private var _allPropertiesVar = Properties[A](Nil)
-
-  def _allProperties = _allPropertiesVar.properties
-  def _propertiesByName = _allPropertiesVar.propertiesByName
-  def _propertiesByMappedName = _allPropertiesVar.propertiesByMappedName
-
-//  private def _allPlusExtProperties = Properties[A]((this :: extensionMappings.map(_.asInstanceOf[ESMapping[A]]).toList).flatMap(_._allProperties))
-
+  /**
+   * Option to set time-to-live for documents of this mapping. Only applies to root-level
+   * documents. To enable ttl without a default ttl value, specifiy Some(Duration.Inf)
+   */
   protected var ttl : Option[Duration] = None // enable ttl without a default ttl value: Some(Duration.Inf)
-  
-  def _mappingName = getClass.getName.stripSuffix("$")
 
-  def mappingConfiguration(doctype: String): String =
-    print(mapping(doctype), "\n")
+  // Field types
+  private implicit def fromSringTuple(t: (String, String)) = Seq(new ESFieldOption(t._1, JsString(t._2)))
+  protected object String extends FieldType[String]("type" -> "string")
+  protected object Float extends FieldType[Float]("type" -> "float")
+  protected object Double extends FieldType[Double]("type" -> "double")
+  protected object Byte extends FieldType[Byte]("type" -> "byte")
+  protected object Short extends FieldType[Short]("type" -> "short")
+  protected object Integer extends FieldType[Int]("type" -> "integer")
+  protected object Long extends FieldType[Long]("type" -> "long")
+  protected object TokenCount extends FieldType[Int]("type" -> "token_count")
+  protected object Date extends FieldType[DateTime]("type" -> "date")
+  protected object Boolean extends FieldType[Boolean]("type" -> "boolean")
+  protected object Binary extends FieldType[Array[Byte]]("type" -> "binary")
+  protected object GeoPoint extends FieldType[GeoPoint]("type" -> "geo_point")
 
-  def mapping(doctype: String) =  {
-    
-    val errors = check
-    if (errors.nonEmpty) {
-      throw new Exception(s"Mapping errors found:\n  ${errors.mkString("\n  ")}")
+  /**
+   * Object type: values are stored as a embedded objects, but individual fields
+   * are not recognized by ES.
+   */
+  protected def Object[B :ClassTag :JsonFormat] =
+    new FieldType[B]("type" -> "object", None)
+
+  /**
+   * Nested type: values are stored as nested objects, the fields of which should be mapped
+   * using given mapping.
+   */
+  protected def Nested[B](mapping: ESMapping[B]) =
+    new FieldType[B]("type" -> "nested", Some(mapping), isNested = true)(mapping.classTag, mapping.originalFormat)
+
+  // Field options
+  protected object Analyzed extends ESFieldOption("index", JsString("analyzed"))
+  protected object NotAnalyzed extends ESFieldOption("index", JsString("not_analyzed"))
+  protected object NotIndexed extends ESFieldOption("index", JsString("no"))
+  protected object IncludeInAll extends ESFieldOption("include_in_all", JsTrue)
+  protected object Stored extends ESFieldOption("store", JsTrue)
+
+  private def format(errors: ArrayBuffer[String]): ProductFormat[A] = {
+    val extensions = registeredExtensions.toMap
+    val originalFormat = implicitly[ProductFormat[A]]
+    // Check that all fields have a corresponding case class field
+    for (field <- fieldsByName.values if !field.isDerived)
+      if (!originalFormat.fields.exists(_.name == field.propertyName))
+        errors.append(s"Mapped field $mappingName.${field.propertyName} has no corresponding property in its case class.")
+    // Check that all extensions have a mapping
+    for (ext <- Extensions.registeredExtensionsOf[A])
+      if (!registeredExtensions.contains(ext))
+        errors.append(s"No mapping registered for extension $ext")
+    // Check that all extensions mapping have a registered mapping
+    for (ext <- registeredExtensions.keys)
+      if (!Extensions.registeredExtensionsOf[A].contains(ext))
+        errors.append(s"Extension was not registered: $ext")
+    // All options should be unique
+    for (field <- fieldsByName.values; options <- field.options.groupBy(_.name).values)
+      if (options.size > 1) errors.append(s"Mapping $mappingName.${field.name} contains incompatible options: ${options.mkString(", ")}")
+    // Create a new format with json names and formats from mappings
+    originalFormat.mapFields { field =>
+      field.copy(format = field.format match {
+        case extFormat : ExtensionsProductFieldFormat[_] =>
+          new ExtensionsProductFieldFormat[A] {
+            override def formatOf[E](ext: Extension[A, E]) =
+              extensions.getOrElse(ext, throw new Exception(s"No mapping registered for extension $ext")).format(errors).asInstanceOf[ProductFormat[E]]
+          }
+        case format =>
+          fieldsByPropertyName.get(field.name).orElse(determineMappingField(field, errors)) match {
+            case Some(mappingField) =>
+              mappingField.childMapping
+                // get & case json format of child mapping
+                .map(_.jsonFormat)
+                // decorate with seq mapping
+                .map(m => if (field.isSeq) listFormat(m) else if (field.isOption) optionFormat(m) else m)
+                // convert to Any
+                .mapTo[JsonFormat[Any]]
+                // decorate field format with child mapping json format
+                .map(format.asInstanceOf[ProductFieldFormat[Any]].withJsonFormat)
+                // fallback to original format when there is no child mapping
+                .getOrElse(format)
+                // use json name from field
+                .withJsonName(mappingField.name)
+            case None =>
+              format
+          }
+      })
     }
-    
-    Properties[Any](List(new ESProperty[Any, A](doctype, doctype, Options[A]((Seq(
-      Some(PropertyOption("_all", Map("enabled" -> true))),
-      Some(PropertyOption("_source", Map("enabled" -> true))),
-      ttl map {
-        case ttl if ttl.isFinite => PropertyOption("_ttl", Map("enabled" -> true, "default" -> ttl.toMillis))
-        case ttl => PropertyOption("_ttl", Map("enabled" -> true))
-      },
-      Some(Stored),
-      Some(PropertyOption("properties", this))).flatten: _*)))))
   }
-  
-  implicit class RichName(name: String) extends RichMappedName(name, name)
 
-  implicit class RichMappedName(name: (String, String)) {
-    def as[T](options: Options[T]) = add(new ESProperty[A, T](name._1, name._2, options))
-    def add[T](property: ESProperty[A, T]) = {
-      _allPropertiesVar = Properties(_allPropertiesVar.properties :+ property)
-      property
+  private def determineMappingField(field: ProductField, errors: ArrayBuffer[String]): Option[ESField[_, _]] = {
+    field.format match {
+      case DefaultProductFieldFormat(jsonName, default, jsonFormat) =>
+        if (jsonFormat.isInstanceOf[ProductFormat[_]])
+          errors.append(s"Field ${field.name} should be mapped explicitly in $mappingName")
+        val runtimeClass = if (field.isSeq) field.genericParameterTypes(0) else field.fieldType
+        val fieldType = if (runtimeClass == classOf[Float]) Float
+        else if (runtimeClass == classOf[Double]) Double
+        else if (runtimeClass == classOf[Short]) Short
+        else if (runtimeClass == classOf[Integer]) Integer
+        else if (runtimeClass == classOf[Long]) Long
+        else if (runtimeClass == classOf[DateTime]) Date
+        else if (runtimeClass == classOf[Boolean]) Boolean
+        else if (runtimeClass == classOf[Array[Byte]]) Binary
+        else String
+        Some(jsonName.getOrElse(field.name) -> field.name :: fieldType & NotAnalyzed)
+      case _ => None
     }
-    implicit def toProperty = new ESProperty(name._1, name._2, Options())
   }
-  
-  private def check : Iterable[String] = {
-    caseClassFields.keys.flatMap { fieldName =>
-      if (_propertiesByName.contains(fieldName)) Seq.empty
-      else Seq(s"Field '$fieldName' is not defined in mapping ${_mappingName}")
-    } ++ _allProperties.flatMap(_.options.options).map(_.value).collect { case es : ESMapping[_] => es.check }.flatten
-  }
-  
-  private def print(obj: Any, indent: String): String = obj match {
-    case mapping: ESMapping[A] =>
-      print(mapping._allPropertiesVar, indent)
-    case properties: Properties[A] =>
-      properties.properties.map(p => "\"" + p.mappedName + "\": " + print(p.options, indent + "    ")).mkString(indent + "{" + indent + "  ", "," + indent + "  ", indent + "}")
-    case options: Options[_] =>
-      options.options.map(print(_, indent)).mkString("{", ", ", "}")
-    case option: PropertyOption =>
-      "\"" + option.name + "\": " + print(option.value, indent)
-    case s: String => "\"" + s.toString + "\""
-    case json: Map[_, _] => json.map(t => "\"" + t._1 + "\": " + print(t._2, indent)).mkString("{", ", ", "}")
-    case v => v.toString
+
+  private def toProperties : JsObject =
+    JsObject((_explicitFields.values ++ registeredExtensions.values.flatMap(_._explicitFields.values.mapTo[ESField[A, _]])).map(f =>
+      f.name -> JsObject(
+        f.options.map(o => o.name -> o.value) ++
+        f.childMapping.flatMap("properties" -> _.toProperties) toMap)).toMap)
+
+  private[elasticsearch] class FieldType[T :ClassTag :JsonFormat](val options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T]] = None, isNested: Boolean = false) {
+    def as[T2](implicit jsonFormat: JsonFormat[T2], classTag: ClassTag[T2]): FieldType[T2] =
+      if (childMapping.isDefined) throw new Exception("Can't convert a field with a child mapping to another type")
+      else new FieldType[T2](options, None)
+    def ::(name: String) = new Field(name, name, options, childMapping)
+    def ::(name: (String, String)) = new Field(name._1, name._2, options, childMapping)
+    class Field(name: String, propertyName: String, options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T]])
+      extends ESField[A, T](name, propertyName, options, isDerived = false, isNested, childMapping)(implicitly[ClassTag[T]], implicitly[JsonFormat[T]]) {
+      _explicitFields += (name -> this)
+      def & (option: ESFieldOption) = new Field(name, propertyName, options :+ option, childMapping)
+    }
   }
 }
-
-object ESProperty {
-  implicit def toPath[A, T](property: ESProperty[A, T]) = Path[A, T](property :: Nil)
-}
-
-class ESProperty[A, T](val name: String, val mappedName: String, val options: ESMapping.Options[T]) 
-extends PathElement[A, T](mappedName, options.options.contains(ESMapping.Nested)) {
-  val nested = options.options.find(_.name == "properties").map(_.value.asInstanceOf[ESMapping[A]])
-  val `type` = options.options.find(_.name == "type").map(_.value).getOrElse("")
-
-  def geo_distance(geoPoint: GeoPoint, distanceInKm: Double) = ESSearchCriteria.GeoDistance(this, geoPoint, distanceInKm)
-
-  def equ(path: Path[A, T]) = ESSearchCriteria.FEq(this, path)
-  def equ(property: ESProperty[A, T]) = ESSearchCriteria.FEq(this, property)
-  def equ[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Eq(this, value)
-  def queryString[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.QueryString(this, value)
-
-  def neq(path: Path[A, T]) = ESSearchCriteria.FNeq(this, path)
-  def neq(property: ESProperty[A, T]) = ESSearchCriteria.FNeq(this, property)
-  def neq[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Neq(this, value)
-
-  def gt(path: Path[A, T]) = ESSearchCriteria.FGt(this, path)
-  def gt(property: ESProperty[A, T]) = ESSearchCriteria.FGt(this, property)
-  def gt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gt(this, value)
-
-  def gte(path: Path[A, T]) = ESSearchCriteria.FGte(this, path)
-  def gte(property: ESProperty[A, T]) = ESSearchCriteria.FGte(this, property)
-  def gte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Gte(this, value)
-
-  def lt(path: Path[A, T]) = ESSearchCriteria.FLt(this, path)
-  def lt(property: ESProperty[A, T]) = ESSearchCriteria.FLt(this, property)
-  def lt[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lt(this, value)
-
-  def lte(path: Path[A, T]) = ESSearchCriteria.FLte(this, path)
-  def lte(property: ESProperty[A, T]) = ESSearchCriteria.FLte(this, property)
-  def lte[V](value: V)(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.Lte(this, value)
-
-  def in[V](values: Seq[V])(implicit writer: JsonWriter[V], jsConverter: JsValueConverter[T]) = ESSearchCriteria.In(this, values)
-  def missing = ESSearchCriteria.missing(this)
-  def exists = ESSearchCriteria.exists(this)
-}
-

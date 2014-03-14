@@ -3,14 +3,16 @@ package com.busymachines.prefab.authentication.elasticsearch
 import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.prefab.authentication.model.Credentials
 import com.busymachines.prefab.authentication.model.PasswordCredentials
+import com.busymachines.prefab.authentication.model.SecurityJsonFormats._
+import com.busymachines.commons.domain.Id
 
 object CredentialsMapping extends ESMapping[Credentials] {
-  val id = "id" -> "_id" as String & NotAnalyzed
-  val passwordCredentials = "passwordCredentials" as Nested(PasswordCredentialsMapping)
+  val id = "_id" -> "id" :: String.as[Id[Credentials]] & NotAnalyzed
+  val passwordCredentials = "passwordCredentials" :: Nested(PasswordCredentialsMapping)
 }
 
 object PasswordCredentialsMapping extends ESMapping[PasswordCredentials] {
-  val login = "login" as String & NotAnalyzed
-  val salt = "salt" as String & NotAnalyzed
-  val passwordHash = "passwordHash" as String & NotAnalyzed
+  val login = "login" :: String & NotAnalyzed
+  val salt = "salt" :: String & NotAnalyzed
+  val passwordHash = "passwordHash" :: String & NotAnalyzed
 }

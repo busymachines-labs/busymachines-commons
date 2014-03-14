@@ -66,7 +66,7 @@ trait CommonJsonFormats
           case e: NoSuchElementException if e.getMessage == "None.get" => deserializationError("Couldn't find a " + type_ + " for value '" + s + "'")
           case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a " + type_ + ": " + e.getMessage)
         }
-      case x => deserializationError("Expected " + type_ + " as String, but got " + x)
+      case x => deserializationError("Expected " + type_ + " :: String, but got " + x)
     }
   }
 
@@ -99,7 +99,7 @@ trait CommonJsonFormats
   }
 
   implicit val jodaDurationFormat = new JsonFormat[org.joda.time.Duration] {
-    def write(value: org.joda.time.Duration) = JsString(value.getMillis() + "")
+    def write(value: org.joda.time.Duration) = JsString(value.getMillis + "")
     def read(value: JsValue): org.joda.time.Duration = value match {
       case JsString(s) =>
         try org.joda.time.Duration.parse(s)
@@ -110,18 +110,7 @@ trait CommonJsonFormats
     }
   }
 
-  implicit val geoPointFormat = new JsonFormat[GeoPoint] {
-    def write(value: GeoPoint) = JsObject(
-      "lat" -> JsNumber(value.lat),
-      "lon" -> JsNumber(value.lon))
-    def read(value: JsValue): GeoPoint = value match {
-      case JsObject(o) =>
-        GeoPoint(
-          lat = o.getOrElse("lat", deserializationError(s"Geopoint lacks lat field")).toString.toDouble,
-          lon = o.getOrElse("lon", deserializationError(s"Geopoint lacks lon field")).toString.toDouble)
-      case s => deserializationError("Couldn't convert '" + s + "' to a geo point")
-    }
-  }
+  implicit val geoPointFormat = format2(GeoPoint)
 
   implicit val stringMapFormat = new JsonFormat[Map[String, String]] {
     def write(value: Map[String, String]) = JsObject(value.mapValues(JsString(_)).toList)
@@ -143,11 +132,11 @@ trait CommonJsonFormats
 
   implicit def idFormat[A] = stringWrapperFormat(Id[A])
   implicit def mimeTypeFormat = stringWrapperFormat(MimeType)
-  implicit val mediaFormat = jsonFormat4(Media)
-  implicit val moneyFormat = jsonFormat2(Money)
+  implicit val mediaFormat = format4(Media)
+  implicit val moneyFormat = format2(Money)
 
-  implicit val termFacetValueFormat = jsonFormat2(TermFacetValue)
-  implicit val histogramValueFormat = jsonFormat7(HistogramFacetValue)
+  implicit val termFacetValueFormat = format2(TermFacetValue)
+  implicit val histogramValueFormat = format7(HistogramFacetValue)
 
   implicit val durationFormat = new JsonFormat[FiniteDuration] {
     def write(value: FiniteDuration) = JsObject(
@@ -162,7 +151,7 @@ trait CommonJsonFormats
     }
   }
 
-  implicit def versionedFormat[T <: HasId[T]](implicit tFormat: JsonFormat[T]) = jsonFormat2(Versioned[T])
+  implicit def versionedFormat[T <: HasId[T]](implicit tFormat: JsonFormat[T]) = format2(Versioned[T])
 
   class SearchResultFormat[T <: HasId[T]](fieldName: String)(implicit tFormat: JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
     def write(result: SearchResult[T]) = {
@@ -178,5 +167,5 @@ trait CommonJsonFormats
     }
   }
 
-  implicit val sequenceFormat = jsonFormat2(Sequence)
+  implicit val sequenceFormat = format2(Sequence)
 }

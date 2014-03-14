@@ -4,7 +4,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 import org.scalatest.FlatSpec
 import com.busymachines.commons.domain.CommonJsonFormats._
-import com.busymachines.commons.elasticsearch2._
 import com.busymachines.commons.implicits.richFuture
 import com.busymachines.commons.test.Mappings._
 import com.busymachines.commons.testing.EmptyESTestIndex
@@ -16,7 +15,6 @@ import com.busymachines.commons.event.DoNothingEventSystem
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import com.busymachines.commons.domain.GeoPoint
-import com.busymachines.commons.elasticsearch2.ESType
 import com.busymachines.commons.elasticsearch.ESTermFacet
 
 @RunWith(classOf[JUnitRunner])

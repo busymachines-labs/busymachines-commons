@@ -32,7 +32,7 @@ object ProductJsonFormatTests {
   implicit def toBig[A](a: A)(implicit ext: Extension[A, Big]) = ext(a)
 }
 
-@RunWith(classOf[JUnitRunner])
+//@RunWith(classOf[JUnitRunner])
 class ProductJsonFormatTests extends FlatSpec {
 
   import ProductJsonFormatTests._

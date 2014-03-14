@@ -6,7 +6,6 @@ import scala.concurrent.Future
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.elasticsearch.ESIndex
-import com.busymachines.commons.elasticsearch.ESProperty.toPath
 import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.prefab.authentication.model.Credentials

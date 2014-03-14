@@ -5,7 +5,7 @@ import scala.language.postfixOps
 import org.scalatest.FlatSpec
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.CommonJsonFormats._
-import com.busymachines.commons.elasticsearch2._
+import com.busymachines.commons.elasticsearch._
 import com.busymachines.commons.implicits.richFuture
 import com.busymachines.commons.test.Mappings._
 import com.busymachines.commons.testing.EmptyESTestIndex
@@ -20,8 +20,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.Some
 import com.busymachines.commons.domain.GeoPoint
-import com.busymachines.commons.elasticsearch2.ESType
-import com.busymachines.commons.elasticsearch.ESSearchSort
+import com.busymachines.commons.elasticsearch.{ESRootDao, ESSearchSort}
 
 @RunWith(classOf[JUnitRunner])
 class ItemDaoTests extends FlatSpec with Logging {

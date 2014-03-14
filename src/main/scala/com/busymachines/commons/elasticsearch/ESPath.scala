@@ -1,7 +1,9 @@
-package com.busymachines.commons.elasticsearch2
+package com.busymachines.commons.elasticsearch
 
 import com.busymachines.commons.Extension
 import com.busymachines.commons.domain.GeoPoint
+import scala.reflect.ClassTag
+import spray.json.JsonFormat
 
 trait ESPath[A, T] {
 
@@ -9,6 +11,7 @@ trait ESPath[A, T] {
 
   def fields: Seq[ESField[_, _]]
   def /[T2](field: ESField[T, T2]) = ESCompoundPath[A, T2](fields :+ field)
+  def /[T2 :ClassTag :JsonFormat](field: AdhocField[T2]) = ESCompoundPath[A, T2](fields :+ field)
   def ++[T2] (other : ESPath[T, T2]) = ESCompoundPath[A, T2](fields ++ other.fields)
 
   def head = fields.head.asInstanceOf[ESField[A, _]]
@@ -44,8 +47,12 @@ trait ESPath[A, T] {
 }
 
 object ESPath {
-  def apply[A, T](_fields: Seq[ESField[_, _]]) = new ESPath[A, T] { def fields = _fields }
+  def apply[A, T](fields: Seq[ESField[_, _]]) = ESCompoundPath[A, T](fields)
   implicit def fromExt[A, E, T](path: ESPath[E, T])(implicit e: Extension[A, E]) = path.asInstanceOf[ESPath[A, T]]
+//  def apply[T2](field: String)(implicit ct: ClassTag[T2], fmt: JsonFormat[T2]) = ESField[Any, T2](field, "", Seq.empty, false, false, None)
+//  implicit def toESField[A, T :ClassTag](field: String) = ESField[A, T](field, "", Seq.empty, false, false, None)(scala.reflect.classTag[T], null.asInstanceOf[JsonFormat[T]])
+  //  def /[T2] (field: String)(implicit ct: ClassTag[T2], fmt: JsonFormat[T2]) = ESCompoundPath[A, T2](fields :+ ESField[Any, T2](field, "", Seq.empty, false, false, None))
+
 }
 
 case class ESCompoundPath[A, T](fields: Seq[ESField[_, _]]) extends ESPath[A, T]

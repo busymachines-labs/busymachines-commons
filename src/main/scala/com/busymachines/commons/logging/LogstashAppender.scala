@@ -17,7 +17,7 @@ import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.event.DoNothingEventSystem
 
 object DomainJsonFormats extends CommonJsonFormats {
-  implicit val logMessageFormat = jsonFormat(LogMessage, "id", "@message", "@fields", "@source", "@source_host", "@source_path", "@tags", "@type", "@timestamp")
+  implicit val logMessageFormat = format9(LogMessage)
 }
 import DomainJsonFormats._
 
@@ -33,20 +33,20 @@ case class LogMessage(
   timestamp: DateTime) extends HasId[LogMessage]
 
 object LogMessageMapping extends ESMapping[LogMessage] {
-  val id = "id" -> "_id" as String & NotAnalyzed
-  val message = "@message" as String & Analyzed & IncludeInAll
-  val fields = "@fields" as Object & NotAnalyzed & IncludeInAll
-  val source = "@source" as String & NotAnalyzed & IncludeInAll
-  val sourceHost = "@source_host" as String & NotAnalyzed & IncludeInAll
-  val sourcePath = "@source_path" as String & NotAnalyzed & IncludeInAll
-  val tags = "@tags" as String & NotAnalyzed & IncludeInAll
-  val `type` = "@type" as String & NotAnalyzed & IncludeInAll
-  val timestamp = "@timestamp" as Date & IncludeInAll
+  val id = "_id" -> "id" :: String.as[Id[LogMessage]] & NotAnalyzed
+  val message = "@message" :: String & Analyzed & IncludeInAll
+  val fields = "@fields" :: Object & NotAnalyzed & IncludeInAll
+  val source = "@source" :: String & NotAnalyzed & IncludeInAll
+  val sourceHost = "@source_host" :: String & NotAnalyzed & IncludeInAll
+  val sourcePath = "@source_path" :: String & NotAnalyzed & IncludeInAll
+  val tags = "@tags" :: String & NotAnalyzed & IncludeInAll
+  val `type` = "@type" :: String & NotAnalyzed & IncludeInAll
+  val timestamp = "@timestamp" :: Date & IncludeInAll
 }
 
 object LogstashAppender extends App {
 
-  val fmt = DateTimeFormat.forPattern("'logstash-'yyyy.MM.d");
+  val fmt = DateTimeFormat.forPattern("'logstash-'yyyy.MM.d")
   val logstashIndexName = fmt.print(DateTime.now)
 
   lazy val esConfig = new ESConfig("loggger.db.elasticsearch") {

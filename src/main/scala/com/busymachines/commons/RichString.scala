@@ -5,6 +5,9 @@ import scala.math.Ordering.Implicits._
 import scala.collection.JavaConversions._
 import java.security.MessageDigest
 import java.lang.{ Long => JLong, Double => JDouble }
+import com.busymachines.commons.spray.ProductFormat
+import scala.reflect.ClassTag
+import com.busymachines.commons.elasticsearch.ESField
 
 class RichString(val s: String) extends AnyVal {
 

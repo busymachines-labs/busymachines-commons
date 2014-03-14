@@ -8,10 +8,6 @@ import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
 import spray.http.{StatusCodes, ContentTypes, HttpEntity}
 import spray.json.JsonParser
 import com.busymachines.prefab.party.domain.Party
-import com.busymachines.prefab.party.db
-import com.busymachines.commons.elasticsearch
-import com.busymachines.commons.elasticsearch.RichJsValue
-import com.busymachines.prefab.party.db.PartyMapping
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.implicits._
 import com.busymachines.prefab.party.implicits._
@@ -25,7 +21,7 @@ import org.scalatest.junit.JUnitRunner
 class PartiesApiTests extends FlatSpec with AssemblyTestBase with PartyApiV1Directives with PartyFixture {
 
   case class PartyPostResponse(id:String)
-  implicit val partyPostResponseFormat=jsonFormat1(PartyPostResponse)
+  implicit val partyPostResponseFormat=format1(PartyPostResponse)
 
   val userAuthRequestBodyJson = """
     {

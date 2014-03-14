@@ -1,19 +1,8 @@
 package com.busymachines.commons.elasticsearch
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.reflect.ClassTag
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
-import org.elasticsearch.action.delete.DeleteRequest
-import org.elasticsearch.action.get.GetRequest
-import org.elasticsearch.action.index.IndexRequest
-import org.elasticsearch.action.search.SearchType
-import org.elasticsearch.index.engine.VersionConflictEngineException
-import org.elasticsearch.index.query.FilterBuilder
-import org.elasticsearch.index.query.FilterBuilders
-import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.search.sort.SortOrder
+import collection.JavaConversions._
 import com.busymachines.commons.Logging
+import com.busymachines.commons.dao.Facet
 import com.busymachines.commons.dao.IdNotFoundException
 import com.busymachines.commons.dao.Page
 import com.busymachines.commons.dao.RetryVersionConflictAsync
@@ -26,23 +15,31 @@ import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
-import com.busymachines.commons.elasticsearch.ESClient.toEsClient
-import com.busymachines.commons.elasticsearch.implicits.richEnity
-import com.busymachines.commons.elasticsearch.implicits.richJsValue
 import com.busymachines.commons.event.BusEvent
-import spray.json.JsonFormat
-import spray.json.pimpString
-import com.busymachines.commons.dao.Facet
-import org.elasticsearch.search.facet.FacetBuilders
-import org.elasticsearch.search.facet.FacetBuilder
-import collection.JavaConversions._
-import org.elasticsearch.search.facet.terms.TermsFacet
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
+import org.elasticsearch.action.delete.DeleteRequest
+import org.elasticsearch.action.get.GetRequest
+import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.common.xcontent.XContentHelper
-import org.elasticsearch.transport.RemoteTransportException
-import scala.concurrent.duration.Duration
+import org.elasticsearch.index.engine.VersionConflictEngineException
+import org.elasticsearch.index.query.FilterBuilder
+import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.search.facet.FacetBuilder
+import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.facet.histogram.HistogramFacet
-import com.busymachines.commons.dao.HistogramFacetValue
+import org.elasticsearch.search.facet.terms.TermsFacet
+import org.elasticsearch.search.sort.SortOrder
+import org.elasticsearch.transport.RemoteTransportException
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.reflect.ClassTag
+import spray.json._
+import scala.Some
 import com.busymachines.commons.dao.TermFacetValue
+import com.busymachines.commons.dao.HistogramFacetValue
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -56,7 +53,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   println("Starting dao " + t.name)
   // Add mapping.
   index.onInitialize { () =>
-    val mappingConfiguration = t.mapping.mappingConfiguration(t.name)
+    val mappingConfiguration = t.mapping.mappingDefinition(t.name).toString
     try {
       client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
       debug(s"Schema for ${index.name}/${t.name}: $mappingConfiguration")
@@ -68,18 +65,59 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }
   }
 
- def retry(future: => Future[Versioned[T]], maxAttempts: Int = 3, attempt: Int = 1): Future[Versioned[T]] =
-    future.recoverWith {
-      case e: VersionConflictException =>
-        debug(s"Version conflict $attempt: " + e.getMessage)
-        if (attempt > maxAttempts) Future.failed(e) 
-        else retry(future, maxAttempts, attempt + 1)
+  /**
+   * Escapes a string special ES characters as specified here : {@link http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_reserved_characters}
+   */
+  def escapeQueryText(queryText: String) =
+    new StringBuilder(queryText).
+      replaceAllLiterally("\\", "\\\\").
+      replaceAllLiterally("/", "\\/").
+      replaceAllLiterally(" ", "\\ ").
+      replaceAllLiterally("+", "\\+").
+      replaceAllLiterally("-", "\\-").
+      replaceAllLiterally("&&", "\\&&").
+      replaceAllLiterally("||", "\\||").
+      replaceAllLiterally("!", "\\!").
+      replaceAllLiterally("(", "\\(").
+      replaceAllLiterally(")", "\\)").
+      replaceAllLiterally("{", "\\{").
+      replaceAllLiterally("}", "\\}").
+      replaceAllLiterally("[", "\\[").
+      replaceAllLiterally("]", "\\]").
+      replaceAllLiterally("^", "\\^").
+      replaceAllLiterally("\"", "\\\"").
+      replaceAllLiterally("~", "\\~").
+      replaceAllLiterally("*", "\\*").
+      replaceAllLiterally("?", "\\?").
+      replaceAllLiterally(":", "\\:").toString
+
+  def allSearchTextOrSearchQuery(searchText: Option[String], searchQuery: Option[String]):Option[SearchCriteria[T]] =
+    propertySearchTextOrSearchQuery(mapping._all,searchText,searchQuery)
+
+  def allSearchText(searchText: String): SearchCriteria[T] =
+    propertySearchText(mapping._all,searchText)
+
+  def allSearchQuery(searchQuery: String): SearchCriteria[T] =
+    propertySearchQuery(mapping._all,searchQuery)
+
+  def propertySearchTextOrSearchQuery(field:ESField[_,String],searchText: Option[String], searchQuery: Option[String]):Option[SearchCriteria[T]] =
+    (searchText, searchQuery) match {
+      case (Some(qT), None) => Some(propertySearchText(field,qT))
+      case (None, Some(q)) => Some(propertySearchQuery(field,q))
+      case (Some(qT), Some(q)) => Some(propertySearchQuery(field,q))
+      case _ => None
     }
-  
+
+  def propertySearchText(field: ESField[_,String],searchText: String): SearchCriteria[T] =
+    propertySearchQuery(field,s"*${escapeQueryText(searchText)}*")
+
+  def propertySearchQuery(property: ESField[_,String],searchQuery: String): SearchCriteria[T] =
+    (property queryString searchQuery).asInstanceOf[ESSearchCriteria[T]]
+
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
     search(new ESSearchCriteria[T] {
       def toFilter = FilterBuilders.idsFilter(typeName).addIds(ids.map(_.value):_*)
-      def prepend[A0](path : Path[A0, T]) = ???
+      def prepend[A0](path : ESPath[A0, T]) = ???
     }, page = Page.all).map(_.result)
 
   def retrieve(id: Id[T]): Future[Option[Versioned[T]]] = {
@@ -92,7 +130,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
         None
       case response =>
         val json = response.getSourceAsString.asJson
-        Some(Versioned(json.convertFromES(mapping), response.getVersion))
+        Some(Versioned(mapping.jsonFormat.read(json), response.getVersion))
     }
   }
 
@@ -107,7 +145,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     
       // TODO : Investigate if this is generic enough : http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets.html#_all_nested_matching_root_documents
       case termFacet: ESTermFacet =>
-        val fieldList = termFacet.fields.map(_.toESPath)
+        val fieldList = termFacet.fields.map(_.toString)
         val firstFacetField = fieldList.head
         val pathComponents = firstFacetField.split("\\.").toList
         val facetbuilder = pathComponents.size match {
@@ -140,7 +178,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     }.toMap
 
   def reindexAll() = {
-    index.refresh()
+    index.refresh
   }
     
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
@@ -172,7 +210,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
             val json = hit.sourceAsString.asJson
-            Versioned(json.convertFromES(mapping), hit.version)
+            Versioned(mapping.jsonFormat.read(json), hit.version)
           }, Some(result.getHits.getTotalHits),
             if (result.getFacets != null) convertESFacetResponse(facets, result) else Map.empty)
         }
@@ -182,7 +220,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   }
 
   def create(entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration]): Future[Versioned[T]] = {
-    val json = entity.convertToES(mapping)
+    val json = mapping.jsonFormat.write(entity)
     val request = new IndexRequest(index.name, t.name)
       .id(entity.id.toString)
       .create(true)
@@ -264,7 +302,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
    * @throws VersionConflictException
    */
   def update(entity: Versioned[T], refreshAfterMutation: Boolean): Future[Versioned[T]] = {
-    val newJson = entity.entity.convertToES(mapping)
+    val newJson = mapping.jsonFormat.write(entity.entity)
 
     val request = new IndexRequest(index.name, t.name)
       .refresh(refreshAfterMutation)
@@ -276,7 +314,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
     preMutate(entity).flatMap { entity: T =>
-      client.execute(request).map(response => Versioned(entity.entity, response.getVersion)) flatMap { mutatedEntity =>
+      client.execute(request).map(response => Versioned(entity, response.getVersion)) flatMap { mutatedEntity =>
         debug(s"Update ${index.name}/${t.name}/${entity.id}:\n${XContentHelper.convertToJson(request.source, true, true)}")
         postMutate(mutatedEntity.entity) map { _ => mutatedEntity }
       }
@@ -337,7 +375,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     val request = client.javaClient.prepareSearch(index.name).addSort("_id", SortOrder.ASC).setTypes(t.name).setPostFilter(filter).setVersion(true).request
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
       val json = hit.sourceAsString.asJson
-      Versioned(json.convertFromES(mapping), hit.getVersion)
+      Versioned(mapping.jsonFormat.read(json), hit.getVersion)
     })
   }
 
@@ -370,4 +408,5 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
   implicit def toResults(f: Future[SearchResult[T]]) = ESRootDao.toResults(f)
 }
-case class ESRootDaoMutationEvent(eventName: String, id: String) extends BusEvent 
+
+case class ESRootDaoMutationEvent(eventName: String, id: String) extends BusEvent
