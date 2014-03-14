@@ -13,6 +13,7 @@ import com.typesafe.config.Config
 
 import scala.concurrent.Future
 import _root_.spray.json.JsValue
+import com.busymachines.commons.dao.Versioned
 
 trait Implicits extends CommonJsonFormats with ExtensionsImplicits {
   implicit def toOption[A](a: A) = Option(a)
@@ -36,6 +37,11 @@ trait Implicits extends CommonJsonFormats with ExtensionsImplicits {
   implicit def richLocale(a : Locale) = new RichLocale(a)
   implicit def richAny[A](a : A) = new RichAny[A](a)
   implicit def convertToUnit(f : Future[_])(implicit ec : ExecutionContext) : Future[Unit] = f.map(_ => Unit)
+
+  implicit def richVersionedFuture[A](future: Future[Versioned[A]])(implicit ec: ExecutionContext) = future.map(_.entity)
+  implicit def richVersionedListFuture[A](future: Future[List[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
+  implicit def richVersionedSeqFuture[A](future: Future[Seq[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
+  implicit def richVersionedOptionFuture[A](future: Future[Option[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
 }
 
 package object implicits extends Implicits

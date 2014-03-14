@@ -179,8 +179,8 @@ abstract private[spray] class ProductFormatImpl[P <: Product :ClassTag, F0 :Prod
         val builder = mutable.ListMap[String, JsValue]()
         for ((name, value) <- fields) {
           (builder.get(name), value) match {
-            case (Some(JsObject(oldFields)), JsObject(fields)) =>
-              builder += (name -> jsObject((oldFields ++ fields).toSeq))
+            case (Some(JsObject(oldFields)), JsObject(newFields)) =>
+              builder += (name -> jsObject((oldFields ++ newFields).toSeq))
             case _ => builder += (name -> value)
           }
         }
