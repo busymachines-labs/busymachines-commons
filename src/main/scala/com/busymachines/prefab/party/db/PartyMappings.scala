@@ -65,7 +65,7 @@ object PartyLocationMapping extends ESMapping[PartyLocation] {
   val description= "description" :: String & NotAnalyzed
   val address= "address" :: Nested(AddressMapping)
   val contactPerson= "contactPerson" :: String & NotAnalyzed
-  val mainLocation="mainLocation" :: Boolean & NotAnalyzed
+  val mainLocation="mainLocation" :: Boolean
 }
 
 object PhoneNumberMapping extends ESMapping[PhoneNumber] {
@@ -75,7 +75,7 @@ object PhoneNumberMapping extends ESMapping[PhoneNumber] {
 
 object EmailMapping extends ESMapping[EmailAddress] {
   val kind = "kind" :: String & NotAnalyzed
-  val validated = "validated" :: Boolean & NotAnalyzed
+  val validated = "validated" :: Boolean
   val emailAddress = "emailAddress" :: String & Analyzed
 }
 

@@ -140,6 +140,10 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
     // All options should be unique
     for (field <- fieldsByName.values; options <- field.options.groupBy(_.name).values)
       if (options.size > 1) errors.append(s"Mapping $mappingName.${field.name} contains incompatible options: ${options.mkString(", ")}")
+    // Check incompatible options
+    for (field <- fieldsByName.values; tp <- field.options.find(_.name == "type"); idx <- field.options.find(_.name == "index")) {
+      if (tp.value != JsString("string") && idx.value != JsString("no")) errors.append(s"Invalid field mapping $field: only String fields can have Analyzed or NotAnalyzed specified.")
+    }
     // Create a new format with json names and formats from mappings
     originalFormat.mapFields { field =>
       field.copy(format = field.format match {
@@ -153,7 +157,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
             case Some(mappingField) =>
               mappingField.childMapping
                 // get & case json format of child mapping
-                .map(_.jsonFormat)
+                .map(_.format(errors))
                 // decorate with seq mapping
                 .map(m => if (field.isSeq) listFormat(m) else if (field.isOption) optionFormat(m) else m)
                 // convert to Any
