@@ -15,7 +15,7 @@ object BarCode {
   val BMP = new ImageFormat("BMP")
   val PNG = new ImageFormat("PNG")
 
-  def apply(code: String) = {
+  def applyX(code: String) = {
     if (code.length == 13) new BarCodeEAN13(code)
     else throw new Exception("Unrecognized bar code format: " + code)
   }
@@ -61,17 +61,17 @@ trait BarCode {
   def toBMP(width: Int, height: Int): Array[Byte] = toImage(width, height, BarCode.BMP)
 }
 
-class BarCodeEAN13(val code: String) extends BarCode {
-  val paddedCode = code.reverse.padTo(13, '0').reverse
+class BarCodeEAN13 private[commons] (val code: String) extends BarCode {
+  require(code.size == 13)
   def toImage(width: Int, height: Int): BufferedImage =
     MatrixToImageWriter.toBufferedImage(
-      new EAN13Writer().encode(paddedCode, BarcodeFormat.EAN_13, width, height),
+      new EAN13Writer().encode(code, BarcodeFormat.EAN_13, width, height),
       new MatrixToImageConfig)
 
   def toImage(width: Int, height: Int, format: BarCode.ImageFormat): Array[Byte] = {
     val o = new ByteArrayOutputStream()
     MatrixToImageWriter.writeToStream(
-      new EAN13Writer().encode(paddedCode, BarcodeFormat.EAN_13, width, height),
+      new EAN13Writer().encode(code, BarcodeFormat.EAN_13, width, height),
       format.format,
       o)
     o.toByteArray
