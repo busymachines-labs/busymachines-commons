@@ -49,11 +49,11 @@ object CompanyMapping extends ESMapping[Company] {
 }
 
 object AddressMapping extends ESMapping[Address] {
-  val street = "street" :: String & Analyzed
-  val street2 = "street2" :: String & Analyzed
+  val street = "street" :: String
+  val street2 = "street2" :: String
   val postalCode = "postalCode" :: String
   val houseNumber = "houseNumber" :: String
-  val city = "city" :: String & Analyzed
+  val city = "city" :: String
   val country = "country" :: String
   val kind = "kind" :: String
   val comment = "comment" :: String & Analyzed
@@ -69,14 +69,14 @@ object PartyLocationMapping extends ESMapping[PartyLocation] {
 }
 
 object PhoneNumberMapping extends ESMapping[PhoneNumber] {
-  val phoneNumber = "phoneNumber" :: String & Analyzed
+  val phoneNumber = "phoneNumber" :: String
   val kind = "kind" :: String
 }
 
 object EmailMapping extends ESMapping[EmailAddress] {
   val kind = "kind" :: String
   val validated = "validated" :: Boolean
-  val emailAddress = "emailAddress" :: String & Analyzed
+  val emailAddress = "emailAddress" :: String
 }
 
 object RelatedPartyMapping extends ESMapping[RelatedParty] {
@@ -89,9 +89,9 @@ object RelatedPartyMapping extends ESMapping[RelatedParty] {
 object UserMapping extends ESMapping[User] {
   val id : ESField[User, Id[User]] = "_id" -> "id" :: String.as[Id[User]]
   val credentials = "credentials" :: String.as[Id[Credentials]]
-  val firstName = "firstName" :: String & Analyzed
-  val middleName = "middleName" :: String & Analyzed
-  val lastName = "lastName" :: String & Analyzed
+  val firstName = "firstName" :: String
+  val middleName = "middleName" :: String
+  val lastName = "lastName" :: String
   val addresses = "addresses" :: Nested(AddressMapping)
   val phoneNumbers = "phoneNumbers" :: Nested(PhoneNumberMapping)
   val emailAddresses = "emailAddresses" :: Nested(EmailMapping)
@@ -100,6 +100,6 @@ object UserMapping extends ESMapping[User] {
 
 object UserRoleMapping extends ESMapping[UserRole] {
   val id = "_id" -> "id" :: String.as[Id[UserRole]]
-  val name = "name" :: String & Analyzed
+  val name = "name" :: String
   val permissions = "permissions" :: String
 }
