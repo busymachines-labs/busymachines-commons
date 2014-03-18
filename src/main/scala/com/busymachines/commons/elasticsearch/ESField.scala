@@ -9,7 +9,9 @@ import com.busymachines.commons.implicits._
  * Mapped field.
  */
 case class ESField[A, T] protected[elasticsearch] (name: String, propertyName: String, options: Seq[ESFieldOption], isDerived: Boolean, isNested: Boolean, childMapping: Option[ESMapping[_ <: T]])(implicit val classTag: ClassTag[T], val jsonFormat: JsonFormat[T])
-  extends ESPath[A, T] { def fields = Seq(this) }
+  extends ESPath[A, T] {
+  def fields = Seq(this)
+}
 
 object ESField {
 //  def apply(name: String) = new AdhocField[String](name)

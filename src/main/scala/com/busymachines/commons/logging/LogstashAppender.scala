@@ -33,14 +33,14 @@ case class LogMessage(
   timestamp: DateTime) extends HasId[LogMessage]
 
 object LogMessageMapping extends ESMapping[LogMessage] {
-  val id = "_id" -> "id" :: String.as[Id[LogMessage]] & NotAnalyzed
+  val id = "_id" -> "id" :: String.as[Id[LogMessage]]
   val message = "@message" :: String & Analyzed & IncludeInAll
-  val fields = "@fields" :: Object & NotAnalyzed & IncludeInAll
-  val source = "@source" :: String & NotAnalyzed & IncludeInAll
-  val sourceHost = "@source_host" :: String & NotAnalyzed & IncludeInAll
-  val sourcePath = "@source_path" :: String & NotAnalyzed & IncludeInAll
-  val tags = "@tags" :: String & NotAnalyzed & IncludeInAll
-  val `type` = "@type" :: String & NotAnalyzed & IncludeInAll
+  val fields = "@fields" :: Object & IncludeInAll
+  val source = "@source" :: String & IncludeInAll
+  val sourceHost = "@source_host" :: String & IncludeInAll
+  val sourcePath = "@source_path" :: String & IncludeInAll
+  val tags = "@tags" :: String & IncludeInAll
+  val `type` = "@type" :: String & IncludeInAll
   val timestamp = "@timestamp" :: Date & IncludeInAll
 }
 

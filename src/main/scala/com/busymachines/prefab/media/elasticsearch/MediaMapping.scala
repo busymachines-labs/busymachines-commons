@@ -6,9 +6,9 @@ import com.busymachines.prefab.media.domain.MediaDomainJsonFormats._
 import com.busymachines.commons.domain.Id
 
 object MediaMapping extends ESMapping[HashedMedia] {
-  val id = "_id" -> "id" :: String.as[Id[HashedMedia]] & NotAnalyzed
-  val mimeType = "mimeType" :: String & Analyzed
-  val name = "name" :: String & Analyzed
-  val hash = "hash" :: String & NotAnalyzed
+  val id = "_id" -> "id" :: String.as[Id[HashedMedia]]
+  val mimeType = "mimeType" :: String
+  val name = "name" :: String
+  val hash = "hash" :: String
   val data = "data" :: String & NotIndexed
 }

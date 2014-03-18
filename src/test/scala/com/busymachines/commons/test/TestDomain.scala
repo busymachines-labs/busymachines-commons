@@ -35,27 +35,27 @@ object Mappings extends CommonJsonFormats {
   implicit val itemFormat = format8(Item)
 
   object PropertyExternalReferenceMapping extends ESMapping[PropertyExternalReference] {
-    val id = "_id" -> "id" :: String.as[Id[PropertyExternalReference]] & NotAnalyzed
-    val name = "name" :: String & NotAnalyzed
+    val id = "_id" -> "id" :: String.as[Id[PropertyExternalReference]]
+    val name = "name" :: String
   }
 
   object PropertyMapping extends ESMapping[Property] {
-    val id = "_id" -> "id" :: String.as[Id[Property]] & NotAnalyzed
+    val id = "_id" -> "id" :: String.as[Id[Property]]
     val mandatory = "mandatory" :: Boolean
-    val name = "name" :: String & NotAnalyzed
+    val name = "name" :: String
     val value = "value" :: Double
     val likes = "likes" :: Integer
     val externalReferences = "externalReferences" :: Nested(PropertyExternalReferenceMapping)
   }
 
   object ItemMapping extends ESMapping[Item] {
-    val id = "_id" -> "id" :: String.as[Id[Item]] & NotAnalyzed
+    val id = "_id" -> "id" :: String.as[Id[Item]]
     val location = "location" :: GeoPoint
-    val name = "name" :: String & NotAnalyzed
+    val name = "name" :: String
     val priceNormal = "priceNormal" :: Double
     val expectedProfit = "expectedProfit" :: Double
     val priceSale = "priceSale" :: Double
-    val validUntil = "validUntil" :: Date & NotAnalyzed
+    val validUntil = "validUntil" :: Date
     val properties = "item_properties" -> "properties" :: Nested(PropertyMapping)
   }
 

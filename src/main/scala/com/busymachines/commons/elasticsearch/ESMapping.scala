@@ -122,6 +122,16 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
   protected object IncludeInAll extends ESFieldOption("include_in_all", JsTrue)
   protected object Stored extends ESFieldOption("store", JsTrue)
 
+  private def allOptions(field: ESField[_, _]): Seq[ESFieldOption] = {
+//    field.options.find(_.name == "type") match {
+//      case Some(JsString(t)) if t == "string" =>
+//    }
+    field.options.find(_.name == "index") match {
+      case Some(_) => field.options
+      case None => field.options :+ NotAnalyzed
+    }
+  }
+
   private def format(errors: ArrayBuffer[String]): ProductFormat[A] = {
     val extensions = registeredExtensions.toMap
     val originalFormat = implicitly[ProductFormat[A]]
@@ -190,7 +200,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
         else if (runtimeClass == classOf[Boolean]) Boolean
         else if (runtimeClass == classOf[Array[Byte]]) Binary
         else String
-        Some(jsonName.getOrElse(field.name) -> field.name :: fieldType & NotAnalyzed)
+        Some(jsonName.getOrElse(field.name) -> field.name :: fieldType)
       case _ => None
     }
   }
@@ -198,7 +208,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
   private def toProperties : JsObject =
     JsObject((_explicitFields.values ++ registeredExtensions.values.flatMap(_._explicitFields.values.mapTo[ESField[A, _]])).map(f =>
       f.name -> JsObject(
-        f.options.map(o => o.name -> o.value) ++
+        allOptions(f).map(o => o.name -> o.value) ++
         f.childMapping.flatMap("properties" -> _.toProperties) toMap)).toMap)
 
   private[elasticsearch] class FieldType[T :ClassTag :JsonFormat](val options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T]] = None, isNested: Boolean = false) {

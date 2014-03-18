@@ -16,13 +16,13 @@ import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.authentication.model.Credentials
 
 object PartyMapping extends ESMapping[Party] {
-  val id = "_id" -> "id" :: String.as[Id[Party]] & NotAnalyzed
-  val tenant = "tenant" :: String & NotAnalyzed
-  val owner = "owner" :: String & NotAnalyzed
+  val id = "_id" -> "id" :: String.as[Id[Party]]
+  val tenant = "tenant" :: String
+  val owner = "owner" :: String
   
-  val fdcWmsClientNumber = "fdcWmsClientNumber" :: String & NotAnalyzed
-  val fdcIdfNumber = "fdcIdfNumber" :: String & NotAnalyzed
-  val fdcDeliveryAddressCustomerNumber = "fdcDeliveryAddressCustomerNumber" :: String & NotAnalyzed
+  val fdcWmsClientNumber = "fdcWmsClientNumber" :: String
+  val fdcIdfNumber = "fdcIdfNumber" :: String
+  val fdcDeliveryAddressCustomerNumber = "fdcDeliveryAddressCustomerNumber" :: String
 
   val person = "person" :: Nested(PersonMapping)
   val company = "company" :: Nested(CompanyMapping)
@@ -37,69 +37,69 @@ object PartyMapping extends ESMapping[Party] {
 }
 
 object PersonMapping extends ESMapping[Person] {
-  val title = "title" :: String & NotAnalyzed
-  val initials = "initials" :: String & NotAnalyzed
-  val firstName = "firstName" :: String & NotAnalyzed
-  val middleName = "middleName" :: String & NotAnalyzed
-  val lastName = "lastName" :: String & NotAnalyzed
+  val title = "title" :: String
+  val initials = "initials" :: String
+  val firstName = "firstName" :: String
+  val middleName = "middleName" :: String
+  val lastName = "lastName" :: String
 }
 
 object CompanyMapping extends ESMapping[Company] {
-  val name = "name" :: String & NotAnalyzed
+  val name = "name" :: String
 }
 
 object AddressMapping extends ESMapping[Address] {
   val street = "street" :: String & Analyzed
   val street2 = "street2" :: String & Analyzed
-  val postalCode = "postalCode" :: String & NotAnalyzed
-  val houseNumber = "houseNumber" :: String & NotAnalyzed
+  val postalCode = "postalCode" :: String
+  val houseNumber = "houseNumber" :: String
   val city = "city" :: String & Analyzed
-  val country = "country" :: String & NotAnalyzed
-  val kind = "kind" :: String & NotAnalyzed
+  val country = "country" :: String
+  val kind = "kind" :: String
   val comment = "comment" :: String & Analyzed
   val geoLocation = "geoLocation" :: GeoPoint
 }
 
 object PartyLocationMapping extends ESMapping[PartyLocation] {
-  val id = "id" :: String & NotAnalyzed
-  val description= "description" :: String & NotAnalyzed
+  val id = "id" :: String
+  val description= "description" :: String
   val address= "address" :: Nested(AddressMapping)
-  val contactPerson= "contactPerson" :: String & NotAnalyzed
+  val contactPerson= "contactPerson" :: String
   val mainLocation="mainLocation" :: Boolean
 }
 
 object PhoneNumberMapping extends ESMapping[PhoneNumber] {
-  val email = "phoneNumber" :: String & Analyzed
-  val kind = "kind" :: String & NotAnalyzed
+  val phoneNumber = "phoneNumber" :: String & Analyzed
+  val kind = "kind" :: String
 }
 
 object EmailMapping extends ESMapping[EmailAddress] {
-  val kind = "kind" :: String & NotAnalyzed
+  val kind = "kind" :: String
   val validated = "validated" :: Boolean
   val emailAddress = "emailAddress" :: String & Analyzed
 }
 
 object RelatedPartyMapping extends ESMapping[RelatedParty] {
-  val relatedParty = "relatedParty" :: String & NotAnalyzed
-  val relatedPartyAlias = "relatedPartyAlias" :: String & NotAnalyzed
-  val kind = "kind" :: String & NotAnalyzed
-  val role = "role" :: String & NotAnalyzed
+  val relatedParty = "relatedParty" :: String
+  val relatedPartyAlias = "relatedPartyAlias" :: String
+  val kind = "kind" :: String
+  val role = "role" :: String
 }
 
 object UserMapping extends ESMapping[User] {
-  val id : ESField[User, Id[User]] = "_id" -> "id" :: String.as[Id[User]] & NotAnalyzed
-  val credentials = "credentials" :: String.as[Id[Credentials]] & NotAnalyzed
+  val id : ESField[User, Id[User]] = "_id" -> "id" :: String.as[Id[User]]
+  val credentials = "credentials" :: String.as[Id[Credentials]]
   val firstName = "firstName" :: String & Analyzed
   val middleName = "middleName" :: String & Analyzed
   val lastName = "lastName" :: String & Analyzed
   val addresses = "addresses" :: Nested(AddressMapping)
   val phoneNumbers = "phoneNumbers" :: Nested(PhoneNumberMapping)
   val emailAddresses = "emailAddresses" :: Nested(EmailMapping)
-  val roles = "roles" :: String & NotAnalyzed
+  val roles = "roles" :: String
 }
 
 object UserRoleMapping extends ESMapping[UserRole] {
-  val id = "_id" -> "id" :: String.as[Id[UserRole]] & NotAnalyzed
+  val id = "_id" -> "id" :: String.as[Id[UserRole]]
   val name = "name" :: String & Analyzed
-  val permissions = "permissions" :: String & NotAnalyzed
+  val permissions = "permissions" :: String
 }

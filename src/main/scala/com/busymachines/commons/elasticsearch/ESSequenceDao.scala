@@ -10,7 +10,7 @@ import com.busymachines.commons.domain.Sequence
 import com.busymachines.commons.dao.{RetryVersionConflictAsync, SequenceDao, Versioned}
 
 private[elasticsearch] object SequenceMapping extends ESMapping[Sequence] {
-  val id = "_id" -> "id" :: String.as[Id[Sequence]] & NotAnalyzed
+  val id = "_id" -> "id" :: String.as[Id[Sequence]]
   val value = "value" :: Long
 }
 

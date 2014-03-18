@@ -9,7 +9,7 @@ import com.busymachines.commons.domain.Id
 
 object AuthenticationMapping extends ESMapping[Authentication] {
   ttl = Some(7.days)
-  val id = "_id" -> "id" :: String.as[Id[Authentication]] & NotAnalyzed
-  val principal = "principal" :: String & NotAnalyzed
+  val id = "_id" -> "id" :: String.as[Id[Authentication]]
+  val principal = "principal" :: String
   val expirationTime = "expirationTime" :: Date
 }

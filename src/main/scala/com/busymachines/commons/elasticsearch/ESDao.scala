@@ -15,7 +15,7 @@ import com.busymachines.commons.dao.SearchSort
 
 
 object MoneyMapping extends ESMapping[Money] {
-  val currency = "currency" :: String & NotAnalyzed
+  val currency = "currency" :: String
   val amount = "amount" :: Double
 }
 
