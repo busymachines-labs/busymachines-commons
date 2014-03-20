@@ -50,6 +50,7 @@ object CsvParser {
       if (!currentLine.isEmpty) 
         result += currentLine.toArray
     }
+    bufferedReader.close()
     result.toArray
   }
 }
