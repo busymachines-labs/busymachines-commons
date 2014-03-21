@@ -11,7 +11,7 @@ import com.busymachines.prefab.authentication.elasticsearch.ESCredentialsDao
 import com.busymachines.commons.Logging
 import com.busymachines.prefab.authentication.model.Credentials
 import com.busymachines.prefab.authentication.model.PasswordCredentials
-import com.busymachines.prefab.authentication.model.SecurityJsonFormats
+import com.busymachines.prefab.authentication.implicits._
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.db.PartyDao
 import com.busymachines.prefab.party.implicits._
