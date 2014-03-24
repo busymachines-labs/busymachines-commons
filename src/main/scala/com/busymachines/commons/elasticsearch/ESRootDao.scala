@@ -91,27 +91,16 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
       replaceAllLiterally("?", "\\?").
       replaceAllLiterally(":", "\\:").toString
 
-  def allSearchTextOrSearchQuery(searchText: Option[String], searchQuery: Option[String]):Option[SearchCriteria[T]] =
-    propertySearchTextOrSearchQuery(mapping._all,searchText,searchQuery)
-
-  def allSearchText(searchText: String): SearchCriteria[T] =
+  def allSearchText(searchText: String): ESSearchCriteria[T] =
     propertySearchText(mapping._all,searchText)
 
-  def allSearchQuery(searchQuery: String): SearchCriteria[T] =
+  def allSearchQuery(searchQuery: String): ESSearchCriteria[T] =
     propertySearchQuery(mapping._all,searchQuery)
 
-  def propertySearchTextOrSearchQuery(field:ESField[_,String],searchText: Option[String], searchQuery: Option[String]):Option[SearchCriteria[T]] =
-    (searchText, searchQuery) match {
-      case (Some(qT), None) => Some(propertySearchText(field,qT))
-      case (None, Some(q)) => Some(propertySearchQuery(field,q))
-      case (Some(qT), Some(q)) => Some(propertySearchQuery(field,q))
-      case _ => None
-    }
-
-  def propertySearchText(field: ESField[_,String],searchText: String): SearchCriteria[T] =
+  def propertySearchText(field: ESField[_,String],searchText: String): ESSearchCriteria[T] =
     propertySearchQuery(field,s"*${escapeQueryText(searchText)}*")
 
-  def propertySearchQuery(property: ESField[_,String],searchQuery: String): SearchCriteria[T] =
+  def propertySearchQuery(property: ESField[_,String],searchQuery: String): ESSearchCriteria[T] =
     (property queryString searchQuery).asInstanceOf[ESSearchCriteria[T]]
 
   def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
