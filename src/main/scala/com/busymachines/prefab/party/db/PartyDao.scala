@@ -9,7 +9,7 @@ import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.prefab.authentication.model.Credentials
-import com.busymachines.prefab.party.domain.{EmailAddress, Party, User}
+import com.busymachines.prefab.party.domain.{PartyLocation, EmailAddress, Party, User}
 import com.busymachines.commons.implicits._
 import com.busymachines.prefab.party.implicits._
 
@@ -30,7 +30,7 @@ class PartyDao(index : ESIndex)(implicit ec: ExecutionContext) extends ESRootDao
         party.users.find(_.id == id).map((party, _))
       case _ => None
   }
-  
+  def findByLocationId(id:Id[PartyLocation]): Future[Option[Versioned[Party]]]=searchSingle(Party.locations / PartyLocationMapping.id equ id)
   def findUserByCredentialsId(id : Id[Credentials]) : Future[Option[(Party, User)]] = 
     searchSingle(Party.users / User.credentials equ id) map {
       case Some(Versioned(party, _)) =>

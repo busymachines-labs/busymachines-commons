@@ -61,7 +61,7 @@ object AddressMapping extends ESMapping[Address] {
 }
 
 object PartyLocationMapping extends ESMapping[PartyLocation] {
-  val id = "id" :: String
+  val id = "id" :: String.as[Id[PartyLocation]]
   val description= "description" :: String
   val address= "address" :: Nested(AddressMapping)
   val contactPerson= "contactPerson" :: String

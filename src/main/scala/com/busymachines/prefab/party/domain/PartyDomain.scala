@@ -16,6 +16,8 @@ case class Party (
   id : Id[Party],
   
   tenant : Id[Tenant],
+
+  `type` : String="",
   
   /**
    * Owner party manages this party.

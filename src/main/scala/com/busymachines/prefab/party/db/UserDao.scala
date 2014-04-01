@@ -5,8 +5,7 @@ import scala.concurrent.Future
 import com.busymachines.commons.elasticsearch.ESNestedDao
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.dao.Versioned
-import com.busymachines.prefab.party.domain.Party
-import com.busymachines.prefab.party.domain.User
+import com.busymachines.prefab.party.domain.{UserRole, Party, User}
 import com.busymachines.prefab.party.implicits._
 
 class UserDao(val parentDao : PartyDao)(implicit ec: ExecutionContext) extends ESNestedDao[Party, User]("user") {
@@ -16,7 +15,13 @@ class UserDao(val parentDao : PartyDao)(implicit ec: ExecutionContext) extends E
   
   protected def findEntity(party: Party, id: Id[User]): Option[User] = 
     party.users.find(_.id == id)
-    
+
+  def getRoles(userId:Id[User]):Future[Option[List[Id[UserRole]]]]={
+    retrieveParent(userId).map{
+      case Some(party)=>party.users.find(_.id==userId).map(_.roles)
+      case None=>None
+    }
+  }
   protected def createEntity(party: Party, entity: User): Party = 
     party.copy(users = party.users :+ entity)
     

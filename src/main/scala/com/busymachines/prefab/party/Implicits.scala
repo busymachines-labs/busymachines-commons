@@ -40,7 +40,7 @@ object implicits {
   implicit val companyFormat = format1(Company)
   implicit val personFormat = format5(Person)
   implicit val partyLocationFormat = format5(PartyLocation)
-  implicit val partyFormat = format16(Party)
+  implicit val partyFormat = format17(Party)
 
   implicit val authenticationRequestFormat = format2(AuthenticationRequest)
   implicit val authenticationResponseFormat = format3(AuthenticationResponse)
