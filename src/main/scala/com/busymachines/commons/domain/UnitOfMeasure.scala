@@ -111,12 +111,23 @@ object UnitOfMeasure extends UnitOfMeasureImpl {
 case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
   import UnitOfMeasure._
   import UnitOfMeasureImpl._
+  
+  /**
+   * A normalized unit contains each unit exacly once, and where the terms have a fixed ordering.
+   * A normalized unit can be used to determince compatibility.
+   * Example: "m s m" has normalized form "m2 s"
+   */
   lazy val normalized: UnitOfMeasure = 
     copy(terms.groupBy(_.unit.symbol).mapValues { ts =>
       val factor = ts.foldLeft(0)(_ + _.prefix.exponent)
       val prefix = prefixes.find(_.exponent == factor).getOrElse(throw new Exception(s"Couldn't find prefix for factor 10^$factor"))
       Term(prefix, ts.head.unit, ts.foldLeft(0)(_ + _.exponent))
     }.values.toList.sortBy(_.unit.symbol))
+    
+  /**
+   * A normalized unit that additionally has all units converted to si base units.
+   * Example: "kWh" has base-unit normalized form "Mg m2/s2"
+   */
   lazy val baseUnitNormalized: UnitOfMeasure =
     copy(terms.flatMap(t => baseUnitMappings.get(t.unit.symbol).map { 
       case (ts, baseUnitFactor) =>
@@ -131,11 +142,14 @@ case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
   lazy val withoutPrefix: UnitOfMeasure =
     copy(terms.map(_.copy(prefix = NoPrefix)))
   def isCompatibleWith(other: UnitOfMeasure) = 
-    normalized.withoutPrefix == other.normalized.withoutPrefix
-  def isConvertableFrom(unit: UnitOfMeasure) = 
-    baseUnitNormalized.withoutPrefix == unit.baseUnitNormalized.withoutPrefix
+    if (this eq other) true
+    else normalized.withoutPrefix == other.normalized.withoutPrefix
+  def isConvertableFrom(other: UnitOfMeasure) = 
+    if (this eq other) true
+    else baseUnitNormalized.withoutPrefix == other.baseUnitNormalized.withoutPrefix
   def convert(value: Double, unit: UnitOfMeasure): Double =
-    if (isConvertableFrom(unit)) {
+    if (this eq unit) value
+    else if (isConvertableFrom(unit)) {
       baseUnitNormalized.terms.zip(unit.baseUnitNormalized.terms)
         .map(t => t._1.prefix.factor / t._2.prefix.factor)
         .foldLeft(value / baseUnitConversionFactor * unit.baseUnitConversionFactor)(_ / _)

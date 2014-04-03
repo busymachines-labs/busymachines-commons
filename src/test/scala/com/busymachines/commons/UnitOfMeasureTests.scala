@@ -29,6 +29,7 @@ class UnitOfMeasureTests extends FlatSpec {
     assert(UnitOfMeasure("W").baseUnitNormalized === UnitOfMeasure(Kilo::Gram, Metre^2, Second^-3))
     assert(UnitOfMeasure(Watt).baseUnitNormalized === UnitOfMeasure(Kilo::Gram, Metre^2, Second^-3))
     assert(UnitOfMeasure(Kilo::Watt).baseUnitNormalized === UnitOfMeasure(Mega::Gram, Metre^2, Second^-3))
+    assert(UnitOfMeasure(Kilo::Watt, Hour).baseUnitNormalized === UnitOfMeasure(Mega::Gram, Metre^2, Second^-2))
   }
   
   it should "be printed without separator when possible" in {
