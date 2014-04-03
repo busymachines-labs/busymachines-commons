@@ -120,7 +120,7 @@ trait CommonJsonFormats
     }
   }
 
-  implicit val unitOfMeasureFormat = stringFormat("UnitOfMeasure", s => UnitOfMeasure(Nil))
+  implicit val unitOfMeasureFormat = stringFormat("UnitOfMeasure", s => UnitOfMeasure(s))
 
   implicit val localeJsonFormat = stringFormat[Locale]("Locale", {
     case "" => Locale.ROOT

@@ -1,97 +1,260 @@
 package com.busymachines.commons.domain
 
+import com.busymachines.commons.implicits._
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
-/**
- * TODO
- * - determine compatibility of Units of of measure. For example, all locale-specific units of a property must be compatible.
- * - need to auto-convert between compatible units
- * - add non-si units, like inches, pounds, miles
- */
-case class UnitOfMeasure(terms : List[UnitOfMeasureTerm]) {
-  def symbol = terms.mkString("\u22C5")
-}
+object UnitOfMeasure extends UnitOfMeasureImpl {
+  
+  val Yotta = prefix("yotta", "Y", 24)
+  val Zetta = prefix("zetta", "Z", 21)
+  val Exa = prefix("exa", "E", 18)
+  val Peta = prefix("peta", "P", 15)
+  val Tera = prefix("tera", "T", 12)
+  val Giga = prefix("giga", "G", 9)
+  val Mega = prefix("mega", "M", 6)
+  val Kilo = prefix("kilo", "k", 3)
+  val Hecto = prefix("hecto", "h", 2)
+  val Deca = prefix("deca", "da", 1)
+  val NoPrefix = prefix("", "", 0)
+  val Deci = prefix("deci", "d", (-1))
+  val Centi = prefix("centi", "c", (-2))
+  val Milli = prefix("milli", "m", (-3))
+  val Micro = prefix("micro", "\u00B5", (-6))
+  val Nano = prefix("nano", "n", (-9))
+  val Pico = prefix("pico", "p", (-12))
+  val Femto = prefix("femto", "f", (-15))
+  val Atto = prefix("atto", "a", (-18))
+  val Zepto = prefix("zepto", "z", (-21))
+  val Yocto = prefix("yocto", "y", (-24))
 
-case class UnitOfMeasureTerm(prefix : UnitPrefix.Prefix, baseUnit : UnitOfMeasure.Unit, exponent : Integer) {
-  def symbol = prefix.symbol + baseUnit.symbol + exponent
-}
+  val Metre = baseUnit("metre", "m")
+  val Gram = baseUnit("gram", "g")
+  val Second = baseUnit("second", "s")
+  val Ampere = baseUnit("ampere", "A")
+  val Kelvin = baseUnit("kelvin", "K")
+  val Mole = baseUnit("mole", "mol")
+  val Candela = baseUnit("candela", "cd")
 
-object UnitOfMeasure extends Enumeration {
-  case class Unit(name : String, symbol : String) extends Val(name)
-  object Unit {
-    implicit def toUnitOfMeasure(unit : Unit) = UnitOfMeasure(UnitOfMeasureTerm(UnitPrefix.None, unit, 1) :: Nil)
+  val Hertz = derivedUnit("hertz", "Hz", "s-1")
+  val Radian = derivedUnit("radian", "rad", "m/m")
+  val Steradian = derivedUnit("steradian", "sr", "m2/m2")
+  val Newton = derivedUnit("newton", "N", "kg m/s2")
+  val Pascal = derivedUnit("pascal", "Pa", "kg/m s2")
+  val Joule = derivedUnit("joule", "J", "kg m2 s-2")
+  val Watt = derivedUnit("watt", "W", "kg m2 s-3")
+  val Coulomb = derivedUnit("coulomb", "C", "s A")
+  val Volt = derivedUnit("volt", "V", "kg m2 s-3 A-1")
+  val Farad = derivedUnit("farad", "F", "kg-1 m-2 s4 A2")
+  val Ohm = derivedUnit("ohm", "\u2126", "kg m2 s-2 A-1")
+  val Siemens = derivedUnit("siemens", "S", "kg-1 m-2 s3 A2")
+  val Weber = derivedUnit("weber", "Wb", "kg m2 s-1 A-1")
+  val Tesla = derivedUnit("tesla", "T", "kg s-2 A-1")
+  val Henry = derivedUnit("henry", "H", "kg m2 s-2 A-2")
+  val Celcius = derivedUnit("celcius", "\u00B0C", "K")
+  val Lumen = derivedUnit("lumen", "lm", "cd")
+  val Lux = derivedUnit("lux", "lx", "m-2 cd")
+  val Becquerel = derivedUnit("becquerel", "Bq", "s-1")
+  val Gray = derivedUnit("gray", "Gy", "m2 s-2")
+  val Sievert = derivedUnit("sievert", "Sv", "m2 s-2")
+  val Katal = derivedUnit("katal", "kat", "s-1 mol")
+  
+  val Minute = derivedUnit("minute", "min", "s", 60)
+  val Hour = derivedUnit("hour", "h", "s", 3600)
+  val Day = derivedUnit("day", "d", "s", 86400)
+  val AngleDegree = derivedUnit("angle-degree", "\u00B0")
+  val AngleMinute = derivedUnit("angle-minute", "'")
+  val AngleSecond = derivedUnit("angle-second", "\"")
+  val Hectare = derivedUnit("hectare", "ha")
+  val Litre = derivedUnit("litre", "l")
+  val Tonne = derivedUnit("tomme", "t")
+  val Bel = derivedUnit("bel", "B")
+  val ElectronVolt = derivedUnit("electron-volt", "eV")
+  
+  val Angstrom = derivedUnit("angstrom", "A")
+  val Are = derivedUnit("are", "a")
+  val Barn = derivedUnit("barn", "b")
+  val Bar = derivedUnit("bar", "bar")
+  val Atmosphere = derivedUnit("atmosphere", "atm")
+  val Torr = derivedUnit("torr", "Torr")
+  
+  case class Term(prefix: Prefix, unit: Unit, exponent: Int = 1) {
+    def ^(exponent: Int) = copy(exponent = exponent)
+    def ^-(exponent: Int) = copy(exponent = -exponent)
+    def ::(prefix: Prefix) = copy(prefix = prefix)
   }
-  val Metre = Unit("metre", "m")
-  val Gram = Unit("gram", "g")
-  val Second = Unit("second", "s")
-  val Ampere = Unit("ampere", "a")
-  val Kelvin = Unit("kelvin", "k")
-  val Mole = Unit("mole", "m")
-  val Candela = Unit("candela", "c")
+  object Term {
+    implicit def toUnitOfMeasure(term: Term) = UnitOfMeasure(List(term))
+  }
+  case class Prefix(name: String, symbol: String, exponent: Int) {
+    val factor = math.pow(10, exponent)
+  } 
+  case class Unit(name: String, symbol: String) extends UnitImpl 
+  object Unit {
+    implicit def toUnitOfMeasure(unit: Unit) = UnitOfMeasure(NoPrefix, unit, 1)
+    implicit def toTerm(unit: Unit) = Term(NoPrefix, unit, 1)
+  }
+  def apply(s: String): UnitOfMeasure = 
+    UnitOfMeasureParser.parse(s)
+  
+  def apply(prefix: Prefix, unit: Unit, exponent: Int = 1): UnitOfMeasure = 
+    UnitOfMeasure(List(Term(prefix, unit, exponent)))
 
-  val Hertz = Unit("hertz", "Hz")
-  val Radian = Unit("radian", "rad")
-  val Steradian = Unit("steradian", "sr")
-  val Newton = Unit("newton", "N")
-  val Pascal = Unit("pascal", "Pa")
-  val Joule = Unit("joule", "J")
-  val Watt = Unit("watt", "W")
-  val Coulomb = Unit("coulomb", "C")
-  val Volt = Unit("volt", "V")
-  val Farad = Unit("farad", "F")
-  val Ohm = Unit("ohm", "\u2126")
-  val Siemens = Unit("siemens", "S")
-  val Weber = Unit("weber", "Wb")
-  val Tesla = Unit("tesla", "T")
-  val Henry = Unit("henry", "H")
-  val Celcius = Unit("celcius", "\u00B0C")
-  val Lumen = Unit("lumen", "lm")
-  val Lux = Unit("lux", "lx")
-  val Becquerel = Unit("becquerel", "Bq")
-  val Gray = Unit("gray", "Gy")
-  val Sievert = Unit("sievert", "Sv")
-  val Katal = Unit("katal", "kat")
-  
-  val Minute = Unit("minute", "min")
-  val Hour = Unit("hour", "h")
-  val Day = Unit("day", "d")
-  val AngleDegree = Unit("angle-degree", "\u00B0")
-  val AngleMinute = Unit("angle-minute", "'")
-  val AngleSecond = Unit("angle-second", "\"")
-  val Hectare = Unit("hectare", "ha")
-  val Litre = Unit("litre", "l")
-  val Tonne = Unit("tomme", "t")
-  val Bel = Unit("bel", "B")
-  val ElectronVolt = Unit("electron-volt", "eV")
-  
-  val Angstrom = Unit("angstrom", "A")
-  val Are = Unit("are", "a")
-  val Barn = Unit("barn", "b")
-  val Bar = Unit("bar", "bar")
-  val Atmosphere = Unit("atmosphere", "atm")
-  val Torr = Unit("torr", "Torr")
+  def apply(terms: Term*): UnitOfMeasure = 
+    UnitOfMeasure(terms.toList)
+    
+  implicit def toUnitOfMeasure[T1 <% Term, T2 <% Term](terms: (T1, T2)) = UnitOfMeasure(terms._1, terms._2)
+  implicit def toUnitOfMeasure(terms: (Term, Term, Term)) = UnitOfMeasure(terms._1, terms._2, terms._3)
+  implicit def toUnitOfMeasure(terms: (Term, Term, Term, Term)) = UnitOfMeasure(terms._1, terms._2, terms._3, terms._4)
 }
 
-object UnitPrefix extends Enumeration {
-  case class Prefix(name : String, symbol : String, factor : Double) extends Val(name)
-  val Yotta = Prefix("yotta", "Y", 10^24)
-  val Zetta = Prefix("zetta", "Z", 10^21)
-  val Exa = Prefix("exa", "E", 10^18)
-  val Peta = Prefix("peta", "P", 10^15)
-  val Tera = Prefix("tera", "T", 10^12)
-  val Giga = Prefix("giga", "G", 10^9)
-  val Mega = Prefix("mega", "M", 10^6)
-  val Kilo = Prefix("kilo", "k", 10^3)
-  val Hecto = Prefix("hecto", "h", 10^2)
-  val Deca = Prefix("deca", "da", 10^1)
-  val None = Prefix("none", "", 10^0)
-  val Deci = Prefix("deci", "d", 10^(-1))
-  val Centi = Prefix("centi", "c", 10^(-2))
-  val Milli = Prefix("milli", "m", 10^(-3))
-  val Micro = Prefix("micro", "\u00B5", 10^(-6))
-  val Nano = Prefix("nano", "n", 10^(-9))
-  val Pico = Prefix("pico", "p", 10^(-12))
-  val Femto = Prefix("femto", "f", 10^(-15))
-  val Atto = Prefix("atto", "a", 10^(-18))
-  val Zepto = Prefix("zepto", "z", 10^(-21))
-  val Yocto = Prefix("yocto", "y", 10^(-24))
+case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
+  import UnitOfMeasure._
+  import UnitOfMeasureImpl._
+  lazy val normalized: UnitOfMeasure = 
+    copy(terms.groupBy(_.unit.symbol).mapValues { ts =>
+      val factor = ts.foldLeft(0)(_ + _.prefix.exponent)
+      val prefix = prefixes.find(_.exponent == factor).getOrElse(throw new Exception(s"Couldn't find prefix for factor 10^$factor"))
+      Term(prefix, ts.head.unit, ts.foldLeft(0)(_ + _.exponent))
+    }.values.toList.sortBy(_.unit.symbol))
+  lazy val baseUnitNormalized: UnitOfMeasure =
+    copy(terms.flatMap(t => baseUnitMappings.get(t.unit.symbol).map { 
+      case (ts, baseUnitFactor) =>
+        val factor = t.prefix.exponent + ts.head.prefix.exponent
+        val prefix = prefixes.find(_.exponent == factor).getOrElse(throw new Exception(s"Couldn't find prefix for factor 10^$factor"))
+        ts.head.copy(prefix = prefix) :: ts.tail
+    }.getOrElse(List(t)))).normalized
+  lazy val baseUnitConversionFactor: Double = 
+    terms.flatMap(t => baseUnitMappings.get(t.unit.symbol).map(_._2)).foldLeft(1d)(_ * _)
+  lazy val symbol = 
+    UnitOfMeasurePrinter.printSymbol(this)
+  lazy val withoutPrefix: UnitOfMeasure =
+    copy(terms.map(_.copy(prefix = NoPrefix)))
+  def isCompatibleWith(other: UnitOfMeasure) = 
+    normalized.withoutPrefix == other.normalized.withoutPrefix
+  def isConvertableFrom(unit: UnitOfMeasure) = 
+    baseUnitNormalized.withoutPrefix == unit.baseUnitNormalized.withoutPrefix
+  def convert(value: Double, unit: UnitOfMeasure): Double =
+    if (isConvertableFrom(unit)) {
+      baseUnitNormalized.terms.zip(unit.baseUnitNormalized.terms)
+        .map(t => t._1.prefix.factor / t._2.prefix.factor)
+        .foldLeft(value / baseUnitConversionFactor * unit.baseUnitConversionFactor)(_ / _)
+    }
+    else throw new Exception(s"Cannot convert unit $unit to $this")
+  override def toString = 
+    symbol
 }
+
+object UnitOfMeasureImpl {
+  import UnitOfMeasure._
+  val prefixes = mutable.Set[Prefix]()
+  val baseUnits = mutable.Set[Unit]()
+  val units = mutable.SortedSet[Unit]()(Ordering.by(u => ('Z'-u.symbol.size) + u.symbol))
+  val baseUnitMappings = mutable.Map[String, (List[Term], Double)]()
+}
+
+class UnitOfMeasureImpl {
+  import UnitOfMeasureImpl._
+  import UnitOfMeasure._
+
+  protected class UnitImpl { this: UnitOfMeasure.Unit =>
+    lazy val normalized: List[Term] = 
+      baseUnitMappings.get(symbol).map(_._1).getOrElse(List(Term(NoPrefix, this, 1)))
+  }
+
+  protected def prefix(name: String, symbol: String, factor: Int) = {
+    val prefix = Prefix(name, symbol, factor)
+    prefixes += prefix
+    prefix
+  }
+    
+  protected def baseUnit(name: String, symbol: String) = {
+    val unit = Unit(name, symbol)
+    baseUnits += unit    
+    units += unit    
+    unit
+  }
+    
+  protected def derivedUnit(name: String, symbol: String, baseUnits: String = "", factor: Double = 1) = {
+    baseUnitMappings.put(symbol, (UnitOfMeasureParser.parse(baseUnits).terms, factor))
+    val unit = Unit(name, symbol)
+    units += unit    
+    unit
+  }
+}
+
+object UnitOfMeasurePrinter {
+  import UnitOfMeasureImpl._
+  def printSymbol(unit: UnitOfMeasure, separator: String = " ", exponentSign: String = "^") = {
+    val nrOfNeg = unit.terms.count(_.exponent < 0)
+    val shouldSlash = nrOfNeg == 1 && unit.terms.head.exponent >= 0
+    var prev: String = ""
+    unit.terms.map { term =>
+      val prefix = term.prefix.map(_.symbol).getOrElse("")
+      val symbol = term.unit.symbol
+      val (sep, exp) =
+        if (term.exponent < 0 && shouldSlash) ("/", -term.exponent)
+        else (if (prev != "" && (prefixes.exists(_.symbol == prev) || Character.isLowerCase(prev.last) == Character.isLowerCase(prefix.headOption.orElse(symbol.headOption).getOrElse(' ')))) separator else "", term.exponent)
+      if (exp != 0) {
+        prev = prefix + symbol + (if (exp != 1) exp else "")
+        sep + prev
+      } else ""
+    }.mkString
+  }  
+}
+
+object UnitOfMeasureParser {
+  
+  import UnitOfMeasure._
+  import UnitOfMeasureImpl._
+  
+  def parse(s: String): UnitOfMeasure = {
+    val terms = ArrayBuffer[Term]()
+    var pos = 0
+    while (pos < s.length) {
+      while (pos < s.length && Character.isWhitespace(s.charAt(pos))) pos += 1
+      var neg = 1 
+      if (pos < s.length && s.charAt(pos) == '/') { pos += 1; neg = -1 }
+      val (term, newPos) = parseTerm(s, pos, neg)
+      pos = newPos
+      terms += term
+      while (pos < s.length && Character.isWhitespace(s.charAt(pos))) pos += 1 
+    }
+    UnitOfMeasure(terms.toList)
+  }
+  
+  private def parseTerm(s: String, pos: Int, neg: Int): (Term, Int) = {
+    prefixes.find(p => p.symbol.nonEmpty && s.startsWith(p.symbol, pos)) match {
+      case Some(prefix) =>
+        units.find(u => s.startsWith(u.symbol, pos + prefix.symbol.length)) match {
+          case Some(unit) =>
+            parseExponent(s, pos + prefix.symbol.length + unit.symbol.length, neg: Int, prefix, unit)
+          case None =>
+            parseUnit(s, pos, neg)
+        }
+      case None =>
+        parseUnit(s, pos, neg)
+    }
+  }
+  
+  private def parseUnit(s: String, pos: Int, neg: Int): (Term, Int) = {
+    units.find(u => s.startsWith(u.symbol, pos)) match {
+      case Some(unit) =>
+        parseExponent(s, pos + unit.symbol.length, neg: Int, NoPrefix, unit)
+      case None =>
+        throw new Exception(s"Couldn't parse unit of measure $s at offset $pos")
+    }
+  }
+  
+  private def parseExponent(s: String, pos: Int, neg: Int, prefix: Prefix, unit: Unit): (Term, Int) = {
+    var a = pos
+    var b = pos
+    val needExp = if (b < s.length && s.charAt(b) == '^') { a += 1; b += 1; true} else false
+    while (b < s.length && (s.charAt(b) == '-' || Character.isDigit(s.charAt(b)))) b += 1
+    if (needExp && b <= pos) throw new Exception(s"Expected exponent at offset $b")
+    if (b > pos) (Term(prefix, unit, s.substring(a, b).toInt * neg), b)
+    else (Term(prefix, unit, neg), a)
+  }
+} 
+
+
