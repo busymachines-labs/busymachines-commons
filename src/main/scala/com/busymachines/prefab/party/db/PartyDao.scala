@@ -14,6 +14,9 @@ import com.busymachines.commons.implicits._
 import com.busymachines.prefab.party.implicits._
 
 class PartyDao(index : ESIndex)(implicit ec: ExecutionContext) extends ESRootDao[Party](index, ESType("party", PartyMapping)) {
+ 
+  def findByFdcIdfNumber(idfNumber : String) = 
+    searchSingle(Party.fdcIdfNumber equ idfNumber)
   
   def findByUserId(userId : Id[User]) = 
     searchSingle(Party.users / User.id equ userId)
