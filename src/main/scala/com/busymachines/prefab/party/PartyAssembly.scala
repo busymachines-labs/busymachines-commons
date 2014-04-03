@@ -8,8 +8,7 @@ import com.busymachines.prefab.authentication.logic.AuthenticationConfig
 import com.busymachines.prefab.party.api.v1.AuthenticationApiV1
 import com.busymachines.prefab.party.api.v1.PartiesApiV1
 import com.busymachines.prefab.party.api.v1.UsersApiV1
-import com.busymachines.prefab.party.db.PartyDao
-import com.busymachines.prefab.party.db.UserDao
+import com.busymachines.prefab.party.db.{PartyLocationDao, PartyDao, UserDao}
 import com.busymachines.prefab.party.logic.PartyManager
 import com.busymachines.prefab.party.logic.UserAuthenticator
 import akka.actor.ActorSystem
@@ -36,6 +35,7 @@ trait PartyAssembly {
   lazy val sequenceDao = new ESSequenceDao(sequenceIndex)
   lazy val partyDao = new PartyDao(partyIndex)
   lazy val userDao = new UserDao(partyDao)
+  lazy val partyLocationDao=new PartyLocationDao(partyDao)
   lazy val credentialsDao = new ESCredentialsDao(partyIndex)
   lazy val authenticationDao = new ESAuthenticationDao(authenticationIndex)
   lazy val userAuthenticator = new UserAuthenticator(authenticationConfig, partyDao, credentialsDao, authenticationDao)
