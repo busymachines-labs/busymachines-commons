@@ -34,7 +34,7 @@ abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit e
           Some(onMany(many))
         } catch {
           case t: MoreThanOneResultException =>
-            throw new MoreThanOneResultException(s"Search criteria $criteria returned more than one result and should return at most one result. Database probably inconsistent.")
+            throw new MoreThanOneResultException(s"Search criteria $criteria returned more than one result and should return at most one result. Database probably inconsistent. The returned results were :$many")
         }
     }
   }
