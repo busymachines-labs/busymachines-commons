@@ -139,6 +139,14 @@ class IncomingMailBox(val mailConfig: IncomingMailConfig) extends Logging {
     val folder = store.getFolder(folderName)
     folder.open(Folder.READ_ONLY)
     folder.getMessageCount
-
   })
+  
+  /**
+   * Closes the mail folder.
+   * @param folderName the folder to close
+   */
+  def close(folderName: String = inboxFolder) = {
+    store.getFolder(folderName).close(false)
+    store.close()
+  }
 }
