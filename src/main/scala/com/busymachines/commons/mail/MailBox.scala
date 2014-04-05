@@ -94,12 +94,12 @@ object MailBox {
       subject = Some(m.getSubject),
       contentType = None,
       content =
-        if ((m.getContentType.contains("text/plain") || m.getContentType.contains("text/html")) &&
+        if ((m.getContentType.toLowerCase.contains("text/plain") || m.getContentType.toLowerCase.contains("application") || m.getContentType.toLowerCase.contains("text/html")) &&
           (m.getContent != null))
           Some(m.getContent.toString.getBytes)
         else None,
       attachments = // Read all attachments as Media objects
-        m.getContentType.contains("multipart") match {
+        m.getContentType.toLowerCase.contains("multipart") match {
           case false => Nil
           case true =>
             val multiPart = m.getContent.asInstanceOf[Multipart]
@@ -107,7 +107,9 @@ object MailBox {
               multiPart.getBodyPart(partIndex).asInstanceOf[MimeBodyPart].getSize match {
                 case -1 => None
                 case _ =>
-                  Some(attachmentToMedia(multiPart.getBodyPart(partIndex).asInstanceOf[MimeBodyPart]))
+                  val part = multiPart.getBodyPart(partIndex).asInstanceOf[MimeBodyPart]
+                  if (part.getHeader("Content-Disposition") != null && part.getHeader("Content-Disposition").mkString(",").contains("attachment;")) Some(attachmentToMedia(part))
+                  else None    
               }) toList
         })
 
