@@ -6,10 +6,19 @@ import com.google.zxing.oned.{Code39Writer, EAN13Writer}
 import com.google.zxing.BarcodeFormat
 import java.io.ByteArrayOutputStream
 
+object BarcodeFamily extends Enumeration {
+  val GTIN = Value("GTIN")
+  val CODE39 = Value("CODE39")
+
+  def withNameOrElse(name: String, family: BarcodeFamily.Value) =
+    values.find(_.toString == name).getOrElse(family)
+}
+
 /**
  * Only EAN13 supported now, pls add other formats too.
  */
 object BarCode {
+
   class ImageFormat(val format: String)
   val JPG = new ImageFormat("JPEG")
   val BMP = new ImageFormat("BMP")

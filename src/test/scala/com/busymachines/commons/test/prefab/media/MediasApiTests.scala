@@ -1,4 +1,4 @@
-package com.busymachines.commons.test.media
+package com.busymachines.commons.test.prefab.media
 
 import com.busymachines.commons.test.AssemblyTestBase
 import com.busymachines.prefab.party.api.v1.PartyApiV1Directives

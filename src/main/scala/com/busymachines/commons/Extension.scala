@@ -149,3 +149,4 @@ trait ExtensionsImplicits {
       new Extensions[P](Map(ext1 -> a, ext2 -> a2))
   }
 }
+

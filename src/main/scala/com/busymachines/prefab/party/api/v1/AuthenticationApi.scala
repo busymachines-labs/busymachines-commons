@@ -36,7 +36,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
               debug(message)
               respondWithHeader(RawHeader(AuthenticationDirectives.tokenKey, authenticationId.toString)) {
                 complete {
-                  AuthenticationResponse(authenticationId.toString, userId.toString, partyId.toString)
+                  AuthenticationResponse(authenticationId.toString, userId.toString, partyId.toString,permissions.seq.map(_.name))
                 }
               }
             }

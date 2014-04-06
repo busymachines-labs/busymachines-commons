@@ -43,7 +43,7 @@ object implicits {
   implicit val partyFormat = format17(Party)
 
   implicit val authenticationRequestFormat = format2(AuthenticationRequest)
-  implicit val authenticationResponseFormat = format3(AuthenticationResponse)
+  implicit val authenticationResponseFormat = format4(AuthenticationResponse)
 
   implicit def toPartyMapping(t: Party.type) = PartyMapping
   implicit def toUserMapping(t: User.type) = UserMapping
