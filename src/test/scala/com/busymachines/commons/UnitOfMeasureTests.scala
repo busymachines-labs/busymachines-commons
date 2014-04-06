@@ -1,12 +1,12 @@
 package com.busymachines.commons
 
-import org.scalatest.FlatSpec
+import org.scalatest._
 import com.busymachines.commons.domain.UnitOfMeasure
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class UnitOfMeasureTests extends FlatSpec {
+class UnitOfMeasureTests extends FlatSpec with Matchers {
 
   import UnitOfMeasure._
   
@@ -42,15 +42,16 @@ class UnitOfMeasureTests extends FlatSpec {
   }
   
   it should "correctly test for compatibility" in {
-    assert(UnitOfMeasure("kW h").isCompatibleWith(UnitOfMeasure("hkW")))
-    assert(UnitOfMeasure("kW h").isCompatibleWith(UnitOfMeasure("h W")))
-    assert(!UnitOfMeasure("kW h").isCompatibleWith(UnitOfMeasure("kW")))
+    assert(areCompatible(UnitOfMeasure("kW h"), UnitOfMeasure("hkW")))
+    assert(areCompatible(UnitOfMeasure("kW h"), UnitOfMeasure("h W")))
+    assert(!areCompatible(UnitOfMeasure("kW h"), UnitOfMeasure("kW")))
   }
   
   "values" should "be converted correctly" in {
     assert(Watt.baseUnitNormalized.withoutPrefix === (Kilo::Watt).baseUnitNormalized.withoutPrefix)
-    assert(Watt.convert(200, Kilo::Watt) === 200000)
-    assert((Kilo::Watt).convert(2000, Watt) === 2)
-    assert(Joule.convert(1, (Kilo::Watt, Hour)) === 3600000)
+    converter(Kilo::Watt, Watt)(200) should be (200000d +- 1e-5)
+    converter(Watt, Kilo::Watt)(2000) should be (2d +- 1e-5)
+    converter((Kilo::Watt) * Hour, Joule)(1) should be (3600000d +- 1e-5)
+    converter(Joule, (Kilo::Watt) * Hour)(3600000) should be (1d +- 1e-5)
   }
 }

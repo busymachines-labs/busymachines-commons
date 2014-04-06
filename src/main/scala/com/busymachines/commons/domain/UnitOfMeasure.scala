@@ -5,6 +5,45 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 object UnitOfMeasure extends UnitOfMeasureImpl {
+
+  /**
+   * Creates a new unit of measure by parsing its symbolic description.
+   */
+  def apply(s: String): UnitOfMeasure = 
+    UnitOfMeasureParser.parse(s)
+  
+  def apply(terms: Term*): UnitOfMeasure = 
+    UnitOfMeasure(terms.toList)
+
+  def areCompatible(from: UnitOfMeasure, to: UnitOfMeasure): Boolean =
+    from == to || from.normalized.withoutPrefix == to.normalized.withoutPrefix
+
+  def areConvertible(from: UnitOfMeasure, to: UnitOfMeasure): Boolean =
+    from == to || from.baseUnitNormalized.withoutPrefix == to.baseUnitNormalized.withoutPrefix
+    
+  def converter(from: UnitOfMeasure, to: UnitOfMeasure): Double => Double = 
+    if (areConvertible(from, to)) {
+      val factor = converterFactor(from, to)
+      (value: Double) => value * factor
+    }
+    else throw new Exception(s"Cannot convert unit $from to $to")
+
+  case class Term(prefix: Prefix, unit: Unit, exponent: Int = 1) {
+    def ^(exponent: Int) = copy(exponent = exponent)
+    def ^-(exponent: Int) = copy(exponent = -exponent)
+    def ::(prefix: Prefix) = copy(prefix = prefix)
+  }
+  object Term {
+    implicit def toUnitOfMeasure(term: Term) = UnitOfMeasure(List(term))
+  }
+  case class Prefix(name: String, symbol: String, exponent: Int) {
+    val factor = math.pow(10, exponent)
+  } 
+  case class Unit(name: String, symbol: String) 
+  object Unit {
+    implicit def toTerm(unit: Unit) = Term(NoPrefix, unit, 1)
+    implicit def toUnitOfMeasure(unit: Unit) = UnitOfMeasure(Term(NoPrefix, unit, 1))
+  }
   
   val Yotta = prefix("yotta", "Y", 24)
   val Zetta = prefix("zetta", "Z", 21)
@@ -77,40 +116,18 @@ object UnitOfMeasure extends UnitOfMeasureImpl {
   val Bar = derivedUnit("bar", "bar")
   val Atmosphere = derivedUnit("atmosphere", "atm")
   val Torr = derivedUnit("torr", "Torr")
-  
-  case class Term(prefix: Prefix, unit: Unit, exponent: Int = 1) {
-    def ^(exponent: Int) = copy(exponent = exponent)
-    def ^-(exponent: Int) = copy(exponent = -exponent)
-    def ::(prefix: Prefix) = copy(prefix = prefix)
-  }
-  object Term {
-    implicit def toUnitOfMeasure(term: Term) = UnitOfMeasure(List(term))
-  }
-  case class Prefix(name: String, symbol: String, exponent: Int) {
-    val factor = math.pow(10, exponent)
-  } 
-  case class Unit(name: String, symbol: String) extends UnitImpl 
-  object Unit {
-    implicit def toUnitOfMeasure(unit: Unit) = UnitOfMeasure(NoPrefix, unit, 1)
-    implicit def toTerm(unit: Unit) = Term(NoPrefix, unit, 1)
-  }
-  def apply(s: String): UnitOfMeasure = 
-    UnitOfMeasureParser.parse(s)
-  
-  def apply(prefix: Prefix, unit: Unit, exponent: Int = 1): UnitOfMeasure = 
-    UnitOfMeasure(List(Term(prefix, unit, exponent)))
 
-  def apply(terms: Term*): UnitOfMeasure = 
-    UnitOfMeasure(terms.toList)
-    
-  implicit def toUnitOfMeasure[T1 <% Term, T2 <% Term](terms: (T1, T2)) = UnitOfMeasure(terms._1, terms._2)
-  implicit def toUnitOfMeasure(terms: (Term, Term, Term)) = UnitOfMeasure(terms._1, terms._2, terms._3)
-  implicit def toUnitOfMeasure(terms: (Term, Term, Term, Term)) = UnitOfMeasure(terms._1, terms._2, terms._3, terms._4)
+  // Some commonly used units:
+  val KiloWattHour = (Kilo::Watt) * Hour
+  val SquareMeter = Metre^2
+  val CubicMeter = Metre^3
 }
 
 case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
   import UnitOfMeasure._
   import UnitOfMeasureImpl._
+
+  def *(term: Term) = copy(terms :+ term)
   
   /**
    * A normalized unit contains each unit exacly once, and where the terms have a fixed ordering.
@@ -141,20 +158,6 @@ case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
     UnitOfMeasurePrinter.printSymbol(this)
   lazy val withoutPrefix: UnitOfMeasure =
     copy(terms.map(_.copy(prefix = NoPrefix)))
-  def isCompatibleWith(other: UnitOfMeasure) = 
-    if (this eq other) true
-    else normalized.withoutPrefix == other.normalized.withoutPrefix
-  def isConvertableFrom(other: UnitOfMeasure) = 
-    if (this eq other) true
-    else baseUnitNormalized.withoutPrefix == other.baseUnitNormalized.withoutPrefix
-  def convert(value: Double, unit: UnitOfMeasure): Double =
-    if (this eq unit) value
-    else if (isConvertableFrom(unit)) {
-      baseUnitNormalized.terms.zip(unit.baseUnitNormalized.terms)
-        .map(t => t._1.prefix.factor / t._2.prefix.factor)
-        .foldLeft(value / baseUnitConversionFactor * unit.baseUnitConversionFactor)(_ / _)
-    }
-    else throw new Exception(s"Cannot convert unit $unit to $this")
   override def toString = 
     symbol
 }
@@ -171,11 +174,11 @@ class UnitOfMeasureImpl {
   import UnitOfMeasureImpl._
   import UnitOfMeasure._
 
-  protected class UnitImpl { this: UnitOfMeasure.Unit =>
-    lazy val normalized: List[Term] = 
-      baseUnitMappings.get(symbol).map(_._1).getOrElse(List(Term(NoPrefix, this, 1)))
-  }
-
+  protected def converterFactor(from: UnitOfMeasure, to: UnitOfMeasure) = 
+    from.baseUnitNormalized.terms.zip(to.baseUnitNormalized.terms)
+      .map(t => t._1.prefix.factor / t._2.prefix.factor)
+      .foldLeft(from.baseUnitConversionFactor / to.baseUnitConversionFactor)(_ * _)
+        
   protected def prefix(name: String, symbol: String, factor: Int) = {
     val prefix = Prefix(name, symbol, factor)
     prefixes += prefix

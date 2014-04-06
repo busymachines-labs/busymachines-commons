@@ -9,10 +9,12 @@ import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.Versioned
 import scala.concurrent.duration.FiniteDuration
 import org.joda.time.LocalDate
-import scala.Some
 import com.busymachines.commons.dao.TermFacetValue
 import com.busymachines.commons.dao.HistogramFacetValue
 import com.busymachines.commons.spray.ProductFormatsInstances
+import com.busymachines.commons.AbstractEnum
+import com.busymachines.commons.CommonEnum
+import com.busymachines.commons.EnumValue
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -46,6 +48,18 @@ trait CommonJsonFormats
     }
   }
 
+  def enumFormat[V <: EnumValue[V]](enum: AbstractEnum[V]) = new JsonFormat[V] {
+    def write(value: V) = JsString(value.toString)
+    def read(value: JsValue): V = value match {
+      case JsString(s) =>
+        try enum.withName(s).asInstanceOf[V]
+        catch {
+          case e: Throwable => deserializationError(s"Expected any of ${enum.values.mkString(",")}, but got " + s)
+        }
+      case x => deserializationError(s"Expected any of ${enum.values.mkString(",")}, but got " + x)
+    }
+  }
+  
   def singletonFormat[A](instance: A) = new JsonFormat[A] {
     def write(value: A) = JsObject()
     def read(value: JsValue) = instance
