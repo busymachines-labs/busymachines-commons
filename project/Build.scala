@@ -3,6 +3,7 @@ import Keys._
 import com.typesafe.sbt.SbtSite.site
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseCreateSrc
+import sbtrelease.ReleasePlugin._
 
 /**
  * gpg --keyserver hkp://pool.sks-keyservers.net  --no-permission-warning --send-keys 331928A8
@@ -12,7 +13,8 @@ object BusyMachinesCommonsBuild extends Build {
   val sprayVersion = "1.2.0"
   
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
-    Project.defaultSettings ++ 
+    Project.defaultSettings ++
+    releaseSettings ++
     publishSettings ++
     site.settings ++ 
     site.sphinxSupport() ++ site.includeScaladoc() ++
@@ -21,7 +23,6 @@ object BusyMachinesCommonsBuild extends Build {
     publishMavenStyle := false,
     exportJars := true,      
     organization := "com.busymachines",
-    version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.10.3",
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:reflectiveCall", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
