@@ -19,6 +19,7 @@ object BusyMachinesCommonsBuild extends Build {
     site.settings ++ 
     site.sphinxSupport() ++ site.includeScaladoc() ++
     Seq(
+    ReleaseKeys.useGlobalVersion := false,
     sbtPlugin := false,
     publishMavenStyle := false,
     exportJars := true,      
@@ -46,7 +47,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "io.spray" % "spray-routing" % sprayVersion withSources(),
     libraryDependencies += "io.spray" % "spray-testkit" % sprayVersion % "test" withSources(),
     libraryDependencies += "io.spray" % "spray-caching" % sprayVersion withSources(),
-    libraryDependencies += "org.scalastuff" %% "esclient" % "1.0.0-SNAPSHOT" withSources(),
+    libraryDependencies += "org.scalastuff" %% "esclient" % "1.0.2" withSources(),
     libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.1" withSources(),
     libraryDependencies += "org.clapper" %% "argot" % "1.0.1" withSources(),
     libraryDependencies +=  "ch.qos.logback" % "logback-classic" % "1.0.13" withSources(),
@@ -90,7 +91,7 @@ object BusyMachinesCommonsBuild extends Build {
           if (v.trim.endsWith("SNAPSHOT")) 
             Some(Resolver.url("snapshots", new URL(nexus + "/repository/snapshots/"))(Resolver.ivyStylePatterns))
           else
-            Some(Resolver.url("snapshots", new URL(nexus + "/repository/releases/"))(Resolver.ivyStylePatterns))
+            Some(Resolver.url("releases", new URL(nexus + "/repository/releases/"))(Resolver.ivyStylePatterns))
         })
                 
 }
