@@ -14,12 +14,16 @@ object BusyMachinesCommonsBuild extends Build {
   
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++
-    releaseSettings ++
+    releaseSettings ++ Seq(
+      ReleaseKeys.useGlobalVersion := false,
+      ReleaseKeys.tagName <<= version map (v => "v" + v),
+      ReleaseKeys.tagComment <<= version map (v => "Releasing %s" format v),
+      ReleaseKeys.commitMessage <<= version map (v => "Setting version to %s" format v)
+    ) ++
     publishSettings ++
     site.settings ++ 
     site.sphinxSupport() ++ site.includeScaladoc() ++
     Seq(
-    ReleaseKeys.useGlobalVersion := false,
     sbtPlugin := false,
     publishMavenStyle := false,
     exportJars := true,      
@@ -29,6 +33,7 @@ object BusyMachinesCommonsBuild extends Build {
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
     resolvers += Resolver.url("busymachines snapshots", url("http://archiva.busymachines.com/repository/snapshots/"))(Resolver.ivyStylePatterns),
+    resolvers += Resolver.url("busymachines releases", url("http://archiva.busymachines.com/repository/releases/"))(Resolver.ivyStylePatterns),
     resolvers += "spray repo" at "http://repo.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "junit" % "junit" % "4.11" % "test" withSources(),
