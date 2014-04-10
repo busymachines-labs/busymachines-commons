@@ -151,7 +151,7 @@ case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
       case (ts, baseUnitFactor) =>
         val factor = t.prefix.exponent + ts.head.prefix.exponent
         val prefix = prefixes.find(_.exponent == factor).getOrElse(throw new Exception(s"Couldn't find prefix for factor 10^$factor"))
-        ts.head.copy(prefix = prefix) :: ts.tail
+        (ts.head.copy(prefix = prefix) :: ts.tail).map(t2 => t2.copy(exponent = t2.exponent * t.exponent))
     }.getOrElse(List(t)))).normalized
   lazy val baseUnitConversionFactor: Double = 
     terms.flatMap(t => baseUnitMappings.get(t.unit.symbol).map(_._2)).foldLeft(1d)(_ * _)
@@ -205,7 +205,7 @@ object UnitOfMeasurePrinter {
   import UnitOfMeasureImpl._
   def printSymbol(unit: UnitOfMeasure, separator: String = " ", exponentSign: String = "^") = {
     val nrOfNeg = unit.terms.count(_.exponent < 0)
-    val shouldSlash = nrOfNeg == 1 && unit.terms.head.exponent >= 0
+    val shouldSlash = nrOfNeg == 1 && unit.terms.head.exponent >= 0 && false // TODO
     var prev: String = ""
     unit.terms.map { term =>
       val prefix = term.prefix.map(_.symbol).getOrElse("")
