@@ -128,6 +128,7 @@ case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
   import UnitOfMeasureImpl._
 
   def *(term: Term) = copy(terms :+ term)
+  def /(term: Term) = copy(terms :+ term.copy(exponent = term.exponent * -1))
   
   /**
    * A normalized unit contains each unit exacly once, and where the terms have a fixed ordering.
