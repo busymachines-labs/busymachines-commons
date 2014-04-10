@@ -12,7 +12,7 @@ import com.busymachines.prefab.party.domain.UserRole
 import com.busymachines.prefab.party.domain.EmailAddress
 import com.busymachines.prefab.party.domain.RelatedParty
 import com.busymachines.prefab.party.implicits._
-import com.busymachines.commons.domain.Id
+import com.busymachines.commons.domain.{GeoPoint, Id}
 import com.busymachines.prefab.authentication.model.Credentials
 
 object PartyMapping extends ESMapping[Party] {
@@ -57,7 +57,7 @@ object AddressMapping extends ESMapping[Address] {
   val country = "country" :: String
   val kind = "kind" :: String
   val comment = "comment" :: String & Analyzed
-  val geoLocation = "geoLocation" :: GeoPoint
+  val geoLocation = "geoLocation" :: Nested(GeoPointMapping)
 }
 
 object PartyLocationMapping extends ESMapping[PartyLocation] {
@@ -102,4 +102,10 @@ object UserRoleMapping extends ESMapping[UserRole] {
   val id = "_id" -> "id" :: String.as[Id[UserRole]]
   val name = "name" :: String
   val permissions = "permissions" :: String
+}
+
+
+object GeoPointMapping extends ESMapping[GeoPoint]()(null, geoPointFormat) {
+  val lat = "lat" :: Double
+  val lon = "lon" :: Double
 }
