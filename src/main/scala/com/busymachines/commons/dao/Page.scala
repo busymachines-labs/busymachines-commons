@@ -9,6 +9,13 @@ object Page {
       case (None, Some(s)) => new Page(0, s)
       case (Some(f), Some(s)) => new Page(f, s)
     }
+  def apply(from: Option[Int], size: Option[Int], defaultPage:Page) =
+    (from, size) match {
+      case (None, None) => defaultPage
+      case (Some(f), None) => new Page(f, 10)
+      case (None, Some(s)) => new Page(0, s)
+      case (Some(f), Some(s)) => new Page(f, s)
+    }
   def first(size: Int) = new Page(0, size)
   val all = new Page(0, 99999999)
   val none = new Page(0, 0)
