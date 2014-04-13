@@ -31,6 +31,7 @@ abstract class AbstractEnum[V <: EnumValue[V]] { thisEnum =>
       case _ => false
     }
   }
+  protected abstract class ValWithId(name: String, val id: Int = nextId) extends Val(name, id) { this: Value => }
 }
 
 trait DefaultEnumValue extends EnumValue[DefaultEnumValue]
