@@ -119,8 +119,10 @@ object UnitOfMeasure extends UnitOfMeasureImpl {
 
   // Some commonly used units:
   val KiloWattHour = (Kilo::Watt) * Hour
+  val MicroWattHour = (Micro::Watt) * Hour
   val SquareMeter = Metre^2
   val CubicMeter = Metre^3
+  val CubicMilliMeter = (Milli::Metre)^3
 }
 
 case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
@@ -191,8 +193,6 @@ class UnitOfMeasureImpl {
       .map(t => Math.pow(t._1.prefix.factor * from.baseUnitConversionFactor / t._2.prefix.factor / to.baseUnitConversionFactor, t._1.exponent))
       .foldLeft(1.0)(_ * _)
       
-      
-        
   protected def prefix(name: String, symbol: String, factor: Int) = {
     val prefix = Prefix(name, symbol, factor)
     prefixes += prefix
