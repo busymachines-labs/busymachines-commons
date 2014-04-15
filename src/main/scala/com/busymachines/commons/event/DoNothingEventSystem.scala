@@ -10,7 +10,8 @@ class DoNothingEventSystem extends EventBus with Logging {
     debug(s"Subscribed to endpoint but in fact did nothing")
   }
 
-  def publish(event: BusEvent): Unit = 
+  def publish(event: BusEvent): Unit = {
     debug(s"Published event $event")
+  }
 
 }

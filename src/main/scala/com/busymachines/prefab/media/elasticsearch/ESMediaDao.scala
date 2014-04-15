@@ -11,7 +11,7 @@ import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.MimeType
 import com.busymachines.commons.domain.Media
-import com.busymachines.commons.dao.Versioned
+import com.busymachines.commons.dao.{Page, Versioned}
 import com.busymachines.commons.Logging
 import com.busymachines.commons.domain.Money
 import com.busymachines.commons.domain.MimeTypes
@@ -34,11 +34,10 @@ class ESMediaDao(index: ESIndex,mimeTypeDetector:MimeTypeDetector)(implicit ec: 
 
   def retrieveAll: Future[List[Media]] =
     dao.retrieveAll map { medias =>
-      medias.map(media =>
-        media match {
-          case Versioned(HashedMedia(id, mimeType, name, hash, data), version) =>
-            Media(Id(id.toString), mimeType, name, encoding.decode(data))
-        })
+      medias.map {
+        case Versioned(HashedMedia(id, mimeType, name, hash, data), version) =>
+          Media(Id(id.toString), mimeType, name, encoding.decode(data))
+      }
     }
 
   def delete(id: Id[Media]): Future[Unit] =
@@ -47,18 +46,18 @@ class ESMediaDao(index: ESIndex,mimeTypeDetector:MimeTypeDetector)(implicit ec: 
   def retrieve(id: Id[Media]): Future[Option[Media]] =
     dao.retrieve(Id[HashedMedia](id.toString)).map {
       _ map {
-        case Versioned(HashedMedia(id, mimeType, name, hash, data), version) =>
-          Media(Id(id.toString), mimeType, name, encoding.decode(data))
+        case Versioned(HashedMedia(_id, mimeType, name, hash, data), version) =>
+          Media(Id(_id.toString), mimeType, name, encoding.decode(data))
       }
     }
 
   def retrieve(mimeType: MimeType, name: Option[String], data: Array[Byte]): Future[Option[Media]] = {
     def hash = hasher.hashBytes(data).toString
     val stringData = encoding.encode(data)
-    dao.search((MediaMapping.mimeType equ mimeType.value) or (MediaMapping.hash equ hash)) map {
-      _.find(m => m.data == stringData && m.name == name) match {
-        case Some(Versioned(HashedMedia(id, mimeType, name, hash, data), version)) =>
-          Some(Media(Id(id.toString), mimeType, name, encoding.decode(data)))
+    dao.search(MediaMapping.hash equ hash, Page.all) map { searchResult =>
+      searchResult.find(m => m.data == stringData && m.name == name) match {
+        case Some(Versioned(HashedMedia(id, _mimeType, _name, _, _data), version)) =>
+          Some(Media(Id(id.toString), _mimeType, _name, encoding.decode(_data)))
         case None => None
       }
     }
@@ -87,14 +86,14 @@ class ESMediaDao(index: ESIndex,mimeTypeDetector:MimeTypeDetector)(implicit ec: 
 
   def readUrl(url: String): Option[Array[Byte]] = {
     try {
-      if (url.toString.isEmpty()) None
+      if (url.toString.isEmpty) None
       else {
         val bis = new BufferedInputStream(new URL(url.toString).openStream())
         try {
           val bytes = Stream.continually(bis.read).takeWhile(-1 != _).map(_.toByte).toArray
           Some(bytes)
         } finally {
-          bis.close
+          bis.close()
         }
       }
     } catch {

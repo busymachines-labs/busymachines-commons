@@ -63,7 +63,6 @@ abstract class DaoMutator[T <: HasId[T]](dao: Dao[T])(implicit classTag: ClassTa
       case Some(parentId) =>
         createEntity(parentId, versionedEntity.entity)
       case None =>
-        debug(s"Updating entity: ${versionedEntity.entity.id}")
         dao.update(versionedEntity, false)
     })
     val futures = for ((id, future) <- writes) yield {
