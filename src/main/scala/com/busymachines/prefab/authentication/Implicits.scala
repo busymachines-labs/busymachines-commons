@@ -6,6 +6,7 @@ import com.busymachines.prefab.authentication.model._
 package object implicits {
   implicit val authenticationJsonFormat = format3(Authentication)
   implicit val passwordCredentialsJsonFormat = format3(PasswordCredentials)
-  implicit val credentialJsonFormat = format2(Credentials)
+  implicit val passwordHintJsonFormat = format2(PasswordHint)
+  implicit val credentialJsonFormat = format3(Credentials)
 
 }
