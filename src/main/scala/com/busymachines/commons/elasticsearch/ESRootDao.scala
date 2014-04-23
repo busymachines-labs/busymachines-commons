@@ -36,10 +36,11 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
-import spray.json._
 import scala.Some
 import com.busymachines.commons.dao.TermFacetValue
 import com.busymachines.commons.dao.HistogramFacetValue
+import spray.json.JsonFormat
+import com.busymachines.commons.util.JsonParser
 
 object ESRootDao {
   implicit def toResults[T <: HasId[T]](f: Future[SearchResult[T]])(implicit ec: ExecutionContext) = f.map(_.result)
@@ -118,7 +119,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
         error(s"No source available for ${t.name} with id $id")
         None
       case response =>
-        val json = response.getSourceAsString.asJson
+        val json = JsonParser.parse(response.getSourceAsString)
         Some(Versioned(mapping.jsonFormat.read(json), response.getVersion))
     }
   }
@@ -198,7 +199,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 //        debug(s"Search ${index.name}/${t.name}: $request")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
-            val json = hit.sourceAsString.asJson
+            val json = JsonParser.parse(hit.sourceAsString)
             Versioned(mapping.jsonFormat.read(json), hit.version)
           }, Some(result.getHits.getTotalHits),
             if (result.getFacets != null) convertESFacetResponse(facets, result) else Map.empty)
@@ -363,7 +364,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   protected def doSearch(filter: FilterBuilder): Future[List[Versioned[T]]] = {
     val request = client.javaClient.prepareSearch(index.name).addSort("_id", SortOrder.ASC).setTypes(t.name).setPostFilter(filter).setVersion(true).request
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
-      val json = hit.sourceAsString.asJson
+      val json = JsonParser.parse(hit.sourceAsString)
       Versioned(mapping.jsonFormat.read(json), hit.getVersion)
     })
   }
