@@ -42,6 +42,7 @@ class JsonParser {
     if (c == '{') {
       next()
       val ab = new ListBuffer[(String, JsValue)]
+      whitespace()
       while (c != '}') {
         whitespace()
         string() match {
@@ -71,6 +72,7 @@ class JsonParser {
     if (c == '[') {
       next()
       val lb = new ListBuffer[JsValue]
+      whitespace()
       while (c != ']') {
         whitespace()
         lb += jsonValue()
