@@ -8,7 +8,6 @@ import scala.language.postfixOps
 import org.parboiled.common.FileUtils
 import com.busymachines.commons.implicits.richByteArray
 import com.busymachines.commons.implicits.richFunction
-import com.busymachines.commons.implicits.richString
 import akka.actor.ActorRefFactory
 import spray.http.CacheDirectives.`max-age`
 import spray.http.CacheDirectives.`public`
@@ -21,21 +20,26 @@ import spray.http.MediaTypes
 import spray.httpx.marshalling.BasicMarshallers
 import spray.routing.Directive.pimpApply
 import spray.routing.Route
-import spray.routing.directives.CacheSpecMagnet.apply
-import spray.routing.directives.CachingDirectives.alwaysCache
-import spray.routing.directives.CachingDirectives.routeCache
 import spray.routing.directives.ContentTypeResolver
 import spray.util.actorSystem
 import com.busymachines.commons.CommonConfig
 import com.busymachines.commons.ProfilingUtils.time
-import com.busymachines.commons.cache.AsyncCache
 import scala.collection.concurrent.TrieMap
 
+/**
+ * Class that serves ui content. For url's with an extension, the corresponding resource is read from the
+ * resourceRoot, 'public' by default, and returned. All other urls return the root document, index.html' by default.
+ *
+ * Resources are cached, both on the server and on the client by means of the Cache-Control header.
+ * @param resourceRoot
+ * @param rootDocument
+ * @param actorRefFactory
+ */
 class UiService(resourceRoot: String = "public", rootDocument: String = "index.html")(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService {
 
   private val root = resourceRoot.split("\\.").filter(_.nonEmpty).mkString("/")
-  private val pattern = """(['\"])([/a-zA-Z_0-9 \-\.]*)(\?.*crc)(.*)(['\"])""".r
-  private val cacheTime: Duration = 7 days
+  private val pattern = """(['\"])([/a-zA-Z_0-9 \-\.]*)(\?.*crc=)\?(.*)(['\"])""".r
+  private val cacheTime: Duration = 7.days
   private val cacheTimeSecs = cacheTime.toSeconds
   private val cache = TrieMap[(String, Option[String]), Route]()
   
@@ -51,24 +55,24 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
             case ext => (path, ext, false)
           }
           val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
-          val shouldProcess = (isRoot || crc.isDefined) && !mediaType.binary 
+          val shouldProcess = (isRoot || crc.isDefined) && !mediaType.binary
           if (!isRoot) {
             cache.getOrElseUpdate((path, crc), {
-              debug(s"Caching resource : ${doc}")
+              debug(s"Caching resource : $doc")
               respondWithHeader(`Cache-Control`(`public`, `max-age`(cacheTimeSecs))) {
-                getFromResource(doc, ext, mediaType, crc, shouldProcess)
+                getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
               }
             })
           } else {
             respondWithHeader(`Cache-Control`(`no-cache`)) {
-              getFromResource(doc, ext, mediaType, crc, shouldProcess)
+              getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
             }
           }
         }
       }
     }
 
-  def getFromResource(path: String, ext: String, mediaType: MediaType, crc: Option[String], shouldProcess: Boolean)(implicit refFactory: ActorRefFactory, resolver: ContentTypeResolver): Route = {
+  def getFromResource(path: String, ext: String, mediaType: MediaType, crc: Option[String], shouldProcess: Boolean, isRoot: Boolean)(implicit refFactory: ActorRefFactory, resolver: ContentTypeResolver): Route = {
     
     time("Fetching resource " + path) {
     val contentType = if (mediaType.binary) ContentType(mediaType) else ContentType(mediaType, HttpCharsets.`UTF-8`)
@@ -83,7 +87,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
           case Some(bytes) =>
             complete {
               // Should process?
-              if (shouldProcess) process(path, bytes, contentType, classLoader)
+              if (shouldProcess) process(path, bytes, contentType, classLoader, isRoot)
               else bytes
             }
           case None =>
@@ -96,7 +100,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   }
 
   lazy val resourceSourceRoots: List[File] = {
-    val dirs = new File(".") :: new File(".").listFiles().filter(_.isDirectory()).toList
+    val dirs = new File(".") :: new File(".").listFiles().filter(_.isDirectory).toList
     dirs.map(new File(_, "src/main/resources/" + root)).filter(_.exists)
   }
 
@@ -115,7 +119,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
     if (path.startsWith("/")) {
       path
     } else {
-      var index = base.lastIndexOf('/');
+      var index = base.lastIndexOf('/')
       while (path.startsWith("../"))
         index = base.lastIndexOf('/', index)
       if (index == -1) path
@@ -123,22 +127,40 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
     }
   }
 
-  def process(basePath: String, bytes: Array[Byte], contentType: ContentType, classLoader: ClassLoader): Array[Byte] = {
+  def stripMin(path: String): String = {
+    val index = path.indexOf(".min?.")
+    if (index >= 0)
+      if (CommonConfig.devmode)
+        path.substring(0, index) + path.substring(index + 5)
+    else
+        path.substring(0, index + 4) + path.substring(index + 5)
+    else path
+  }
+
+  def process(basePath: String, bytes: Array[Byte], contentType: ContentType, classLoader: ClassLoader, isRoot: Boolean): Array[Byte] = {
     val out = new StringBuilder
-    for (line <- Source.fromBytes(bytes, contentType.charset.toString).getLines) {
+    val shouldAddDebugHtml = CommonConfig.devmode && isRoot
+    for (l <- Source.fromBytes(bytes, contentType.charset.toString).getLines) {
+      val line = if (shouldAddDebugHtml) {
+        val i0 = l.indexOf("</body>")
+        val i = if (i0 >= 0) i0 else l.indexOf("</html>")
+        if (i >= 0) {
+          l.substring(0, i) + "<div style='position: absolute; right: 10px; bottom: 10px; border: 1px solid red; color: red; padding: 4px'>DEVMODE</div>" + l.substring(i)
+        } else l
+      } else l
       pattern.findFirstMatchIn(line) match {
         case Some(m) =>
-          val path = m.group(2)
+          val path = stripMin(m.group(2))
           loadResource(basePath, path, classLoader) match {
             case None =>
               debug("Couldn't load resource " + basePath + "/" + path)
-              out.append(m.before).append(m.group(1)).append(m.group(2)).append(m.group(3)).append("=!!!").append(m.group(4)).append(m.group(5)).append(m.after).append("\n")
+              out.append(m.before).append(m.group(1)).append(m.group(2)).append(m.group(3)).append("=!").append(m.group(4)).append(m.group(5)).append(m.after).append("\n")
             case Some(bytes) =>
               val crc = bytes.crc32
-              out.append(m.before).append(m.group(1)).append(m.group(2)).append(m.group(3)).append("=").append(crc).append(m.group(4)).append(m.group(5)).append(m.after).append("\n")
+              out.append(m.before).append(m.group(1)).append(path).append(m.group(3)).append(crc).append(m.group(4)).append(m.group(5)).append(m.after).append("\n")
           }
         case None =>
-          out.append(line).append('\n')
+          out.append(stripMin(line)).append('\n')
 
       }
     }

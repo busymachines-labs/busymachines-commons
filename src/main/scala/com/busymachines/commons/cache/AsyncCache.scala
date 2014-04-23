@@ -38,10 +38,10 @@ class AsyncCache[K, V](val cache: SprayCache[V]) {
   def get(key: K): Option[Future[V]] =
     cache.get(key)
 
-  def getOrElseUpdate(key: K, future: => Future[V])(implicit executor: ExecutionContext) =
+  def getOrElseUpdate(key: K, future: => Future[V])(implicit executor: ExecutionContext): Future[V] =
     cache(key)(future)
 
-  def setOrUpdate(key: K, future: => Future[V])(implicit executor: ExecutionContext):Future[V] =
+  def setOrUpdate(key: K, future: => Future[V])(implicit executor: ExecutionContext): Future[V] =
     (cache.remove(key) match {
       case Some(f) => f
       case None => Future.successful()

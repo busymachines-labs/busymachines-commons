@@ -62,16 +62,50 @@ class JsonParserSpec extends Specification {
 
 object JsonParserPerformanceTest extends App {
   val largeJsonSource = FileUtils.readAllCharsFromResource("test.json")
+
+  val smallJsonSource =
+    """
+      |{
+      |      "tags": [
+      |        "c#",
+      |        "asp.net",
+      |        "profiling"
+      |      ],
+      |      "answer_count": 1,
+      |      "favorite_count": 0,
+      |      "question_timeline_url": "/questions/5667978/timeline",
+      |      "question_comments_url": "/questions/5667978/comments",
+      |      "question_answers_url": "/questions/5667978/answers",
+      |      "question_id": 5667978,
+      |      "owner": {
+      |        "user_id": 299408,
+      |        "user_type": "registered",
+      |        "display_name": "Joshua Enfield",
+      |        "reputation": 766,
+      |        "email_hash": "a9d1f9135b43b217b9325eed54745460"
+      |      },
+      |      "creation_date": 1302806349,
+      |      "last_edit_date": 1302806677,
+      |      "last_activity_date": 1302810904,
+      |      "up_vote_count": 2,
+      |      "down_vote_count": 0,
+      |      "view_count": 15,
+      |      "score": 2,
+      |      "community_owned": false,
+      |      "title": "Code Profiling ASP.NET MVC2 applications"
+      |    }
+    """.stripMargin
+
   // warm up
   print("Warming up")
-  for (i <- 0 to 500) {
+  for (i <- 1 until 120) {
     spray.json.JsonParser(largeJsonSource)
     JsonParser.parse(largeJsonSource)
-    if (i % 100 == 0) print(".")
+    if (i % 20 == 0) print(".")
   }
   println()
-  println("Running tests")
-  val count = 500
+  println("Running tests with large document")
+  var count = 200
   var start = System.currentTimeMillis
   for (i <- 0 to count) {
     spray.json.JsonParser(largeJsonSource)
@@ -79,8 +113,8 @@ object JsonParserPerformanceTest extends App {
   var end = System.currentTimeMillis - start
   val time1 = end/count.toDouble
   println(s"Parse time spray parser: $time1 msec")
-  val parser = new JsonParser
   start = System.currentTimeMillis
+  val parser = new JsonParser
   for (i <- 0 to count) {
     parser.parse(largeJsonSource)
   }
@@ -88,5 +122,24 @@ object JsonParserPerformanceTest extends App {
   val time2 = end/count.toDouble
   println(s"Parse time new parser: $time2 msec")
   println(s"Speedup: ${(time1/time2).toInt}x")
+
+  println("Running tests with small document")
+
+  count = 20000
+  start = System.currentTimeMillis
+  for (i <- 0 to count) {
+    spray.json.JsonParser(smallJsonSource)
+  }
+  end = System.currentTimeMillis - start
+  val time3 = end/count.toDouble
+  println(s"Parse time spray parser: $time3 msec")
+  start = System.currentTimeMillis
+  for (i <- 0 to count) {
+    parser.parse(smallJsonSource)
+  }
+  end = System.currentTimeMillis - start
+  val time4 = end/count.toDouble
+  println(s"Parse time new parser: $time4 msec")
+  println(s"Speedup: ${(time3/time4).toInt}x")
 
 }

@@ -1,5 +1,6 @@
 package com.busymachines.commons.util
 
+import java.lang.StringBuilder
 import scala.collection.mutable.ListBuffer
 import spray.json._
 
@@ -42,6 +43,7 @@ class JsonParser {
     if (c == '{') {
       next()
       val ab = new ListBuffer[(String, JsValue)]
+      whitespace()
       while (c != '}') {
         whitespace()
         string() match {
@@ -71,6 +73,7 @@ class JsonParser {
     if (c == '[') {
       next()
       val lb = new ListBuffer[JsValue]
+      whitespace()
       while (c != ']') {
         whitespace()
         lb += jsonValue()
@@ -118,10 +121,11 @@ class JsonParser {
   private def string(): Option[String] = {
     if (c == '"') {
       next()
-      sb.clear()
+      sb.setLength(0)
       while (c != 0 && c != '"') {
         if (c == '\\') {
-          next() match {
+          next()
+          c match {
             case '"' => sb.append('"'); next()
             case '\\' => sb.append('\\'); next()
             case '/' => sb.append('/'); next()
@@ -148,13 +152,13 @@ class JsonParser {
       if (c != '"')
         exception("expected '\"'")
       next()
-      Some(sb.toString())
+      Some(sb.toString)
     }
     else None
   }
 
   private def jsonNumber(): Option[JsNumber] = {
-    sb.clear()
+    sb.setLength(0)
     if (c == '-') {
       sb.append(c)
       next()
@@ -183,10 +187,11 @@ class JsonParser {
         next()
       }
     }
-    if (sb.nonEmpty) Some(JsNumber(sb.toString()))
+    if (sb.length() != 0) Some(JsNumber(sb.toString))
     else None
   }
 
+  @inline
   private def whitespace() =
     while (Character.isWhitespace(c))
       next()
@@ -208,14 +213,14 @@ class JsonParser {
     else exception("Hex digit expected")
   }
 
-  private def next() = {
+  @inline
+  private def next() {
     i += 1
     if (i < s.length) {
       c = s(i)
     } else {
       c = 0
     }
-    c
   }
 
   def exception(message: String) =

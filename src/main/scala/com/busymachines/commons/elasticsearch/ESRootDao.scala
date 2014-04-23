@@ -185,9 +185,9 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
         // Sorting    
         sort match {
-          case esSearchOrder:ESSearchSort => 
+          case esSearchOrder:ESSearchSort =>
             request = request.addSort(esSearchOrder.field, esSearchOrder.order)
-        }    
+        }
         
         // Faceting
         val requestFacets = toESFacets(facets)

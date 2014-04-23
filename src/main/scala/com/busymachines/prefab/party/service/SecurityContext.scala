@@ -9,7 +9,7 @@ import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.domain.Permission
 
 case class SecurityContext(
-  tenantId: Id[Tenant],
+  tenantId: Option[Id[Tenant]],
   partyId: Id[Party],
   userId: Id[User],
   party: String,

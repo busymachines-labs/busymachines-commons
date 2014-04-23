@@ -40,7 +40,7 @@ object CommonConfig extends CommonConfig("") with Logging {
   def toStringSeq: Seq[String] =
   toStringSeq2.map(x => x._1 + "=" + x._2).sorted.distinct
 
-  def toStringSeq2: Seq[(String, String)] =
+  private def toStringSeq2: Seq[(String, String)] =
     CommonConfigFactory.usedPaths.keys.filter(_.nonEmpty).filter(CommonConfigFactory.config.hasPath).toSeq.flatMap { path =>
         CommonConfigFactory.config.getValue(path) match {
           case config: ConfigObject => toStringSeq4(config, path)
@@ -48,22 +48,7 @@ object CommonConfig extends CommonConfig("") with Logging {
         }
     }
 
-//  def toStringSeq3(config: Config, path: String): Seq[(String, String)] =
-//    if (path == "")
-//      CommonConfigFactory.usedPaths.keys.filter(_.nonEmpty).filter(config.hasPath).toSeq.flatMap { path =>
-//        config.getValue(path) match {
-////          case config: Config => toStringSeq3(config, path)
-//          case config: ConfigObject => toStringSeq3(config.toConfig, path)
-//          case other => Seq.empty
-//        }
-//      }
-//    else
-//    config.entrySet.toSeq.flatMap { entry =>
-//      entry.getValue match {
-//      }
-//    }
-
-  def toStringSeq4(value: ConfigValue, path: String) : Seq[(String, String)] =
+  private def toStringSeq4(value: ConfigValue, path: String) : Seq[(String, String)] =
     value match {
       case config: ConfigObject => config.entrySet.toSeq.flatMap { e =>
         toStringSeq4(e.getValue, path + "." + e.getKey.replace("\"", ""))
@@ -74,6 +59,10 @@ object CommonConfig extends CommonConfig("") with Logging {
 }
 
 class RichCommonConfigType[A <: CommonConfig](f: String => A) {
+
+  /**
+   * Create a sequence of top-level config objects.
+   */
   def seq(baseName : String): Seq[A] = {
     val result = ArrayBuffer[A]()
     var foundMore = true
@@ -114,99 +103,3 @@ class CommonConfig(baseName: String) extends RichConfig(CommonConfigFactory.conf
     result.toSeq
   }
 }
-
-class RichCommonConfig[A, T <: String => CommonConfig](config: T) {
-}
-
-class CommonConfig2(config : Config) extends RichConfig(new ConfigDelegate(config)) {
-  def this(baseName : String) = this(CommonConfigFactory.config(baseName).theConfig)
-}
-
-// Not used now, but it was too much work to throw away...
-class ConfigDelegate(delegate: Config) extends Config {
-
-  def p(path: String) = {
-    path
-  }
-
-  def root() = delegate.root()
-
-  def origin() = delegate.origin()
-
-  def withFallback(other: ConfigMergeable) = delegate.withFallback(other)
-
-  def resolve() = delegate.resolve()
-
-  def resolve(options: ConfigResolveOptions) = delegate.resolve(options)
-
-  def checkValid(reference: Config, restrictToPaths: String*) = delegate.checkValid(reference, restrictToPaths:_*)
-
-  def hasPath(path: String) = delegate.hasPath(p(path))
-
-  def isEmpty = delegate.isEmpty
-
-  def entrySet(): Set[Entry[String, ConfigValue]] = delegate.entrySet()
-
-  def getBoolean(path: String) = delegate.getBoolean(p(path))
-
-  def getNumber(path: String) = delegate.getNumber(p(path))
-
-  def getInt(path: String) = delegate.getInt(p(path))
-
-  def getLong(path: String) = delegate.getLong(p(path))
-
-  def getDouble(path: String) = delegate.getDouble(p(path))
-
-  def getString(path: String) = delegate.getString(p(path))
-
-  def getObject(path: String) = delegate.getObject(p(path))
-
-  def getConfig(path: String) = new ConfigDelegate(delegate.getConfig(p(path)))
-
-  def getAnyRef(path: String) = delegate.getAnyRef(p(path))
-
-  def getValue(path: String) = delegate.getValue(p(path))
-
-  def getBytes(path: String) = delegate.getBytes(p(path))
-
-  def getMilliseconds(path: String) = delegate.getMilliseconds(p(path))
-
-  def getNanoseconds(path: String) = delegate.getNanoseconds(p(path))
-
-  def getList(path: String) = delegate.getList(p(path))
-
-  def getBooleanList(path: String): List[Boolean] = delegate.getBooleanList(p(path))
-
-  def getNumberList(path: String): List[Number] = delegate.getNumberList(p(path))
-
-  def getIntList(path: String): List[Integer] = delegate.getIntList(p(path))
-
-  def getLongList(path: String): List[Long] = delegate.getLongList(p(path))
-
-  def getDoubleList(path: String): List[Double] = delegate.getDoubleList(p(path))
-
-  def getStringList(path: String): List[String] = delegate.getStringList(p(path))
-
-  def getObjectList(path: String): List[_ <: ConfigObject] = delegate.getObjectList(p(path))
-
-  def getConfigList(path: String): List[_ <: Config] = delegate.getConfigList(p(path))
-
-  def getAnyRefList(path: String) = delegate.getAnyRefList(p(path))
-
-  def getBytesList(path: String): List[Long] = delegate.getBytesList(p(path))
-
-  def getMillisecondsList(path: String): List[Long] = delegate.getMillisecondsList(p(path))
-
-  def getNanosecondsList(path: String): List[Long] = delegate.getNanosecondsList(p(path))
-
-  def withOnlyPath(path: String) = delegate.withOnlyPath(p(path))
-
-  def withoutPath(path: String) = delegate.withoutPath(p(path))
-
-  def atPath(path: String) = delegate.atPath(p(path))
-
-  def atKey(key: String) = delegate.atKey(p(key))
-
-  def withValue(path: String, value: ConfigValue) = delegate.withValue(p(path), value)
-}
-

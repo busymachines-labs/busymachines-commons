@@ -36,7 +36,7 @@ class PartyDaoTests extends FlatSpec with Logging {
       addresses = Address(street = Some("Street 1")) :: Nil)
 
     val party1 = Party(
-      tenant = tenantId,
+      tenant = Some(tenantId),
       id = Id.static[Party]("party1"),
       users = user1 :: Nil)
 

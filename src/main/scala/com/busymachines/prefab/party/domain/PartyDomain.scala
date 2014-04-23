@@ -13,11 +13,11 @@ case class Tenant(
 
 case class Party (
   
-  id : Id[Party],
+  id : Id[Party] = Id.generate,
   
-  tenant : Id[Tenant],
+  tenant : Option[Id[Tenant]] = None,
 
-  `type` : String="",
+  `type` : String = "",
   
   /**
    * Owner party manages this party.
@@ -117,12 +117,12 @@ case class User (
 }
 
 case class PartyLocation(
-                          id: Id[PartyLocation],
-                          description: String,
-                          address: Address,
-                          contactPerson: Option[Id[User]] = None,
-                          mainLocation: Boolean
-                          )extends HasId[PartyLocation]
+  id: Id[PartyLocation],
+  description: String,
+  address: Address,
+  contactPerson: Option[Id[User]] = None,
+  mainLocation: Boolean
+  )extends HasId[PartyLocation]
 
 case class Address (
   kind : Option[AddressKind] = None,

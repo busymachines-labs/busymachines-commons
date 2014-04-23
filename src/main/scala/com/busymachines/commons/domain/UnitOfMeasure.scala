@@ -156,7 +156,7 @@ case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
         (ts.head.copy(prefix = prefix) :: ts.tail).map(t2 => t2.copy(exponent = t2.exponent * t.exponent))
     }.getOrElse(List(t)))).normalized
   lazy val baseUnitConversionFactor: Double = 
-    terms.flatMap(t => baseUnitMappings.get(t.unit.symbol).map(_._2)).foldLeft(1d)(_ * _)
+    terms.flatMap(t => baseUnitMappings.get(t.unit.symbol).map(_._2)).foldLeft(1.0)(_ * _)
   lazy val symbol = 
     UnitOfMeasurePrinter.printSymbol(this)
   lazy val withoutPrefix: UnitOfMeasure =
