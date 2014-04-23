@@ -67,14 +67,14 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
         throw new IdAlreadyExistsException(entity.id.toString, typeName)
       case None =>
 	      parentDao.retrieve(id) flatMap {
-	    case Some(Versioned(parent, version)) =>
-	      val modifiedParent = createEntity(parent, entity)
-	      parentDao.update(Versioned(modifiedParent, version), refreshAfterMutation) map {
-	        case Versioned(parent, version) => Versioned(entity, version)
-	      }
-	    case None =>
-	      throw new IdNotFoundException(id.toString, parentDao.typeName)   
-	    }
+    	    case Some(Versioned(parent, version)) =>
+    	      val modifiedParent = createEntity(parent, entity)
+    	      parentDao.update(Versioned(modifiedParent, version), refreshAfterMutation) map {
+    	        case Versioned(parent, version) => Versioned(entity, version)
+    	      }
+    	    case None =>
+    	      throw new IdNotFoundException(id.toString, parentDao.typeName)   
+  	    }
 	  }
   }
   
@@ -122,12 +122,12 @@ abstract class ESNestedDao[P <: HasId[P], T <: HasId[T] : JsonFormat](typeName :
   def update(entity: Versioned[T], refreshAfterMutation : Boolean = true): Future[Versioned[T]] = {
     retrieveParent(entity.entity.id) flatMap {
       case None => throw new IdNotFoundException(entity.entity.id.toString, typeName)
-      case Some(Versioned(parent, _)) =>
+      case Some(Versioned(parent, v)) =>
         val found = new Found
         val modifiedParent = modifyEntity(parent, entity.entity.id, found, _ => entity.entity)
         found.entity match {
           case Some(modifiedEntity) =>
-              	parentDao.update(Versioned(modifiedParent, entity.version - 6), refreshAfterMutation).map(_.copy(entity = modifiedEntity))
+           	parentDao.update(Versioned(modifiedParent, entity.version), refreshAfterMutation).map(_.copy(entity = modifiedEntity))
           case None =>
           	throw new IdNotFoundException(entity.entity.id.toString, typeName)
         }

@@ -119,8 +119,10 @@ object UnitOfMeasure extends UnitOfMeasureImpl {
 
   // Some commonly used units:
   val KiloWattHour = (Kilo::Watt) * Hour
+  val MicroWattHour = (Micro::Watt) * Hour
   val SquareMeter = Metre^2
   val CubicMeter = Metre^3
+  val CubicMilliMeter = (Milli::Metre)^3
 }
 
 case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
@@ -128,6 +130,7 @@ case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
   import UnitOfMeasureImpl._
 
   def *(term: Term) = copy(terms :+ term)
+  def /(term: Term) = copy(terms :+ term.copy(exponent = term.exponent * -1))
   
   /**
    * A normalized unit contains each unit exacly once, and where the terms have a fixed ordering.
@@ -148,9 +151,9 @@ case class UnitOfMeasure (terms: List[UnitOfMeasure.Term]) {
   lazy val baseUnitNormalized: UnitOfMeasure =
     copy(terms.flatMap(t => baseUnitMappings.get(t.unit.symbol).map { 
       case (ts, baseUnitFactor) =>
-        val factor = t.prefix.exponent + ts.head.prefix.exponent
-        val prefix = prefixes.find(_.exponent == factor).getOrElse(throw new Exception(s"Couldn't find prefix for factor 10^$factor"))
-        ts.head.copy(prefix = prefix) :: ts.tail
+        val pexp = t.prefix.exponent + ts.head.prefix.exponent
+        val prefix = prefixes.find(_.exponent == pexp).getOrElse(throw new Exception(s"Couldn't find prefix for factor 10^$pexp"))
+        (ts.head.copy(prefix = prefix) :: ts.tail).map(t2 => t2.copy(exponent = t2.exponent * t.exponent))
     }.getOrElse(List(t)))).normalized
   lazy val baseUnitConversionFactor: Double = 
     terms.flatMap(t => baseUnitMappings.get(t.unit.symbol).map(_._2)).foldLeft(1d)(_ * _)
@@ -174,11 +177,22 @@ class UnitOfMeasureImpl {
   import UnitOfMeasureImpl._
   import UnitOfMeasure._
 
+//  protected def converterFactor(from: UnitOfMeasure, to: UnitOfMeasure) =
+//    from.terms.zip(to.terms).
+//      map(t => baseUnitMappings.get(t._1.unit.symbol) match { 
+//        case Some((ts, baseUnitFactor)) =>
+//          val factor = t._1.prefix.factor * t._2.prefix.factor
+//          val prefix = prefixes.find(_.exponent == factor).getOrElse(throw new Exception(s"Couldn't find prefix for factor 10^$factor"))
+//          (ts.head.copy(prefix = prefix) :: ts.tail).map(t2 => t2.copy(exponent = t2.exponent * t.exponent))
+//        case None =>
+//        
+//    }.getOrElse(List(t)))).normalized
+    
   protected def converterFactor(from: UnitOfMeasure, to: UnitOfMeasure) = 
     from.baseUnitNormalized.terms.zip(to.baseUnitNormalized.terms)
-      .map(t => t._1.prefix.factor / t._2.prefix.factor)
-      .foldLeft(from.baseUnitConversionFactor / to.baseUnitConversionFactor)(_ * _)
-        
+      .map(t => Math.pow(t._1.prefix.factor * from.baseUnitConversionFactor / t._2.prefix.factor / to.baseUnitConversionFactor, t._1.exponent))
+      .foldLeft(1.0)(_ * _)
+      
   protected def prefix(name: String, symbol: String, factor: Int) = {
     val prefix = Prefix(name, symbol, factor)
     prefixes += prefix
@@ -204,7 +218,7 @@ object UnitOfMeasurePrinter {
   import UnitOfMeasureImpl._
   def printSymbol(unit: UnitOfMeasure, separator: String = " ", exponentSign: String = "^") = {
     val nrOfNeg = unit.terms.count(_.exponent < 0)
-    val shouldSlash = nrOfNeg == 1 && unit.terms.head.exponent >= 0
+    val shouldSlash = nrOfNeg == 1 && unit.terms.head.exponent >= 0 && false // TODO
     var prev: String = ""
     unit.terms.map { term =>
       val prefix = term.prefix.map(_.symbol).getOrElse("")

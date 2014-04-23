@@ -15,6 +15,7 @@ abstract class AbstractEnum[V <: EnumValue[V]] { thisEnum =>
   def values: Set[Value] = _values.toSet
   def apply(id: Int) =  _values.find(_.id == id).getOrElse(throw new Exception(s"Enumeration id $id not defined for enumeration ${getClass.getSimpleName}"))
   def withName(s: String) = _values.find(_.name == s).getOrElse(throw new Exception(s"Enumeration value $s not defined for enumeration ${getClass.getSimpleName}"))
+  def withNameOrElse(s: String, v: V) = _values.find(_.name == s).getOrElse(v)
 
   protected def nextId: Int = { 
     val id = _nextId; 
@@ -30,6 +31,7 @@ abstract class AbstractEnum[V <: EnumValue[V]] { thisEnum =>
       case _ => false
     }
   }
+  protected abstract class ValWithId(name: String, val id: Int = nextId) extends Val(name, id) { this: Value => }
 }
 
 trait DefaultEnumValue extends EnumValue[DefaultEnumValue]

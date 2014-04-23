@@ -57,10 +57,11 @@ class ItemDaoTests extends FlatSpec with Logging {
   val geoPoint = GeoPoint(10, 10)
 
   "ItemDao" should "create & retrieve" in {
-    val item = Item(name = "Sample item", validUntil = now, location = geoPoint, properties = Property(name = "Property1") :: Property(name = "Property2") :: Nil)
+    val item = Item(name = "Sample item", `type` = Some(ItemType.Bicycle), validUntil = now, location = geoPoint, properties = Property(name = "Property1") :: Property(name = "Property2") :: Nil)
     println(ItemMapping.jsonFormat.write(item))
     dao.create(item, true).await
     assert(dao.retrieve(item.id).await.get.id === item.id)
+    assert(dao.retrieve(item.id).await.get.`type` === Some(ItemType.Bicycle))
     assert(dao.retrieve(item.id).await.get.validUntil === now)
     assert(dao.retrieve(item.id).await.get.location === geoPoint)
   }

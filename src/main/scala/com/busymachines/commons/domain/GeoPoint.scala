@@ -1,8 +1,9 @@
 package com.busymachines.commons.domain
 
 case class GeoPoint(
-  lat: Double,
-  lon: Double) {
+                     lat: Double,
+                     lon: Double,
+                     alt: Option[Double] = None) {
   override def toString = 
     lat.toString + "," + lon.toString
 }

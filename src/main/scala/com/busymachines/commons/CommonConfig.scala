@@ -4,7 +4,8 @@ import com.typesafe.config._
 import java.net.URL
 import com.busymachines.commons.implicits._
 import scala.math.Ordering.Implicits._
-import java.util
+import java.util.List
+import java.util.Set
 import java.lang.{Boolean, Double, Long}
 import java.util.Map.Entry
 import scala.collection.concurrent.TrieMap
@@ -144,7 +145,7 @@ class ConfigDelegate(delegate: Config) extends Config {
 
   def isEmpty = delegate.isEmpty
 
-  def entrySet(): util.Set[Entry[String, ConfigValue]] = delegate.entrySet()
+  def entrySet(): Set[Entry[String, ConfigValue]] = delegate.entrySet()
 
   def getBoolean(path: String) = delegate.getBoolean(p(path))
 
@@ -174,29 +175,29 @@ class ConfigDelegate(delegate: Config) extends Config {
 
   def getList(path: String) = delegate.getList(p(path))
 
-  def getBooleanList(path: String): util.List[Boolean] = delegate.getBooleanList(p(path))
+  def getBooleanList(path: String): List[Boolean] = delegate.getBooleanList(p(path))
 
-  def getNumberList(path: String): util.List[Number] = delegate.getNumberList(p(path))
+  def getNumberList(path: String): List[Number] = delegate.getNumberList(p(path))
 
-  def getIntList(path: String): util.List[Integer] = delegate.getIntList(p(path))
+  def getIntList(path: String): List[Integer] = delegate.getIntList(p(path))
 
-  def getLongList(path: String): util.List[Long] = delegate.getLongList(p(path))
+  def getLongList(path: String): List[Long] = delegate.getLongList(p(path))
 
-  def getDoubleList(path: String): util.List[Double] = delegate.getDoubleList(p(path))
+  def getDoubleList(path: String): List[Double] = delegate.getDoubleList(p(path))
 
-  def getStringList(path: String): util.List[String] = delegate.getStringList(p(path))
+  def getStringList(path: String): List[String] = delegate.getStringList(p(path))
 
-  def getObjectList(path: String): util.List[_ <: ConfigObject] = delegate.getObjectList(p(path))
+  def getObjectList(path: String): List[_ <: ConfigObject] = delegate.getObjectList(p(path))
 
-  def getConfigList(path: String): util.List[_ <: Config] = delegate.getConfigList(p(path))
+  def getConfigList(path: String): List[_ <: Config] = delegate.getConfigList(p(path))
 
   def getAnyRefList(path: String) = delegate.getAnyRefList(p(path))
 
-  def getBytesList(path: String): util.List[Long] = delegate.getBytesList(p(path))
+  def getBytesList(path: String): List[Long] = delegate.getBytesList(p(path))
 
-  def getMillisecondsList(path: String): util.List[Long] = delegate.getMillisecondsList(p(path))
+  def getMillisecondsList(path: String): List[Long] = delegate.getMillisecondsList(p(path))
 
-  def getNanosecondsList(path: String): util.List[Long] = delegate.getNanosecondsList(p(path))
+  def getNanosecondsList(path: String): List[Long] = delegate.getNanosecondsList(p(path))
 
   def withOnlyPath(path: String) = delegate.withOnlyPath(p(path))
 

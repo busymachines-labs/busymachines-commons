@@ -10,10 +10,20 @@ import scala.concurrent.duration.Duration
 import spray.caching.{Cache => SprayCache}
 import spray.caching.{Cache => SprayCache}
 import spray.caching.ValueMagnet.fromFuture
+import com.busymachines.commons.CommonConfig
+
+class AsyncCacheConfig(baseName: String) extends CommonConfig(baseName) {
+  val maxCapacity = int("maxCapacity") 
+  val initialCapacity = int("initialCapacity") 
+  val timeToLive = duration("timeToLive") 
+  val timeToIdle = duration("timeToIdle") 
+}
 
 object AsyncCache {
   def expiringLru[K, V](initialCapacity: Int = 16, maxCapacity: Long = Long.MaxValue, timeToLive: Duration = Duration.Inf, timeToIdle: Duration = Duration.Inf) =
     new AsyncCache[K, V](new ExpiringLruCache[V](maxCapacity, initialCapacity, timeToLive, timeToIdle))
+  def expiringLru[K, V](config: AsyncCacheConfig) =
+    new AsyncCache[K, V](new ExpiringLruCache[V](config.maxCapacity, config.initialCapacity, config.timeToLive, config.timeToIdle))
 }
 
 /**

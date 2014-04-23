@@ -124,7 +124,7 @@ trait CommonJsonFormats
     }
   }
 
-  implicit val geoPointFormat = format2(GeoPoint)
+  implicit val geoPointFormat = format3(GeoPoint)
 
   implicit val stringMapFormat = new JsonFormat[Map[String, String]] {
     def write(value: Map[String, String]) = JsObject(value.mapValues(JsString(_)).toList)

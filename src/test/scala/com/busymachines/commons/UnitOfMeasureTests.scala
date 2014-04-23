@@ -9,7 +9,7 @@ import org.scalatest.junit.JUnitRunner
 class UnitOfMeasureTests extends FlatSpec with Matchers {
 
   import UnitOfMeasure._
-  
+
   "symbols" should "be parsed correctly" in {
     assert(UnitOfMeasure("m/sm") == UnitOfMeasure(Metre, Second^-1, Metre))
     assert(UnitOfMeasure("m/s m") == UnitOfMeasure(Metre, Second^-1, Metre))
@@ -20,8 +20,9 @@ class UnitOfMeasureTests extends FlatSpec with Matchers {
   }
     
   "units" should "be normalized correctly" in {
-    assert(UnitOfMeasure("m/s m").normalized === UnitOfMeasure(Metre^2, Second^-1))
+    assert(UnitOfMeasure("m/s m").normalized === UnitOfMeasure("m2/s"))
     assert(UnitOfMeasure(Metre, Metre).normalized.symbol === "m2")
+    assert(UnitOfMeasure("Mg m2s-3s s").normalized.symbol === "Mg m2s-1")
   }
   
   it should "be normalized to baseUnits correctly" in {
@@ -49,9 +50,14 @@ class UnitOfMeasureTests extends FlatSpec with Matchers {
   
   "values" should "be converted correctly" in {
     assert(Watt.baseUnitNormalized.withoutPrefix === (Kilo::Watt).baseUnitNormalized.withoutPrefix)
+    converter(Hour, Minute)(1) should be (60d +- 1e-5)
+    converter(Hour, Second)(1) should be (3600d +- 1e-5)
+    // TODO fix this test
+//    converter(Hour * Hour, Second * Second)(1) should be (3600d * 3600d +- 1e-5)
     converter(Kilo::Watt, Watt)(200) should be (200000d +- 1e-5)
     converter(Watt, Kilo::Watt)(2000) should be (2d +- 1e-5)
     converter((Kilo::Watt) * Hour, Joule)(1) should be (3600000d +- 1e-5)
     converter(Joule, (Kilo::Watt) * Hour)(3600000) should be (1d +- 1e-5)
+    converter((Kilo::Watt) * Hour / Hour, Watt)(1) should be (1000d +- 1e-5)
   }
 }

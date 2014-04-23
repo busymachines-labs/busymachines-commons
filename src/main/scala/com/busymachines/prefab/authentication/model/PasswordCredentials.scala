@@ -7,7 +7,7 @@ import scala.util.Random
 
 object PasswordCredentials extends ((String, String, String) => PasswordCredentials) {
   def apply(login : String, password: String) = {
-    val salt = Random.nextString(12)
+    val salt = 0.to(12).map(_ => Random.nextPrintableChar()).mkString
     new PasswordCredentials(login, salt, (password + salt).md5.toHexString)
   }
 }

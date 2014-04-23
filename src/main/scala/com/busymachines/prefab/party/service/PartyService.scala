@@ -87,5 +87,5 @@ trait PartyService {
    * @param user - the user ID
    * @return - true/false
    */
-  def userHasEnoughRights(partyId: Id[Party], user: User): Future[Boolean]
+  def userHasEnoughRights(partyId: Id[Party], userId: Id[User]): Future[Boolean]
 }
