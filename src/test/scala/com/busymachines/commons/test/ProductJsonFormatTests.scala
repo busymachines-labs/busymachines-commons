@@ -60,11 +60,11 @@ class ProductJsonFormatTests extends FlatSpec {
     assert(Thing2("The Thing", Map.empty).toJson === """{"name":"The Thing", "map":{}}""".asJson)
   }
 
-  "Multiple extensions " should "be instantiated" in {
-    val json = """{"name":"Colored Thing","size" : 12, "color":"red"}""".asJson
-    val thing = json.convertTo[Thing3]
-    assert(thing.ext.map.size === 2)
-    assert(thing.color === "red")
-    assert(thing.size === 12)
-  }
+//  "Multiple extensions " should "be instantiated" in {
+//    val json = """{"name":"Colored Thing","size" : 12, "color":"red"}""".asJson
+//    val thing = json.convertTo[Thing3]
+//    assert(thing.ext.map.size === 2)
+//    assert(thing.color === "red")
+//    assert(thing.size === 12)
+//  }
 }
