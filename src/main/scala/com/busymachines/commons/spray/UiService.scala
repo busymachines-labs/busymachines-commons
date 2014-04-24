@@ -48,6 +48,16 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
 
   def route =
     get {
+      pathEnd {
+        parameters('crc ?) { crc =>
+          respondWithHeader(`Cache-Control`(`no-cache`)) {
+            val ext = extension(rootDocument)
+            val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
+            val shouldProcess = crc.isDefined && !mediaType.binary
+            getFromResource(rootDocument, ext, mediaType, crc, shouldProcess, true)
+          }
+        }
+      } ~
       path(Rest) { path =>
        parameters('crc ?) { crc =>
           val (doc, ext, isRoot) = extension(path) match {
