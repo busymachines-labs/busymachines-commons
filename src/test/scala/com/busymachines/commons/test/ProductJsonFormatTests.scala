@@ -41,23 +41,23 @@ class ProductJsonFormatTests extends FlatSpec {
   BigExtension.register()
 
   "Default field value" should "be used when missing in json" in {
-    val json = "{}".asJson
+    val json = "{}".parseJson
     val thing = json.convertTo[Thing1]
     assert(thing.name === "The Thing")
   }
 
   it should "be overridden by json value" in {
-    val json = """{ "name" : "New Name" }""".asJson
+    val json = """{ "name" : "New Name" }""".parseJson
     val thing = json.convertTo[Thing1]
     assert(thing.name === "New Name")
   }
 
   "Empty collections with default values" should "be excluded" in {
-    assert(Thing1().toJson === """{"name":"The Thing"}""".asJson)
+    assert(Thing1().toJson === """{"name":"The Thing"}""".parseJson)
   }
 
   "Empty collections without default values" should "not be excluded" in {
-    assert(Thing2("The Thing", Map.empty).toJson === """{"name":"The Thing", "map":{}}""".asJson)
+    assert(Thing2("The Thing", Map.empty).toJson === """{"name":"The Thing", "map":{}}""".parseJson)
   }
 
 //  "Multiple extensions " should "be instantiated" in {

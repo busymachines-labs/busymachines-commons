@@ -118,7 +118,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
         error(s"No source available for ${t.name} with id $id")
         None
       case response =>
-        val json = response.getSourceAsString.asJson
+        val json = response.getSourceAsString.parseJson
         Some(Versioned(mapping.jsonFormat.read(json), response.getVersion))
     }
   }
@@ -198,7 +198,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 //        debug(s"Search ${index.name}/${t.name}: $request")
         client.execute(request.request).map { result =>
           SearchResult(result.getHits.hits.toList.map { hit =>
-            val json = hit.sourceAsString.asJson
+            val json = hit.sourceAsString.parseJson
             Versioned(mapping.jsonFormat.read(json), hit.version)
           }, Some(result.getHits.getTotalHits),
             if (result.getFacets != null) convertESFacetResponse(facets, result) else Map.empty)
@@ -363,7 +363,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   protected def doSearch(filter: FilterBuilder): Future[List[Versioned[T]]] = {
     val request = client.javaClient.prepareSearch(index.name).addSort("_id", SortOrder.ASC).setTypes(t.name).setPostFilter(filter).setVersion(true).request
     client.execute(request).map(_.getHits.hits.toList.map { hit =>
-      val json = hit.sourceAsString.asJson
+      val json = hit.sourceAsString.parseJson
       Versioned(mapping.jsonFormat.read(json), hit.getVersion)
     })
   }
