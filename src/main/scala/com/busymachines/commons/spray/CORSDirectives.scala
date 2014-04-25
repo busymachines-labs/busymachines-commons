@@ -24,7 +24,7 @@ import spray.http.SomeOrigins
 
 trait CORSDirectives { this: HttpService =>
   def respondWithCORSHeaders(origin: AllowedOrigins) =
-   respondWithHeaders(
+   respondWithSingletonHeaders(
     HttpHeaders.`Access-Control-Allow-Methods`(HttpMethods.GET, HttpMethods.POST, HttpMethods.DELETE, HttpMethods.OPTIONS, HttpMethods.PUT),
     HttpHeaders.`Access-Control-Allow-Headers`("X-Requested-With, Cache-Control, Pragma, Origin, Authorization, Content-Type, Auth-Token"),
     HttpHeaders.`Access-Control-Expose-Headers`("Auth-Token"),
