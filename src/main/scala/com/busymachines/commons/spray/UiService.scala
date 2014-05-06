@@ -44,40 +44,37 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   private val cache = TrieMap[(String, Option[String]), Route]()
   
   if (CommonConfig.devmode)
-    info("Resources are read from source folders (devmode)")
+    info(s"Resources are read from source folders in $resourceRoot (devmode)")
 
   def route =
     get {
       pathEnd {
-        parameters('crc ?) { crc =>
-          respondWithHeader(`Cache-Control`(`no-cache`)) {
-            val ext = extension(rootDocument)
-            val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
-            val shouldProcess = crc.isDefined && !mediaType.binary
-            getFromResource(rootDocument, ext, mediaType, crc, shouldProcess, true)
-          }
-        }
+        processPath("")
       } ~
       path(Rest) { path =>
-       parameters('crc ?) { crc =>
-          val (doc, ext, isRoot) = extension(path) match {
-            case "" => (rootDocument, extension(rootDocument), true)
-            case ext => (path, ext, false)
+        processPath(path)
+      }
+    }
+  
+  private def processPath(path: String) = 
+    parameters('crc ?) { crc =>
+      val (doc, ext, isRoot) = extension(path) match {
+        case "" => (rootDocument, extension(rootDocument), true)
+        case ext => (path, ext, false)
+      }
+      val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
+      val shouldProcess = (isRoot || crc.isDefined) && !mediaType.binary
+      if (!isRoot) {
+        cache.getOrElseUpdate((path, crc), {
+          debug(s"Caching resource : $doc")
+          respondWithHeader(`Cache-Control`(`public`, `max-age`(cacheTimeSecs))) {
+            getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
           }
-          val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
-          val shouldProcess = (isRoot || crc.isDefined) && !mediaType.binary
-          if (!isRoot) {
-            cache.getOrElseUpdate((path, crc), {
-              debug(s"Caching resource : $doc")
-              respondWithHeader(`Cache-Control`(`public`, `max-age`(cacheTimeSecs))) {
-                getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
-              }
-            })
-          } else {
-            respondWithHeader(`Cache-Control`(`no-cache`)) {
-              getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
-            }
-          }
+        })
+      } else {
+        debug(s"Getting non-cachable resource : $doc")
+        respondWithHeader(`Cache-Control`(`no-cache`)) {
+          getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
         }
       }
     }

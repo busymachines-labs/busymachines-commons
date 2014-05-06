@@ -2,18 +2,16 @@ package com.busymachines.commons
 
 import java.net.URL
 import java.util.Locale
-
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.ExecutionContext
 import scala.xml.Elem
 import scala.xml.factory.XMLLoader
-
 import com.busymachines.commons.domain.CommonJsonFormats
 import com.typesafe.config.Config
-
 import scala.concurrent.Future
 import _root_.spray.json.JsValue
 import com.busymachines.commons.dao.Versioned
+import java.io.InputStream
 
 trait Implicits extends CommonJsonFormats with ExtensionsImplicits {
   implicit def toOption[A](a: A) = Option(a)
@@ -29,6 +27,7 @@ trait Implicits extends CommonJsonFormats with ExtensionsImplicits {
   implicit def richString(s : String) = new RichString(s)
   implicit def richByteArray(bytes : Array[Byte]) = new RichByteArray(bytes)
   implicit def richUrl(url : URL) = new RichUrl(url)
+  implicit def richInputStream(is : InputStream) = new RichInputStream(is)
   implicit def richXml(xml : XMLLoader[Elem]) = new RichXml(xml)
   implicit def richOption[A](option : Option[A]) = new RichOption(option)
   implicit def richFunction[A, B](f : A => Option[B]) = new RichFunction(f)
