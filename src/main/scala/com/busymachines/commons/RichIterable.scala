@@ -9,6 +9,18 @@ import scala.collection.generic.CanBuildFrom
  */
 class RichIterable[A, C[A] <: Iterable[A]](val collection: C[A]) extends AnyVal {
 
+  def nonEmptyOrElse(ss: C[A]): C[A] =
+    if (collection.nonEmpty) collection
+    else ss
+
+  def isEmptyOrElse(ss: C[A] => C[A]) =
+    if (collection.isEmpty) collection
+    else ss(collection)
+
+  def maxByOption[B](f : A => B)(implicit ordering: Ordering[B]): Option[A] = 
+    if (collection.isEmpty) None
+    else Some(collection.maxBy(f))
+  
   /**
    * Traverses the collection where each element is input an asynchronous function, resulting in a future
    * of a collection of results. Although the traverse is completely asynchronous, the traversal is done

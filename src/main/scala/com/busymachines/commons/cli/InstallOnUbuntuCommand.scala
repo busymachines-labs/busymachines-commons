@@ -1,9 +1,32 @@
 package com.busymachines.commons.cli
 
-object InstallCmdLineOption extends CmdLineOption1("install", Some('i'), "name", { name =>
-   
+import java.io.File
+import com.busymachines.commons.implicits._
 
-  val ubuntuInstallScript = """
+object InstallOnUbuntuCommand {
+  import InstallCommand._
+
+  def install(name: String, description: String, user: Option[String]) = {
+    println(s"Installing $name")
+    
+    val libDir = new File("/usr/local/share/" + name)
+    libDir.mkdirs()
+    val jars = copyJars(libDir)       
+    val startScript = new File("/usr/local/bin/", name + ".sh")
+    val initScript = new File("/etc/init.d/", name)
+    val initScriptContent = InstallOnUbuntuCommand.initScript(name, description, startScript.getCanonicalPath, user.getOrElse("root"))
+    initScriptContent.copyTo(initScript)
+
+  }
+
+  def initScript(name: String, description: String, command: String, user: String) = 
+    initScriptTemplate.
+      replaceAll("<NAME>", name).
+      replaceAll("<DESCRIPTION>", description).
+      replaceAll("<COMMAND>", command).
+      replaceAll("<USERNAME>", user)
+    
+  val initScriptTemplate = """
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          <NAME>
@@ -72,6 +95,5 @@ case "$1" in
     echo "Usage: $0 {start|stop|restart|uninstall}"
 esac
 """
-})
 
-
+}

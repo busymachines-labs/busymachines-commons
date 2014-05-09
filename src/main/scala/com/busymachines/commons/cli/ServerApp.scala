@@ -20,11 +20,13 @@ class CmdLineOption1(name: String, short: Option[Char], parameter: String, f : S
  */
 class ServerApp(appName: String) extends App {
 
+  protected def description: String = ""
+  
   case class Config(command: String = "", installName: Option[String] = None, installUser: Option[String] = None)
   
   val parser = new OptionParser[Config](appName) {
     head(appName, "1.0")
-    cmd("install") action { (_, c) => c.copy(command = "update") } text("Install the application") children(
+    cmd("install") action { (_, c) => c.copy(command = "install") } text("Install the application") children(
         arg[String]("<name>") required() action { (name, c) => c.copy(installName = Some(name)) },
         opt[String]('u', "user") action { (user, c) => c.copy(installUser = Some(user)) }
     )
@@ -33,6 +35,14 @@ class ServerApp(appName: String) extends App {
   val config = parser.parse(args, Config())
   
   println("config: " + config)
+  
+  config match {
+    case Some(config) =>
+      config.command match {
+        case "install" => InstallCommand.install(config.installName.get, description, config.installUser)
+      }
+    case None =>
+  }
   
   val installOption = new CmdLineOption1("install", Some('i'), "name", { name =>
     

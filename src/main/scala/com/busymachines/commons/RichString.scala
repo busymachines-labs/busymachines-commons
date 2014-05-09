@@ -8,6 +8,12 @@ import java.lang.{ Long => JLong, Double => JDouble }
 import com.busymachines.commons.spray.ProductFormat
 import scala.reflect.ClassTag
 import com.busymachines.commons.elasticsearch.ESField
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileWriter
+import java.io.OutputStreamWriter
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 class RichString(val s: String) extends AnyVal {
 
@@ -56,4 +62,11 @@ class RichString(val s: String) extends AnyVal {
 
   def toDoubleOrElse(alt: Double) =
     toDoubleOption.getOrElse(alt)
+    
+  def copyTo(file: File, charset: Charset = StandardCharsets.UTF_8) {
+    val writer = new OutputStreamWriter(new FileOutputStream(file), charset)
+    try writer.write(s)
+    finally writer.close()
+  }
+
 }
