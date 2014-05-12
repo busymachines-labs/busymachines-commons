@@ -218,7 +218,7 @@ object UnitOfMeasurePrinter {
   import UnitOfMeasureImpl._
   def printSymbol(unit: UnitOfMeasure, separator: String = " ", exponentSign: String = "^") = {
     val nrOfNeg = unit.terms.count(_.exponent < 0)
-    val shouldSlash = nrOfNeg == 1 && unit.terms.head.exponent >= 0 && false // TODO
+    val shouldSlash = nrOfNeg == 1 && unit.terms.last.exponent < 0 
     var prev: String = ""
     unit.terms.map { term =>
       val prefix = term.prefix.map(_.symbol).getOrElse("")

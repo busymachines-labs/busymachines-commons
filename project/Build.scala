@@ -21,7 +21,7 @@ object BusyMachinesCommonsBuild extends Build {
     publishMavenStyle := false,
     exportJars := true,      
     organization := "com.busymachines",
-    version := "0.0.1-SNAPSHOT",
+    version := "0.2-SNAPSHOT",
     scalaVersion := "2.10.3",
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:reflectiveCall", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,

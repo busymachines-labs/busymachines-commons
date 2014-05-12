@@ -40,6 +40,7 @@ class UnitOfMeasureTests extends FlatSpec with Matchers {
     assert(UnitOfMeasure(Metre, Metre).normalized.symbol === "m2")
     assert(UnitOfMeasure(Hour, Watt).symbol === "h W")
     assert(UnitOfMeasure(Hecto::Watt).symbol === "hW")
+    assert(UnitOfMeasure("m3/h").symbol === "m3/h")
   }
   
   it should "correctly test for compatibility" in {
