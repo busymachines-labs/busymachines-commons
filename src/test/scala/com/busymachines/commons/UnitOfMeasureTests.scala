@@ -22,7 +22,7 @@ class UnitOfMeasureTests extends FlatSpec with Matchers {
   "units" should "be normalized correctly" in {
     assert(UnitOfMeasure("m/s m").normalized === UnitOfMeasure("m2/s"))
     assert(UnitOfMeasure(Metre, Metre).normalized.symbol === "m2")
-    assert(UnitOfMeasure("Mg m2s-3s s").normalized.symbol === "Mg m2s-1")
+    assert(UnitOfMeasure("Mg m2s-3s s").normalized.symbol === "Mg m2/s")
   }
   
   it should "be normalized to baseUnits correctly" in {
