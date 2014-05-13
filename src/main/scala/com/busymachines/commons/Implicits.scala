@@ -12,6 +12,7 @@ import scala.concurrent.Future
 import _root_.spray.json.JsValue
 import com.busymachines.commons.dao.Versioned
 import java.io.InputStream
+import org.joda.time.ReadablePartial
 
 trait Implicits extends CommonJsonFormats with ExtensionsImplicits {
   implicit def toOption[A](a: A) = Option(a)
@@ -41,6 +42,11 @@ trait Implicits extends CommonJsonFormats with ExtensionsImplicits {
   implicit def richVersionedListFuture[A](future: Future[List[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
   implicit def richVersionedSeqFuture[A](future: Future[Seq[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
   implicit def richVersionedOptionFuture[A](future: Future[Option[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
+
+  implicit def jodaOrdering[A <: ReadablePartial] = new Ordering[A] {
+    def compare(x: A, y: A): Int = 
+      x.compareTo(y)
+  }
 }
 
 package object implicits extends Implicits

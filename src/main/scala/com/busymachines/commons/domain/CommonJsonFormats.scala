@@ -15,6 +15,8 @@ import com.busymachines.commons.spray.ProductFormatsInstances
 import com.busymachines.commons.AbstractEnum
 import com.busymachines.commons.CommonEnum
 import com.busymachines.commons.EnumValue
+import org.joda.time.DateTimeZone
+import org.joda.time.LocalDateTime
 
 object CommonJsonFormats extends CommonJsonFormats
 
@@ -84,6 +86,8 @@ trait CommonJsonFormats
     }
   }
 
+  implicit val jodaTimeZoneFormat = stringFormat("JodaTimeZone", s => DateTimeZone.forID(s))
+
   implicit val jodaLocalDateFormat = new JsonFormat[LocalDate] {
     val format = ISODateTimeFormat.date
     def write(value: LocalDate) = JsString(format.print(value))
@@ -92,6 +96,19 @@ trait CommonJsonFormats
         try format.parseLocalDate(s)
         catch {
           case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
+        }
+      case s => deserializationError("Couldn't convert '" + s + "' to a local date")
+    }
+  }
+
+  implicit val jodaLocalDateTimeFormat = new JsonFormat[LocalDateTime] {
+    val format = ISODateTimeFormat.date
+    def write(value: LocalDateTime) = JsString(format.print(value))
+    def read(value: JsValue): LocalDateTime = value match {
+      case JsString(s) =>
+        try format.parseLocalDateTime(s)
+        catch {
+          case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a local date-time: " + e.getMessage)
         }
       case s => deserializationError("Couldn't convert '" + s + "' to a date-time")
     }
