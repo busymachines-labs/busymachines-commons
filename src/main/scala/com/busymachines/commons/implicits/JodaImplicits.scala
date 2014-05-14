@@ -19,7 +19,7 @@ trait JodaImplicits { this: CommonJsonFormats =>
     def write(value: LocalDate) = JsString(format.print(value))
     def read(value: JsValue): LocalDate = value match {
       case JsString(s) =>
-        try format.parseDateTime(s).toLocalDate
+        try jodaDateTimeParser.parseDateTime(s).toLocalDate
         catch {
           case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a date-time: " + e.getMessage)
         }
@@ -32,7 +32,7 @@ trait JodaImplicits { this: CommonJsonFormats =>
     def write(value: LocalDateTime) = JsString(format.print(value))
     def read(value: JsValue): LocalDateTime = value match {
       case JsString(s) =>
-        try format.parseDateTime(s).toLocalDateTime
+        try jodaDateTimeParser.parseDateTime(s).toLocalDateTime
         catch {
           case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a local date-time: " + e.getMessage)
         }
