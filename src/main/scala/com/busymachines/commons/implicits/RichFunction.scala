@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import com.typesafe.config.Config
 import scala.math.Ordering.Implicits._

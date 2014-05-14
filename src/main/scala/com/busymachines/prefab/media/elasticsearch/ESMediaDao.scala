@@ -6,7 +6,7 @@ import com.google.common.hash.Hashing
 import com.google.common.io.BaseEncoding
 import java.io.BufferedInputStream
 import java.net.URL
-import com.busymachines.commons.domain.CommonJsonFormats._
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.MimeType
@@ -23,7 +23,7 @@ import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.prefab.media.domain.HashedMedia
-import com.busymachines.prefab.media.domain.MediaDomainJsonFormats.hashMediaFormat
+import com.busymachines.prefab.media.Implicits._
 import com.busymachines.prefab.media.service.MimeTypeDetector
 
 class ESMediaDao(index: ESIndex,mimeTypeDetector:MimeTypeDetector)(implicit ec: ExecutionContext) extends MediaDao with Logging {

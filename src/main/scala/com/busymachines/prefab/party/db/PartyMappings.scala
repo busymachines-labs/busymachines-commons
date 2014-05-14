@@ -1,7 +1,7 @@
 package com.busymachines.prefab.party.db
 
 import com.busymachines.commons.elasticsearch.{ESField, ESMapping}
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.prefab.party.domain._
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.domain.User
@@ -11,7 +11,7 @@ import com.busymachines.prefab.party.domain.Company
 import com.busymachines.prefab.party.domain.UserRole
 import com.busymachines.prefab.party.domain.EmailAddress
 import com.busymachines.prefab.party.domain.RelatedParty
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.prefab.party.Implicits._
 import com.busymachines.commons.domain.{GeoPoint, Id}
 import com.busymachines.prefab.authentication.model.Credentials
 

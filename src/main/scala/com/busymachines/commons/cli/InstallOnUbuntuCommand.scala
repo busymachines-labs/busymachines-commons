@@ -1,7 +1,7 @@
 package com.busymachines.commons.cli
 
 import java.io.File
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 
 object InstallOnUbuntuCommand {
   import InstallCommand._

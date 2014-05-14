@@ -1,6 +1,6 @@
 package com.busymachines.commons.mail
 
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.CommonConfig
 
 case class IncomingMailConfig(baseName: String) extends CommonConfig(baseName) {

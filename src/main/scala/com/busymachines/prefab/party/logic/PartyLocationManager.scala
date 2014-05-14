@@ -7,7 +7,7 @@ import com.busymachines.commons.domain.Id
 import scala.concurrent.{ExecutionContext, Future}
 import com.busymachines.commons.dao.{Page, Versioned}
 import com.busymachines.commons.EntityNotFoundException
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.elasticsearch.ESSearchCriteria.And
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.commons.elasticsearch.ESSearchCriteria.And

@@ -2,7 +2,7 @@ package com.busymachines.prefab.authentication.model
 
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import scala.util.Random
 
 object PasswordCredentials extends ((String, String, String) => PasswordCredentials) {

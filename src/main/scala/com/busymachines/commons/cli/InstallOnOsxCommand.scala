@@ -2,7 +2,7 @@ package com.busymachines.commons.cli
 
 import java.io.File
 import scala.io.Source
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 
 object InstallOnOsxCommand {
   import InstallCommand._

@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import scala.concurrent.{ExecutionContext, Await, Future}
 import scala.concurrent.duration._

@@ -3,7 +3,7 @@ package com.busymachines.commons.elasticsearch
 import scala.reflect.ClassTag
 import spray.json.{JsValue, JsonFormat}
 import com.busymachines.commons.Extension
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 
 /**
  * Mapped field.

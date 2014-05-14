@@ -1,8 +1,8 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import java.net.URL
 import scala.io.Source
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 
 object RichSource {
 

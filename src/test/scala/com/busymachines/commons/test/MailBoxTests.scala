@@ -2,7 +2,7 @@ package com.busymachines.commons.test
 
 import org.scalatest.FlatSpec
 import com.busymachines.commons.mail.{OutgoingMailConfig, OutgoingMailBox, IncomingMailBox, IncomingMailConfig}
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import com.busymachines.commons.mail.model.MailMessage

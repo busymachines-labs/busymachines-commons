@@ -2,7 +2,7 @@ package com.busymachines.ghreports
 
 import com.typesafe.config.ConfigFactory
 import com.busymachines.commons.Logging
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import scala.concurrent.Future
 import akka.io.IO
 import spray.can.Http

@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 /**
  * Created by ruud on 06/02/14.

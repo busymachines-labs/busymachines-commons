@@ -1,8 +1,8 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import java.net.URL
 import java.io.InputStream
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import java.io.File
   
 class RichUrl(val url : URL) extends AnyVal {

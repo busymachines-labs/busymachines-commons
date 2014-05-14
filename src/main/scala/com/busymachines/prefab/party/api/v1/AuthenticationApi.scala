@@ -17,8 +17,8 @@ import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.prefab.authentication.model.Authentication
 import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
 import com.busymachines.prefab.authentication.spray.AuthenticationDirectives
-import com.busymachines.commons.implicits._
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.commons.Implicits._
+import com.busymachines.prefab.party.Implicits._
 
 /**
  * Handling authentication before using API.

@@ -1,6 +1,6 @@
 package com.busymachines.prefab.authentication
 
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.prefab.authentication.model._
 
 package object implicits {

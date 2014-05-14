@@ -2,7 +2,7 @@ package com.busymachines.commons.elasticsearch
 
 import spray.json.JsonFormat
 import com.busymachines.commons.domain.{Money, HasId}
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.dao.Dao
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.dao.SearchCriteria
@@ -12,7 +12,6 @@ import com.busymachines.commons.Logging
 import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.MoreThanOneResultException
 import com.busymachines.commons.dao.SearchSort
-
 
 object MoneyMapping extends ESMapping[Money] {
   val currency = "currency" :: String

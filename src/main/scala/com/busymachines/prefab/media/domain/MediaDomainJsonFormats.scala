@@ -1,9 +1,7 @@
 package com.busymachines.prefab.media.domain
 
-import com.busymachines.commons.domain.CommonJsonFormats
+import com.busymachines.commons.Implicits._
 
-object MediaDomainJsonFormats extends MediaDomainJsonFormats
-
-trait MediaDomainJsonFormats extends CommonJsonFormats {
+trait MediaDomainJsonFormats {
   implicit val hashMediaFormat = format5(HashedMedia)
 }

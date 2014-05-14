@@ -1,6 +1,6 @@
 package com.busymachines.commons.test
 
-import com.busymachines.commons.domain.CommonJsonFormats
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.domain.GeoPoint
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
@@ -41,7 +41,7 @@ case class Item(
   name: String,
   properties: List[Property] = Nil) extends HasId[Item]
 
-object Mappings extends CommonJsonFormats {
+object Mappings {
   implicit val itemTypeFormat = enumFormat(ItemType)
   implicit val propertyReferenceFormat = format2(PropertyExternalReference)
   implicit val propertyFormat = format6(Property)

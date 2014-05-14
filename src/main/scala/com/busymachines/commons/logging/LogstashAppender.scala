@@ -6,9 +6,10 @@ import com.busymachines.commons.elasticsearch.ESConfig
 import com.busymachines.commons.elasticsearch.ESClient
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
-import com.busymachines.commons.domain.CommonJsonFormats
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
@@ -16,10 +17,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.commons.event.DoNothingEventSystem
 
-object DomainJsonFormats extends CommonJsonFormats {
+//object LoggingJsonFormats extends LoggingJsonFormats
+
+trait LoggingJsonFormats {
   implicit val logMessageFormat = format9(LogMessage)
 }
-import DomainJsonFormats._
+
+//import LoggingJsonFormats._
 
 case class LogMessage(
   id: Id[LogMessage] = Id.generate[LogMessage],
@@ -35,7 +39,7 @@ case class LogMessage(
 object LogMessageMapping extends ESMapping[LogMessage] {
   val id = "_id" -> "id" :: String.as[Id[LogMessage]]
   val message = "@message" :: String & Analyzed & IncludeInAll
-  val fields = "@fields" :: Object & IncludeInAll
+//  val fields = "@fields" :: Object & IncludeInAll
   val source = "@source" :: String & IncludeInAll
   val sourceHost = "@source_host" :: String & IncludeInAll
   val sourcePath = "@source_path" :: String & IncludeInAll

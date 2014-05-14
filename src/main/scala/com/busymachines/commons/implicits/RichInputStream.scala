@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import java.io.InputStream
 import java.io.OutputStream

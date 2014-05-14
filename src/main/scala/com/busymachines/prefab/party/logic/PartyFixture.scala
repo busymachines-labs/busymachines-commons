@@ -13,7 +13,7 @@ import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.domain.Tenant
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.service.PartyService
-import com.busymachines.commons.implicits.richFuture
+import com.busymachines.commons.Implicits.richFuture
 
 object PartyFixture extends PartyFixture 
 

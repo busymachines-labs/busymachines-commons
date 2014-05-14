@@ -5,7 +5,7 @@ import com.busymachines.commons.elasticsearch.ESNestedDao
 import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.party.domain.{PartyLocation, Party, User}
 import com.busymachines.commons.dao.{Page, Versioned}
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.prefab.party.Implicits._
 import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.commons.EntityNotFoundException
 

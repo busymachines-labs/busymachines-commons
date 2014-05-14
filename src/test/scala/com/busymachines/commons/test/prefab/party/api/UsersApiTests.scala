@@ -8,8 +8,8 @@ import org.scalatest.FlatSpec
 import spray.http._
 import spray.json.JsonParser
 import com.busymachines.prefab.party.domain.User
-import com.busymachines.commons.implicits._
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.commons.Implicits._
+import com.busymachines.prefab.party.Implicits._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 

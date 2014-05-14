@@ -14,12 +14,12 @@ import com.busymachines.prefab.authentication.model.PasswordCredentials
 import com.busymachines.prefab.authentication.implicits._
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.db.PartyDao
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.prefab.party.Implicits._
 import com.busymachines.prefab.party.db.UserDao
 import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.service.PartyService
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 
 class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCredentialsDao, userAuthenticator : UserAuthenticator)(implicit ec: ExecutionContext) extends PartyService with Logging {
 

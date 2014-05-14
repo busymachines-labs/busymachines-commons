@@ -1,6 +1,6 @@
 package com.busymachines.commons.domain
 
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 

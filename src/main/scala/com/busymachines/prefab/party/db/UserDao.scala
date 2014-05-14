@@ -6,7 +6,7 @@ import com.busymachines.commons.elasticsearch.ESNestedDao
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.prefab.party.domain.{UserRole, Party, User}
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.prefab.party.Implicits._
 
 class UserDao(val parentDao : PartyDao)(implicit ec: ExecutionContext) extends ESNestedDao[Party, User]("user") {
     

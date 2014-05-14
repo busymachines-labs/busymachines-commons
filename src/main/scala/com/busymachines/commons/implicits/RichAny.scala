@@ -1,8 +1,8 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import _root_.spray.json.{JsValue, JsonFormat}
 
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 
 class RichAny[A](val a: A) extends AnyVal {
   def toOption(f : A => Boolean) = 

@@ -7,8 +7,7 @@ import com.busymachines.prefab.media.db.MediaDao
 import com.busymachines.prefab.party.api.v1.PartyApiV1Directives
 import com.busymachines.prefab.media.api.v1.model.MediaApiV1JsonFormats
 import com.busymachines.prefab.media.api.v1.model.MediaInput
-import com.busymachines.commons.implicits.richString
-import com.busymachines.commons.implicits.richFuture
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.domain.Media
 import com.busymachines.commons.domain.MimeType
 import com.busymachines.commons.domain.MimeTypes
@@ -16,6 +15,7 @@ import com.busymachines.commons.domain.Id
 import spray.http.MediaType
 import com.busymachines.commons.EntityNotFoundException
 import spray.http.HttpEntity
+import com.busymachines.prefab.media.Implicits._
 import com.busymachines.prefab.media.service.MimeTypeDetector
 import com.busymachines.prefab.media.logic.DefaultMimeTypeDetector
 

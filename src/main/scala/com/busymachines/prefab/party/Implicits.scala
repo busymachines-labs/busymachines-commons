@@ -2,7 +2,7 @@ package com.busymachines.prefab.party
 
 import com.busymachines.prefab.party.domain._
 import com.busymachines.prefab.party.db.{EmailMapping, UserMapping, PartyMapping}
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.domain.PartyRole
 import com.busymachines.prefab.party.domain.AddressKind
@@ -22,7 +22,7 @@ import com.busymachines.prefab.party.api.v1.model.{AuthenticationResponse, Authe
 import spray.json.{JsNull, JsValue, RootJsonFormat}
 import com.busymachines.commons.Extensions
 
-object implicits {
+object Implicits {
 
   implicit val phoneNumberKindFormat = stringFormat[PhoneNumberKind]("PhoneNumberKind", PhoneNumberKind, _.name)
   implicit val addressKindFormat = stringFormat[AddressKind]("AddressKind", AddressKind, _.name)

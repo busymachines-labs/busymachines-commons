@@ -2,7 +2,7 @@ package com.busymachines.commons.test
 
 import akka.actor.ActorSystem
 import com.busymachines.commons.event.LocalEventBus
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.testing.EmptyESTestIndex
 import com.busymachines.prefab.party.PartyAssembly
 import com.busymachines.prefab.party.logic.PartyFixture

@@ -2,7 +2,8 @@ package com.busymachines.commons
 
 import com.typesafe.config._
 import java.net.URL
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
+import com.busymachines.commons.implicits.RichConfig
 import scala.math.Ordering.Implicits._
 import java.util.List
 import java.util.Set
@@ -37,6 +38,8 @@ object CommonConfig extends CommonConfig("") with Logging {
   override def mkString(sep: String) =
     toStringSeq.mkString(sep)
 
+  override def toSortedStringSeq = super.toSortedStringSeq  
+    
   def toStringSeq: Seq[String] =
   toStringSeq2.map(x => x._1 + "=" + x._2).sorted.distinct
 

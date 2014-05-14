@@ -12,7 +12,7 @@ import com.busymachines.commons.dao.SearchSort
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import spray.json.JsonFormat
 import com.busymachines.commons.dao.Facet
 

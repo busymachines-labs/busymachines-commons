@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 /**
  * Usefulness probably too specific to 'fields' structures, which will be replaced by extensions.

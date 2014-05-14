@@ -1,7 +1,7 @@
 package com.busymachines.commons.test
 
 import org.scalatest.FlatSpec
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import spray.json._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

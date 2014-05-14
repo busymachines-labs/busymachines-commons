@@ -6,7 +6,7 @@ import com.busymachines.commons.Logging
 import com.busymachines.prefab.authentication.spray.AuthenticationDirectives
 import com.busymachines.prefab.party.api.v1.model.AuthenticationRequest
 import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.prefab.party.Implicits._
 import akka.actor.ActorSystem
 import spray.client.UnsuccessfulResponseException
 import spray.client.pipelining._

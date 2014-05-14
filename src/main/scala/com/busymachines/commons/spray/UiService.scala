@@ -6,8 +6,7 @@ import scala.concurrent.duration.DurationInt
 import scala.io.Source
 import scala.language.postfixOps
 import org.parboiled.common.FileUtils
-import com.busymachines.commons.implicits.richByteArray
-import com.busymachines.commons.implicits.richFunction
+import com.busymachines.commons.Implicits._
 import akka.actor.ActorRefFactory
 import spray.http.CacheDirectives.`max-age`
 import spray.http.CacheDirectives.`public`

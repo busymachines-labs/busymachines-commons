@@ -6,8 +6,8 @@ import akka.actor.ActorRefFactory
 import spray.http.StatusCodes
 import com.busymachines.commons.spray.CommonHttpService
 import com.busymachines.prefab.party.logic.UserAuthenticator
-import com.busymachines.commons.implicits._
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.commons.Implicits._
+import com.busymachines.prefab.party.Implicits._
 
 class UsersApiV1(partyService : PartyService, authenticator : UserAuthenticator)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with PartyApiV1Directives {
 

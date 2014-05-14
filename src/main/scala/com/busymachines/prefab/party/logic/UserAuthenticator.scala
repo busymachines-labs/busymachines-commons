@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import com.busymachines.prefab.authentication.logic.PrefabAuthenticator
 import com.busymachines.commons.Logging
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.authentication.model.Credentials
 import com.busymachines.prefab.authentication.model.PasswordCredentials
@@ -17,7 +17,7 @@ import com.busymachines.prefab.authentication.model.Authentication
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.prefab.party.db.PartyDao
 import com.busymachines.prefab.party.service.SecurityContext
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.prefab.party.Implicits._
 import com.busymachines.prefab.party.domain.User
 
 class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, credentialsDao: CredentialsDao, authenticationDao: AuthenticationDao)(implicit ec: ExecutionContext)

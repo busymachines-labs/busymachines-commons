@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import scala.collection.generic.CanBuildFrom
 

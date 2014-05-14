@@ -3,8 +3,7 @@ package com.busymachines.commons.test
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 import org.scalatest.FlatSpec
-import com.busymachines.commons.domain.CommonJsonFormats._
-import com.busymachines.commons.implicits.richFuture
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.test.Mappings._
 import com.busymachines.commons.testing.EmptyESTestIndex
 import org.joda.time.DateTime

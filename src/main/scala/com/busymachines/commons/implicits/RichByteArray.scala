@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import com.google.common.io.BaseEncoding
 import com.google.common.hash.Hashing

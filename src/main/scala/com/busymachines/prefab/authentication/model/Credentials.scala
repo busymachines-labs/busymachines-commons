@@ -1,6 +1,6 @@
 package com.busymachines.prefab.authentication.model
 
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import scala.util.Random
 import com.busymachines.commons.domain.{HasId, Id}
 import org.joda.time.DateTime

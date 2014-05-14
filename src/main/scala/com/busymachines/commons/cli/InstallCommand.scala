@@ -1,6 +1,6 @@
 package com.busymachines.commons.cli
 
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import java.io.File
 import java.net.URLClassLoader
 

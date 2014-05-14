@@ -1,7 +1,9 @@
 package com.busymachines.commons.spray
 
 import _root_.spray.http.HttpRequest
-import com.busymachines.commons._
+import com.busymachines.commons.CommonConfig
+import com.busymachines.commons.Logging
+import com.busymachines.commons.NotAuthorizedException
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.event.Logging.DebugLevel
@@ -18,7 +20,7 @@ import _root_.spray.routing.directives.LogEntry
 import _root_.spray.routing.ExceptionHandler
 import _root_.spray.routing.HttpService
 import _root_.spray.routing.RejectionHandler
-import com.busymachines.commons.domain.CommonJsonFormats._
+import com.busymachines.commons.Implicits._
 import _root_.spray.http.IllegalRequestException
 import scala.util.control.NonFatal
 import _root_.spray.util.LoggingContext
@@ -26,6 +28,7 @@ import _root_.spray.http._
 import _root_.spray.json._
 import StatusCodes._
 import _root_.spray.routing.AuthorizationFailedRejection
+import com.busymachines.commons.EntityNotFoundException
 
 case class HttpServerConfig(baseName: String) extends CommonConfig(baseName) {
   val interface = string("interface")

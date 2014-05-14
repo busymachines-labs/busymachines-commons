@@ -10,8 +10,8 @@ import com.busymachines.commons.elasticsearch.ESRootDao
 import com.busymachines.commons.elasticsearch.ESType
 import com.busymachines.prefab.authentication.model.Credentials
 import com.busymachines.prefab.party.domain.{PartyLocation, EmailAddress, Party, User}
-import com.busymachines.commons.implicits._
-import com.busymachines.prefab.party.implicits._
+import com.busymachines.commons.Implicits._
+import com.busymachines.prefab.party.Implicits._
 
 class PartyDao(index : ESIndex)(implicit ec: ExecutionContext) extends ESRootDao[Party](index, ESType("party", PartyMapping)) {
  

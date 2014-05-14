@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import com.typesafe.config.Config
 import scala.math.Ordering.Implicits._
@@ -7,6 +7,7 @@ import scala.concurrent.duration._
 import com.typesafe.config.impl.SimpleConfig
 import com.typesafe.config.ConfigFactory
 import scala.collection.mutable.ArrayBuffer
+import com.busymachines.commons.CommonConfig
 
 class RichConfig(val theConfig: Config) {
 

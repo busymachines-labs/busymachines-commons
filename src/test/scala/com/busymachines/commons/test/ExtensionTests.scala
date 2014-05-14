@@ -1,7 +1,7 @@
 //package com.busymachines.commons.test
 //
 //
-//import com.busymachines.commons.implicits._
+//import com.busymachines.commons.Implicits._
 //import org.scalatest.FlatSpec
 //import com.busymachines.commons.{ExtensionsImplicits, Extension, Extensions}
 //import spray.json._

@@ -1,20 +1,42 @@
 package com.busymachines.commons
 
+import java.io.InputStream
 import java.net.URL
 import java.util.Locale
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 import scala.xml.Elem
 import scala.xml.factory.XMLLoader
-import com.busymachines.commons.domain.CommonJsonFormats
+import org.joda.time.ReadablePartial
+import com.busymachines.commons.dao.Versioned
+import com.busymachines.commons.implicits._
 import com.typesafe.config.Config
+import implicits.RichAny
+import implicits.RichByteArray
+import implicits.RichConfig
+import implicits.RichDouble
+import implicits.RichFunction
+import implicits.RichFuture
+import implicits.RichFutureType
+import implicits.RichInputStream
+import implicits.RichIterable
+import implicits.RichIterableMap
+import implicits.RichJsValue
+import implicits.RichLocale
+import implicits.RichOption
+import implicits.RichSeq
+import implicits.RichString
+import implicits.RichStringCollection
+import implicits.RichUrl
+import implicits.RichXml
+import implicits.JodaImplicits
 import scala.concurrent.Future
 import _root_.spray.json.JsValue
-import com.busymachines.commons.dao.Versioned
-import java.io.InputStream
-import org.joda.time.ReadablePartial
+import com.busymachines.commons.domain.CommonDomainJsonFormats
+import com.busymachines.commons.logging.LoggingJsonFormats
 
-trait Implicits extends CommonJsonFormats with ExtensionsImplicits {
+object Implicits extends CommonJsonFormats with CommonDomainJsonFormats with ExtensionsImplicits with JodaImplicits with LoggingJsonFormats {
   implicit def toOption[A](a: A) = Option(a)
   implicit def richConfig(config : Config) = new RichConfig(config)
   implicit def richCommonConfigType[A <: CommonConfig](f : String => A) = new RichCommonConfigType[A](f)
@@ -43,11 +65,5 @@ trait Implicits extends CommonJsonFormats with ExtensionsImplicits {
   implicit def richVersionedSeqFuture[A](future: Future[Seq[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
   implicit def richVersionedOptionFuture[A](future: Future[Option[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
 
-  implicit def jodaOrdering[A <: ReadablePartial] = new Ordering[A] {
-    def compare(x: A, y: A): Int = 
-      x.compareTo(y)
-  }
 }
-
-package object implicits extends Implicits
 

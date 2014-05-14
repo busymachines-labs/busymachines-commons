@@ -4,7 +4,7 @@ import com.busymachines.prefab.party.db.PartyDao
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import com.busymachines.commons.dao.DaoCache
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.prefab.party.domain.Party
 import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.party.domain.RelatedParty

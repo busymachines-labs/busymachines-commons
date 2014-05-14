@@ -1,7 +1,7 @@
 package com.busymachines.prefab.party.domain
 
 import com.busymachines.commons
-import com.busymachines.commons.implicits._
+import com.busymachines.commons.Implicits._
 import scala.util.Random
 import com.busymachines.commons.domain.{GeoPoint, Id, HasId}
 import com.busymachines.prefab.authentication.model.Credentials

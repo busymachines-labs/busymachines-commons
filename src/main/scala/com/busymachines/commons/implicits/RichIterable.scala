@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.collection.generic.CanBuildFrom

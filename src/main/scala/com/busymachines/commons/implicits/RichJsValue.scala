@@ -1,4 +1,4 @@
-package com.busymachines.commons
+package com.busymachines.commons.implicits
 
 import _root_.spray.json._
 import scala.collection.mutable
