@@ -11,8 +11,20 @@ import spray.json.JsonFormat
 import spray.json.deserializationError
 import org.joda.time.ReadablePartial
 import spray.json.RootJsonFormat
+import org.joda.time.JodaAccessor
+
+class RichLocalDateTime(val localDateTime: LocalDateTime) extends AnyVal {
+  def localMillis: Long = JodaAccessor.localMillis(localDateTime)
+}
+class RichLocalDate(val localDate: LocalDate) extends AnyVal {
+  def localMillis: Long = JodaAccessor.localMillis(localDate)
+}
 
 trait JodaImplicits { this: CommonJsonFormats =>
+  
+  implicit def toLocalDateTime(localDateTime: LocalDateTime) = new RichLocalDateTime(localDateTime)
+  implicit def toLocalDate(localDate: LocalDate) = new RichLocalDate(localDate)
+  
   implicit val jodaTimeZoneFormat = stringFormat("JodaTimeZone", s => DateTimeZone.forID(s))
   
   implicit val jodaLocalDateFormat = new RootJsonFormat[LocalDate] {
