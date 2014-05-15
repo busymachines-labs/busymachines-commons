@@ -18,8 +18,9 @@ import spray.http.HttpEntity
 import com.busymachines.prefab.media.Implicits._
 import com.busymachines.prefab.media.service.MimeTypeDetector
 import com.busymachines.prefab.media.logic.DefaultMimeTypeDetector
+import spray.httpx.SprayJsonSupport
 
-class MediasApiV1(mediaDao: MediaDao, authenticator: UserAuthenticator,mimeTypeDetector:MimeTypeDetector)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with MediaApiV1Directives {
+class MediasApiV1(mediaDao: MediaDao, authenticator: UserAuthenticator,mimeTypeDetector:MimeTypeDetector)(implicit actorRefFactory: ActorRefFactory) extends CommonHttpService with MediaApiV1Directives with SprayJsonSupport {
 
   private def decodeWebBase64(src: String): Option[Array[Byte]] = {
     val base64 = "data:(.*);base64,(.*)".r

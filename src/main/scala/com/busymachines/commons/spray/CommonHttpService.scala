@@ -8,9 +8,8 @@ import spray.http.HttpHeaders
 import spray.routing.HttpService
 import spray.routing.RequestContext
 import spray.routing.Route
-import spray.httpx.SprayJsonSupport
 
-abstract class CommonHttpService(implicit val actorRefFactory: ActorRefFactory) extends HttpService with CommonDirectives with Route with Logging with SprayJsonSupport {
+abstract class CommonHttpService(implicit val actorRefFactory: ActorRefFactory) extends HttpService with CommonDirectives with Route with Logging {
   implicit def executionContext = actorRefFactory.dispatcher
 
   def apply(request: RequestContext) =
