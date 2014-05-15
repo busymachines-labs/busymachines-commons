@@ -10,7 +10,8 @@ import sbtrelease.ReleasePlugin._
  */
 object BusyMachinesCommonsBuild extends Build {
  
-  val sprayVersion = "1.2.0"
+  val sprayVersion = "1.3.1"
+  val akkaVersion = "2.3.0"
   
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++
@@ -41,13 +42,13 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "org.specs2" %% "specs2" % "2.3.8" % "test" withSources(),
     libraryDependencies += "org.pegdown" % "pegdown" % "1.4.1" % "test" withSources(), // used by scalatest
     libraryDependencies += "org.elasticsearch" % "elasticsearch" % "1.0.2" withSources(),
-    libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.3" withSources(),
-    libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.2.3" withSources(),
-    libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.2.3" withSources(),
-    libraryDependencies += "com.typesafe.akka" %% "akka-contrib" % "2.2.3" withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % akkaVersion withSources(),
+    libraryDependencies += "com.typesafe.akka" %% "akka-contrib" % akkaVersion withSources(),
     libraryDependencies += "io.spray" % "spray-can" % sprayVersion withSources(),
     libraryDependencies += "io.spray" % "spray-client" % sprayVersion withSources(),
-    libraryDependencies += "io.spray" %%  "spray-json" % "1.2.5" withSources(),
+    libraryDependencies += "io.spray" %%  "spray-json" % "1.2.6" withSources(),
     libraryDependencies += "io.spray" % "spray-servlet" % sprayVersion withSources(),
     libraryDependencies += "io.spray" % "spray-routing" % sprayVersion withSources(),
     libraryDependencies += "io.spray" % "spray-testkit" % sprayVersion % "test" withSources(),
