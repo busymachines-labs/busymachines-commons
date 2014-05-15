@@ -11,7 +11,6 @@ import spray.json.JsonFormat
 import spray.json.deserializationError
 import org.joda.time.ReadablePartial
 import spray.json.RootJsonFormat
-import org.mockito.internal.matchers.EndsWith
 
 trait JodaImplicits { this: CommonJsonFormats =>
   implicit val jodaTimeZoneFormat = stringFormat("JodaTimeZone", s => DateTimeZone.forID(s))
