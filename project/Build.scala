@@ -12,6 +12,7 @@ object BusyMachinesCommonsBuild extends Build {
  
   val sprayVersion = "1.3.1"
   val akkaVersion = "2.3.0"
+  val specs2Version = "2.3.11"
   
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = 
     Project.defaultSettings ++
@@ -39,7 +40,7 @@ object BusyMachinesCommonsBuild extends Build {
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "junit" % "junit" % "4.11" % "test" withSources(),
     libraryDependencies += "org.scalatest" %% "scalatest" % "2.0" % "test" withSources(),
-    libraryDependencies += "org.specs2" %% "specs2" % "2.3.8" % "test" withSources(),
+    libraryDependencies += "org.specs2" %% "specs2-core" % specs2Version % "test" withSources(),
     libraryDependencies += "org.pegdown" % "pegdown" % "1.4.1" % "test" withSources(), // used by scalatest
     libraryDependencies += "org.elasticsearch" % "elasticsearch" % "1.0.2" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion withSources(),
