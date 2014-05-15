@@ -29,7 +29,7 @@ trait JodaImplicits { this: CommonJsonFormats =>
   }
 
   implicit val jodaLocalDateTimeFormat = new RootJsonFormat[LocalDateTime] {
-    val format = ISODateTimeFormat.date
+    val format = ISODateTimeFormat.dateTime
     def write(value: LocalDateTime) = JsString(format.print(value))
     def read(value: JsValue): LocalDateTime = value match {
       case JsString(s) =>
