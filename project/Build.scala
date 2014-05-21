@@ -58,7 +58,8 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1", // for class file error in guava
     libraryDependencies += "org.apache.pdfbox" % "pdfbox" % "1.8.3" withSources(),
     libraryDependencies += "com.google.zxing" % "javase" % "2.3.0" withSources(),
-    libraryDependencies += "com.github.scopt" %% "scopt" % "3.2.0" withSources()
+    libraryDependencies += "com.github.scopt" %% "scopt" % "3.2.0" withSources(),
+    libraryDependencies += "com.codahale.metrics" % "metrics-core" % "3.0.1" withSources()
   ))
 
   def publishSettings = Seq(
