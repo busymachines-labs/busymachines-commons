@@ -9,12 +9,12 @@ import java.net.URL
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
+import com.busymachines.prefab.media.domain.Media
 import com.busymachines.commons.domain.MimeType
-import com.busymachines.commons.domain.Media
+import com.busymachines.commons.domain.MimeTypes
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.Logging
 import com.busymachines.commons.domain.Money
-import com.busymachines.commons.domain.MimeTypes
 import com.busymachines.prefab.media.db.MediaDao
 import com.busymachines.commons.dao.SearchResult.toResult
 import com.busymachines.commons.dao.Versioned.toEntity

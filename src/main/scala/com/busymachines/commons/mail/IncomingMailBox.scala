@@ -6,7 +6,7 @@ import scala.Some
 import scala.concurrent.Future
 
 import com.busymachines.commons.Logging
-import com.busymachines.commons.domain.{Media, MimeType, MimeTypes}
+import com.busymachines.prefab.media.domain.Media
 import com.busymachines.commons.mail.model.MailMessage
 import javax.mail._
 import javax.mail.Message.RecipientType

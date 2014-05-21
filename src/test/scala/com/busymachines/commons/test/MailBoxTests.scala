@@ -8,7 +8,9 @@ import org.joda.time.format.DateTimeFormat
 import com.busymachines.commons.mail.model.MailMessage
 import javax.mail.Address
 import javax.mail.internet.InternetAddress
-import com.busymachines.commons.domain.{MimeTypes, Id, Media}
+import com.busymachines.prefab.media.domain.Media
+import com.busymachines.commons.domain.MimeType
+import com.busymachines.commons.domain.MimeTypes
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 

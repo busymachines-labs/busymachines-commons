@@ -2,7 +2,7 @@ package com.busymachines.prefab.media.db
 
 import scala.concurrent.Future
 import com.busymachines.commons.domain.Id
-import com.busymachines.commons.domain.Media
+import com.busymachines.prefab.media.domain.Media
 import com.busymachines.commons.domain.MimeType
 
 trait MediaDao {

@@ -7,7 +7,7 @@ import com.busymachines.commons.domain.Id
 import org.joda.time.DateTime
 import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.commons.EnumValue
-import com.busymachines.commons.AbstractEnum
+import com.busymachines.commons.Enum
 
 case class PropertyExternalReference(
   id: Id[PropertyExternalReference] = Id.generate[PropertyExternalReference],
@@ -22,8 +22,8 @@ case class Property(
   externalReferences: List[PropertyExternalReference] = Nil) extends HasId[Property]
 
 trait ItemType extends EnumValue[ItemType]
-object ItemType extends AbstractEnum[ItemType] {
-  case class Value(name: String, id: Int = nextId) extends Val(name) with ItemType
+object ItemType extends Enum[ItemType] {
+  case class Value(name: String, id: Int = nextId) extends Val with ItemType
   val House = Value("house")
   val Car = Value("car")
   val Bicycle = Value("bicycle")

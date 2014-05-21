@@ -1,23 +1,16 @@
 package com.busymachines.commons.domain
 
-import java.util.Currency
-import java.util.Locale
-import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat
-import spray.json._
-import com.busymachines.commons.dao.SearchResult
-import com.busymachines.commons.dao.Versioned
-import scala.concurrent.duration.FiniteDuration
-import org.joda.time.LocalDate
-import com.busymachines.commons.dao.TermFacetValue
 import com.busymachines.commons.dao.HistogramFacetValue
-import com.busymachines.commons.spray.ProductFormatsInstances
-import com.busymachines.commons.AbstractEnum
-import com.busymachines.commons.CommonEnum
-import com.busymachines.commons.EnumValue
+import com.busymachines.commons.dao.SearchResult
+import com.busymachines.commons.dao.TermFacetValue
+import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.implicits.CommonJsonFormats
-import org.joda.time.DateTimeZone
-import org.joda.time.LocalDateTime
+
+import spray.json.JsArray
+import spray.json.JsNumber
+import spray.json.JsObject
+import spray.json.JsonFormat
+import spray.json.RootJsonWriter
 
 trait CommonDomainJsonFormats { this: CommonJsonFormats =>
 
@@ -25,10 +18,9 @@ trait CommonDomainJsonFormats { this: CommonJsonFormats =>
 
   implicit val unitOfMeasureFormat = stringFormat("UnitOfMeasure", s => UnitOfMeasure(s))
 
+  implicit val mimeTypeFormat = stringFormat("MimeType", MimeType)
 
   implicit def idFormat[A] = stringWrapperFormat(Id[A])
-  implicit def mimeTypeFormat = stringWrapperFormat(MimeType)
-  implicit val mediaFormat = format4(Media)
   implicit val moneyFormat = format2(Money)
 
   implicit val termFacetValueFormat = format2(TermFacetValue)

@@ -5,10 +5,11 @@ import javax.mail.Message.RecipientType
 import org.joda.time.DateTime
 import javax.mail.{Session, Message, Multipart}
 import javax.mail.internet.{MimeMultipart, MimeMessage, MimeBodyPart}
-import com.busymachines.commons.domain.{MimeType, MimeTypes, Media}
 import javax.activation.{DataHandler, DataSource}
 import javax.mail.util.ByteArrayDataSource
 import scala.collection.JavaConversions._
+import com.busymachines.prefab.media.domain.Media
+import com.busymachines.commons.domain.MimeTypes
 
 /**
  * Created by paul on 2/6/14.

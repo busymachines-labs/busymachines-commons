@@ -2,8 +2,8 @@ package com.busymachines.commons.mail.model
 
 import javax.mail.Address
 import org.joda.time.DateTime
+import com.busymachines.prefab.media.domain.Media
 import com.busymachines.commons.domain.MimeType
-import com.busymachines.commons.domain.Media
 
 case class MailMessage(
   messageNumber:Int = 0,

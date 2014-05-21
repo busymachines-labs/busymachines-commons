@@ -4,13 +4,13 @@ import com.busymachines.commons.spray.CommonHttpService
 import akka.actor.ActorRefFactory
 import com.busymachines.prefab.party.logic.UserAuthenticator
 import com.busymachines.prefab.media.db.MediaDao
+import com.busymachines.prefab.media.domain.Media
+import com.busymachines.commons.domain.MimeType
+import com.busymachines.commons.domain.MimeTypes
 import com.busymachines.prefab.party.api.v1.PartyApiV1Directives
 import com.busymachines.prefab.media.api.v1.model.MediaApiV1JsonFormats
 import com.busymachines.prefab.media.api.v1.model.MediaInput
 import com.busymachines.commons.Implicits._
-import com.busymachines.commons.domain.Media
-import com.busymachines.commons.domain.MimeType
-import com.busymachines.commons.domain.MimeTypes
 import com.busymachines.commons.domain.Id
 import spray.http.MediaType
 import com.busymachines.commons.EntityNotFoundException

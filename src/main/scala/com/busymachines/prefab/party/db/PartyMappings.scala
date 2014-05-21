@@ -89,7 +89,7 @@ object RelatedPartyMapping extends ESMapping[RelatedParty] {
 object UserMapping extends ESMapping[User] {
   val id : ESField[User, Id[User]] = "_id" -> "id" :: String.as[Id[User]]
   val credentials = "credentials" :: String.as[Id[Credentials]]
-  val firstName = "firstName" :: String
+  val firstName = "firstName" :: String 
   val middleName = "middleName" :: String
   val lastName = "lastName" :: String
   val addresses = "addresses" :: Nested(AddressMapping)

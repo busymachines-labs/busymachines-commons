@@ -126,6 +126,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
 //    field.options.find(_.name == "type") match {
 //      case Some(JsString(t)) if t == "string" =>
 //    }
+    // Make Not analyzed default
     field.options.find(_.name == "index") match {
       case Some(_) => field.options
       case None => field.options :+ NotAnalyzed

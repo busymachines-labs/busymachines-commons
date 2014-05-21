@@ -1,12 +1,5 @@
 package com.busymachines.commons.domain
 
-case class Media(
-  id : Id[Media]  = Id.generate, 
-  mimeType : MimeType, 
-  name : Option[String] = None, 
-  data : Array[Byte]
-) extends HasId[Media]
-
 case class MimeType(value : String)
 
 object MimeTypes {

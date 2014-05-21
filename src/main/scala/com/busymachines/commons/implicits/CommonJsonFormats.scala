@@ -12,8 +12,7 @@ import org.joda.time.LocalDate
 import com.busymachines.commons.dao.TermFacetValue
 import com.busymachines.commons.dao.HistogramFacetValue
 import com.busymachines.commons.spray.ProductFormatsInstances
-import com.busymachines.commons.AbstractEnum
-import com.busymachines.commons.CommonEnum
+import com.busymachines.commons.Enum
 import com.busymachines.commons.EnumValue
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalDateTime
@@ -47,7 +46,7 @@ trait CommonJsonFormats
     }
   }
 
-  def enumFormat[V <: EnumValue[V]](enum: AbstractEnum[V]) = new JsonFormat[V] {
+  def enumFormat[V <: EnumValue[V]](enum: Enum[V]) = new JsonFormat[V] {
     def write(value: V) = JsString(value.toString)
     def read(value: JsValue): V = value match {
       case JsString(s) =>

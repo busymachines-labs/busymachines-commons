@@ -4,9 +4,10 @@ import com.busymachines.commons.domain.Id
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.MimeType
 
-case class HashedMedia(
-  id: Id[HashedMedia],
-  mimeType: MimeType,
-  name: Option[String],
-  hash: String,
-  data: String) extends HasId[HashedMedia]
+case class Media(
+  id : Id[Media]  = Id.generate, 
+  mimeType : MimeType, 
+  name : Option[String] = None, 
+  data : Array[Byte]
+) extends HasId[Media]
+
