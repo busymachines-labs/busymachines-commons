@@ -1,6 +1,6 @@
 package com.busymachines.prefab.authentication.logic
 
-import com.busymachines.commons.NotAuthorizedException
+import com.busymachines.commons.ForbiddenException
 
 /**
  * A security context may inherit from PrefabSecurityContext. Since it throws
@@ -22,7 +22,7 @@ trait PrefabSecurityContext[Permission] {
      */
   def mustBeAllowedTo(permission : Permission) : Unit =
     if (!permissions.contains(permission)) {
-      throw new NotAuthorizedException(s"$principalDescription has no permission to $permission")
+      throw new ForbiddenException(s"$principalDescription has no permission to $permission")
     }
 }
 
