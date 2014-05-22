@@ -15,13 +15,12 @@ class LocalEventBus(actorSystem: ActorSystem) extends EventBus with Logging {
   }
   
   def publish(event: BusEvent):Unit = {
-    debug(s"Published event $event")
     actorSystem.eventStream.publish(event)
   }
 }
 
 class LocalEventBusEndpointActor(f: PartialFunction[BusEvent, Any]) extends Actor with Logging {
   def receive = {
-    case event: BusEvent => f.applyOrElse(event, (_ : Any) => debug("Event ignored : " + event))
+    case event: BusEvent => f.applyOrElse(event, (_ : Any) => Unit )
   }
 }

@@ -27,7 +27,7 @@ class ServerApp(appName: String) extends App {
   val parser = new OptionParser[Config](appName) {
     head(appName, "1.0")
     cmd("install") action { (_, c) => c.copy(command = "install") } text("Install the application") children(
-        arg[String]("<name>") required() action { (name, c) => c.copy(installName = Some(name)) },
+        arg[String]("<name>") required() text("name of the application") action { (name, c) => c.copy(installName = Some(name)) },
         opt[String]('u', "user") action { (user, c) => c.copy(installUser = Some(user)) }
     )
   }
@@ -40,6 +40,7 @@ class ServerApp(appName: String) extends App {
     case Some(config) =>
       config.command match {
         case "install" => InstallCommand.install(config.installName.get, description, config.installUser)
+        case _ =>
       }
     case None =>
   }
