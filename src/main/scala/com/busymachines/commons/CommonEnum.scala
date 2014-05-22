@@ -1,5 +1,8 @@
 package com.busymachines.commons
 
+import scala.collection.concurrent.TrieMap
+import scala.collection.mutable.ArrayBuffer
+
 trait EnumValue[V <: EnumValue[V]] { 
   def enum: Enum[V]
   def name: String
@@ -7,13 +10,13 @@ trait EnumValue[V <: EnumValue[V]] {
 }
 
 abstract class Enum[Value <: EnumValue[Value]] { thisEnum =>
-  private val _values = collection.mutable.Set[Value]()
+  private val _values = new ArrayBuffer[Value]
   private var _nextId = 0
 
-  def values: Set[Value] = _values.toSet
-  def apply(id: Int) =  _values.find(_.id == id).getOrElse(throw new Exception(s"Enumeration id $id not defined for enumeration ${getClass.getSimpleName}"))
-  def withName(s: String) = _values.find(_.name == s).getOrElse(throw new Exception(s"Enumeration value $s not defined for enumeration ${getClass.getSimpleName}"))
-  def withNameOrElse(s: String, v: Value) = _values.find(_.name == s).getOrElse(v)
+  lazy val values: Set[Value] = _values.toSet
+  def apply(id: Int) =  values.find(_.id == id).getOrElse(throw new Exception(s"Enumeration id $id not defined for enumeration ${getClass.getSimpleName}"))
+  def withName(s: String) = values.find(_.name == s).getOrElse(throw new Exception(s"Enumeration value $s not defined for enumeration ${getClass.getSimpleName}"))
+  def withNameOrElse(s: String, v: Value) = values.find(_.name == s).getOrElse(v)
 
   protected def nextId: Int = { 
     val id = _nextId; 
