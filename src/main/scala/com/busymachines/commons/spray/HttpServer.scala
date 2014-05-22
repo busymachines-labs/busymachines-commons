@@ -43,34 +43,16 @@ abstract class HttpServer(config: HttpServerConfig)(implicit actorSystem: ActorS
   }
 
   implicit val commonExceptionHandler = ExceptionHandler {
-    case e: AuthenticationException => crossDomain { ctx =>
+    case e: AuthenticationException => { ctx =>
       debug(s"Request cannot be processed: authentication required.\n $e")
       ctx.complete(StatusCodes.Unauthorized)
     }
-    case e: ForbiddenException => crossDomain { ctx =>
+    case e: ForbiddenException => { ctx =>
       debug(s"Request cannot be processed: access denied.\n $e")
       ctx.complete(StatusCodes.Forbidden)
     }
-    case e: EntityNotFoundException => crossDomain { ctx =>
+    case e: EntityNotFoundException => { ctx =>
       ctx.complete(StatusCodes.NotFound, Map("message" -> e.getMessage, "id" -> e.id, "type" -> e.`type`).toJson.toString)
-    }
-    case e: IllegalRequestException => crossDomain { ctx =>
-      warn("Illegal request {}\n\t{}\n\tCompleting with '{}' response",
-        ctx.request, e.getMessage, e.status)
-      ctx.complete(e.status, e.info.format(routingSettings.verboseErrorMessages))
-    }
-    case e: RequestProcessingException => crossDomain { ctx =>
-      warn("Request {} could not be handled normally\n\t{}\n\tCompleting with '{}' response",
-        ctx.request, e.getMessage, e.status)
-      ctx.complete(e.status, e.info.format(routingSettings.verboseErrorMessages))
-    }
-    case NonFatal(e) => crossDomain { ctx =>
-      error(e, "Error during processing of request {}", ctx.request)
-      ctx.complete(InternalServerError)
-    }
-    case e: Throwable => crossDomain { ctx =>
-      error(s"Request ${ctx.request} could not be handled normally: ${e.getMessage}", e)
-      ctx.complete(StatusCodes.InternalServerError, e.getMessage)
     }
   }
 
