@@ -50,7 +50,6 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
   val client = index.client
   val mapping = t.mapping
 
-  println("Starting dao " + t.name)
   // Add mapping.
   index.onInitialize { () =>
     val mappingConfiguration = t.mapping.mappingDefinition(t.name).toString
@@ -223,11 +222,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
     preMutate(entity).flatMap { entity : T =>
       client.execute(request).map(response => Versioned(entity, response.getVersion)) flatMap { storedEntity =>
-        debug(s"Create ${index.name}/${t.name}/${entity.id}:\n${XContentHelper.convertToJson(request.source, true, true)}")
+//        debug(s"Create ${index.name}/${t.name}/${entity.id}:\n${XContentHelper.convertToJson(request.source, true, true)}")
         postMutate(storedEntity) map { _ => storedEntity }
       }
     }.recover(convertException { e =>
-      debug(s"Create ${index.name}/${t.name}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
+//      debug(s"Create ${index.name}/${t.name}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
       throw e
     })
   }
@@ -304,11 +303,11 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     //      Future.successful(Versioned(entity, response.getVersion.toString))
     preMutate(entity).flatMap { entity: T =>
       client.execute(request).map(response => Versioned(entity, response.getVersion)) flatMap { mutatedEntity =>
-        debug(s"Update ${index.name}/${t.name}/${entity.id}:\n${XContentHelper.convertToJson(request.source, true, true)}")
+//        debug(s"Update ${index.name}/${t.name}/${entity.id}:\n${XContentHelper.convertToJson(request.source, true, true)}")
         postMutate(mutatedEntity.entity) map { _ => mutatedEntity }
       }
     }.recover(convertException { e =>
-      debug(s"Update ${index.name}/${t.name}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
+//      debug(s"Update ${index.name}/${t.name}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
       throw e
     })
   }
