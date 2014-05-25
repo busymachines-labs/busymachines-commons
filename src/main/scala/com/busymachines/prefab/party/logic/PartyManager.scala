@@ -74,7 +74,7 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
    userDao.modify(id)(_user=> user).map(_=>Unit)
 
 
-  def findUser(id: Id[User])(implicit sc: SecurityContext): Future[Option[User]] = 
+  def findUser(id: Id[User])(implicit sc: SecurityContext): Future[Option[User]] =
     userDao.retrieve(id).map(_.map(_.entity))
 
   /**
@@ -82,7 +82,7 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
    * check if that party is the party of current user OR if it's a child party.
    */
   def userHasEnoughRights(partyId: Id[Party], userId: Id[User]): Future[Boolean] = partyDao.findUserById(userId) map {
-    case Some(tup) => tup._1.id == partyId.value ||( tup._1.owner !=None && tup._1.owner.get == partyId)
+    case Some(tup) => tup._1.id == partyId ||( tup._1.owner != None && tup._1.owner.get == partyId)
     case None => false
   }
 }

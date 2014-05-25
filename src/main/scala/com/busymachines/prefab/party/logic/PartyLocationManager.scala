@@ -35,7 +35,7 @@ class PartyLocationManager(locationDao:PartyLocationDao, partyDao:PartyDao, part
                      neLon: Option[Double],
                      limit: Option[Int],
                      offset: Option[Int],
-                     costCenters: List[String])(implicit securityContext:SecurityContext): List[PartyLocation] = {
+                     costCenters: List[String])(implicit securityContext:SecurityContext): Future[List[PartyLocation]] = {
 
     var Ids:List[Id[Party]] = partyIds.getOrElse(partyManager.listChildPartiesIds.await ::: List(securityContext.partyId))
 
@@ -50,7 +50,7 @@ class PartyLocationManager(locationDao:PartyLocationDao, partyDao:PartyDao, part
           (neLat map(ne => PartyMapping.locations / PartyLocationMapping.address / AddressMapping.geoLocation / GeoPointMapping.lat lte ne)) ::
           (neLon map(ne => PartyMapping.locations / PartyLocationMapping.address / AddressMapping.geoLocation / GeoPointMapping.lon lte ne)) ::
           Nil flatten),
-      Page(offset,limit)).map(_.result.map(_.entity.map(_.locations)) flatten).await.flatten
+      Page(offset,limit)).map(_.result.flatMap(_.entity.locations))
 
   }
 

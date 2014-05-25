@@ -221,7 +221,7 @@ object UnitOfMeasurePrinter {
     val shouldSlash = nrOfNeg == 1 && unit.terms.last.exponent < 0 
     var prev: String = ""
     unit.terms.map { term =>
-      val prefix = term.prefix.map(_.symbol).getOrElse("")
+      val prefix = term.prefix.symbol
       val symbol = term.unit.symbol
       val (sep, exp) =
         if (term.exponent < 0 && shouldSlash) ("/", -term.exponent)

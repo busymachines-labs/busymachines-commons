@@ -210,7 +210,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
     JsObject((_explicitFields.values ++ registeredExtensions.values.flatMap(_._explicitFields.values.mapTo[ESField[A, _]])).map(f =>
       f.name -> JsObject(
         allOptions(f).map(o => o.name -> o.value) ++
-        f.childMapping.flatMap("properties" -> _.toProperties) toMap)).toMap)
+        f.childMapping.map("properties" -> _.toProperties) toMap)).toMap)
 
   private[elasticsearch] class FieldType[T :ClassTag :JsonFormat](val options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T]] = None, isNested: Boolean = false) {
     def as[T2](implicit jsonFormat: JsonFormat[T2], classTag: ClassTag[T2]): FieldType[T2] =

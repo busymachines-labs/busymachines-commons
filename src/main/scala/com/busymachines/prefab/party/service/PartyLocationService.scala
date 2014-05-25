@@ -20,6 +20,6 @@ trait PartyLocationService {
                      neLon: Option[Double],
                      limit: Option[Int],
                      offset: Option[Int],
-                     costCenters: List[String])(implicit securityContext:SecurityContext): List[PartyLocation]
+                     costCenters: List[String])(implicit securityContext:SecurityContext): Future[List[PartyLocation]]
 }
 

@@ -41,7 +41,7 @@ class DistributedSubscriber(topic: String, onReceiveCompletion: BusEvent => Any)
   mediator ! Subscribe(topic, self)
 
   def receive = {
-    case SubscribeAck(Subscribe(topic, `self`)) =>
+    case SubscribeAck(Subscribe(topic, None, `self`)) =>
       context become ready
   }
 

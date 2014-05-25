@@ -329,7 +329,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     retrieve(id) map (entity => {
       val request = new DeleteRequest(index.name, t.name, id.toString).refresh(refreshAfterMutation)
       (entity match {
-        case None => Future.successful()
+        case None => Future.successful(Unit)
         case Some(e) => preMutate(e)
       }) flatMap { _ =>
         client.execute(request) map {
@@ -340,7 +340,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
         }
       } flatMap { _ =>
         entity match {
-          case None => Future.successful()
+          case None => Future.successful(Unit)
           case Some(e) => preMutate(e)
         }
       }

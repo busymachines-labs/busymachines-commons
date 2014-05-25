@@ -4,10 +4,9 @@ import com.typesafe.config.Config
 import scala.math.Ordering.Implicits._
 import scala.collection.JavaConversions._
 import scala.concurrent.duration._
-import com.typesafe.config.impl.SimpleConfig
 import com.typesafe.config.ConfigFactory
-import scala.collection.mutable.ArrayBuffer
 import com.busymachines.commons.CommonConfig
+import java.util.concurrent.TimeUnit
 
 class RichConfig(val theConfig: Config) {
 
@@ -69,22 +68,22 @@ class RichConfig(val theConfig: Config) {
     seq(path, theConfig.getBytesList(_).map(_.longValue))
 
   def duration(path: String): FiniteDuration =
-    theConfig.getMilliseconds(path).longValue.millis
+    theConfig.getDuration(path, TimeUnit.MILLISECONDS).longValue.millis
 
   def durationOption(path: String): Option[FiniteDuration] =
     option(path, duration)
 
   def durationSeq(path: String): Seq[FiniteDuration] =
-    seq(path, theConfig.getMillisecondsList(_).map(_.longValue.millis))
+    seq(path, theConfig.getDurationList(_, TimeUnit.MILLISECONDS).map(_.longValue.millis))
     
   def jodaDuration(path: String): org.joda.time.Duration = 
-    new org.joda.time.Duration(theConfig.getMilliseconds(path))
+    new org.joda.time.Duration(theConfig.getDuration(path, TimeUnit.MILLISECONDS))
     
   def jodaDurationOption(path: String): Option[org.joda.time.Duration] = 
     option(path, jodaDuration)
   
-  def jodaDurationSeq(path: String): Seq[org.joda.time.Duration] = 
-    seq(path, theConfig.getMillisecondsList(_).map(new org.joda.time.Duration(_)))
+  def jodaDurationSeq(path: String): Seq[org.joda.time.Duration] =
+    seq(path, theConfig.getDurationList(_, TimeUnit.MILLISECONDS).map(new org.joda.time.Duration(_)))
   
   def apply(path: String) = 
     config(path)

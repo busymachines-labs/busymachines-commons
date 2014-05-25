@@ -27,7 +27,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
     partyDao.findUserByCredentialsId(credentialsId) map {
       case Some((party, user)) =>
         val permissions = party.userRoles.filter(role => user.roles.contains(role.id)).flatMap(_.permissions).toSet
-        SecurityContext(tenantId = party.tenant, party.id, user.id, party.describe, user.describe, id, permissions) 
+        Some(SecurityContext(tenantId = party.tenant, party.id, user.id, party.describe, user.describe, id, permissions))
       case None =>  
         debug(s"Cannot authenticate user with credentials: ${credentialsId}.")
         None

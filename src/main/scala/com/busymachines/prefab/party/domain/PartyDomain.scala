@@ -61,7 +61,7 @@ case class Party (
 
   def describe =
     company.map(_.name).getOrElse(
-    person.map(p => p.title :: p.initials :: p.middleName :: p.lastName :: Nil).flatMap(_.toSeq).mkString(" "))
+    person.toSeq.flatMap(p => p.title.toSeq :: p.initials.toSeq :: p.middleName.toSeq :: p.lastName.toSeq :: Nil).mkString(" "))
 }
   
 case class Company(

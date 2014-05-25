@@ -33,7 +33,7 @@ class Cache[K, V](val cache: SprayCache[V]) {
   def setOrUpdate(key: K, future: => Future[V])(implicit executor: ExecutionContext):Future[V] =
     (cache.remove(key) match {
       case Some(f) => f
-      case None => Future.successful()
+      case None => Future.successful(Unit)
     }) flatMap { _ => cache(key)(future) }
 
   def remove(key: K): Option[Future[V]] =
@@ -43,6 +43,6 @@ class Cache[K, V](val cache: SprayCache[V]) {
     keys.flatMap(key => cache.remove(key).map(key -> _)).toMap
   }
 
-  def clear =
-    cache.clear
+  def clear() =
+    cache.clear()
 }
