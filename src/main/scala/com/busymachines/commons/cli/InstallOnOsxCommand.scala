@@ -16,8 +16,8 @@ object InstallOnOsxCommand {
     val binDir = new File(installDir, "bin")
     binDir.mkdirs()
     val startScript = new File(binDir, name + ".sh")
-    val initScript = InstallOnUbuntuCommand.initScript(name, description, startScript.getCanonicalPath, user.getOrElse("root"))
-    initScript.copyTo(new File(binDir, name + ".sh"))
+//    val initScript = InstallOnUbuntuCommand.initScript(name, description, startScript.getCanonicalPath, user.getOrElse("root"))
+//    initScript.copyTo(new File(binDir, name + ".sh"))
   }
   
 

@@ -22,29 +22,7 @@ class ServerApp(appName: String) extends App {
 
   protected def description: String = ""
   
-  case class Config(command: String = "", installName: Option[String] = None, installUser: Option[String] = None)
-  
-  val parser = new OptionParser[Config](appName) {
-    head(appName, "1.0")
-    cmd("install") action { (_, c) => c.copy(command = "install") } text("Install the application") children(
-        arg[String]("<name>") required() text("name of the application") action { (name, c) => c.copy(installName = Some(name)) },
-        opt[String]('u', "user") action { (user, c) => c.copy(installUser = Some(user)) }
-    )
-  }
-  
-  val config = parser.parse(args, Config())
-  
-  println("config: " + config)
-  
-  config match {
-    case Some(config) =>
-      config.command match {
-        case "install" => InstallCommand.install(config.installName.get, description, config.installUser)
-        case _ =>
-      }
-    case None =>
-  }
-  
+
   val installOption = new CmdLineOption1("install", Some('i'), "name", { name =>
     
     def copyJars(dest: File): List[String] = {

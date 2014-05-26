@@ -6,26 +6,45 @@ import com.busymachines.commons.Implicits._
 object InstallOnUbuntuCommand {
   import InstallCommand._
 
-  def install(name: String, description: String, user: Option[String]) = {
+  def install(name: String, description: String, user: Option[String], vmArgs: String, app: App, args: String) = {
     println(s"Installing $name")
     
-    val libDir = new File("/usr/local/share/" + name)
+    val appDir = new File("/opt", name)
+    val libDir = new File(appDir, "lib")
+    val binDir = new File(appDir, "bin")
     libDir.mkdirs()
-    val jars = copyJars(libDir)       
-    val startScript = new File("/usr/local/bin/", name + ".sh")
+    binDir.mkdirs()
+    val jars = copyJars(libDir)
+    val startScriptContent = mkStartScript(vmArgs, new File(appDir, "log/output.log").toString, jars.mkString(","), app.getClass.getName, args)
+    val startScript = new File(binDir, name + ".sh")
+    startScriptContent.copyTo(startScript)
+    val initScriptContent = mkInitScript(name, description, startScript.getCanonicalPath, user.getOrElse("root"))
     val initScript = new File("/etc/init.d/", name)
-    val initScriptContent = InstallOnUbuntuCommand.initScript(name, description, startScript.getCanonicalPath, user.getOrElse("root"))
     initScriptContent.copyTo(initScript)
 
   }
 
-  def initScript(name: String, description: String, command: String, user: String) = 
+  def mkStartScript(vmArgs: String, logfile: String, jars: String, mainClass: String, args: String) = {
+    startScriptTemplate.
+      replace("<VM_ARGS>", vmArgs).
+      replace("<LOGFILE>", logfile).
+      replace("<JARS>", vmArgs).
+      replace("<MAIN_CLASS>", mainClass).
+      replace("<ARGS>", args)
+  }
+
+  def mkInitScript(name: String, description: String, command: String, user: String) =
     initScriptTemplate.
       replaceAll("<NAME>", name).
       replaceAll("<DESCRIPTION>", description).
       replaceAll("<COMMAND>", command).
       replaceAll("<USERNAME>", user)
-    
+
+  val startScriptTemplate = """
+#!/bin/sh
+java <VM_ARGS> -Dlogfile=<LOGFILE> -cp <JARS> <MAIN_CLASS> <ARGS>
+"""
+
   val initScriptTemplate = """
 #!/bin/sh
 ### BEGIN INIT INFO
@@ -48,7 +67,7 @@ start() {
     echo 'Service already running' >&2
     return 1
   fi
-  echo 'Starting service...' >&2
+  echo 'Starting <NAME>...' >&2
   local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
   su -c "$CMD" $RUNAS > "$PIDFILE"
   echo 'Service started' >&2
@@ -56,16 +75,16 @@ start() {
 
 stop() {
   if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
-    echo 'Service not running' >&2
+    echo '<NAME> not running' >&2
     return 1
   fi
-  echo 'Stopping service...' >&2
+  echo 'Stopping <NAME>...' >&2
   kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
   echo 'Service stopped' >&2
 }
 
 uninstall() {
-  echo -n "Are you really sure you want to uninstall this service? That cannot be undone. [yes|No] "
+  echo -n "Are you really sure you want to uninstall <NAME>? That cannot be undone. [yes|No] "
   local SURE
   read SURE
   if [ "$SURE" = "yes" ]; then
