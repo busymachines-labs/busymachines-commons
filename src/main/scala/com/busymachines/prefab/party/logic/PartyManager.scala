@@ -20,6 +20,10 @@ import com.busymachines.prefab.party.service.SecurityContext
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.party.service.PartyService
 import com.busymachines.commons.Implicits._
+import com.busymachines.prefab.party.domain.PartyLocation
+import com.busymachines.prefab.party.db.PartyMapping
+import com.busymachines.prefab.party.db.PartyLocationMapping
+import com.busymachines.prefab.party.db.AddressMapping
 
 class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCredentialsDao, userAuthenticator : UserAuthenticator)(implicit ec: ExecutionContext) extends PartyService with Logging {
 
@@ -85,4 +89,8 @@ class PartyManager(partyDao: PartyDao, userDao : UserDao, credentialsDao : ESCre
     case Some(tup) => tup._1.id == partyId ||( tup._1.owner != None && tup._1.owner.get == partyId)
     case None => false
   }
+  
+   def getPartyLocations(implicit securityContext: SecurityContext): Future[List[PartyLocation]] = listChildPartiesIds.map(parties => securityContext.partyId :: parties).flatMap(
+    ids => partyDao.search(PartyMapping.locations / PartyLocationMapping.address / AddressMapping.geoLocation exists).map(_.result.map(_.entity.locations) flatten)).map(loc => loc.filter(_.address.geoLocation isDefined))
+
 }

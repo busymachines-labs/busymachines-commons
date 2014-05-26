@@ -5,6 +5,7 @@ import com.busymachines.prefab.party.domain.Party
 import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.party.domain.User
 import com.busymachines.prefab.authentication.model.Credentials
+import com.busymachines.prefab.party.domain.PartyLocation
 
 trait PartyService {
 
@@ -88,4 +89,12 @@ trait PartyService {
    * @return - true/false
    */
   def userHasEnoughRights(partyId: Id[Party], userId: Id[User]): Future[Boolean]
+  
+  /**
+   * Gets all subparties locations (user party included) that have a geoLocation
+   * check if that party is the party of current user OR if it's a child party.
+   * @param securityContext 
+   * @return - List of PartyLocations
+   */
+  def getPartyLocations(implicit securityContext: SecurityContext): Future[List[PartyLocation]] 
 }

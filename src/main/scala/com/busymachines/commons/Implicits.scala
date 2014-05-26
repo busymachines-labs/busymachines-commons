@@ -37,6 +37,7 @@ import com.busymachines.commons.domain.CommonDomainJsonFormats
 import com.busymachines.commons.logging.LoggingJsonFormats
 
 object Implicits extends CommonJsonFormats with CommonDomainJsonFormats with ExtensionsImplicits with JodaImplicits with LoggingJsonFormats {
+  implicit def toOption[A](a: A) = Option(a) 
   implicit def richConfig(config : Config) = new RichConfig(config)
   implicit def richCommonConfigType[A <: CommonConfig](f : String => A) = new RichCommonConfigType[A](f)
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
