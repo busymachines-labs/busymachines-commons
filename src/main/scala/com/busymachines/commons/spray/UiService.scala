@@ -56,24 +56,26 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
     }
   
   private def processPath(path: String) = 
-    parameters('crc ?) { crc =>
-      val (doc, ext, isRoot) = extension(path) match {
-        case "" => (rootDocument, extension(rootDocument), true)
-        case ext => (path, ext, false)
-      }
-      val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
-      val shouldProcess = (isRoot || crc.isDefined) && !mediaType.binary
-      if (!isRoot) {
-        cache.getOrElseUpdate((path, crc), {
-          debug(s"Caching resource : $doc")
-          respondWithHeader(`Cache-Control`(`public`, `max-age`(cacheTimeSecs))) {
+    detach() {
+      parameters('crc ?) { crc =>
+        val (doc, ext, isRoot) = extension(path) match {
+          case "" => (rootDocument, extension(rootDocument), true)
+          case ext => (path, ext, false)
+        }
+        val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
+        val shouldProcess = (isRoot || crc.isDefined) && !mediaType.binary
+        if (!isRoot) {
+          cache.getOrElseUpdate((path, crc), {
+            debug(s"Caching resource : $doc")
+            respondWithHeader(`Cache-Control`(`public`, `max-age`(cacheTimeSecs))) {
+              getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
+            }
+          })
+        } else {
+          debug(s"Getting non-cachable resource : $doc")
+          respondWithHeader(`Cache-Control`(`no-cache`)) {
             getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
           }
-        })
-      } else {
-        debug(s"Getting non-cachable resource : $doc")
-        respondWithHeader(`Cache-Control`(`no-cache`)) {
-          getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
         }
       }
     }
