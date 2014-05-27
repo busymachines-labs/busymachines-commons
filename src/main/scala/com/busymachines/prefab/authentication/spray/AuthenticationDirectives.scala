@@ -20,6 +20,35 @@ import com.busymachines.commons.Logging
 
 object AuthenticationDirectives {
   val tokenKey = "Auth-Token"
+
+  def authenticator[SecurityContext](
+    authenticator: PrefabAuthenticator[_, SecurityContext]
+  )(implicit
+    ec: ExecutionContext
+  ): ContextAuthenticator[SecurityContext] = { ctx: RequestContext =>
+    def devmodeAuth = {
+      if (CommonConfig.devmode) authenticator.devmodeSecurityContext(ctx.request.uri.query.get("dev-login"))
+      else None
+    }
+
+    ctx.request.headers.find(_.is(tokenKey.toLowerCase)).map(_.value).
+      orElse(ctx.request.uri.query.get(tokenKey)).map(Id[Authentication]) match {
+      case Some(authenticationId) =>
+        authenticator.authenticate(authenticationId) map {
+          case Some(securityContext) => Right(securityContext)
+          case None =>
+            devmodeAuth match {
+              case Some(devContext) => Right(devContext)
+              case none => Left(AuthenticationFailedRejection(CredentialsRejected, Nil))
+            }
+        }
+      case None =>
+        devmodeAuth match {
+          case Some(devContext) => Future.successful(Right(devContext))
+          case none => Future.successful(Left(AuthenticationFailedRejection(CredentialsMissing, Nil)))
+        }
+    }
+  }
 }
 
 trait AuthenticationDirectives extends Logging {
@@ -27,31 +56,10 @@ trait AuthenticationDirectives extends Logging {
   implicit def toAuthentication[SecurityContext](authenticator: PrefabAuthenticator[_, SecurityContext])(implicit ec: ExecutionContext) = {
     AuthMagnet.fromContextAuthenticator {
       new HttpAuthenticator[SecurityContext] {
-        override def apply(ctx: RequestContext) = {
-          def devmodeAuth = {
-            if (CommonConfig.devmode) authenticator.devmodeSecurityContext(ctx.request.uri.query.get("dev-login"))
-            else None
-          }
+        val bmAuthenticator = AuthenticationDirectives.authenticator(authenticator)
 
-          ctx.request.headers.find(_.is(tokenKey.toLowerCase)).map(_.value).
-            orElse(ctx.request.uri.query.get(tokenKey)).map(Id[Authentication]) match {
-              case Some(authenticationId) =>
-                debug(s"Request ${ctx.request.uri} with auth id $authenticationId")
-                authenticator.authenticate(authenticationId) map {
-                  case Some(securityContext) => Right(securityContext)
-                  case None =>
-                    devmodeAuth match {
-                      case Some(devContext) => Right(devContext)
-                      case none => Left(AuthenticationFailedRejection(CredentialsRejected, Nil))
-                    }
-                }
-              case None =>
-                devmodeAuth match {
-                  case Some(devContext) => Future.successful(Right(devContext))
-                  case none => Future.successful(Left(AuthenticationFailedRejection(CredentialsMissing, Nil)))
-                }
-            }
-        }
+        override def apply(ctx: RequestContext) = bmAuthenticator(ctx)
+
         def executionContext: ExecutionContext = ec
 
         def authenticate(credentials: Option[HttpCredentials], ctx: RequestContext): Future[Option[SecurityContext]] = ???
