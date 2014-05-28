@@ -12,6 +12,7 @@ import spray.http.ContentTypes
 import spray.http.AllowedOrigins
 import spray.http.AllOrigins
 import spray.http.SomeOrigins
+import com.busymachines.commons.CommonConfig
 
 /**
  * Code copied from:
@@ -45,5 +46,7 @@ trait CORSDirectives { this: HttpService =>
       }
 
 
-  def crossDomain = respondWithCORSHeaders(AllOrigins)
+  def crossDomain: Directive0 =
+    if (CommonConfig.devmode) respondWithCORSHeaders(AllOrigins)
+    else noop
 }
