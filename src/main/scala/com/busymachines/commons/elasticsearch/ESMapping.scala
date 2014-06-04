@@ -14,6 +14,7 @@ import scala.reflect.ClassTag
 import spray.json.JsNumber
 import spray.json.JsObject
 import spray.json.JsTrue
+import spray.json.JsFalse
 import spray.json.{JsString, JsonFormat}
 
 /**
@@ -73,6 +74,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
         "_all" -> JsObject("enabled" -> JsTrue) ::
         "_source" -> JsObject("enabled" -> JsTrue) ::
         "store" -> JsTrue ::
+        "dynamic" -> JsFalse ::
         "properties" -> toProperties ::
           ttl.toList.map {
             case ttl if ttl.isFinite => "_ttl" -> JsObject("enabled" -> JsTrue, "default" -> JsNumber(ttl.toMillis))
@@ -129,7 +131,12 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
     // Make Not analyzed default
     field.options.find(_.name == "index") match {
       case Some(_) => field.options
-      case None => field.options :+ NotAnalyzed
+      case None => 
+        // 
+        fieldsByPropertyName.get(field.name) match {
+          case Some(field) => field.options :+ NotAnalyzed
+          case None => field.options :+ NotIndexed
+        }
     }
   }
 

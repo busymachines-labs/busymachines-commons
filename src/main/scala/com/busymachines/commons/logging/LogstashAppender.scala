@@ -53,9 +53,7 @@ object LogstashAppender extends App {
   val fmt = DateTimeFormat.forPattern("'logstash-'yyyy.MM.d")
   val logstashIndexName = fmt.print(DateTime.now)
 
-  lazy val esConfig = new ESConfig("loggger.db.elasticsearch") {
-    def indexName = logstashIndexName
-  }
+  lazy val esConfig = new ESConfig("loggger.db.elasticsearch") 
   lazy val esClient = new ESClient(esConfig)
   lazy val esIndex = new ESIndex(esClient, esConfig.indexName, new DoNothingEventSystem)
 

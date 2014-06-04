@@ -1,6 +1,6 @@
 package com.busymachines.prefab.party.db
 
-import com.busymachines.commons.elasticsearch.{ESField, ESMapping}
+import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.commons.Implicits._
 import com.busymachines.prefab.party.domain._
 import com.busymachines.prefab.party.domain.Party
@@ -24,7 +24,7 @@ object PartyMapping extends ESMapping[Party] {
   val fdcIdfNumber = "fdcIdfNumber" :: String
   val fdcDeliveryAddressCustomerNumber = "fdcDeliveryAddressCustomerNumber" :: String
 
-  val person = "person" :: Nested(PersonMapping)
+  val person = "person" :: Nested(PersonMapping) 
   val company = "company" :: Nested(CompanyMapping)
   val addresses = "addresses" :: Nested(AddressMapping)
   val locations = "locations" :: Nested(PartyLocationMapping)
@@ -87,7 +87,7 @@ object RelatedPartyMapping extends ESMapping[RelatedParty] {
 }
 
 object UserMapping extends ESMapping[User] {
-  val id : ESField[User, Id[User]] = "_id" -> "id" :: String.as[Id[User]]
+  val id = "_id" -> "id" :: String.as[Id[User]]
   val credentials = "credentials" :: String.as[Id[Credentials]]
   val firstName = "firstName" :: String 
   val middleName = "middleName" :: String
@@ -103,7 +103,6 @@ object UserRoleMapping extends ESMapping[UserRole] {
   val name = "name" :: String
   val permissions = "permissions" :: String
 }
-
 
 object GeoPointMapping extends ESMapping[GeoPoint]()(null, geoPointFormat) {
   val lat = "lat" :: Double

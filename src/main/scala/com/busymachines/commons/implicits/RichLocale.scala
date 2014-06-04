@@ -6,7 +6,7 @@ import java.util.Locale
  * Created by ruud on 04/01/14.
  */
 class RichLocale(val locale: Locale) extends AnyVal {
-
+  
   def isRoot =
     locale == Locale.ROOT
 

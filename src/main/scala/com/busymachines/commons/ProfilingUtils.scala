@@ -9,11 +9,16 @@ object ProfilingUtils extends Logging {
       val t0 = System.nanoTime()
       val result = block // call-by-name
       val t1 = System.nanoTime()
-      val seconds = (t1 - t0) / 1000000;
+      val msec = (t1 - t0) / 1000000.0;
+      val m = 
+        if (msec >= 1000)
+          s"${message} (${msec / 1000.0} sec)"
+        else
+          s"${message} ($msec msec)"
       if (stdout) {
-        println(s"${message} (${seconds / 1000.0}s)")
+        println(m)
       }
-      debug(s"${message} (${seconds / 1000.0}s)")
+      debug(m)
       result
     } else {
       block

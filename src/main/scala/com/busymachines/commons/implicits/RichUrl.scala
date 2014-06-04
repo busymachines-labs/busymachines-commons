@@ -10,7 +10,7 @@ class RichUrl(val url : URL) extends AnyVal {
   def fileName = {
     val path = url.getPath
     val index = path.lastIndexOf('/')
-    if (index >= 0) path.substring(index)
+    if (index >= 0) path.substring(index + 1)
     else path
       
   } 

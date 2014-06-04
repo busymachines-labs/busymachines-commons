@@ -43,7 +43,8 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   private val cache = TrieMap[(String, Option[String]), Route]()
   
   if (CommonConfig.devmode)
-    info(s"Resources are read from source folders in $resourceRoot (devmode)")
+    for (root <- resourceSourceRoots)
+      info(s"Resources are read from source folders in $root (devmode)")
 
   def route =
     get {
@@ -64,6 +65,8 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
         }
         val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
         val shouldProcess = (isRoot || crc.isDefined) && !mediaType.binary
+        if (CommonConfig.devmode)
+          cache.clear()
         if (!isRoot) {
           // Non-root resource: cache on server and client
           cache.getOrElseUpdate((path, crc), {
@@ -162,11 +165,12 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
       } else l
       pattern.findFirstMatchIn(line) match {
         case Some(m) =>
+          val base = ""
           val path = stripMin(m.group(2))
-          loadResource(basePath, path, classLoader) match {
+          loadResource(base, path, classLoader) match {
             case None =>
-              debug("Couldn't load resource " + basePath + "/" + path)
-              out.append(m.before).append(m.group(1)).append(m.group(2)).append(m.group(3)).append("=!").append(m.group(4)).append(m.group(5)).append(m.after).append("\n")
+              debug("Couldn't load resource " + base + "/" + path)
+              out.append(m.before).append(m.group(1)).append(m.group(2)).append(m.group(3)).append("!").append(m.group(4)).append(m.group(5)).append(m.after).append("\n")
             case Some(bytes) =>
               val crc = bytes.crc32
               out.append(m.before).append(m.group(1)).append(path).append(m.group(3)).append(crc).append(m.group(4)).append(m.group(5)).append(m.after).append("\n")
