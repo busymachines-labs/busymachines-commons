@@ -27,6 +27,14 @@ trait PartyService {
   def getParty(partyId: Id[Party])(implicit sc: SecurityContext): Future[Option[Party]]
 
   /**
+   * Retrieves parties in set of IDs
+   * @param partyIds - list of party ID
+   * @param sc - implicit SecurityContext
+   * @return all parties with given ids
+   */
+  def getParties(partyIds: Seq[Id[Party]])(implicit sc: SecurityContext): Future[List[Party]]
+  
+  /**
    *Returns a list of child parties for the given user
    * @param sc - implicit SecurityContext
    * @return - list of parties
