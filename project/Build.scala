@@ -30,7 +30,7 @@ object BusyMachinesCommonsBuild extends Build {
     publishMavenStyle := false,
     exportJars := true,      
     organization := "com.busymachines",
-    scalaVersion := "2.10.3",
+    scalaVersion := "2.10.4",
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:reflectiveCall", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
@@ -38,6 +38,12 @@ object BusyMachinesCommonsBuild extends Build {
     resolvers += Resolver.url("busymachines releases", url("http://archiva.busymachines.com/repository/releases/"))(Resolver.ivyStylePatterns),
     resolvers += "spray repo" at "http://repo.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
+      addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.0" cross CrossVersion.full),
+      libraryDependencies <+= (scalaVersion)("org.scala-lang" % "scala-reflect" % _),
+      libraryDependencies ++= (
+        if (scalaVersion.value.startsWith("2.10")) List("org.scalamacros" %% "quasiquotes" % "2.0.0")
+        else Nil
+        ),
     libraryDependencies += "junit" % "junit" % "4.11" % "test" withSources(),
     libraryDependencies += "org.scalatest" %% "scalatest" % "2.0" % "test" withSources(),
     libraryDependencies += "org.specs2" %% "specs2-core" % specs2Version % "test" withSources(),
