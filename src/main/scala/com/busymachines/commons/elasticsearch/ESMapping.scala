@@ -133,10 +133,11 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
       case Some(_) => field.options
       case None => 
         // 
-        fieldsByPropertyName.get(field.name) match {
-          case Some(field) => field.options :+ NotAnalyzed
-          case None => field.options :+ NotIndexed
-        }
+//        fieldsByPropertyName.get(field.name) match {
+//          case Some(field) => field.options :+ NotAnalyzed
+//          case None => field.options :+ NotIndexed
+//        }
+        field.options :+ NotAnalyzed
     }
   }
 
