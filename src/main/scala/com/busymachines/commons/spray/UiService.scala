@@ -24,6 +24,7 @@ import spray.util.actorSystem
 import com.busymachines.commons.CommonConfig
 import com.busymachines.commons.ProfilingUtils.time
 import scala.collection.concurrent.TrieMap
+import spray.httpx.encoding.Gzip
 
 /**
  * Class that serves ui content. For url's with an extension, the corresponding resource is read from the
@@ -58,31 +59,33 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   
   private def processPath(path: String) = 
     detach() {
-      parameters('crc ?) { crc =>
-        val (doc, ext, isRoot) = extension(path) match {
-          case "" => (rootDocument, extension(rootDocument), true)
-          case ext => (path, ext, false)
-        }
-        val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
-        val shouldProcess = (isRoot || crc.isDefined) && !mediaType.binary
-        if (CommonConfig.devmode)
-          cache.clear()
-        if (!isRoot) {
-          // Non-root resource: cache on server and client
-          cache.getOrElseUpdate((path, crc), {
-            debug(s"Caching resource : $doc")
-            respondWithHeader(`Cache-Control`(`public`, `max-age`(cacheTimeSecs))) {
-              getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
-            }
-          })
-        } else {
-          // Root resource: cache on server, not on client
-          cache.getOrElseUpdate((path, crc), {
-            debug(s"Getting non-cachable resource : $doc")
-            respondWithHeader(`Cache-Control`(`no-cache`)) {
-              getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
-            }
-          })
+      compressResponse(Gzip) {
+        parameters('crc ?) { crc =>
+          val (doc, ext, isRoot) = extension(path) match {
+            case "" => (rootDocument, extension(rootDocument), true)
+            case ext => (path, ext, false)
+          }
+          val mediaType = MediaTypes.forExtension(ext).getOrElse(MediaTypes.`application/octet-stream`)
+          val shouldProcess = (isRoot || crc.isDefined) && !mediaType.binary
+          if (CommonConfig.devmode)
+            cache.clear()
+          if (!isRoot) {
+            // Non-root resource: cache on server and client
+            cache.getOrElseUpdate((path, crc), {
+              debug(s"Caching resource : $doc")
+              respondWithHeader(`Cache-Control`(`public`, `max-age`(cacheTimeSecs))) {
+                getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
+              }
+            })
+          } else {
+            // Root resource: cache on server, not on client
+            cache.getOrElseUpdate((path, crc), {
+              debug(s"Getting non-cachable resource : $doc")
+              respondWithHeader(`Cache-Control`(`no-cache`)) {
+                getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
+              }
+            })
+          }
         }
       }
     }
