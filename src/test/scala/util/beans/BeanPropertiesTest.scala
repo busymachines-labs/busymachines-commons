@@ -5,11 +5,11 @@ import scala.collection.generic.CanBuildFrom
 
 class BeanPropertiesTest extends Specification {
 
-  val copierAB = BeanProperties.copier[Abean, Bbean]
-  val copierCB = BeanProperties.copier[Cbean, Bbean]
-
   "BeanProperties copier" should {
     "... copy all properties from A to B" in {
+      val copierAB = BeanProperties.copier[Abean, Bbean]()
+      val copierCB = BeanProperties.copier[Cbean, Bbean]()
+
       copierAB.copy(Abean("aaa")) === Bbean("aaa")
       copierCB.copy(Cbean("aaa", 0)) === Bbean("aaa")
     }
@@ -33,15 +33,15 @@ class BeanPropertiesTest extends Specification {
     "... use implicit conversions for deep copy" in {
       implicit def a2b(a: Abean): Bbean = BeanProperties.copy[Abean, Bbean](a)
 
-      val copier = BeanProperties.copier[SupAbean, SupBbean]
+      val copier = BeanProperties.copier[SupAbean, SupBbean]()
 
       copier.copy(SupAbean(Abean("eee"))) === SupBbean(Bbean("eee"))
     }
 
     "... use implicit Copier for deep copy" in {
-      implicit val a2bCopier = BeanProperties.copier[Abean, Bbean]
+      implicit val a2bCopier = BeanProperties.copier[Abean, Bbean]()
 
-      val copier = BeanProperties.copier[SupAbean, SupBbean]
+      val copier = BeanProperties.copier[SupAbean, SupBbean]()
 
       copier.copy(SupAbean(Abean("eee"))) === SupBbean(Bbean("eee"))
     }
@@ -50,6 +50,18 @@ class BeanPropertiesTest extends Specification {
       val seq = Seq(Abean("1"), Abean("2"))
 
       A2BCopier.a2b(seq) === Seq(Bbean("1"), Bbean("2"))
+    }
+
+    "... take extra parameters to rename properties" in {
+      val copierAD = BeanProperties.copier[Abean, Dbean]("other" -> (_.s))
+
+      copierAD.copy(Abean("x")) === Dbean("x")
+    }
+
+    "... take extra parameters to map property values" in {
+      val copierAB = BeanProperties.copier[Abean, Bbean]("s" -> (_.s + "_mapped"))
+
+      copierAB.copy(Abean("x")) === Bbean("x_mapped")
     }
   }
 
@@ -71,7 +83,7 @@ class BeanPropertiesTest extends Specification {
     }
 
     "... use implicit Copier for deep update" in {
-      implicit val a2bCopier = BeanProperties.copier[Abean, Bbean]
+      implicit val a2bCopier = BeanProperties.copier[Abean, Bbean]()
 
       val updater = BeanProperties.updater[SupAbean, SupCbean]
 
@@ -96,6 +108,8 @@ case class Bbean(s: String)
 
 case class Cbean(s: String, i: Int)
 
+case class Dbean(other: String)
+
 case class SupAbean(sub: Abean)
 
 case class SupBbean(sub: Bbean)
@@ -105,7 +119,7 @@ case class SupCbean(sub: Bbean, j: Long)
 case class SupDbean(sub: Cbean, j: Long)
 
 object A2BCopier extends StandardCopiers {
-  implicit val a2bCopier = BeanProperties.copier[Abean, Bbean]
+  implicit val a2bCopier = BeanProperties.copier[Abean, Bbean]()
 
   def a2b(seq: Seq[Abean]): Seq[Bbean] = implicitly[Copier[Seq[Abean], Seq[Bbean]]].copy(seq)
 }

@@ -15,6 +15,10 @@ trait Updater[A, B] {
 
 trait StandardCopiers {
 
+  implicit def optionCopier[A, B](implicit copier: Copier[A, B]) = new Copier[Option[A], Option[B]] {
+    def copy(a: Option[A]): Option[B] = a.map(copier.copy)
+  }
+
   implicit def collectionCopier[A, B, C[A] <: Iterable[A]](implicit
     copier: Copier[A, B],
     cbf: CanBuildFrom[C[B], B, C[B]]
@@ -118,16 +122,27 @@ object BeanProperties {
   }
 
 
-  def copier[A, B]: Copier[A, B] = macro copierImpl[A, B]
+  def copier[A, B](props: Pair[String, A => Any]*): Copier[A, B] = macro copierImpl[A, B]
 
-  def copierImpl[A: c.WeakTypeTag, B: c.WeakTypeTag](c: Context): c.Expr[Copier[A, B]] = {
+  def copierImpl[A: c.WeakTypeTag, B: c.WeakTypeTag](c: Context)(props: c.Expr[Pair[String, A => Any]]*): c.Expr[Copier[A, B]] = {
     import c.universe._
+
+    val params: List[Tree] =
+      for (prop <- props.toList)
+      yield {
+        prop.tree match {
+          case q"${_}(${Literal(Constant(propName: String))}).->[${_}](${propValue: Tree})" =>
+            q"($propName, $propValue(a))"
+          case q"(${propName: String}, ${propValue: Tree})" =>
+            q"($propName, $propValue(a))"
+        }
+      }
 
     val aType = weakTypeOf[A].typeSymbol
     val bType = weakTypeOf[B].typeSymbol
     c.Expr[Copier[A, B]](
       q"""new util.beans.Copier[$aType, $bType] {
-           def copy(a: $aType): $bType = util.beans.BeanProperties.copy[$aType, $bType](a)
+           def copy(a: $aType): $bType = util.beans.BeanProperties.copy[$aType, $bType](a, ..$params)
          }""")
   }
 
