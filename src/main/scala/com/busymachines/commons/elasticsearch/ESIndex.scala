@@ -29,17 +29,18 @@ class ESIndex(config: ESConfig, val name : String, val eventBus: EventBus) exten
   private val initializeHandlers = TrieMap[() => Unit, Unit]()
   private val initialized = new AtomicBoolean(false)
 
-  lazy val client = {
-    initialize {
-      ESIndex.clientsByClusterName.getOrElseUpdate(config.clusterName, {
-        info("Using ElasticSearch client " + Version.CURRENT)
-        new ESClient(
-          new TransportClient(ImmutableSettings.settingsBuilder().put("cluster.name", config.clusterName)) {
-            addTransportAddresses(config.hostNames.map(new InetSocketTransportAddress(_, config.port)): _*)
-          })
-      })
-    }
+  private lazy val client0 = {
+    ESIndex.clientsByClusterName.getOrElseUpdate(config.clusterName, {
+      info("Using ElasticSearch client " + Version.CURRENT)
+      new ESClient(
+        new TransportClient(ImmutableSettings.settingsBuilder().put("cluster.name", config.clusterName)) {
+          addTransportAddresses(config.hostNames.map(new InetSocketTransportAddress(_, config.port)): _*)
+        })
+    })
   }
+
+  lazy val client =
+    initialize(client0)
 
   def refresh() {
     client.javaClient.admin.indices().refresh(new RefreshRequest()).actionGet
@@ -47,10 +48,10 @@ class ESIndex(config: ESConfig, val name : String, val eventBus: EventBus) exten
   
   def drop() {
     initialized.set(false)
-    val indicesExistsReponse = client.execute(new IndicesExistsRequest(name))
+    val indicesExistsReponse = client0.execute(new IndicesExistsRequest(name))
     val exists = Await.result(indicesExistsReponse, 30 seconds).isExists
     if (exists) {
-      client.javaClient.admin.indices().delete(new DeleteIndexRequest(name)).get()
+      client0.javaClient.admin.indices().delete(new DeleteIndexRequest(name)).get()
     }
   }
 
