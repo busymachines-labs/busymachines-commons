@@ -55,7 +55,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     val mappingConfiguration = t.mapping.mappingDefinition(t.name).toString
     try {
       debug(s"Schema for ${index.name}/${t.name}: $mappingConfiguration")
-      client.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
+      client.javaClient.admin.indices.putMapping(new PutMappingRequest(index.name).`type`(t.name).source(mappingConfiguration)).get()
     }
     catch {
       case e : Throwable =>
@@ -380,7 +380,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
 
 
   def onChange(f: Id[T] => Unit) {
-    index.bus.subscribe {
+    index.eventBus.subscribe {
       case ESRootDaoMutationEvent(n, id) if n == eventName =>
         f(Id[T](id))
     }
@@ -392,7 +392,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     Future.successful(entity)
 
   protected def postMutate(entity: T): Future[Unit] =
-    Future.successful(index.bus.publish(ESRootDaoMutationEvent(eventName, entity.id.toString)))
+    Future.successful(index.eventBus.publish(ESRootDaoMutationEvent(eventName, entity.id.toString)))
 
   implicit def toResults(f: Future[SearchResult[T]]) = ESRootDao.toResults(f)
 }

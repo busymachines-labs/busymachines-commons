@@ -4,7 +4,7 @@ import com.busymachines.commons.Logging
 import akka.actor.ActorRef
 import scala.concurrent.Future
 
-class DoNothingEventSystem extends EventBus with Logging {
+object DoNothingEventSystem extends EventBus with Logging {
 
   def subscribe(f: PartialFunction[BusEvent, Any]): Unit = {
     debug(s"Subscribed to endpoint but in fact did nothing")

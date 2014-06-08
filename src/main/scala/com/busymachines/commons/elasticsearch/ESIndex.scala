@@ -1,8 +1,6 @@
 package com.busymachines.commons.elasticsearch
 
-import akka.actor.ActorSystem
 import com.busymachines.commons.event.EventBus
-import com.busymachines.commons.event.LocalEventBus
 import java.util.concurrent.atomic.AtomicBoolean
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
@@ -12,46 +10,55 @@ import scala.collection.concurrent.TrieMap
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
+import org.elasticsearch.client.transport.TransportClient
+import org.elasticsearch.common.settings.ImmutableSettings
+import com.busymachines.commons.Logging
+import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.Version
+import org.scalastuff.esclient.ESClient
 
-class ESIndex(_client: ESClient, val name : String, eventBus:EventBus) {
-  def this(config : ESConfig, name : String, eventBus:EventBus) = this(new ESClient(config), name, eventBus)
-  def this(configBaseName : String, name : String, eventBus:EventBus) = this(new ESConfig(configBaseName), name, eventBus)
+private object ESIndex {
+  private val clientsByClusterName = TrieMap[String, ESClient]()
+}
 
-  type InitializeHandler = () => Unit
-  
-  private val nrOfShards = _client.config.numberOfShards
-  private val nrOfReplicas = _client.config.numberOfShards
-  private val initializeHandlers = TrieMap[InitializeHandler, Unit]()
-  private var initialized = new AtomicBoolean(false)
-  
-  lazy val bus:EventBus = eventBus match {
-    case null =>  new LocalEventBus(ActorSystem("bm")).asInstanceOf[EventBus] 
-    case _ => eventBus
-  }
-  
+class ESIndex(config: ESConfig, val name : String, val eventBus: EventBus) extends Logging {
+  def this(config : ESConfig, eventBus: EventBus) = this(config, config.indexName, eventBus)
+
+  private val nrOfShards = config.numberOfShards
+  private val nrOfReplicas = config.numberOfShards
+  private val initializeHandlers = TrieMap[() => Unit, Unit]()
+  private val initialized = new AtomicBoolean(false)
+
   lazy val client = {
-    initialize
-    _client
+    initialize {
+      ESIndex.clientsByClusterName.getOrElseUpdate(config.clusterName, {
+        info("Using ElasticSearch client " + Version.CURRENT)
+        new ESClient(
+          new TransportClient(ImmutableSettings.settingsBuilder().put("cluster.name", config.clusterName)) {
+            addTransportAddresses(config.hostNames.map(new InetSocketTransportAddress(_, config.port)): _*)
+          })
+      })
+    }
   }
 
   def refresh() {
-    _client.admin.indices().refresh(new RefreshRequest()).actionGet
+    client.javaClient.admin.indices().refresh(new RefreshRequest()).actionGet
   }
   
   def drop() {
     initialized.set(false)
-    val indicesExistsReponse = _client.execute(new IndicesExistsRequest(name))
+    val indicesExistsReponse = client.execute(new IndicesExistsRequest(name))
     val exists = Await.result(indicesExistsReponse, 30 seconds).isExists
     if (exists) {
-      _client.admin().indices().delete(new DeleteIndexRequest(name)).get()
+      client.javaClient.admin.indices().delete(new DeleteIndexRequest(name)).get()
     }
   }
 
-  def initialize() {
-    val indicesExistsReponse = _client.execute(new IndicesExistsRequest(name))
+  private def initialize(client: ESClient): ESClient = {
+    val indicesExistsReponse = client.execute(new IndicesExistsRequest(name))
     val exists = Await.result(indicesExistsReponse, 30 seconds).isExists
     if (!exists) {
-      _client.admin.indices.create(new CreateIndexRequest(name).settings(
+      client.javaClient.admin.indices.create(new CreateIndexRequest(name).settings(
         s"""
            {
             "number_of_shards" : $nrOfShards,
@@ -65,6 +72,7 @@ class ESIndex(_client: ESClient, val name : String, eventBus:EventBus) {
     // call initialize handlers
     for ((handler, _) <- initializeHandlers) 
     	handler()
+    client
   }
   
   def onInitialize(handler : () => Unit) {

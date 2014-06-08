@@ -32,7 +32,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
    */
   private var _explicitFields = Map[String, ESField[A, _]]()
 
-  private lazy val mappingName = classTag.runtimeClass.getName.stripSuffix("$")
+  private[elasticsearch] lazy val mappingName = classTag.runtimeClass.getName.stripSuffix("$")
 
   /**
    * Mapped fields.
@@ -132,12 +132,12 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
     field.options.find(_.name == "index") match {
       case Some(_) => field.options
       case None => 
-        // 
-//        fieldsByPropertyName.get(field.name) match {
-//          case Some(field) => field.options :+ NotAnalyzed
-//          case None => field.options :+ NotIndexed
-//        }
-        field.options :+ NotAnalyzed
+
+        fieldsByName.get(field.name) match {
+          case Some(field) => field.options :+ NotAnalyzed
+          case None => field.options :+ NotIndexed
+        }
+//        field.options :+ NotAnalyzed
     }
   }
 

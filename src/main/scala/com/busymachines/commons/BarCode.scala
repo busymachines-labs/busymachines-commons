@@ -102,5 +102,4 @@ class BarCode39(val code: String) extends BarCode {
       o)
     o.toByteArray
   }
-
 }

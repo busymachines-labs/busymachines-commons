@@ -15,7 +15,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class ESSequenceDaoTests extends FlatSpec with Logging {
 
-  val esIndex = new EmptyESTestIndex(getClass, new DoNothingEventSystem)
+  val esIndex = new EmptyESTestIndex(getClass, DoNothingEventSystem)
   val sequenceDao = new ESSequenceDao(esIndex)
   val sequence1 = Id.static[Sequence]("test-sequence-1")
   val sequence2 = Id.static[Sequence]("test-sequence-2")

@@ -3,7 +3,6 @@ package com.busymachines.commons.logging
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.DateTime
 import com.busymachines.commons.elasticsearch.ESConfig
-import com.busymachines.commons.elasticsearch.ESClient
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import com.busymachines.commons.Implicits._
@@ -54,8 +53,7 @@ object LogstashAppender extends App {
   val logstashIndexName = fmt.print(DateTime.now)
 
   lazy val esConfig = new ESConfig("loggger.db.elasticsearch") 
-  lazy val esClient = new ESClient(esConfig)
-  lazy val esIndex = new ESIndex(esClient, esConfig.indexName, new DoNothingEventSystem)
+  lazy val esIndex = new ESIndex(esConfig, DoNothingEventSystem)
 
   val dao = new ESRootDao[LogMessage](esIndex, ESType("log", LogMessageMapping))
   for (i <- 1 to 1000) {

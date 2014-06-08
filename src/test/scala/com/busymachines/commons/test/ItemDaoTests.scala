@@ -25,7 +25,7 @@ import com.busymachines.commons.elasticsearch.{ESRootDao, ESSearchSort}
 @RunWith(classOf[JUnitRunner])
 class ItemDaoTests extends FlatSpec with Logging {
 
-  val esIndex = new EmptyESTestIndex(getClass, new DoNothingEventSystem)
+  val esIndex = new EmptyESTestIndex(getClass, DoNothingEventSystem)
   val dao = new ESRootDao[Item](esIndex, ESType("item", ItemMapping))
   val nestedDao = new ESNestedDao[Item, Property]("properties") {
     def parentDao = dao

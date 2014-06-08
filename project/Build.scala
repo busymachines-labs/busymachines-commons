@@ -22,13 +22,13 @@ object BusyMachinesCommonsBuild extends Build {
     exportJars := true,      
     organization := "com.busymachines",
     version := "0.3-SNAPSHOT",
-    scalaVersion := "2.10.4",
+    scalaVersion := "2.11.1",
     crossScalaVersions := Seq("2.11.1", "2.10.4"),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),
-    scalacOptions <++= scalaBinaryVersion map {
-      case "2.11" => Seq("-Ydelambdafy:method")
-      case _ => Nil
-    },
+//    scalacOptions <++= scalaBinaryVersion map {
+//      case "2.11" => Seq("-Ydelambdafy:method")
+//      case _ => Nil
+//    },
     incOptions := incOptions.value.withNameHashing(true),
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.withSource := true,
