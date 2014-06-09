@@ -19,7 +19,7 @@ import org.elasticsearch.transport.RemoteTransportException
 import org.elasticsearch.index.engine.VersionConflictEngineException
 import org.elasticsearch.action.delete.DeleteRequest
 import java.util.UUID
-import spray.json.{JsValue, JsObject}
+import spray.json.{JsString, JsValue, JsObject}
 
 /**
  * Collection represented by type.
@@ -322,8 +322,8 @@ class ESCollection[T](index: ESIndex, typeName: String, mapping: ESMapping[T])(i
     json match {
       case JsObject(fields) =>
         fields.get("_id") match {
-          case Some(id) => id.toString
-          case None => UUID.randomUUID.toString
+          case Some(JsString(id)) => id.toString
+          case _ => UUID.randomUUID.toString
         }
       case _ => UUID.randomUUID.toString
     }
