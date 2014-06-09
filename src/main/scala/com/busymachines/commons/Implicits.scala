@@ -5,11 +5,9 @@ import java.net.URL
 import java.util.Locale
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
 import scala.xml.Elem
 import scala.xml.factory.XMLLoader
-import org.joda.time.ReadablePartial
-import com.busymachines.commons.dao.Versioned
+import com.busymachines.commons.dao.{SearchResult, Versioned}
 import com.busymachines.commons.implicits._
 import com.typesafe.config.Config
 import implicits.RichAny
@@ -64,6 +62,8 @@ object Implicits extends CommonJsonFormats with CommonDomainJsonFormats with Ext
   implicit def richVersionedListFuture[A](future: Future[List[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
   implicit def richVersionedSeqFuture[A](future: Future[Seq[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
   implicit def richVersionedOptionFuture[A](future: Future[Option[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
+  implicit def richSearchResult[A](future: Future[SearchResult[A]])(implicit ec: ExecutionContext) = future.map(_.result)
+  implicit def richVersionedSearchResult[A](future: Future[SearchResult[A]])(implicit ec: ExecutionContext) = future.map(_.result.map(_.entity))
 
 }
 

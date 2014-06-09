@@ -106,18 +106,6 @@ class ESCollection[T](index: ESIndex, typeName: String, mapping: ESMapping[T])(i
     }
   }
 
-  def allSearchText(searchText: String): ESSearchCriteria[T] =
-    propertySearchText(mapping._all,searchText)
-
-  def allSearchQuery(searchQuery: String): ESSearchCriteria[T] =
-    propertySearchQuery(mapping._all,searchQuery)
-
-  def propertySearchText(field: ESField[_,String],searchText: String): ESSearchCriteria[T] =
-    propertySearchQuery(field,s"*${escapeQueryText(searchText)}*")
-
-  def propertySearchQuery(property: ESField[_,String],searchQuery: String): ESSearchCriteria[T] =
-    (property queryString searchQuery).asInstanceOf[ESSearchCriteria[T]]
-
   def create(entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration] = None): Future[Versioned[T]] = {
     val json = mapping.jsonFormat.write(entity)
     val request = new IndexRequest(indexName, typeName)
@@ -239,7 +227,7 @@ class ESCollection[T](index: ESIndex, typeName: String, mapping: ESMapping[T])(i
   /**
    * Escapes a string special ES characters as specified here : {@link http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_reserved_characters}
    */
-  private def escapeQueryText(s: String) = {
+  private[elasticsearch] def escapeQueryText(s: String) = {
     var b0: StringBuilder = null
     def b = { if (b0 == null) b0 = new StringBuilder; b0 }
     var p = 0
