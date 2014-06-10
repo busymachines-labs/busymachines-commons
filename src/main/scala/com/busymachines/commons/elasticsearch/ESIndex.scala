@@ -16,13 +16,15 @@ import com.busymachines.commons.Logging
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.Version
 import org.scalastuff.esclient.ESClient
+import java.io.Writer
+import spray.json.JsObject
 
 private object ESIndex {
   private val clientsByClusterName = TrieMap[String, ESClient]()
 }
 
-class ESIndex(config: ESConfig, val name : String, val eventBus: EventBus) extends Logging {
-  def this(config : ESConfig, eventBus: EventBus) = this(config, config.indexName, eventBus)
+class ESIndex(config: ESConfig, val name : String, _eventBus: => EventBus) extends Logging {
+  def this(config : ESConfig, eventBus: => EventBus) = this(config, config.indexName, eventBus)
 
   private val nrOfShards = config.numberOfShards
   private val nrOfReplicas = config.numberOfShards
@@ -42,10 +44,22 @@ class ESIndex(config: ESConfig, val name : String, val eventBus: EventBus) exten
   lazy val client =
     initialize(client0)
 
+  def eventBus = _eventBus
+
+  def onInitialize(handler : () => Unit) {
+    if (initialized.get)
+      handler()
+    initializeHandlers.put(handler, {})
+  }
+
   def refresh() {
     client.javaClient.admin.indices().refresh(new RefreshRequest()).actionGet
   }
-  
+
+  def dump(writer: Writer, f: JsObject => Unit) {
+    ESIndexDump.exportJsonDump(this, writer, f)
+  }
+
   def drop() {
     initialized.set(false)
     val indicesExistsReponse = client0.execute(new IndicesExistsRequest(name))
@@ -74,11 +88,5 @@ class ESIndex(config: ESConfig, val name : String, val eventBus: EventBus) exten
     for ((handler, _) <- initializeHandlers) 
     	handler()
     client
-  }
-  
-  def onInitialize(handler : () => Unit) {
-    if (initialized.get) 
-      handler()
-    initializeHandlers.put(handler, {})
   }
 }

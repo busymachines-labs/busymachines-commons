@@ -22,7 +22,7 @@ import java.util.UUID
 import spray.json.{JsString, JsValue, JsObject}
 
 /**
- * Collection represented by type.
+ * Collection of documents represented by type.
  */
 class ESCollection[T](index: ESIndex, typeName: String, mapping: ESMapping[T])(implicit ec: ExecutionContext) extends Logging {
 
