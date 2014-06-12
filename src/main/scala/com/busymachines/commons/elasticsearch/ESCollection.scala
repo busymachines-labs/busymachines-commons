@@ -227,7 +227,7 @@ class ESCollection[T](index: ESIndex, typeName: String, mapping: ESMapping[T])(i
   /**
    * Escapes a string special ES characters as specified here : {@link http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_reserved_characters}
    */
-  private[elasticsearch] def escapeQueryText(s: String) = {
+  private[elasticsearch] def escapeQueryText(s: String): String = {
     var b0: StringBuilder = null
     def b = { if (b0 == null) b0 = new StringBuilder; b0 }
     var p = 0
@@ -257,9 +257,9 @@ class ESCollection[T](index: ESIndex, typeName: String, mapping: ESMapping[T])(i
         case '|' if p < l && s.charAt(p) == '|' => b.append("\\|")
         case c => b.append(c)
       }
-      if (b0 == null) s
-      else b0.toString
     }
+    if (b0 == null) s
+    else b0.toString
   }
 
   private def toESFacets(facets: Seq[Facet]): Map[Facet, FacetBuilder] =
