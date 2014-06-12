@@ -1,10 +1,11 @@
-package com.busymachines.commons.test
+package com.busymachines.commons
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
 import java.util.UUID
+
 import com.busymachines.commons.domain.Id
+import org.junit.runner.RunWith
+import org.scalatest.FlatSpec
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class IdTests extends FlatSpec {

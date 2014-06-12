@@ -1,4 +1,4 @@
-package com.busymachines.commons.test
+package com.busymachines.commons.elasticsearch
 
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.domain.GeoPoint

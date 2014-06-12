@@ -1,32 +1,27 @@
-package com.busymachines.commons.test
+package com.busymachines.commons.elasticsearch
 
+import com.busymachines.commons.Implicits.richFuture
+import com.busymachines.commons.Logging
+import com.busymachines.commons.dao.Versioned.toEntity
+import com.busymachines.commons.dao.{Page, Versioned}
+import com.busymachines.commons.domain.{GeoPoint, Id}
+import com.busymachines.commons.event.DoNothingEventSystem
+import com.busymachines.commons.testing.EmptyESTestIndex
+import org.joda.time.{DateTime, DateTimeZone}
+import org.junit.runner.RunWith
+import org.scalatest.FlatSpec
+import org.scalatest.junit.JUnitRunner
+import com.busymachines.commons.elasticsearch.Mappings._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
-import org.scalatest.FlatSpec
-import com.busymachines.commons.dao.Versioned.toEntity
-import com.busymachines.commons.Implicits._
-import com.busymachines.commons.elasticsearch._
-import com.busymachines.commons.Implicits.richFuture
-import com.busymachines.commons.test.Mappings._
-import com.busymachines.commons.testing.EmptyESTestIndex
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
-import com.busymachines.commons.domain.Id
-import com.busymachines.commons.dao.Versioned
-import com.busymachines.commons.dao.Page
-import com.busymachines.commons.Logging
-import com.busymachines.commons.event.DoNothingEventSystem
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import scala.Some
-import com.busymachines.commons.domain.GeoPoint
-import com.busymachines.commons.elasticsearch.{ESRootDao, ESSearchSort}
 
 @RunWith(classOf[JUnitRunner])
 class ItemDaoTests extends FlatSpec with Logging {
 
   val esIndex = new EmptyESTestIndex(getClass, DoNothingEventSystem)
   val dao = new ESRootDao[Item](esIndex, ESType("item", ItemMapping))
+  val collection = new ESCollection[Item](esIndex, "item", ItemMapping)
+
   val nestedDao = new ESNestedDao[Item, Property]("properties") {
     def parentDao = dao
 
@@ -299,5 +294,8 @@ class ItemDaoTests extends FlatSpec with Logging {
     assert(dao.search((ItemMapping.name queryString ("priceSale:(<=0.02 AND >=0.01) "))).await.size === 2)
   }
 
+  "Collection" should "not escape alphanumeric text" in {
+    assert(collection.escapeQueryText("doe") === "doe")
+  }
 
 }

@@ -1,10 +1,9 @@
-package com.busymachines.commons.test
+package com.busymachines.commons.elasticsearch
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 import org.scalatest.FlatSpec
 import com.busymachines.commons.Implicits._
-import com.busymachines.commons.test.Mappings._
 import com.busymachines.commons.testing.EmptyESTestIndex
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone

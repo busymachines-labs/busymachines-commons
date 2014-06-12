@@ -1,16 +1,15 @@
-package com.busymachines.commons.test
+package com.busymachines.commons.elasticsearch
+
+import com.busymachines.commons.Logging
+import com.busymachines.commons.domain.{Id, Sequence}
+import com.busymachines.commons.event.DoNothingEventSystem
+import com.busymachines.commons.testing.EmptyESTestIndex
+import org.junit.runner.RunWith
+import org.scalatest.FlatSpec
+import org.scalatest.junit.JUnitRunner
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
-import org.scalatest.FlatSpec
-import com.busymachines.commons.testing.EmptyESTestIndex
-import com.busymachines.commons.domain.Id
-import com.busymachines.commons.Logging
-import com.busymachines.commons.event.DoNothingEventSystem
-import com.busymachines.commons.elasticsearch.ESSequenceDao
-import com.busymachines.commons.domain.Sequence
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ESSequenceDaoTests extends FlatSpec with Logging {
