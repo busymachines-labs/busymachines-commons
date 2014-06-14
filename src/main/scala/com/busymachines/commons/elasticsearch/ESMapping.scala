@@ -6,7 +6,6 @@ import com.busymachines.commons.Implicits._
 import com.busymachines.commons.spray._
 import com.busymachines.commons.{ExtensionsProductFieldFormat, Extension}
 import org.joda.time.DateTime
-import scala.Some
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration

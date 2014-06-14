@@ -33,18 +33,7 @@ class ESCollection[T](index: ESIndex, typeName: String, mapping: ESMapping[T])(i
   val defaultSort: SearchSort = ESSearchSort.asc("_id")
 
   // Add mapping.
-  index.onInitialize { () =>
-    val mappingConfiguration = mapping.mappingDefinition(typeName).toString
-    try {
-      debug(s"Schema for $indexName/$typeName: $mappingConfiguration")
-      client.javaClient.admin.indices.putMapping(new PutMappingRequest(indexName).`type`(typeName).source(mappingConfiguration)).get()
-    }
-    catch {
-      case e : Throwable =>
-        error(s"Invalid schema for $indexName/$typeName: $mappingConfiguration: ${e.getMessage}", e)
-        throw e
-    }
-  }
+  index.onInitialize { () => index.addMapping(typeName, mapping) }
 
   def retrieve(id: String): Future[Option[Versioned[T]]] = {
     val request = new GetRequest(indexName, typeName, id.toString)

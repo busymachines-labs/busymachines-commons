@@ -1,69 +1,75 @@
 package com.busymachines.commons.elasticsearch
 
 import java.io.{Reader, Writer}
+import java.util.concurrent.TimeUnit
+
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.common.unit.TimeValue
-import java.util.concurrent.TimeUnit
+import org.scalastuff.json.JsonParser
+import org.scalastuff.json.spray.{SprayJsonBuilder, SprayJsonParser, SprayJsonPrinter}
 import spray.json._
-import com.busymachines.commons.util.JsonParser
-import scala.Some
+
+import scala.collection.concurrent.TrieMap
 import scala.collection.immutable.ListMap
 
 private[elasticsearch] object ESIndexDump {
 
-  def exportJsonDump(index: ESIndex, writer: Writer, f: JsObject => Unit) {
-    writer.write("[\n")
+  def exportJson(index: ESIndex, writer: Writer, f: JsObject => Unit) {
+    val printer = new SprayJsonPrinter(writer, 2)
+    printer.handler.startArray()
     iterateAll(index, (typeName, obj) => {
       val objWithType = JsObject(ListMap("_type" -> JsString(typeName)) ++ obj.fields)
-      writer.write("  ")
-      write(objWithType, 2, writer)
-      writer.write(",\n")
+      printer(objWithType)
       f(objWithType)
     })
-    writer.write("]\n")
+    printer.handler.endArray()
     writer.close()
   }
 
-  def importJsonDump(index: ESIndex, reader: Reader, f: JsObject => Unit) {
+  def importJson(index: ESIndex, reader: Reader, mapping: PartialFunction[String, ESMapping[_]], f: JsObject => Unit) {
 
-  }
+    val collections = new TrieMap[String, ESCollection[_]]
 
-  private def write(value: JsValue, indent: Int, writer: Writer): Unit =
-    value match {
-      case JsObject(fields) =>
-        writer.append("{\n")
-        var first = true
-        for (field <- fields) {
-          if (first) first = false else writer.append(",\n")
-          for (i <- 1 to indent + 2) writer.append(' ')
-          writer.append('\"').append(field._1).append("\" : ")
-          write(field._2, indent + 2, writer)
+    val parser = new JsonParser(new SprayJsonBuilder() {
+      var level = 0
+      override def startObject() {
+        if (level == 0)
+          reset()
+        level += 1
+        super.startObject()
+      }
+
+      override def endObject() {
+        super.endObject()
+        level -= 1
+        if (level == 0) {
+          println(result)
         }
-        if (!first) writer.append("\n")
-        for (i <- 1 to indent) writer.append(' ')
-        writer.append("}")
-      case JsArray(values) =>
-        writer.append("[\n")
-        var first = true
-        for (value <- values) {
-          if (first) first = false else writer.append(",\n")
-          for (i <- 1 to indent + 2) writer.append(' ')
-          write(value, indent + 2, writer)
-        }
-        if (!first) writer.append("\n")
-        for (i <- 1 to indent) writer.append(' ')
-        writer.append("]")
-      case JsString(s) =>
-        writer.append('\"').append(s).append('\"')
-      case JsNumber(n) =>
-        writer.append(String.valueOf(n))
-      case JsNull =>
-        writer.append("null")
-      case JsTrue =>
-        writer.append("true")
-      case JsFalse =>
-        writer.append("false")
+      }
+      override def startArray() {
+        if (level > 0)
+          super.startArray()
+      }
+      override def endArray() {
+        if (level > 0)
+          super.endArray()
+      }
+    })
+
+    def process(obj: JsObject) = {
+      val t = obj.fields.get("_type") match {
+        case Some(JsString(s)) => s
+        case _ => ""
+      }
+//      val collection = collections.getOrElseUpdate(t, {
+//        if (mapping.isDefinedAt(t)) {
+//          new ESCollection[_](index, t, mapping(t))
+//        }
+//        else throw new Exception(s"Unknown type '$t', import aborted.")
+//      })
     }
+    parser.parse(reader)
+  }
 
   private def iterateAll(index: ESIndex, f: (String, JsObject) => Unit) = {
 
@@ -76,6 +82,8 @@ private[elasticsearch] object ESIndexDump {
         .setSize(100)
         .execute.actionGet.getScrollId)
 
+    val jsonParser = new SprayJsonParser
+
     while (scrollId.isDefined) {
       val response =
         client.prepareSearchScroll(scrollId.get)
@@ -83,7 +91,7 @@ private[elasticsearch] object ESIndexDump {
           .execute().actionGet()
 
       for (hit <- response.getHits.hits) {
-        JsonParser.parse(hit.sourceAsString) match {
+        jsonParser.parse(hit.sourceAsString) match {
           case obj: JsObject => f(hit.`type`, obj)
           case _ =>
         }

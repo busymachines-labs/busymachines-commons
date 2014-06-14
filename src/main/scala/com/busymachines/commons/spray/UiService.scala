@@ -45,7 +45,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   
   if (CommonConfig.devmode)
     for (root <- resourceSourceRoots)
-      info(s"Resources are read from source folders in $root (devmode)")
+      info(s"Tracking resource changes in: ${root.getPath.stripPrefix("./")} (DEVMODE)")
 
   def route =
     get {

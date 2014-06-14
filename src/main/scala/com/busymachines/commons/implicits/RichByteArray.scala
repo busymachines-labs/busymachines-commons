@@ -1,24 +1,26 @@
 package com.busymachines.commons.implicits
 
-import com.google.common.io.BaseEncoding
-import com.google.common.hash.Hashing
-import com.busymachines.commons.util.HexString
+import java.security.MessageDigest
+import java.util.zip.CRC32
 
-object RichByteArray {
-  val base64Encoding = BaseEncoding.base64
-  val crc32 = Hashing.crc32
-  val md5 = Hashing.md5
-}
+import com.busymachines.commons.util.HexString
+import org.apache.commons.codec.binary.Base64
 
 class RichByteArray(val bytes : Array[Byte]) extends AnyVal {
-  def encodeBase64 : String = 
-    RichByteArray.base64Encoding.encode(bytes)
+  def encodeBase64 : String =
+    new String(Base64.encodeBase64(bytes), "UTF-8")
 
-  def md5 = 
-    RichByteArray.md5.hashBytes(bytes).asBytes
+  def encodeBase64Url : String =
+    new String(new Base64(true).encode(bytes), "UTF-8")
 
-  def crc32 = 
-    RichByteArray.crc32.hashBytes(bytes).asInt
+  def md5: Array[Byte] =
+    MessageDigest.getInstance("MD5").digest(bytes)
+
+  def crc32 = {
+    val crc = new CRC32()
+    crc.update(bytes)
+    crc.getValue.toInt
+  }
 
   def toHexString: String =
     HexString.fromByteArray(bytes)

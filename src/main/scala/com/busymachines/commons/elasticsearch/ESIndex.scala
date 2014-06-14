@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import scala.collection.concurrent.TrieMap
 import scala.concurrent.Await
@@ -16,7 +17,7 @@ import com.busymachines.commons.Logging
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.Version
 import org.scalastuff.esclient.ESClient
-import java.io.Writer
+import java.io.{Reader, Writer}
 import spray.json.JsObject
 
 private object ESIndex {
@@ -56,8 +57,26 @@ class ESIndex(config: ESConfig, val name : String, _eventBus: => EventBus) exten
     client.javaClient.admin.indices().refresh(new RefreshRequest()).actionGet
   }
 
-  def dump(writer: Writer, f: JsObject => Unit) {
-    ESIndexDump.exportJsonDump(this, writer, f)
+  def addMapping(typeName: String, mapping: ESMapping[_]) {
+    val mappingConfiguration = mapping.mappingDefinition(typeName).toString
+    try {
+      debug(s"Schema for $name/$typeName: $mappingConfiguration")
+      client.javaClient.admin.indices.putMapping(new PutMappingRequest(name).`type`(typeName).source(mappingConfiguration)).get()
+    }
+    catch {
+      case e : Throwable =>
+        val msg = s"Invalid schema for $name/$typeName: ${e.getMessage} in $mappingConfiguration"
+        error(msg, e)
+        throw new Exception(msg, e)
+    }
+  }
+
+  def exportJson(writer: Writer, f: JsObject => Unit) {
+    ESIndexDump.exportJson(this, writer, f)
+  }
+
+  def importJson(reader: Reader, mapping: PartialFunction[String, ESMapping[_]], f: JsObject => Unit) {
+    ESIndexDump.importJson(this, reader, mapping, f)
   }
 
   def drop() {

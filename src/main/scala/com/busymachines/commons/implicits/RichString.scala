@@ -1,19 +1,12 @@
 package com.busymachines.commons.implicits
 
-import com.typesafe.config.Config
-import scala.math.Ordering.Implicits._
-import scala.collection.JavaConversions._
+import java.io.{File, FileOutputStream, OutputStreamWriter}
+import java.lang.{Double => JDouble, Long => JLong}
+import java.nio.charset.{Charset, StandardCharsets}
 import java.security.MessageDigest
-import java.lang.{ Long => JLong, Double => JDouble }
-import com.busymachines.commons.spray.ProductFormat
-import scala.reflect.ClassTag
-import com.busymachines.commons.elasticsearch.ESField
-import java.io.File
-import java.io.FileOutputStream
-import java.io.FileWriter
-import java.io.OutputStreamWriter
-import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
+
+import com.busymachines.commons.Implicits._
+import org.apache.commons.codec.binary.Base64
 
 class RichString(val s: String) extends AnyVal {
 
@@ -25,13 +18,16 @@ class RichString(val s: String) extends AnyVal {
     MessageDigest.getInstance("SHA-256").digest(s.getBytes("UTF-8"))
 
   def md5: Array[Byte] =
-    RichByteArray.md5.hashBytes(s.getBytes("UTF-8")).asBytes
+    s.getBytes("UTF-8").md5
 
-  def crc32 =
-    RichByteArray.crc32.hashBytes(s.getBytes("UTF-8")).asInt
+  def crc32: Int =
+    s.getBytes("UTF-8").crc32
 
   def decodeBase64: Array[Byte] =
-    RichByteArray.base64Encoding.decode(s)
+    Base64.decodeBase64(s)
+
+  def decodeBase64Url: Array[Byte] =
+    new Base64(true).decode(s)
 
   def toIntOption: Option[Int] =
     try {
