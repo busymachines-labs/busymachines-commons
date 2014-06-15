@@ -17,8 +17,6 @@ import com.busymachines.commons.Logging
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.Version
 import org.scalastuff.esclient.ESClient
-import java.io.{Reader, Writer}
-import spray.json.JsObject
 
 private object ESIndex {
   private val clientsByClusterName = TrieMap[String, ESClient]()
@@ -69,14 +67,6 @@ class ESIndex(config: ESConfig, val name : String, _eventBus: => EventBus) exten
         error(msg, e)
         throw new Exception(msg, e)
     }
-  }
-
-  def exportJson(writer: Writer, f: JsObject => Unit) {
-    ESIndexDump.exportJson(this, writer, f)
-  }
-
-  def importJson(reader: Reader, mapping: PartialFunction[String, ESMapping[_]], f: JsObject => Unit) {
-    ESIndexDump.importJson(this, reader, mapping, f)
   }
 
   def drop() {
