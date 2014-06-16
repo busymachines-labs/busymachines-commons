@@ -84,7 +84,7 @@ object BeanProperties {
               case NoSymbol =>
 
                 if (!param.asTerm.isParamWithDefault)
-                  c.abort(c.enclosingPosition, s"Cannot copy: property ${weakTypeOf[A]}.${paramName} not found and no default value provided")
+                  c.abort(c.enclosingPosition, s"Cannot copy: property ${weakTypeOf[B]}.${paramName} not found and no default value provided")
                 else
                   None // property is not found, use default value
 

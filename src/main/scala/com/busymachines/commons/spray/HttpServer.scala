@@ -1,5 +1,6 @@
 package com.busymachines.commons.spray
 
+import _root_.spray.util.LoggingContext
 import com.busymachines.commons._
 import akka.actor.ActorSystem
 import akka.actor.Props
@@ -55,6 +56,8 @@ abstract class HttpServer(config: HttpServerConfig)(implicit actorSystem: ActorS
       ctx.complete(StatusCodes.NotFound, Map("message" -> e.getMessage, "id" -> e.id, "type" -> e.`type`).toJson.toString)
     }
   }
+
+  implicit val loggingContext = LoggingContext.fromAdapter(actorSystem.log)
 
   class Actor extends HttpServiceActor {
     def receive = runRoute(logRequest(showRequest _) {
