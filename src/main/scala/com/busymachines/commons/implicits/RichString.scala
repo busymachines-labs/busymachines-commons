@@ -60,9 +60,13 @@ class RichString(val s: String) extends AnyVal {
     toDoubleOption.getOrElse(alt)
     
   def copyTo(file: File, charset: Charset = StandardCharsets.UTF_8) {
-    val writer = new OutputStreamWriter(new FileOutputStream(file), charset)
-    try writer.write(s)
-    finally writer.close()
+    try {
+      val writer = new OutputStreamWriter(new FileOutputStream(file), charset)
+      try writer.write(s)
+      finally writer.close()
+    } catch {
+      case e: Exception => throw new Exception("couldn't write to " + file + ": " + e.getMessage)
+    }
   }
 
 }
