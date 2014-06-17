@@ -72,7 +72,6 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
       JsObject(
         "_all" -> JsObject("enabled" -> JsTrue) ::
         "_source" -> JsObject("enabled" -> JsTrue) ::
-        "store" -> JsTrue ::
         "dynamic" -> JsFalse ::
         "properties" -> toProperties ::
           ttl.toList.map {
