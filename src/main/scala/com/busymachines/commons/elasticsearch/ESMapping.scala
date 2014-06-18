@@ -72,7 +72,6 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
       JsObject(
         "_all" -> JsObject("enabled" -> JsTrue) ::
         "_source" -> JsObject("enabled" -> JsTrue) ::
-        "store" -> JsTrue ::
         "properties" -> toProperties ::
           ttl.toList.map {
             case ttl if ttl.isFinite => "_ttl" -> JsObject("enabled" -> JsTrue, "default" -> JsNumber(ttl.toMillis))
