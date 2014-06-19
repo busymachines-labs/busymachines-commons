@@ -38,7 +38,7 @@ object InstallOnUbuntuCommand {
     if (canOverwrite(startScript)) {
       startScript.getParentFile.mkdirs()
 
-      val startScriptContent = s"""#!/bin/sh
+      val startScriptContent = s"""#!/bin/bash
 $genmarker
 java $vmArgs -Dconfig.file=/etc/$name.conf -Dlogback.configurationFile=/etc/$name.d/cli-logback.xml -cp $jarFileNames $appClassName $$*
 """
