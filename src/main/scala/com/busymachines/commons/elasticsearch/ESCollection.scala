@@ -24,7 +24,7 @@ import spray.json.{JsString, JsValue, JsObject}
 /**
  * Collection of documents represented by type.
  */
-class ESCollection[T](index: ESIndex, typeName: String, mapping: ESMapping[T])(implicit ec: ExecutionContext) extends Logging {
+class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESMapping[T])(implicit ec: ExecutionContext) extends Logging {
 
   val client = index.client
   val indexName = index.name

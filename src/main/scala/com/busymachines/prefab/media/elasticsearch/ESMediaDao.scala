@@ -17,7 +17,7 @@ import com.busymachines.prefab.media.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ESMediaDao(index: ESIndex,mimeTypeDetector:MimeTypeDetector)(implicit ec: ExecutionContext) extends MediaDao with Logging {
+class ESMediaDao(index: ESIndex, mimeTypeDetector:MimeTypeDetector)(implicit ec: ExecutionContext) extends MediaDao with Logging {
 
   private val dao = new ESRootDao[HashedMedia](index, ESType[HashedMedia]("media", MediaMapping))
 
