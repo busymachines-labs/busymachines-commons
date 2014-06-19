@@ -92,7 +92,7 @@ java $vmArgs -Dconfig.file=/etc/$name.conf -Dlogback.configurationFile=/etc/$nam
       replace("<ARGS>", args)
 
 
-  val initScriptTemplate = """#!/bin/sh
+  val initScriptTemplate = """#!/bin/bash
 <GEN_MARKER>
 ### BEGIN INIT INFO
 # Provides:          <NAME>
