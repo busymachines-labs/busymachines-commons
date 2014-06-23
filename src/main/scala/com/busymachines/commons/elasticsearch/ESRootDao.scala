@@ -126,7 +126,7 @@ class ESRootDao[T <: HasId[T]: JsonFormat: ClassTag](index: ESIndex, t: ESType[T
     collection.retrieveAll
 
   def onChange(f: Id[T] => Unit) =
-    collection.onChange(f)
+    collection.onChange(id => f(Id(id)))
 }
 
 case class ESRootDaoMutationEvent(eventName: String, id: String) extends BusEvent
