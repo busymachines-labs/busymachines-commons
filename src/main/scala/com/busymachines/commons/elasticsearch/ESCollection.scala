@@ -21,6 +21,8 @@ import org.elasticsearch.action.delete.DeleteRequest
 import java.util.UUID
 import spray.json.{JsString, JsValue, JsObject}
 
+import scala.util.Success
+
 /**
  * Collection of documents represented by type.
  */
@@ -97,8 +99,9 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
 
   def create(entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration] = None): Future[Versioned[T]] = {
     val json = mapping.jsonFormat.write(entity)
+    val id: String = getIdFromJson(json)
     val request = new IndexRequest(indexName, typeName)
-      .id(getIdFromJson(json))
+      .id(id)
       .create(true)
       .source(json.toString)
       .refresh(refreshAfterMutation)
@@ -108,11 +111,15 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
 
-      client.execute(request).map(response => Versioned(entity, response.getVersion))
-    .recover(convertException { e =>
+    client.execute(request).map(response => Versioned(entity, response.getVersion))
+      .andThen {
+        case Success(v) =>
+          index.eventBus.publish(ESRootDaoMutationEvent(eventName, id))
+      }
+      .recover(convertException { e =>
       //      debug(s"Create ${indexName}/${typeName}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
-      throw e
-    })
+        throw e
+      })
   }
 
   def getOrCreate(id: String, refreshAfterMutation: Boolean)(_create: => T): Future[Versioned[T]] = {
@@ -176,9 +183,11 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
   def update(entity: Versioned[T], refreshAfterMutation: Boolean): Future[Versioned[T]] = {
     val newJson = mapping.jsonFormat.write(entity.entity)
 
+    val id: String = getIdFromJson(newJson)
+
     val request = new IndexRequest(indexName, typeName)
       .refresh(refreshAfterMutation)
-      .id(getIdFromJson(newJson))
+      .id(id)
       .source(newJson.toString)
       .version(entity.version)
 
@@ -186,7 +195,11 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     //      val response = client.execute(IndexAction.INSTANCE, request).get
     //      Future.successful(Versioned(entity, response.getVersion.toString))
       client.execute(request).map(response => Versioned(entity.entity, response.getVersion))
-    .recover(convertException { e =>
+        .andThen {
+          case Success(v) =>
+            index.eventBus.publish(ESRootDaoMutationEvent(eventName, id))
+        }
+      .recover(convertException { e =>
       //      debug(s"Update ${indexName}/${typeName}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
       throw e
     })
@@ -198,6 +211,8 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       response =>
         if (!response.isFound) {
           throw new IdNotFoundException(id, typeName)
+        } else {
+          index.eventBus.publish(ESRootDaoMutationEvent(eventName, id))
         }
     }
   }
@@ -206,10 +221,10 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     index.refresh
   }
 
-  def onChange(f: Id[T] => Unit) {
+  def onChange(f: String => Unit) {
     index.eventBus.subscribe {
       case ESRootDaoMutationEvent(n, id) if n == eventName =>
-        f(Id[T](id))
+        f(id)
     }
   }
 
