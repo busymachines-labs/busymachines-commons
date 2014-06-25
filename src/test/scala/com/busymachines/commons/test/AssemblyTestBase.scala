@@ -3,7 +3,7 @@ package com.busymachines.commons.test
 import akka.actor.ActorSystem
 import com.busymachines.commons.event.LocalEventBus
 import com.busymachines.commons.Implicits._
-import com.busymachines.commons.testing.EmptyESTestIndex
+import com.busymachines.commons.testing.{DefaultTestESConfig, EmptyESTestIndex}
 import com.busymachines.prefab.party.PartyAssembly
 import com.busymachines.prefab.party.logic.PartyFixture
 import org.scalatest.FlatSpec
@@ -18,7 +18,7 @@ trait AssemblyTestBase extends FlatSpec with MediaAssembly with RouteTest with S
   lazy implicit val actorSystem = ActorSystem("Commons",ConfigFactory.load("tests.conf"))
   lazy implicit val executionContext = actorSystem.dispatcher
   lazy val eventBus = new LocalEventBus(actorSystem)
-  lazy val index = new EmptyESTestIndex(getClass, eventBus)
+  lazy val index = new EmptyESTestIndex(getClass, DefaultTestESConfig, eventBus)
   def actorRefFactory = actorSystem
 
   PartyFixture.createDevMode(partyDao, credentialsDao)
