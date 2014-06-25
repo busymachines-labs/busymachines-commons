@@ -5,23 +5,14 @@ package com.busymachines.commons.util
 import com.busymachines.commons.Logging
 import com.busymachines.commons.dao.Scroll
 import com.busymachines.commons.elasticsearch.{ESMapping, ESSearchCriteria, ESCollection}
-import com.busymachines.prefab.party.db.PartyMapping
 import org.scalatest.FlatSpec
 import com.busymachines.commons.test.AssemblyTestBase
-import com.busymachines.prefab.party.api.v1.PartyApiV1Directives
 import com.busymachines.prefab.party.logic.PartyFixture
-import com.busymachines.prefab.party.api.v1.model.AuthenticationResponse
-import spray.http.{StatusCodes, ContentTypes, HttpEntity}
-import spray.json.JsonParser
-import com.busymachines.prefab.party.domain.Party
 import com.busymachines.commons.domain.{HasId, Id}
 import com.busymachines.commons.Implicits._
-import com.busymachines.prefab.party.Implicits._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.concurrent.duration.DurationInt
-import com.busymachines.commons.spray._
-
 import scala.util.Random
 
 /**

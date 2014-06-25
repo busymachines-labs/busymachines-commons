@@ -64,6 +64,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
   def retrieveAll: Future[List[Versioned[T]]] =
     search(all, page = Page.all).map(_.result)
 
+  //TODO Future refactoring needed
   def prepareScroll(criteria:SearchCriteria[T],duration:FiniteDuration=5 minutes, size:Int=100):Future[Scroll]={
       val request=client.javaClient.prepareSearch(indexName)
         .setTypes(typeName)
