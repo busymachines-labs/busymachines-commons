@@ -30,7 +30,7 @@ class MediaDaoTests extends FlatSpec with Logging {
 
   "MediaDao" should "creates & & retrieve & avoids duplicates" in {
 
-  val esIndex = new EmptyESTestIndex(getClass, DoNothingEventSystem)
+  val esIndex = new EmptyESTestIndex(getClass)
 
   lazy val mediaDao = new ESMediaDao(esIndex,mediaMimeTypeDetector)
   lazy val mediaMimeTypeDetector:MimeTypeDetector = new DefaultMimeTypeDetector
