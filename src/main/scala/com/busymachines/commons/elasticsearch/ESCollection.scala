@@ -65,13 +65,18 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     search(all, page = Page.all).map(_.result)
 
   //TODO Future refactoring needed
-  def prepareScroll(criteria:SearchCriteria[T],duration:FiniteDuration=5 minutes, size:Int=100):Future[Scroll]={
+  def prepareScroll(criteria:SearchCriteria[T],duration:FiniteDuration=5 minutes, size:Int=100):Future[Scroll]=
+    criteria match{
+      case crit:ESSearchCriteria[T]=>
+
       val request=client.javaClient.prepareSearch(indexName)
         .setTypes(typeName)
+        .setQuery(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), crit.toFilter))
         .setSearchType(SearchType.SCAN)
         .setSize(size)
         .setScroll(new TimeValue(duration.toSeconds,TimeUnit.SECONDS))
     client.execute(request.request).map(r=>Scroll(r.getScrollId(),duration,size))
+      case _ => throw new Exception("Expected ElasticSearch search criteria")
   }
 
   def scroll(criteria:SearchCriteria[T], scroll:Scroll):Future[SearchResult[T]]=criteria match {

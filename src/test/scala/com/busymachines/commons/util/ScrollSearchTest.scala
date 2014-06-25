@@ -173,4 +173,6 @@ class ScrollSearchTest extends FlatSpec with AssemblyTestBase with PartyFixture 
 
   }
 
+  //TODO Create a test here for modified searchCriteria and see the outcome
+
 }
