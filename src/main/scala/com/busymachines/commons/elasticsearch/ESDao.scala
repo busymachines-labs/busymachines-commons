@@ -26,9 +26,9 @@ abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit e
 
   def searchSingle(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T]): Future[Option[Versioned[T]]] = {
     search(criteria).map {
-      case SearchResult(Nil, _, _) => None
-      case SearchResult(first :: Nil, _, _) => Some(first)
-      case SearchResult(many, _, _) =>
+      case SearchResult(Nil, _, _, _) => None
+      case SearchResult(first :: Nil, _, _, _) => Some(first)
+      case SearchResult(many, _, _, _) =>
         try {
           Some(onMany(many))
         } catch {

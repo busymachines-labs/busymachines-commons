@@ -1,10 +1,13 @@
 package com.busymachines.commons.elasticsearch
 
+import java.util.concurrent.TimeUnit
+
+import org.elasticsearch.common.unit.TimeValue
+
 import collection.JavaConversions._
 import scala.concurrent.{Future, ExecutionContext}
 import com.busymachines.commons.dao._
 import com.busymachines.commons.Logging
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import org.elasticsearch.index.query.{QueryBuilders, FilterBuilders}
 import org.elasticsearch.action.get.GetRequest
 import com.busymachines.commons.util.JsonParser
@@ -12,7 +15,7 @@ import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.search.facet.{FacetBuilders, FacetBuilder}
 import org.elasticsearch.search.facet.histogram.HistogramFacet
 import org.elasticsearch.search.facet.terms.TermsFacet
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{FiniteDuration, Duration}
 import org.elasticsearch.action.index.IndexRequest
 import com.busymachines.commons.domain.Id
 import org.elasticsearch.transport.RemoteTransportException
@@ -20,6 +23,7 @@ import org.elasticsearch.index.engine.VersionConflictEngineException
 import org.elasticsearch.action.delete.DeleteRequest
 import java.util.UUID
 import spray.json.{JsString, JsValue, JsObject}
+import scala.concurrent.duration.DurationInt
 
 /**
  * Collection of documents represented by type.
@@ -57,6 +61,29 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
 
   def retrieveAll: Future[List[Versioned[T]]] =
     search(all, page = Page.all).map(_.result)
+
+  def prepareScroll(criteria:SearchCriteria[T],duration:FiniteDuration=5 minutes, size:Int=100):Future[Scroll]={
+      val request=client.javaClient.prepareSearch(indexName)
+        .setTypes(typeName)
+        .setSearchType(SearchType.SCAN)
+        .setSize(size)
+        .setScroll(new TimeValue(duration.toSeconds,TimeUnit.SECONDS))
+    client.execute(request.request).map(r=>Scroll(r.getScrollId(),duration,size))
+  }
+
+  def scroll(criteria:SearchCriteria[T], scroll:Scroll):Future[SearchResult[T]]=criteria match {
+    case criteria:ESSearchCriteria[T]=>
+     val request= client.javaClient.prepareSearchScroll(scroll.id)
+            .setScroll(new TimeValue(scroll.duration.toSeconds, TimeUnit.SECONDS))
+
+      client.execute(request.request).map { result =>
+        SearchResult(result.getHits.hits.toList.map { hit =>
+          val json = JsonParser.parse(hit.sourceAsString)
+          Versioned(mapping.jsonFormat.read(json), hit.version)
+        }, Some(result.getHits.getTotalHits),scroll=Some(scroll.copy(id=result.getScrollId())))
+      }
+    case _=>throw new Exception("Expected ElasticSearch search criteria")
+  }
 
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
     criteria match {

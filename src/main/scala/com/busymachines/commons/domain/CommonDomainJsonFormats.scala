@@ -1,9 +1,6 @@
 package com.busymachines.commons.domain
 
-import com.busymachines.commons.dao.HistogramFacetValue
-import com.busymachines.commons.dao.SearchResult
-import com.busymachines.commons.dao.TermFacetValue
-import com.busymachines.commons.dao.Versioned
+import com.busymachines.commons.dao._
 import com.busymachines.commons.implicits.CommonJsonFormats
 
 import spray.json.JsArray
@@ -20,7 +17,11 @@ trait CommonDomainJsonFormats { this: CommonJsonFormats =>
 
   implicit val mimeTypeFormat = stringFormat("MimeType", MimeType)
 
+
   implicit def idFormat[A] = stringWrapperFormat(Id[A])
+
+  implicit val scrollTypeFormat = format3(Scroll)
+
   implicit val moneyFormat = format2(Money)
 
   implicit val termFacetValueFormat = format2(TermFacetValue)
@@ -32,6 +33,7 @@ trait CommonDomainJsonFormats { this: CommonJsonFormats =>
     def write(result: SearchResult[T]) = {
       val jsonResult = JsArray(result.result.map(_.entity).map(tFormat.write))
       val jsonFacetResult = JsObject(result.facets.map(facet => facet._1 -> JsArray(facet._2.map {
+        case v: Scroll => scrollTypeFormat.write(v)
         case v: HistogramFacetValue => histogramValueFormat.write(v)
         case v: TermFacetValue => termFacetValueFormat.write(v)
         })))
