@@ -5,7 +5,6 @@ import com.busymachines.commons.domain.GeoPoint
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import org.joda.time.DateTime
-import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.commons.EnumValue
 import com.busymachines.commons.Enum
 
