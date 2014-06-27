@@ -28,6 +28,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.{FiniteDuration, Duration}
 import scala.reflect.ClassTag
 import spray.json._
+import scala.concurrent.duration.DurationInt
 import scala.Some
 
 object ESRootDao {
@@ -60,10 +61,8 @@ class ESRootDao[T <: HasId[T] : JsonFormat : ClassTag] (index: ESIndex, t: ESTyp
   def reindexAll () =
     collection.reindexAll ()
 
-  //TODO Refactor scroll and prepareScroll methods as in exort/import methods from ESToolHelper
-  def scroll (criteria: SearchCriteria[T], scroll: Scroll): Future[SearchResult[T]] = collection.scroll (criteria, scroll)
-
-  def prepareScroll (criteria:SearchCriteria[T], duration:FiniteDuration, size:Int=100): Future[Scroll] = collection.prepareScroll(criteria, duration, size)
+  def scan (criteria: SearchCriteria[T], duration: FiniteDuration = 5 minutes, batchSize: Int = 100): Iterator[T] =
+    collection.scan (criteria, duration, batchSize)
 
   def search (criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] =
     collection.search (criteria, page, sort, facets)
