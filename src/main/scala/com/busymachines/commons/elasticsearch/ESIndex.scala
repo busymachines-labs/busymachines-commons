@@ -26,7 +26,7 @@ class ESIndex(config: ESConfig, val name : String, _eventBus: => EventBus) exten
   def this(config : ESConfig, eventBus: => EventBus) = this(config, config.indexName, eventBus)
 
   private val nrOfShards = config.numberOfShards
-  private val nrOfReplicas = config.numberOfShards
+  private val nrOfReplicas = config.numberOfReplicas
   private val initializeHandlers = TrieMap[() => Unit, Unit]()
   private val initialized = new AtomicBoolean(false)
 
