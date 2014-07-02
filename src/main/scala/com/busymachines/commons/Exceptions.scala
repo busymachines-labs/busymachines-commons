@@ -14,3 +14,19 @@ class EntityNotFoundException(val id: String, val `type`: String) extends Except
   def this(id: Id[_], `type`: String) = this(id.toString, `type`)
 }
 
+/**
+ * This exception should be used when known, application specific events occur. Any client of the library should
+ * define its different exceptions by using a fixed set of possible values for the id parameter.
+ *
+ * The {@link com.busymachines.commons.spray.CommonExceptionHandler} returns by default the 499 http status code
+ * for this exception, regardless of the fields.
+ *
+ * @author Lorand Szakacs, lorand.szakacs@busymachines.com
+ */
+class ApplicationException(val id: String, msg: String, cause: Option[Throwable] = None) extends Exception(msg, cause.getOrElse(null)) {
+  lazy val message = getMessage
+
+  override def toString = s"id=$id\n${super.toString}"
+
+}
+
