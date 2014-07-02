@@ -12,8 +12,7 @@ class NotAuthorizedException(msg: String, cause: Option[Throwable] = None) exten
  */
 class EntityNotFoundException(val id: String, val `type`: String) extends Exception(s"${`type`.capitalize} with id $id not found") {
   def this(id: Id[_], `type`: String) = this(id.toString, `type`)
-}
-
+}add
 /**
  * This exception should be used when known, application specific events occur. Any client of the library should
  * define its different exceptions by using a fixed set of possible values for the id parameter.

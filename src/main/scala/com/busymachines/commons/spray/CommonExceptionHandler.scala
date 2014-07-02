@@ -24,7 +24,7 @@ object CommonExceptionHandler extends ExceptionHandler with Logging {
 
     case e: ApplicationException => ctx =>
       debug(s"Application encountered a domain exception:\n${e.toString}")
-      ctx.complete(StatusCodes.Forbidden, Map("message" -> e.message, "id" -> e.id,))
+      ctx.complete(StatusCodes.Forbidden, Map("message" -> e.message, "id" -> e.id))
 
     case e: Throwable => ctx =>
       error(s"Request ${ctx.request} could not be handled normally:\n${e.getMessage}", e)
