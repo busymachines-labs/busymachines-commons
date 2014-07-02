@@ -5,9 +5,7 @@ import com.busymachines.commons.Logging
 import akka.actor.ActorRefFactory
 import spray.http.CacheDirectives
 import spray.http.HttpHeaders
-import spray.routing.HttpService
-import spray.routing.RequestContext
-import spray.routing.Route
+import spray.routing._
 
 abstract class CommonHttpService(implicit val actorRefFactory: ActorRefFactory) extends HttpService with CommonDirectives with Route with Logging {
   implicit def executionContext = actorRefFactory.dispatcher
@@ -19,4 +17,8 @@ abstract class CommonHttpService(implicit val actorRefFactory: ActorRefFactory) 
 
   def cacheHeaders(duration: FiniteDuration) =
     respondWithHeaders(HttpHeaders.`Cache-Control`(CacheDirectives.`private`()), HttpHeaders.`Access-Control-Max-Age`(duration.toSeconds))
+
+  implicit def eh: ExceptionHandler = CommonExceptionHandler
+
+  implicit def rh: RejectionHandler = CommonRejectionHandler
 }
