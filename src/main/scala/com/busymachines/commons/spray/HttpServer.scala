@@ -38,12 +38,8 @@ case class HttpServerConfig(baseName: String) extends CommonConfig(baseName) {
 abstract class HttpServer(config: HttpServerConfig)(implicit actorSystem : ActorSystem) extends CommonHttpService with CORSDirectives with Logging {
 
   val serverName : String = "http-server"
-  val exceptionHandler : ExceptionHandler = commonExceptionHandler
-  def rejectionHandler : RejectionHandler = commonRejectionHandler
   val routingSettings = RoutingSettings(actorSystem)
 
-  private implicit def eh = exceptionHandler
-  private implicit val rh = rejectionHandler 
   private implicit def rs = routingSettings
 
   def route : Route
@@ -57,38 +53,4 @@ abstract class HttpServer(config: HttpServerConfig)(implicit actorSystem : Actor
   def start() =
     IO(Http) ! Http.Bind(actorSystem.actorOf(Props(new Actor), serverName), interface = config.interface, port = config.port)
 
-  def commonRejectionHandler = RejectionHandler {
-    case rejections if rejections.nonEmpty => 
-      crossDomain { 
-        RejectionHandler.Default(rejections)
-      }
-  }
-    
-  def commonExceptionHandler = ExceptionHandler {
-     case e: NotAuthorizedException => crossDomain {
-      debug(s"Exception handler rejecting with forbidden because exception : $e")
-      complete(StatusCodes.Unauthorized)
-    }
-    case e: EntityNotFoundException => crossDomain { ctx =>
-      ctx.complete(StatusCodes.NotFound, Map("message" -> e.getMessage, "id" -> e.id, "type" -> e.`type`).toJson.toString)
-    }
-    case e: IllegalRequestException => crossDomain { ctx =>
-      warn("Illegal request {}\n\t{}\n\tCompleting with '{}' response",
-      ctx.request, e.getMessage, e.status)
-      ctx.complete(e.status, e.info.format(routingSettings.verboseErrorMessages))
-    }
-    case e: RequestProcessingException => crossDomain { ctx =>
-      warn("Request {} could not be handled normally\n\t{}\n\tCompleting with '{}' response",
-      ctx.request, e.getMessage, e.status)
-      ctx.complete(e.status, e.info.format(routingSettings.verboseErrorMessages))
-    }
-    case NonFatal(e) => crossDomain { ctx =>
-      error(e, "Error during processing of request {}", ctx.request)
-      ctx.complete(InternalServerError)
-    } 
-    case e: Throwable => crossDomain { ctx =>
-      error(s"Request ${ctx.request} could not be handled normally: ${e.getMessage}", e)
-      ctx.complete(StatusCodes.InternalServerError, e.getMessage)
-    } 
-  } 
 }
