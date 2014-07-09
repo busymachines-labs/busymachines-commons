@@ -1,7 +1,7 @@
 package com.busymachines.commons.spray
 
 import com.busymachines.commons.{NotAuthorizedException, Logging}
-import spray.routing.{Route, Rejection, RejectionHandler}
+import spray.routing.{AuthenticationFailedRejection, Route, Rejection, RejectionHandler}
 
 /**
  * Created by lorand on 02.07.2014.
@@ -13,7 +13,13 @@ object CommonRejectionHandler extends RejectionHandler with Logging{
     case e: List[Rejection] => ctx => {
       debug(s"Processing rejection handler")
       debug(s"Rejection is $e")
-      throw new NotAuthorizedException(s"No valid Auth-Token present")
+
+      e.find(_.isInstanceOf[AuthenticationFailedRejection]) match {
+        case Some(_) => throw new NotAuthorizedException(s"No valid Auth-Token present $e")
+          //TODO: iterate over rejections and figure out appropriate ApplicationExceptions to throw
+        case None => throw new Exception(s"$e")
+      }
+
     }
   }
 }
