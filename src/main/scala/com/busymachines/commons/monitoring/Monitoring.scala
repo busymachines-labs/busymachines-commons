@@ -43,7 +43,6 @@ class MonitoringImpl extends Monitoring {
   }
   
   def sendEvent[A <: MonitoringEvent](obj: A)(implicit fmt: ProductFormat[A]) {
-    
   }
   
 }
