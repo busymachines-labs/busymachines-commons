@@ -53,6 +53,7 @@ class MediasApiV1(mediaDao: MediaDao, authenticator: UserAuthenticator,mimeTypeD
           }
         } ~
         get {
+          //TODO add authentication
             parameters(
               'raw.as[Boolean]?) { raw =>
                 mediaDao.retrieve(mediaId).await match {

@@ -35,7 +35,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
   }
   
   /**
-   * Use this method when a security context is need, but there is no physical user that
+   * Use this method when a security context is needed, but there is no physical user that
    * goes through the login process. For example, a batch process.
    */
   def securityContextFor(userId : Id[User]) : Future[SecurityContext] = {
