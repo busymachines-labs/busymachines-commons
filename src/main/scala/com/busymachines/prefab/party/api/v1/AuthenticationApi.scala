@@ -30,7 +30,12 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
     path("users" / "authentication") { 
       post {
         entity(as[AuthenticationRequest]) { request =>
-          Await.result(authenticator.authenticateWithLoginNamePassword(request.loginName, request.password), 1.minute) match {
+          Await.result(for {
+            context <- request.partyName match {
+              case None => authenticator.authenticateWithLoginNamePassword (request.loginName, request.password)
+              case Some (partyName) => authenticator.authenticateWithPartyLoginNamePassword (partyName, request.loginName, request.password)
+            }
+          } yield context match {
             case Some(SecurityContext(tenantId, partyId, userId, partyName, loginName, authenticationId, permissions)) => {
               val message = "User %s has been succesfully logged in".format(request.loginName)
               debug(message)
@@ -49,7 +54,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
               }
             }
           }
-        }
+          ,1 minute)}
       } 
     } ~    
     // Check if an authentication token is still valid

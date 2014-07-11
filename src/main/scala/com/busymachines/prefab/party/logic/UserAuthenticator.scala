@@ -65,7 +65,19 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
     partyDao.retrieve(partyId).flatMap { party =>
       authenticateWithLoginNamePassword(login, password, (c: Credentials) => party.isDefined && party.get.users.exists(_.credentials == c.id))
     }
-  
+
+  /**
+   * Authenticates a user of a specific party.
+   */
+  def authenticateWithPartyLoginNamePassword(partyName : String, login: String, password: String): Future[Option[SecurityContext]] =
+  for {
+    foundParty <- partyDao.findByPartyName(partyName)
+    securityContext <- foundParty match {
+      case None => Future.successful(None)
+      case Some(party) => authenticateWithLoginNamePassword(party.entity.id,login, password)
+    }
+  } yield securityContext
+
   /**
    * Authenticates a user regardless of the party it belongs to.
    */
