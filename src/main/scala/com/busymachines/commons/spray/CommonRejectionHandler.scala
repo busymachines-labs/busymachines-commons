@@ -17,7 +17,7 @@ object CommonRejectionHandler extends RejectionHandler with Logging{
       e.find(_.isInstanceOf[AuthenticationFailedRejection]) match {
         case Some(_) => throw new NotAuthorizedException(s"No valid Auth-Token present $e")
           //TODO: iterate over rejections and figure out appropriate ApplicationExceptions to throw
-        case None => throw new Exception(s"$e")
+        case _ => throw new Exception(s"$e")
       }
 
     }
