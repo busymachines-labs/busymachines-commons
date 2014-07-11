@@ -10,7 +10,7 @@ import com.busymachines.commons.{Enum, EnumValue}
  */
 trait Country extends EnumValue[Country]
 object Country extends Enum[Country] {
-  case class Value(abbreviation: String, name: String) extends Val with NextId with Country
+  case class Value(name: String, description: String) extends Val with NextId with Country
   val Austria = Value("AT", "Austria")
   val Belgium = Value("BE", "Belgium")
   val BosniaAndHerzegovina = Value("BA", "Bosnia And Herzegovina")
