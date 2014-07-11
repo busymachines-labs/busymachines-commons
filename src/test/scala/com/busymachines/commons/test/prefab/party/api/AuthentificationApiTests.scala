@@ -26,7 +26,7 @@ class AuthentificationApiTests extends FlatSpec with Logging with AssemblyTestBa
     {
       "loginName": "user1@test.com",
       "password": "test",
-      "partyName" : "Test,Company"
+      "party" : "Test,Company"
     }
                                 """
 
@@ -34,7 +34,7 @@ class AuthentificationApiTests extends FlatSpec with Logging with AssemblyTestBa
     {
       "loginName": "user2@test.com",
       "password": "test",
-      "partyName" : "Test 2 Company"
+      "party" : "Test 2 Company"
     }
                                                   """
 
