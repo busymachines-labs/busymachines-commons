@@ -21,6 +21,8 @@ object CommonRejectionHandler extends RejectionHandler with Logging {
       }
     }
     case Nil => ctx => {
+      debug(s"Processing rejection handler")
+      debug(s"Rejection is $v1")
       throw new Exception(s"$v1")
     }
   }
