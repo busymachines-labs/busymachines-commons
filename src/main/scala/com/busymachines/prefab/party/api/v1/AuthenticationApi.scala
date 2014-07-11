@@ -31,7 +31,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
       post {
         entity(as[AuthenticationRequest]) { request =>
           Await.result(for {
-            context <- request.partyName match {
+            context <- request.party match {
               case None => authenticator.authenticateWithLoginNamePassword (request.loginName, request.password)
               case Some (partyName) => authenticator.authenticateWithPartyLoginNamePassword (partyName, request.loginName, request.password)
             }

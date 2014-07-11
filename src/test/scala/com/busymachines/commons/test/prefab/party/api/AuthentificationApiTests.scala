@@ -32,9 +32,9 @@ class AuthentificationApiTests extends FlatSpec with Logging with AssemblyTestBa
 
   val userAuthWithCorrectPartyNameRequestBodyJson = """
     {
-      "loginName": "user1@test.com",
+      "loginName": "user2@test.com",
       "password": "test",
-      "partyName" : "Test Company"
+      "partyName" : "Test 2 Company"
     }
                                                   """
 
