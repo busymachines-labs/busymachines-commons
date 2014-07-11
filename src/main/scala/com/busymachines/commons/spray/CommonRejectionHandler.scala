@@ -10,20 +10,15 @@ object CommonRejectionHandler extends RejectionHandler with Logging {
   override def isDefinedAt(x: List[Rejection]): Boolean = true
 
   override def apply(v1: List[Rejection]): Route = v1 match {
-    case e: List[Rejection] => ctx => {
+    case Nil => ctx => Unit // do nothing
+    case e if e.exists(_.isInstanceOf[AuthenticationFailedRejection]) => ctx =>
       debug(s"Processing rejection handler")
       debug(s"Rejection is $e")
-
-      e.find(_.isInstanceOf[AuthenticationFailedRejection]) match {
-        case Some(_) => throw new NotAuthorizedException(s"No valid Auth-Token present $e")
-        //TODO: iterate over rejections and figure out appropriate ApplicationExceptions to throw
-        case None => throw new Exception(s"$e")
-      }
-    }
+      throw new NotAuthorizedException(s"No valid Auth-Token present $e")
     case _ => ctx => {
       debug(s"Processing rejection handler")
       debug(s"Rejection is $v1")
-      throw new Exception(s"$v1")
+      throw new Exception(s"${v1.mkString(",")}")
     }
   }
 }
