@@ -105,6 +105,20 @@ class ESCollection[T] (val index: ESIndex, val typeName: String, val mapping: ES
     }
   }
 
+  def searchSingle(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T]): Future[Option[Versioned[T]]] = {
+    search(criteria).map {
+      case SearchResult(Nil, _, _) => None
+      case SearchResult(first :: Nil, _, _) => Some(first)
+      case SearchResult(many, _, _) =>
+        try {
+          Some(onMany(many))
+        } catch {
+          case t: MoreThanOneResultException =>
+            throw new MoreThanOneResultException(s"Search criteria $criteria returned more than one result and should return at most one result. Database probably inconsistent. The returned results were :$many")
+        }
+    }
+  }
+
   def create (entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration] = None): Future[Versioned[T]] = {
     val json = mapping.jsonFormat.write (entity)
     val id: String = getIdFromJson (json)

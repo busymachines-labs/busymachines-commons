@@ -17,7 +17,9 @@ class PartyDao(index : ESIndex)(implicit ec: ExecutionContext) extends ESRootDao
  
   def findByFdcIdfNumber(idfNumber : String) = 
     searchSingle(Party.fdcIdfNumber equ idfNumber)
-  
+
+  def findByPartyName(partyName:String)= searchSingle(Party.company / CompanyMapping.name equ partyName)
+
   def findByUserId(userId : Id[User]) = 
     searchSingle(Party.users / User.id equ userId)
   

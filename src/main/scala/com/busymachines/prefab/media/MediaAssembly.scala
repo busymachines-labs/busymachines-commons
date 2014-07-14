@@ -11,8 +11,8 @@ trait MediaAssembly extends PartyAssembly {
   // default configuration
   def mediaIndex = index
 
-  lazy val mediaDao = new ESMediaDao(mediaIndex,mediaMimeTypeDetector)
-  lazy val mediaMimeTypeDetector:MimeTypeDetector = new DefaultMimeTypeDetector
-  lazy val mediasApiV1 = new MediasApiV1(mediaDao, userAuthenticator,mediaMimeTypeDetector)
+  lazy val mediaDao = new ESMediaDao(mediaIndex, mediaMimeTypeDetector)
+  lazy val mediaMimeTypeDetector: MimeTypeDetector = new DefaultMimeTypeDetector
+  lazy val mediasApiV1 = new MediasApiV1(mediaDao, userAuthenticator, mediaMimeTypeDetector)
 
 }
