@@ -22,7 +22,7 @@ trait AssemblyTestBase extends FlatSpec with MediaAssembly with RouteTest with S
   def actorRefFactory = actorSystem
 
   PartyFixture.createDevMode(partyDao, credentialsDao)
-
+ 
   // put the resulting security context in an implicit val
   def login(userName : String, password : String) =
     userAuthenticator.authenticateWithLoginNamePassword(userName, password).await.get
