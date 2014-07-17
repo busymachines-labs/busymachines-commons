@@ -37,9 +37,8 @@ object BusyMachinesCommonsBuild extends Build {
     resolvers += "spray nightlies repo" at "http://nightlies.spray.io",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "junit" % "junit" % "4.11" % "test" withSources(),
-    libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.3" % "test" withSources(),
+    libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.0" % "test" withSources(),
     libraryDependencies += "org.specs2" %% "specs2" % "2.3.12" % "test" withSources(),
-    libraryDependencies += "org.pegdown" % "pegdown" % "1.4.1" % "test" withSources(), // used by scalatest
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.3" withSources(),
       libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.3.3" withSources(),
       //    libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.3.3" withSources(),
