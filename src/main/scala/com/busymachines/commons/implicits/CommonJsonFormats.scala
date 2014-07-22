@@ -16,8 +16,10 @@ import com.busymachines.commons.Enum
 import com.busymachines.commons.EnumValue
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalDateTime
+import com.busymachines.commons.localisation.Country
+import com.busymachines.commons.localisation.Language
 
-trait CommonJsonFormats 
+trait CommonJsonFormats
   extends BasicFormats
   with StandardFormats
   with CollectionFormats
@@ -57,7 +59,7 @@ trait CommonJsonFormats
       case x => deserializationError(s"Expected any of ${enum.values.mkString(",")}, but got " + x)
     }
   }
-  
+
   def singletonFormat[A](instance: A) = new JsonFormat[A] {
     def write(value: A) = JsObject()
     def read(value: JsValue) = instance
@@ -81,14 +83,15 @@ trait CommonJsonFormats
       case x => deserializationError("Expected " + type_ + " :: String, but got " + x)
     }
   }
-  
-    implicit val stringMapFormat = new JsonFormat[Map[String, String]] {
+
+  implicit val stringMapFormat = new JsonFormat[Map[String, String]] {
     def write(value: Map[String, String]) = JsObject(value.mapValues(JsString(_)).toList)
     def read(value: JsValue): Map[String, String] = value match {
       case JsObject(fields) => fields.map(t => (t._1, t._2.toString)).toMap
       case s => deserializationError("Couldn't convert '" + s + "' to a string map")
     }
   }
+
   implicit val localeJsonFormat = stringFormat[Locale]("Locale", {
     case "" => Locale.ROOT
     case tag => Locale.forLanguageTag(tag)
@@ -96,6 +99,7 @@ trait CommonJsonFormats
     case Locale.ROOT => ""
     case locale => locale.getLanguage
   })
+
   implicit val durationFormat = new JsonFormat[FiniteDuration] {
     def write(value: FiniteDuration) = JsObject(
       "length" -> JsNumber(value.length),
@@ -108,4 +112,8 @@ trait CommonJsonFormats
       case s => deserializationError("Couldn't convert '" + s + "' to a geo point")
     }
   }
+
+  implicit val countryJsonFormat = enumFormat(Country)
+  
+  implicit val languageJsonFormat = enumFormat(Language)
 }
