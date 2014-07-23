@@ -2,22 +2,25 @@ package com.busymachines.commons.implicits
 
 import java.util.Currency
 import java.util.Locale
-import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat
-import spray.json._
-import com.busymachines.commons.dao.SearchResult
-import com.busymachines.commons.dao.Versioned
+
 import scala.concurrent.duration.FiniteDuration
-import org.joda.time.LocalDate
-import com.busymachines.commons.dao.TermFacetValue
-import com.busymachines.commons.dao.HistogramFacetValue
-import com.busymachines.commons.spray.ProductFormatsInstances
+
 import com.busymachines.commons.Enum
 import com.busymachines.commons.EnumValue
-import org.joda.time.DateTimeZone
-import org.joda.time.LocalDateTime
-import com.busymachines.commons.localisation.Country
-import com.busymachines.commons.localisation.Language
+import com.busymachines.commons.spray.ProductFormatsInstances
+
+import spray.json.AdditionalFormats
+import spray.json.BasicFormats
+import spray.json.CollectionFormats
+import spray.json.JsNumber
+import spray.json.JsObject
+import spray.json.JsString
+import spray.json.JsValue
+import spray.json.JsonFormat
+import spray.json.ProductFormats
+import spray.json.RootJsonFormat
+import spray.json.StandardFormats
+import spray.json.deserializationError
 
 trait CommonJsonFormats
   extends BasicFormats
@@ -112,8 +115,4 @@ trait CommonJsonFormats
       case s => deserializationError("Couldn't convert '" + s + "' to a geo point")
     }
   }
-
-  implicit val countryJsonFormat = enumFormat(Country)
-  
-  implicit val languageJsonFormat = enumFormat(Language)
 }

@@ -2,45 +2,49 @@ package com.busymachines.commons.domain
 
 import com.busymachines.commons.dao._
 import com.busymachines.commons.implicits.CommonJsonFormats
-
 import spray.json.JsArray
 import spray.json.JsNumber
 import spray.json.JsObject
 import spray.json.JsonFormat
 import spray.json.RootJsonWriter
+import com.busymachines.commons.localisation.Country
+import com.busymachines.commons.localisation.Language
 
 trait CommonDomainJsonFormats {
   this: CommonJsonFormats =>
 
-  implicit val geoPointFormat = format3 (GeoPoint)
+  implicit val geoPointFormat = format3(GeoPoint)
 
-  implicit val unitOfMeasureFormat = stringFormat ("UnitOfMeasure", s => UnitOfMeasure (s))
+  implicit val unitOfMeasureFormat = stringFormat("UnitOfMeasure", s => UnitOfMeasure(s))
 
-  implicit val mimeTypeFormat = stringFormat ("MimeType", MimeType)
+  implicit val mimeTypeFormat = stringFormat("MimeType", MimeType)
 
+  implicit def idFormat[A] = stringWrapperFormat(Id[A])
 
-  implicit def idFormat[A] = stringWrapperFormat (Id[A])
+  implicit val moneyFormat = format2(Money)
 
-  implicit val moneyFormat = format2 (Money)
+  implicit val termFacetValueFormat = format2(TermFacetValue)
+  implicit val histogramValueFormat = format7(HistogramFacetValue)
 
-  implicit val termFacetValueFormat = format2 (TermFacetValue)
-  implicit val histogramValueFormat = format7 (HistogramFacetValue)
+  implicit def versionedFormat[T <: HasId[T]](implicit tFormat: JsonFormat[T]) = format2(Versioned[T])
 
-  implicit def versionedFormat[T <: HasId[T]] (implicit tFormat: JsonFormat[T]) = format2 (Versioned[T])
-
-  class SearchResultFormat[T <: HasId[T]] (fieldName: String)(implicit tFormat: JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
-    def write (result: SearchResult[T]) = {
-      val jsonResult = JsArray (result.result.map (_.entity).map (tFormat.write))
-      val jsonFacetResult = JsObject (result.facets.map (facet => facet._1 -> JsArray (facet._2.map {
-        case v: HistogramFacetValue => histogramValueFormat.write (v)
-        case v: TermFacetValue => termFacetValueFormat.write (v)
+  class SearchResultFormat[T <: HasId[T]](fieldName: String)(implicit tFormat: JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
+    def write(result: SearchResult[T]) = {
+      val jsonResult = JsArray(result.result.map(_.entity).map(tFormat.write))
+      val jsonFacetResult = JsObject(result.facets.map(facet => facet._1 -> JsArray(facet._2.map {
+        case v: HistogramFacetValue => histogramValueFormat.write(v)
+        case v: TermFacetValue => termFacetValueFormat.write(v)
       })))
       result.totalCount match {
-        case Some (totalCount) => JsObject (fieldName -> jsonResult, "totalCount" -> JsNumber (totalCount), "facets" -> jsonFacetResult)
-        case None => JsObject (fieldName -> jsonResult)
+        case Some(totalCount) => JsObject(fieldName -> jsonResult, "totalCount" -> JsNumber(totalCount), "facets" -> jsonFacetResult)
+        case None => JsObject(fieldName -> jsonResult)
       }
     }
   }
 
-  implicit val sequenceFormat = format2 (Sequence)
+  implicit val sequenceFormat = format2(Sequence)
+
+  implicit val countryJsonFormat = enumFormat(Country)
+
+  implicit val languageJsonFormat = enumFormat(Language)
 }
