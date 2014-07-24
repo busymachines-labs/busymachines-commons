@@ -21,7 +21,7 @@ object BusyMachinesCommonsBuild extends Build {
     publishMavenStyle := false,
     exportJars := true,      
     organization := "com.busymachines",
-    version := "0.3-SNAPSHOT",
+    version := "0.3",
     scalaVersion := "2.11.1",
     crossScalaVersions := Seq("2.11.1", "2.10.4"),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),
@@ -64,12 +64,12 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies <++= scalaBinaryVersion {
       case "2.11" => Seq(
           "io.spray" %% "spray-json" % "1.2.6" withSources(),
-          "io.spray" %% "spray-can" % "1.3.1-20140423" withSources(),
-          "io.spray" %% "spray-client" % "1.3.1-20140423" withSources(),
-          "io.spray" %% "spray-servlet" % "1.3.1-20140423" withSources(),
-          "io.spray" %% "spray-routing" % "1.3.1-20140423" withSources(),
-          "io.spray" %% "spray-caching" % "1.3.1-20140423" withSources(),
-          "io.spray" %% "spray-testkit" % "1.3.1-20140423" % "test" withSources())
+          "io.spray" %% "spray-can" % "1.3.1" withSources(),
+          "io.spray" %% "spray-client" % "1.3.1" withSources(),
+          "io.spray" %% "spray-servlet" % "1.3.1" withSources(),
+          "io.spray" %% "spray-routing" % "1.3.1" withSources(),
+          "io.spray" %% "spray-caching" % "1.3.1" withSources(),
+          "io.spray" %% "spray-testkit" % "1.3.1" % "test" withSources())
       case _ => Seq(
           "io.spray" %% "spray-json" % "1.2.6" withSources(),
           "io.spray" % "spray-can" % "1.3.1" withSources(),
