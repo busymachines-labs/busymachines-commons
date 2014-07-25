@@ -56,7 +56,7 @@ object ESSearchCriteria {
   }
 
   case class FEqu[A, T](path1: ESPath[A, T], path2: ESPath[A, T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.scriptFilter(s"doc['$path1'].value == doc['$path2'].value").lang("expression")
+    def toFilter = FilterBuilders.scriptFilter(s"doc['$path1'].value == doc['$path2'].value").lang("groovy")
     def prepend[A0](path : ESPath[A0, A]) = FEqu(path ++ path1, path ++ path2)
   }
 
@@ -66,7 +66,7 @@ object ESSearchCriteria {
   }
 
   case class FNeq[A, T](path1: ESPath[A, T], path2: ESPath[A, T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value != doc['${path2.toString}'].value").lang("expression")
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value != doc['${path2.toString}'].value").lang("groovy")
     def prepend[A0](ESPath : ESPath[A0, A]) = FNeq(ESPath ++ path1, ESPath ++ path2)
   }
 
@@ -76,7 +76,7 @@ object ESSearchCriteria {
   }
 
   case class FGt[A, T](path1: ESPath[A, T], path2: ESPath[A, T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value > doc['${path2.toString}'].value").lang("expression")
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value > doc['${path2.toString}'].value").lang("groovy")
     def prepend[A0](ESPath : ESPath[A0, A]) = FGt(ESPath ++ path1, ESPath ++ path2)
   }
 
@@ -86,7 +86,7 @@ object ESSearchCriteria {
   }
 
   case class FGte[A, T](path1: ESPath[A, T], path2: ESPath[A, T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value >= doc['${path2.toString}'].value").lang("expression")
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value >= doc['${path2.toString}'].value").lang("groovy")
     def prepend[A0](ESPath : ESPath[A0, A]) = FGte(ESPath ++ path1, ESPath ++ path2)
   }
 
@@ -96,7 +96,7 @@ object ESSearchCriteria {
   }
 
   case class FLt[A, T](path1: ESPath[A, T], path2: ESPath[A, T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value < doc['${path2.toString}'].value").lang("expression")
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value < doc['${path2.toString}'].value").lang("groovy")
     def prepend[A0](ESPath : ESPath[A0, A]) = FLt(ESPath ++ path1, ESPath ++ path2)
   }
 
@@ -106,7 +106,7 @@ object ESSearchCriteria {
   }
 
   case class FLte[A, T, V](path1: ESPath[A, T], path2: ESPath[A, T]) extends ESSearchCriteria[A] {
-    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value <= doc['${path2.toString}'].value").lang("expression")
+    def toFilter = FilterBuilders.scriptFilter(s"doc['${path1.toString}'].value <= doc['${path2.toString}'].value").lang("groovy")
     def prepend[A0](ESPath : ESPath[A0, A]) = FLte(ESPath ++ path1, ESPath ++ path2)
   }
 
