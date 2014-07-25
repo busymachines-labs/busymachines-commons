@@ -6,7 +6,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import com.busymachines.commons.spray
 
-object ProductFormatTestsFixture extends DefaultJsonProtocol with spray.ProductFormatsInstances {
+object ProductFormatTestsFixture extends DefaultJsonProtocol with spray.json.ProductFormatsInstances {
 
   case class Box(size: Double, things: List[Thing])
   case class Thing(name: String, properties: Map[String, String] = Map.empty)

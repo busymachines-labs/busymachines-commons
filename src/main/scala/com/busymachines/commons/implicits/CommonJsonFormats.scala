@@ -7,7 +7,7 @@ import scala.concurrent.duration.FiniteDuration
 
 import com.busymachines.commons.Enum
 import com.busymachines.commons.EnumValue
-import com.busymachines.commons.spray.ProductFormatsInstances
+import com.busymachines.commons.spray.json.ProductFormatsInstances
 
 import spray.json.AdditionalFormats
 import spray.json.BasicFormats

@@ -4,7 +4,7 @@ import _root_.spray.json._
 import scala.collection.concurrent.TrieMap
 import scala.reflect.ClassTag
 import java.util.concurrent.atomic.AtomicBoolean
-import com.busymachines.commons.spray.{DefaultProductFieldFormat, ProductField, ProductFieldFormat, ProductFormat}
+import com.busymachines.commons.spray.json.{DefaultProductFieldFormat, ProductField, ProductFieldFormat, ProductFormat}
 import scala.Some
 
 object Extensions {

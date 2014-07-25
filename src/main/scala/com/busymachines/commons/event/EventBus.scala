@@ -3,7 +3,6 @@ package com.busymachines.commons.event
 import spray.json.JsonWriter
 import org.joda.time.DateTime
 import com.busymachines.prefab.media.domain.Media
-import com.busymachines.commons.spray.ProductFormat
 
 
 trait BusEvent {

@@ -2,7 +2,7 @@ package com.busymachines.commons.monitoring
 
 import org.joda.time.DateTime
 import spray.json.JsonWriter
-import com.busymachines.commons.spray.ProductFormat
+import com.busymachines.commons.spray.json.ProductFormat
 import com.codahale.metrics.Meter
 import com.codahale.metrics.Gauge
 import com.codahale.metrics.MetricRegistry

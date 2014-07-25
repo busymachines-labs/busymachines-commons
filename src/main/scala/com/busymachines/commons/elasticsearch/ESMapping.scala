@@ -3,7 +3,7 @@ package com.busymachines.commons.elasticsearch
 import com.busymachines.commons.Extensions
 import com.busymachines.commons.domain.GeoPoint
 import com.busymachines.commons.Implicits._
-import com.busymachines.commons.spray._
+import com.busymachines.commons.spray.json._
 import com.busymachines.commons.{ExtensionsProductFieldFormat, Extension}
 import org.joda.time.DateTime
 import scala.collection.concurrent.TrieMap
