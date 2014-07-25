@@ -22,7 +22,7 @@ class EntityNotFoundException(val id: String, val `type`: String) extends Except
  *
  * @author Lorand Szakacs, lorand.szakacs@busymachines.com
  */
-class ApplicationException(val id: String, msg: String, cause: Option[Throwable] = None) extends Exception(msg, cause.getOrElse(null)) {
+class ApplicationException(val id: String, msg: String, val messageParameters: Map[String, String] = Map(), cause: Option[Throwable] = None) extends Exception(msg, cause.getOrElse(null)) {
   lazy val message = getMessage
 
   override def toString = s"id=$id\n${super.toString}"
