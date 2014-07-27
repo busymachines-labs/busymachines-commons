@@ -32,6 +32,7 @@ class ESIndex(config: ESConfig, val name : String, _eventBus: => EventBus) exten
 
   private lazy val client0 = {
     ESIndex.clientsByClusterName.getOrElseUpdate(config.clusterName, {
+
       info("Using ElasticSearch client " + Version.CURRENT)
       new ESClient(
         new TransportClient(ImmutableSettings.settingsBuilder().put("cluster.name", config.clusterName)) {

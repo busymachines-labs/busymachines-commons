@@ -37,7 +37,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
             }
           } yield context match {
             case Some(SecurityContext(tenantId, partyId, userId, partyName, loginName, authenticationId, permissions)) => {
-              val message = "User %s has been succesfully logged in".format(request.loginName)
+              val message = "User %s has been successfully logged in".format(request.loginName)
               debug(message)
               respondWithHeader(RawHeader(AuthenticationDirectives.tokenKey, authenticationId.toString)) {
                 complete {
@@ -45,7 +45,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
                 }
               }
             }
-            case None => {
+            case None =>
               debug("Tried to log in user %s but received 'Invalid userName or password.'".format(request.loginName))
               respondWithStatus(StatusCodes.Forbidden) {
                 complete {
@@ -53,7 +53,6 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
                 }
               }
             }
-          }
           ,1 minute)}
       } 
     } ~    
@@ -61,11 +60,10 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
     path("users" / "authentication" / MatchId[Authentication]) { tokenValue =>
       get {
         Await.result(authenticator.authenticate(tokenValue), 1.minute) match {
-          case Some(session) => {
+          case Some(session) =>
             complete {
               Map("message" -> s"Authentication token is valid")
             }
-          }
           case None => {
             respondWithStatus(StatusCodes.NotFound) {
               complete {

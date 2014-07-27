@@ -2,7 +2,6 @@ package com.busymachines.prefab.authentication.spray
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import com.busymachines.commons.CommonConfig
 import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.authentication.logic.PrefabAuthenticator
 import com.busymachines.prefab.authentication.model.Authentication
@@ -16,7 +15,7 @@ import spray.routing.RequestContext
 import spray.routing.authentication.HttpAuthenticator
 import spray.routing.authentication.ContextAuthenticator
 import spray.routing.directives.AuthMagnet
-import com.busymachines.commons.Logging
+import com.busymachines.commons.{CommonConfig, Logging}
 
 object AuthenticationDirectives {
   val tokenKey = "Auth-Token"

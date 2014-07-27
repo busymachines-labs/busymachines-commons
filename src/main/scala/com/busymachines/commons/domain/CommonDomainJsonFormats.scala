@@ -7,8 +7,6 @@ import spray.json.JsNumber
 import spray.json.JsObject
 import spray.json.JsonFormat
 import spray.json.RootJsonWriter
-import com.busymachines.commons.localisation.Country
-import com.busymachines.commons.localisation.Language
 
 trait CommonDomainJsonFormats {
   this: CommonJsonFormats =>

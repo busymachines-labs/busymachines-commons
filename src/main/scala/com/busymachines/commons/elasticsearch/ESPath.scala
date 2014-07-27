@@ -1,7 +1,7 @@
 package com.busymachines.commons.elasticsearch
 
-import com.busymachines.commons.Extension
 import com.busymachines.commons.domain.GeoPoint
+import com.busymachines.commons.util.Extension
 import scala.reflect.ClassTag
 import spray.json.JsonFormat
 

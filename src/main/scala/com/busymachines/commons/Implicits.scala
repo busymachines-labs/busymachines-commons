@@ -3,6 +3,9 @@ package com.busymachines.commons
 import java.io.InputStream
 import java.net.URL
 import java.util.Locale
+
+import com.busymachines.commons.util.ExtensionsImplicits
+
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.ExecutionContext
 import scala.xml.Elem

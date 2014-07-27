@@ -2,10 +2,14 @@
 
 package com.busymachines.commons.util
 
+import akka.actor.ActorSystem
 import com.busymachines.commons.Logging
 import com.busymachines.commons.elasticsearch.{ESMapping, ESSearchCriteria, ESCollection}
+import com.busymachines.commons.event.LocalEventBus
+import com.busymachines.commons.testing.{DefaultTestESConfig, EmptyESTestIndex}
+import com.busymachines.prefab.party.PartyAssembly
+import com.typesafe.config.ConfigFactory
 import org.scalatest.FlatSpec
-import com.busymachines.commons.test.AssemblyTestBase
 import com.busymachines.prefab.party.logic.PartyFixture
 import com.busymachines.commons.domain.{HasId, Id}
 import com.busymachines.commons.Implicits._
@@ -34,7 +38,12 @@ object SomeDocumentMapping extends ESMapping[SomeDocument] {
 }
 
 @RunWith (classOf[JUnitRunner])
-class ScrollSearchTest extends FlatSpec with AssemblyTestBase with PartyFixture with Logging {
+class ScrollSearchTest extends FlatSpec with PartyAssembly with PartyFixture with Logging {
+
+  lazy implicit val actorSystem: ActorSystem = ActorSystem("Commons",ConfigFactory.load("tests.conf"))
+  lazy implicit val executionContext = actorSystem.dispatcher
+  lazy val eventBus = new LocalEventBus(actorSystem)
+  lazy val index = new EmptyESTestIndex(getClass, DefaultTestESConfig, eventBus)
 
   val totalDocs: Int = 1001
   val batchSize: Int = 10

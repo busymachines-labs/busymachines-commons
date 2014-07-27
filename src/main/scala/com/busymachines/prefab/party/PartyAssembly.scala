@@ -1,6 +1,10 @@
 package com.busymachines.prefab.party
 
 import akka.actor.ActorSystem
+import com.busymachines.prefab.media.api.v1.MediasApiV1
+import com.busymachines.prefab.media.elasticsearch.ESMediaDao
+import com.busymachines.prefab.media.logic.DefaultMimeTypeDetector
+import com.busymachines.prefab.media.service.MimeTypeDetector
 import scala.concurrent.ExecutionContext
 import com.busymachines.commons.elasticsearch.ESIndex
 import com.busymachines.prefab.authentication.elasticsearch.ESAuthenticationDao
@@ -33,6 +37,7 @@ trait PartyAssembly {
   def sequenceIndex = index
   def authenticationConfigBaseName = "authentication"
   def authenticationConfig = new AuthenticationConfig(authenticationConfigBaseName)
+  def mediaIndex = index
 
   // components
   lazy val sequenceDao = new ESSequenceDao(sequenceIndex)
@@ -47,6 +52,9 @@ trait PartyAssembly {
   lazy val authenticationApiV1 = new AuthenticationApiV1(userAuthenticator)
   lazy val usersApiV1 = new UsersApiV1(partyService, userAuthenticator)
   lazy val partiesApiV1 = new PartiesApiV1(partyService, userAuthenticator)
+  lazy val mediaDao = new ESMediaDao(mediaIndex, mediaMimeTypeDetector)
+  lazy val mediaMimeTypeDetector: MimeTypeDetector = DefaultMimeTypeDetector
+  lazy val mediasApiV1 = new MediasApiV1(mediaDao, mediaMimeTypeDetector)
 
   // services
   def createPartyFixture() = PartyFixture.create(partyDao, credentialsDao)

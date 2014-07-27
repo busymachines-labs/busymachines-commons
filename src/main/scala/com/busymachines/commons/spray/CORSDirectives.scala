@@ -1,5 +1,6 @@
 package com.busymachines.commons.spray
 
+import com.busymachines.commons.CommonConfig
 import spray.routing._
 import spray.http.HttpHeader
 import spray.http.StatusCodes.Forbidden
@@ -12,7 +13,6 @@ import spray.http.ContentTypes
 import spray.http.AllowedOrigins
 import spray.http.AllOrigins
 import spray.http.SomeOrigins
-import com.busymachines.commons.CommonConfig
 
 /**
  * Code copied from:

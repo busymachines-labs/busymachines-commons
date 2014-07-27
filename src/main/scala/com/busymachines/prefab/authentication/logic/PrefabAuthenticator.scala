@@ -1,14 +1,14 @@
 package com.busymachines.prefab.authentication.logic
 
+import com.busymachines.commons.CommonConfig
+import com.busymachines.commons.util.AsyncCache
+
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
 import org.joda.time.DateTime
-
-import com.busymachines.commons.CommonConfig
-import com.busymachines.commons.cache.AsyncCache
 import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.authentication.db.AuthenticationDao
 import com.busymachines.prefab.authentication.model.Authentication

@@ -1,63 +1,63 @@
 package com.busymachines.commons.util
 
-import org.specs2.mutable._
+import org.scalatest.FlatSpec
+import org.scalatest.Matchers._
 import org.parboiled.common.FileUtils
 import spray.json._
 
-class JsonParserSpec extends Specification {
+class JsonParserSpec extends FlatSpec {
 
-  "The JsonParser" should {
+  "The JsonParser" should
     "parse 'null' to JsNull" in {
-      JsonParser.parse("null") mustEqual JsNull
+      JsonParser.parse("null") shouldEqual JsNull
     }
-    "parse 'true' to JsTrue" in {
-      JsonParser.parse("true") mustEqual JsTrue
+    it should "parse 'true' to JsTrue" in {
+      JsonParser.parse("true") shouldEqual JsTrue
     }
-    "parse 'false' to JsFalse" in {
-      JsonParser.parse("false") mustEqual JsFalse
+  it should "parse 'false' to JsFalse" in {
+      JsonParser.parse("false") shouldEqual JsFalse
     }
-    "parse '0' to JsNumber" in {
-      JsonParser.parse("0") mustEqual JsNumber(0)
+  it should "parse '0' to JsNumber" in {
+      JsonParser.parse("0") shouldEqual JsNumber(0)
     }
-    "parse '1.23' to JsNumber" in {
-      JsonParser.parse("1.23") mustEqual JsNumber(1.23)
+  it should "parse '1.23' to JsNumber" in {
+      JsonParser.parse("1.23") shouldEqual JsNumber(1.23)
     }
-    "parse '-1E10' to JsNumber" in {
-      JsonParser.parse("-1E10") mustEqual JsNumber("-1E+10")
+  it should "parse '-1E10' to JsNumber" in {
+      JsonParser.parse("-1E10") shouldEqual JsNumber("-1E+10")
     }
-    "parse '12.34e-10' to JsNumber" in {
-      JsonParser.parse("12.34e-10") mustEqual JsNumber("1.234E-9")
+  it should "parse '12.34e-10' to JsNumber" in {
+      JsonParser.parse("12.34e-10") shouldEqual JsNumber("1.234E-9")
     }
-    "parse \"xyz\" to JsString" in {
-      JsonParser.parse("\"xyz\"") mustEqual JsString("xyz")
+  it should "parse \"xyz\" to JsString" in {
+      JsonParser.parse("\"xyz\"") shouldEqual JsString("xyz")
     }
-    "parse escapes in a JsString" in {
-      JsonParser.parse(""""\"\\/\b\f\n\r\t"""") mustEqual JsString("\"\\/\b\f\n\r\t")
-      JsonParser.parse("\"L\\" + "u00e4nder\"") mustEqual JsString("Länder")
+  it should "parse escapes in a JsString" in {
+      JsonParser.parse(""""\"\\/\b\f\n\r\t"""") shouldEqual JsString("\"\\/\b\f\n\r\t")
+      JsonParser.parse("\"L\\" + "u00e4nder\"") shouldEqual JsString("Länder")
     }
-    "parse all representations of the slash (SOLIDUS) character in a JsString" in {
-      JsonParser.parse( "\"" + "/\\/\\u002f" + "\"") mustEqual JsString("///")
+  it should "parse all representations of the slash (SOLIDUS) character in a JsString" in {
+      JsonParser.parse( "\"" + "/\\/\\u002f" + "\"") shouldEqual JsString("///")
     }
-    "properly parse a simple JsObject" in (
-      JsonParser.parse(""" { "key" :42, "key2": "value" }""") mustEqual
+  it should "properly parse a simple JsObject" in (
+      JsonParser.parse(""" { "key" :42, "key2": "value" }""") shouldEqual
         JsObject("key" -> JsNumber(42), "key2" -> JsString("value"))
       )
-    "properly parse a simple JsArray" in (
-      JsonParser.parse("""[null, 1.23 ,{"key":true } ] """) mustEqual
+  it should "properly parse a simple JsArray" in (
+      JsonParser.parse("""[null, 1.23 ,{"key":true } ] """) shouldEqual
         JsArray(JsNull, JsNumber(1.23), JsObject("key" -> JsBoolean(true)))
       )
-    "properly parse a large file" in {
+  it should "properly parse a large file" in {
       val largeJsonSource = FileUtils.readAllCharsFromResource("test.json")
       val jsobj = JsonParser.parse(largeJsonSource).asInstanceOf[JsObject]
-      jsobj.fields("questions").asInstanceOf[JsArray].elements.size mustEqual 100
+      jsobj.fields("questions").asInstanceOf[JsArray].elements.size shouldEqual 100
     }
-    "be reentrant" in {
+  it should "be reentrant" in {
       val largeJsonSource = FileUtils.readAllCharsFromResource("test.json")
       List.fill(20)(largeJsonSource).map(JsonParser.parse).toList.map {
         _.asInstanceOf[JsObject].fields("questions").asInstanceOf[JsArray].elements.size
-      } mustEqual List.fill(20)(100)
+      } shouldEqual List.fill(20)(100)
     }
-  }
 }
 
 object JsonParserPerformanceTest extends App {

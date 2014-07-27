@@ -1,6 +1,5 @@
 package com.busymachines.commons
 
-import scala.collection.concurrent.TrieMap
 import scala.collection.mutable.ArrayBuffer
 
 trait EnumValue[V <: EnumValue[V]] { 

@@ -1,18 +1,13 @@
 package com.busymachines.commons
 
-import com.typesafe.config._
-import java.net.URL
+import java.io.File
+
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.implicits.RichConfig
-import scala.math.Ordering.Implicits._
-import java.util.List
-import java.util.Set
-import java.lang.{Boolean, Double, Long}
-import java.util.Map.Entry
+import com.typesafe.config._
+
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.Future
-import java.io.File
 
 object CommonConfigFactory {
   private[commons] var usedPaths = TrieMap[String, Unit]()

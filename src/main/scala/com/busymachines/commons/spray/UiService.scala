@@ -1,6 +1,9 @@
 package com.busymachines.commons.spray
 
 import java.io.File
+import com.busymachines.commons.CommonConfig
+import com.busymachines.commons.util.ProfilingUtils
+
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.DurationInt
 import scala.io.Source
@@ -21,8 +24,7 @@ import spray.routing.Directive.pimpApply
 import spray.routing.Route
 import spray.routing.directives.ContentTypeResolver
 import spray.util.actorSystem
-import com.busymachines.commons.CommonConfig
-import com.busymachines.commons.ProfilingUtils.time
+import ProfilingUtils.time
 import scala.collection.concurrent.TrieMap
 import spray.httpx.encoding.Gzip
 

@@ -1,10 +1,9 @@
 package com.busymachines.commons.elasticsearch
- 
-import com.busymachines.commons.Extensions
+
 import com.busymachines.commons.domain.GeoPoint
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.spray.json._
-import com.busymachines.commons.{ExtensionsProductFieldFormat, Extension}
+import com.busymachines.commons.util.{ExtensionsProductFieldFormat, Extension, Extensions}
 import org.joda.time.DateTime
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable.ArrayBuffer
@@ -29,7 +28,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
   /**
    * Will be filled during construction of the mapping object.
    */
-  private var _explicitFields = Map[String, ESField[A, _]]()
+  private val _explicitFields = new ArrayBuffer[ESField[A, _]]
 
   private[elasticsearch] lazy val mappingName = classTag.runtimeClass.getName.stripSuffix("$")
 
@@ -37,8 +36,8 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
    * Mapped fields.
    */
 //  lazy val fields = _explicitFields.values
-  lazy val fieldsByName = _explicitFields
-  lazy val fieldsByPropertyName = _explicitFields.values.groupBy(_.propertyName).mapValues(_.head)
+  lazy val fieldsByName = _explicitFields.groupBy(_.name).mapValues(_.head)
+  lazy val fieldsByPropertyName = _explicitFields.groupBy(_.propertyName).mapValues(_.head)
 
   // Predefined fields
   val _all = ESField[Any, String]("_all", "", String.options, false, false, None)
@@ -130,12 +129,11 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
     field.options.find(_.name == "index") match {
       case Some(_) => field.options
       case None => 
-
-//        fieldsByName.get(field.name) match {
-//          case Some(field) => field.options :+ NotAnalyzed
-//          case None => field.options :+ NotIndexed
-//        }
-        field.options :+ NotAnalyzed
+        fieldsByName.get(field.name) match {
+          case Some(field) => field.options :+ NotAnalyzed
+          case None => field.options :+ NotIndexed
+        }
+//        field.options :+ NotAnalyzed
     }
   }
 
@@ -155,6 +153,9 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
       if (!Extensions.registeredExtensionsOf[A].contains(ext))
         errors.append(s"Extension was not registered: $ext")
     // All options should be unique
+    for (fields <- _explicitFields.groupBy(_.name).values)
+      if (fields.size > 1)
+        errors.append(s"Mapping $mappingName contains multiple definitions of field ${fields.head}")
     for (field <- fieldsByName.values; options <- field.options.groupBy(_.name).values)
       if (options.size > 1) errors.append(s"Mapping $mappingName.${field.name} contains incompatible options: ${options.mkString(", ")}")
     // Check incompatible options
@@ -170,7 +171,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
               extensions.getOrElse(ext, throw new Exception(s"No mapping registered for extension $ext")).format(errors).asInstanceOf[ProductFormat[E]]
           }
         case format =>
-          fieldsByPropertyName.get(field.name).orElse(determineMappingField(field, errors)) match {
+          fieldsByPropertyName.get(field.name).orElse(implicitMappingField(field, errors)) match {
             case Some(mappingField) =>
               mappingField.childMapping
                 // get & case json format of child mapping
@@ -192,7 +193,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
     }
   }
 
-  private def determineMappingField(field: ProductField, errors: ArrayBuffer[String]): Option[ESField[_, _]] = {
+  private def implicitMappingField(field: ProductField, errors: ArrayBuffer[String]): Option[ESField[_, _]] = {
     field.format match {
       case DefaultProductFieldFormat(jsonName, default, jsonFormat) =>
         if (jsonFormat.isInstanceOf[ProductFormat[_]])
@@ -207,27 +208,32 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
         else if (runtimeClass == classOf[Boolean]) Boolean
         else if (runtimeClass == classOf[Array[Byte]]) Binary
         else String
-        Some(jsonName.getOrElse(field.name) -> field.name :: fieldType)
+        Some(fieldType.implicitField(jsonName.getOrElse(field.name), field.name, Seq(NotIndexed)))
       case _ => None
     }
   }
 
   private def toProperties : JsObject =
-    JsObject((_explicitFields.values ++ registeredExtensions.values.flatMap(_._explicitFields.values.mapTo[ESField[A, _]])).map(f =>
+    JsObject((_explicitFields ++ registeredExtensions.values.flatMap(_._explicitFields.mapTo[ESField[A, _]])).map(f =>
       f.name -> JsObject(
         allOptions(f).map(o => o.name -> o.value) ++
         f.childMapping.map("properties" -> _.toProperties) toMap)).toMap)
 
-  private[elasticsearch] class FieldType[T :ClassTag :JsonFormat](val options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T]] = None, isNested: Boolean = false) {
+  private[elasticsearch] class FieldType[T :ClassTag :JsonFormat](val options: Seq[ESFieldOption], val childMapping: Option[ESMapping[_ <: T]] = None, val isNested: Boolean = false) {
     def as[T2](implicit jsonFormat: JsonFormat[T2], classTag: ClassTag[T2]): FieldType[T2] =
       if (childMapping.isDefined) throw new Exception("Can't convert a field with a child mapping to another type")
       else new FieldType[T2](options, None)
     def ::(name: String) = new Field(name, name, options, childMapping)
     def ::(name: (String, String)) = new Field(name._1, name._2, options, childMapping)
+    def implicitField(name: String, propertyName: String, additionalOptions: Seq[ESFieldOption]) =
+      ESField[A, T](name, propertyName, options ++ additionalOptions, false, isNested, childMapping)
     class Field(name: String, propertyName: String, options: Seq[ESFieldOption], childMapping: Option[ESMapping[_ <: T]])
       extends ESField[A, T](name, propertyName, options, isDerived = false, isNested, childMapping)(implicitly[ClassTag[T]], implicitly[JsonFormat[T]]) {
-      _explicitFields += (name -> this)
-      def & (option: ESFieldOption) = new Field(name, propertyName, options :+ option, childMapping)
+      _explicitFields += this
+      def & (option: ESFieldOption) = {
+        _explicitFields -= this
+        new Field(name, propertyName, options :+ option, childMapping)
+      }
     }
   }
 }

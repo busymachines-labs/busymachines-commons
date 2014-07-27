@@ -9,7 +9,7 @@ object EmptyESTestIndex {
   private val usedIndexes = concurrent.TrieMap[String, Int]()
 
   def getNextName(baseName: String): String = {
-    val i = usedIndexes.get(baseName).getOrElse(0)
+    val i = usedIndexes.getOrElse(baseName, 0)
     usedIndexes(baseName) = i + 1
     baseName + (if (i > 0) i else "")
   }

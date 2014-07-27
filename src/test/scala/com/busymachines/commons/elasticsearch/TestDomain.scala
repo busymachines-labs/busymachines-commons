@@ -1,12 +1,11 @@
 package com.busymachines.commons.elasticsearch
 
+import com.busymachines.commons.{Enum, EnumValue}
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.domain.GeoPoint
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import org.joda.time.DateTime
-import com.busymachines.commons.EnumValue
-import com.busymachines.commons.Enum
 
 case class PropertyExternalReference(
   id: Id[PropertyExternalReference] = Id.generate[PropertyExternalReference],

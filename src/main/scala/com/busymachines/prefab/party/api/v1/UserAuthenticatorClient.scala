@@ -1,5 +1,7 @@
 package com.busymachines.prefab.party.api.v1
 
+import com.busymachines.commons.util.{FutureSerializer, SynchronizedOptional}
+
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import com.busymachines.commons.Logging
@@ -14,8 +16,6 @@ import spray.http.HttpRequest
 import spray.http.StatusCodes
 import spray.httpx.SprayJsonSupport.sprayJsonMarshaller
 import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
-import com.busymachines.commons.concurrent.FutureSerializer
-import com.busymachines.commons.cache.SynchronizedOptional
 
 class UserAuthenticatorClient(url : String, user : String, password : String)(implicit actorSystem: ActorSystem, ec: ExecutionContext) extends Logging {
 

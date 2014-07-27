@@ -104,7 +104,7 @@ object UserRoleMapping extends ESMapping[UserRole] {
   val permissions = "permissions" :: String
 }
 
-object GeoPointMapping extends ESMapping[GeoPoint]()(null, geoPointFormat) {
+object GeoPointMapping extends ESMapping[GeoPoint] {
   val lat = "lat" :: Double
   val lon = "lon" :: Double
 }

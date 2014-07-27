@@ -3,10 +3,9 @@ package com.busymachines.commons.implicits
 import java.util.Currency
 import java.util.Locale
 
-import scala.concurrent.duration.FiniteDuration
+import com.busymachines.commons.{Enum, EnumValue}
 
-import com.busymachines.commons.Enum
-import com.busymachines.commons.EnumValue
+import scala.concurrent.duration.FiniteDuration
 import com.busymachines.commons.spray.json.ProductFormatsInstances
 
 import spray.json.AdditionalFormats
@@ -29,6 +28,7 @@ trait CommonJsonFormats
   with ProductFormats
   with ProductFormatsInstances
   with AdditionalFormats {
+
   implicit object currencyJsonFormat extends RootJsonFormat[Currency] {
     def write(c: Currency) =
       JsString(c.toString)

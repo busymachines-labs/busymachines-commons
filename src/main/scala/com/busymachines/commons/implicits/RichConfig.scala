@@ -1,11 +1,11 @@
 package com.busymachines.commons.implicits
 
+import com.busymachines.commons.CommonConfig
 import com.typesafe.config.Config
 import scala.math.Ordering.Implicits._
 import scala.collection.JavaConversions._
 import scala.concurrent.duration._
 import com.typesafe.config.ConfigFactory
-import com.busymachines.commons.CommonConfig
 import java.util.concurrent.TimeUnit
 
 class RichConfig(val theConfig: Config) {

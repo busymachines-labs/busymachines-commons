@@ -20,5 +20,5 @@ abstract class CommonHttpService(implicit val actorRefFactory: ActorRefFactory) 
 
   implicit def eh: ExceptionHandler = CommonExceptionHandler
 
-  implicit def rh: RejectionHandler = CommonRejectionHandler
+//  implicit def rh: RejectionHandler = RejectionHandler.Default
 }

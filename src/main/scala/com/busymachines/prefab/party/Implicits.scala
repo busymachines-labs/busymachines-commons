@@ -1,5 +1,6 @@
 package com.busymachines.prefab.party
 
+import com.busymachines.commons.util.Extensions
 import com.busymachines.prefab.party.domain._
 import com.busymachines.prefab.party.db.{EmailMapping, UserMapping, PartyMapping}
 import com.busymachines.commons.Implicits._
@@ -20,7 +21,6 @@ import com.busymachines.prefab.party.domain.Address
 import com.busymachines.prefab.party.domain.PhoneNumberKind
 import com.busymachines.prefab.party.api.v1.model.{AuthenticationResponse, AuthenticationRequest}
 import spray.json.{JsNull, JsValue, RootJsonFormat}
-import com.busymachines.commons.Extensions
 
 object Implicits {
 
