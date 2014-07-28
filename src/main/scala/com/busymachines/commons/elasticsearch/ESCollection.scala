@@ -33,7 +33,7 @@ import scala.util.Success
 class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESMapping[T])(implicit ec: ExecutionContext) extends Logging {
 
   implicit val client = index.client
-  val indexName = index.name
+  val indexName = index.indexName
   val eventName = mapping.mappingName + "_" + indexName + "_" + typeName
   val all: SearchCriteria[T] = ESSearchCriteria.All[T]()
   val defaultSort: SearchSort = ESSearchSort.asc ("_id")

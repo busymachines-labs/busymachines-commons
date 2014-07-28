@@ -3,60 +3,84 @@ package com.busymachines.commons.elasticsearch.tools
 import java.io._
 import java.util.concurrent.TimeUnit
 import java.util.zip.{GZIPInputStream, GZIPOutputStream}
-
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.elasticsearch.{ESConfig, ESCollection, ESIndex, ESMapping}
 import com.busymachines.commons.event.{DoNothingEventSystem, LocalEventBus}
 import org.elasticsearch.action.index.{IndexAction, IndexRequest}
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.common.unit.TimeValue
-import org.scalastuff.esclient.ESClient
 import org.scalastuff.json.JsonParser
 import org.scalastuff.json.spray.{SprayJsonBuilder, SprayJsonParser, SprayJsonPrinter}
 import spray.json._
-
 import scala.collection.concurrent.TrieMap
 import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
+import com.busymachines.commons.Logging
+import scala.collection.mutable.HashSet
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.Await
+import com.busymachines.commons.elasticsearch.ESClient
 
-object ESImport {
+object ESImport extends Logging {
 
-  def importJson(config: ESConfig, index: String, file: File, force: Boolean, mappings: PartialFunction[String, ESMapping[_]], f: JsObject => Unit): Unit =
-    if (!file.getName.endsWith(".gz")) importJson(config, index, new InputStreamReader(new FileInputStream(file), "UTF-8"), force, mappings, f)
-    else importJson(config, index, new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), force, mappings, f)
+  def importJson(config: ESConfig, index: String, file: File, overwrite: Boolean, dryRun: Boolean, mappings: String => Option[ESMapping[_]], f: JsObject => Unit): Boolean =
+    if (!file.getName.endsWith(".gz")) importJson(config, index, new InputStreamReader(new FileInputStream(file), "UTF-8"), overwrite, dryRun, mappings, f)
+    else importJson(config, index, new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), overwrite, dryRun, mappings, f)
 
-  def importJson(config: ESConfig, indexName: String, reader: Reader, force: Boolean, mappings: PartialFunction[String, ESMapping[_]], f: JsObject => Unit) {
+  def importJson(config: ESConfig, indexName: String, reader: Reader, overwrite: Boolean, dryRun: Boolean, mappings: String => Option[ESMapping[_]], f: JsObject => Unit): Boolean = {
 
-    lazy val index = new ESIndex(config, indexName, DoNothingEventSystem)
-
+    val client = ESClient(config)
+    val typesEncountered = new HashSet[String]
+		var hasErrors: Boolean = false
+    
     def process(obj: JsObject) = {
       f(obj)
       obj.fields.get("_type") match {
         case Some(JsString(t)) =>
-          val mapping =
-            if (mappings.isDefinedAt(t)) {
-              new ESCollection[Any](index, t, mappings(t).asInstanceOf[ESMapping[Any]])
-            }
-            else throw new Exception(s"Unknown type '$t', import aborted.")
-          val objWithoutType = JsObject(obj.fields.filter(_._1 != "_type"))
+          
+          // Create a mapping for this type, but only the first time it is encountered
+          val hasMapping = 
+            if (typesEncountered.add(t)) {
+              mappings(t) match {
+                case Some(mapping) =>
+                  client.addMapping(indexName, t, mapping)
+                  true
+                case None =>
+                  error(s"Unknown type '$t', import aborted.")
+                  hasErrors = true
+                  false
+              }
+            } else true
 
-          obj.fields.get("_id") match {
-            case Some(JsString(id)) =>
-
-              val request = new IndexRequest(indexName, t)
-                .id(id)
-                .create(true)
-                .source(objWithoutType.toString)
-                .refresh(false)
-
-              val response = index.client.javaClient.execute(IndexAction.INSTANCE, request).get
-              if (!response.isCreated)
-                println("Couldn't create document: " + obj)
+          // import the object
+          if (hasMapping) {
+            val objectBare = JsObject(obj.fields.filter(f => f._1 != "_type" && f._1 != "_ttl"))
+  
+            obj.fields.get("_id") match {
+              case Some(JsString(id)) =>
+  
+                if (!dryRun) {
+                  val request = new IndexRequest(indexName, t)
+                    .id(id)
+                    .create(true)
+                    .source(objectBare.toString)
+                    .refresh(false)
+    
+                  val response = client.javaClient.execute(IndexAction.INSTANCE, request).get
+                  if (!response.isCreated) {
+                    error(s"Couldn't create document: $obj")
+                    hasErrors = true
+                  }
+                }
             case _ =>
-              println("Skipping document without id: " + obj)
+              error(s"Skipping document without id: $obj")
+              hasErrors = true
+            }
           }
         case _ =>
-          println("Skipping document without type: " + obj)
+          error(s"Skipping document without type: $obj")
+          hasErrors = true
       }
     }
 
@@ -85,8 +109,16 @@ object ESImport {
           super.endArray()
       }
     })
+    
+    if (client.indexExists(indexName)) {
+      if (overwrite) logger.info(s"Overwriting existing index: $indexName")
+      else logger.error(s"Index already exists: $indexName")
+    } 
 
-    parser.parse(reader)
+    // Stop processing if index existed
+    if (dryRun || !hasErrors)
+      parser.parse(reader)
+    !hasErrors
   }
 
 }

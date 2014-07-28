@@ -2,13 +2,11 @@ package com.busymachines.commons.elasticsearch.tools
 
 import java.io._
 import java.util.zip.GZIPOutputStream
-
 import ESToolHelper._
-import org.scalastuff.esclient.ESClient
 import org.scalastuff.json.spray.SprayJsonPrinter
 import spray.json.{JsString, JsObject}
-
 import scala.collection.immutable.ListMap
+import com.busymachines.commons.elasticsearch.ESClient
 
 object ESExport {
 

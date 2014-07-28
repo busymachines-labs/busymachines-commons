@@ -1,20 +1,17 @@
 package com.busymachines.commons.dao
 
 import java.util.concurrent.TimeUnit
-
 import com.busymachines.commons.domain.{HasId, Id}
 import com.busymachines.commons.elasticsearch.{ESCollection, ESSearchCriteria}
 import com.busymachines.commons.util.JsonParser
 import org.elasticsearch.action.search.{ClearScrollRequestBuilder, ClearScrollRequest, ClearScrollAction, SearchType}
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.index.query.QueryBuilders
-import org.scalastuff.esclient.ESClient
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{FiniteDuration}
-
 import scala.concurrent.duration.DurationInt
 import com.busymachines.commons.Implicits._
+import com.busymachines.commons.elasticsearch.ESClient
 
 /**
  * Created by alex on 25.06.2014.

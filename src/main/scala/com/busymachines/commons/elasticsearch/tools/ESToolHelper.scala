@@ -1,12 +1,11 @@
 package com.busymachines.commons.elasticsearch.tools
 
 import java.util.concurrent.TimeUnit
-
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.common.unit.TimeValue
-import org.scalastuff.esclient.ESClient
 import org.scalastuff.json.spray.SprayJsonParser
 import spray.json.JsObject
+import com.busymachines.commons.elasticsearch.ESClient
 
 object ESToolHelper {
 
