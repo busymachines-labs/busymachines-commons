@@ -40,7 +40,7 @@ object InstallOnUbuntuCommand {
 
       val startScriptContent = s"""#!/bin/bash
 $genmarker
-java $vmArgs -Dconfig.file=/etc/$name.conf -Dlogback.configurationFile=/etc/$name.d/cli-logback.xml -cp $jarFileNames $appClassName $$*
+java $vmArgs -Dconfig.file=/etc/$name.conf -Dlog4j.configurationFile=/etc/$name.d/cli-log4j2.xml -cp $jarFileNames $appClassName $$*
 """
 
       startScriptContent.copyTo(startScript)
@@ -56,7 +56,7 @@ java $vmArgs -Dconfig.file=/etc/$name.conf -Dlogback.configurationFile=/etc/$nam
       initScript.getParentFile.mkdirs()
       try {
 
-        val command = s"java $vmArgs -Dconfig.file=/etc/$name.conf -Dlogback.configurationFile=/etc/$name.d/logback.xml -cp $jarFileNames $appClassName $args"
+        val command = s"java $vmArgs -Dconfig.file=/etc/$name.conf -log4j.configurationFile=/etc/$name.d/log4j2.xml -cp $jarFileNames $appClassName $args"
 
         val initScriptContent = mkInitScript(name, description, command, "", userName.getOrElse("root"))
         initScriptContent.copyTo(initScript)
@@ -73,8 +73,8 @@ java $vmArgs -Dconfig.file=/etc/$name.conf -Dlogback.configurationFile=/etc/$nam
     writeApplicationConf(new File("/etc/" + name + ".conf"))
 
     // write logback.xml
-    writeResource("logback.xml", new File("/etc/" + name + ".d/logback.xml"))
-    writeResource("cli-logback.xml", new File("/etc/" + name + ".d/cli-logback.xml"))
+    writeResource("log4j2.xml", new File("/etc/" + name + ".d/log4j2.xml"))
+    writeResource("cli-log4j2.xml", new File("/etc/" + name + ".d/cli-log4j2.xml"))
 
     // change owner of log file
     val logFile = new File(s"/var/log/$name.log")
