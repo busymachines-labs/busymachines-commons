@@ -6,7 +6,7 @@ import com.busymachines.prefab.media.elasticsearch.ESMediaDao
 import com.busymachines.prefab.media.logic.DefaultMimeTypeDetector
 import com.busymachines.prefab.media.service.MimeTypeDetector
 import scala.concurrent.ExecutionContext
-import com.busymachines.commons.elasticsearch.ESIndex
+import com.busymachines.commons.elasticsearch.{ESSequenceDao, ESIndex}
 import com.busymachines.prefab.authentication.elasticsearch.ESAuthenticationDao
 import com.busymachines.prefab.authentication.elasticsearch.ESCredentialsDao
 import com.busymachines.prefab.authentication.logic.AuthenticationConfig
@@ -16,7 +16,6 @@ import com.busymachines.prefab.party.api.v1.UsersApiV1
 import com.busymachines.prefab.party.db.{PartyLocationDao, PartyDao, UserDao}
 import com.busymachines.prefab.party.logic.PartyManager
 import com.busymachines.prefab.party.logic.UserAuthenticator
-import com.busymachines.commons.elasticsearch.ESSequenceDao
 import com.busymachines.prefab.party.logic.PartyFixture
 import com.busymachines.prefab.party.logic.PartyCache
 import com.busymachines.prefab.party.service.PartyService

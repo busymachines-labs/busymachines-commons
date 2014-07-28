@@ -30,7 +30,7 @@ import scala.util.Success
 /**
  * Collection of documents represented by type.
  */
-class ESCollection[T] (val index: ESIndex, val typeName: String, val mapping: ESMapping[T])(implicit ec: ExecutionContext) extends Logging {
+class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESMapping[T])(implicit ec: ExecutionContext) extends Logging {
 
   implicit val client = index.client
   val indexName = index.name
