@@ -92,10 +92,10 @@ object InstallCommand {
   def writeResource(resource: String, dest: File) {
     if (!dest.exists) {
       dest.getParentFile.mkdirs()
-      val resource = getClass.getClassLoader.getResource(resource)
-      if (resource == null)
+      val cpResource = getClass.getClassLoader.getResource(resource)
+      if (cpResource == null)
         throw new Exception(s"Classpath resource not found: $resource")
-      resource.copyTo(dest)
+      cpResource.copyTo(dest)
       println(s"Created $dest")
     } else {
       println(s"Kept existing file $dest")
