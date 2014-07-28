@@ -56,7 +56,7 @@ java $vmArgs -Dconfig.file=/etc/$name.conf -Dlog4j.configurationFile=/etc/$name.
       initScript.getParentFile.mkdirs()
       try {
 
-        val command = s"java $vmArgs -Dconfig.file=/etc/$name.conf -log4j.configurationFile=/etc/$name.d/log4j2.xml -cp $jarFileNames $appClassName $args"
+        val command = s"java $vmArgs -Dconfig.file=/etc/$name.conf -Dlog4j.configurationFile=/etc/$name.d/log4j2.xml -cp $jarFileNames $appClassName $args"
 
         val initScriptContent = mkInitScript(name, description, command, "", userName.getOrElse("root"))
         initScriptContent.copyTo(initScript)
