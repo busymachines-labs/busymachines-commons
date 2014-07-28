@@ -44,8 +44,8 @@ class ESIndex(config: ESConfig, val indexName : String, _eventBus: => EventBus) 
 
   def drop() {
     initialized.set(false)
-    if (client.indexExists(indexName)) {
-      client.executeSync(new DeleteIndexRequest(indexName))
+    if (client0.indexExists(indexName)) {
+      client0.executeSync(new DeleteIndexRequest(indexName))
     }
   }
 

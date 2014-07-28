@@ -41,8 +41,8 @@ class ESClient(val javaClient: Client, val config: ESConfig) extends Logging {
     executeSync(new CreateIndexRequest(indexName).settings(
     s"""
        {
-        "number_of_shards" : $config.nrOfShards,
-        "number_of_replicas" : $config.nrOfReplicas,
+        "number_of_shards" : ${config.numberOfShards},
+        "number_of_replicas" : ${config.numberOfReplicas},
         "index.mapper.dynamic": false            
       }
       """))
