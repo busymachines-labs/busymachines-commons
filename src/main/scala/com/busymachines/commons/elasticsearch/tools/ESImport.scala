@@ -44,7 +44,8 @@ object ESImport extends Logging {
             if (typesEncountered.add(t)) {
               mappings(t) match {
                 case Some(mapping) =>
-                  client.addMapping(indexName, t, mapping)
+                  if (!dryRun)
+                    client.addMapping(indexName, t, mapping)
                   true
                 case None =>
                   error(s"Unknown type '$t', import aborted.")
@@ -57,25 +58,27 @@ object ESImport extends Logging {
           if (hasMapping) {
             val objectBare = JsObject(obj.fields.filter(f => f._1 != "_type" && f._1 != "_ttl"))
   
+            val id = 
             obj.fields.get("_id") match {
-              case Some(JsString(id)) =>
+              case Some(JsString(id)) => id
+              case None => null
+            }
+
+              if (!dryRun) {
+                val request = new IndexRequest(indexName, t)
+                  .id(id)
+                  .create(true)
+                  .source(objectBare.toString)
+                  .refresh(false)
   
-                if (!dryRun) {
-                  val request = new IndexRequest(indexName, t)
-                    .id(id)
-                    .create(true)
-                    .source(objectBare.toString)
-                    .refresh(false)
-    
-                  val response = client.javaClient.execute(IndexAction.INSTANCE, request).get
-                  if (!response.isCreated) {
-                    error(s"Couldn't create document: $obj")
-                    hasErrors = true
-                  }
+                val response = client.javaClient.execute(IndexAction.INSTANCE, request).get
+                if (!response.isCreated) {
+                  error(s"Couldn't create document: $obj")
+                  hasErrors = true
                 }
-            case _ =>
-              error(s"Skipping document without id: $obj")
-              hasErrors = true
+//          case _ =>
+//              error(s"Skipping document without id: $obj")
+//              hasErrors = true
             }
           }
         case _ =>
@@ -112,8 +115,15 @@ object ESImport extends Logging {
     
     if (client.indexExists(indexName)) {
       if (overwrite) logger.info(s"Overwriting existing index: $indexName")
-      else logger.error(s"Index already exists: $indexName")
-    } 
+      else if (dryRun) logger.warn(s"Index already exists: $indexName")
+      else {
+        logger.error(s"Index already exists: $indexName")
+        hasErrors = true
+      }
+    } else {
+      if (!dryRun)
+        client.createIndex(indexName)
+    }
 
     // Stop processing if index existed
     if (dryRun || !hasErrors)

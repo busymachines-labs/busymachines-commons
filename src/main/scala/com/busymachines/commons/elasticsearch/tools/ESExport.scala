@@ -7,14 +7,16 @@ import org.scalastuff.json.spray.SprayJsonPrinter
 import spray.json.{JsString, JsObject}
 import scala.collection.immutable.ListMap
 import com.busymachines.commons.elasticsearch.ESClient
+import com.busymachines.commons.elasticsearch.ESConfig
 
 object ESExport {
 
-  def exportJson(client: ESClient, index: String, file: File, f: (JsObject, Long, Long) => Unit): Unit =
-    if (!file.getName.endsWith(".gz")) exportJson(client, index, new OutputStreamWriter(new FileOutputStream(file), "UTF-8"), f)
-    else exportJson(client, index, new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(file)), "UTF-8"), f)
+  def exportJson(config: ESConfig, index: String, file: File, f: (JsObject, Long, Long) => Unit): Unit =
+    if (!file.getName.endsWith(".gz")) exportJson(config, index, new OutputStreamWriter(new FileOutputStream(file), "UTF-8"), f)
+    else exportJson(config, index, new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(file)), "UTF-8"), f)
 
-  def exportJson(client: ESClient, index: String, writer: Writer, f: (JsObject, Long, Long) => Unit) {
+  def exportJson(config: ESConfig, index: String, writer: Writer, f: (JsObject, Long, Long) => Unit) {
+  	val client = ESClient(config)
     val printer = new SprayJsonPrinter(writer, 2)
     printer.handler.startArray()
     iterateAll(client, index, (typeName, obj, hit, totalHits) => {
