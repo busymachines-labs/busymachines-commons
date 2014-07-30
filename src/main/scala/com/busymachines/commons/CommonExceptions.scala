@@ -28,4 +28,8 @@ class ApplicationException(val id: String, msg: String, val messageParameters: M
   override def toString = s"id=$id\n${super.toString}"
 
 }
+class ApplicationException2(msg: String, val id: String, val messageParameters: Map[String, String] = Map.empty, cause: Option[Throwable] = None) extends Exception(msg, cause.orNull) {
+  def message = getMessage
+  override def toString = s"$id:$msg"
+}
 
