@@ -67,12 +67,12 @@ object ESImport extends Logging {
               if (!dryRun) {
                 val request = new IndexRequest(indexName, t)
                   .id(id)
-                  .create(true)
+                  .create(!overwrite)
                   .source(objectBare.toString)
                   .refresh(false)
   
                 val response = client.javaClient.execute(IndexAction.INSTANCE, request).get
-                if (!response.isCreated) {
+                if (!overwrite && !response.isCreated) {
                   error(s"Couldn't create document: $obj")
                   hasErrors = true
                 }
@@ -114,7 +114,7 @@ object ESImport extends Logging {
     })
     
     if (client.indexExists(indexName)) {
-      if (overwrite) logger.info(s"Overwriting existing index: $indexName")
+      if (overwrite) logger.debug(s"Overwriting existing index: $indexName")
       else if (dryRun) logger.warn(s"Index already exists: $indexName")
       else {
         logger.error(s"Index already exists: $indexName")

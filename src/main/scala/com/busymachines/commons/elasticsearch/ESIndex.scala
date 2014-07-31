@@ -13,7 +13,7 @@ import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import com.busymachines.commons.Logging
 import com.busymachines.commons.event.EventBus
 
-class ESIndex(config: ESConfig, val indexName : String, _eventBus: => EventBus) extends Logging {
+class ESIndex(val config: ESConfig, val indexName : String, _eventBus: => EventBus) extends Logging {
   def this(config : ESConfig, eventBus: => EventBus) = this(config, config.indexName, eventBus)
 
   private val nrOfShards = config.numberOfShards
