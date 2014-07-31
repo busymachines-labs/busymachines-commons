@@ -39,9 +39,8 @@ class SynchronizedOptional[A] {
       oldValue
     }
 
-  def clear = 
+  def clear() =
     synchronized {
       value = None
     }
-  
 }
