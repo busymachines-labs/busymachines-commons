@@ -107,7 +107,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     }
   }
 
-  def searchSingle(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T]): Future[Option[Versioned[T]]] = {
+  def searchSingle(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T] = throw new MoreThanOneResultException): Future[Option[Versioned[T]]] = {
     search(criteria).map {
       case SearchResult(Nil, _, _) => None
       case SearchResult(first :: Nil, _, _) => Some(first)
