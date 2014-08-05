@@ -1,5 +1,8 @@
 package com.busymachines.commons.elasticsearch
 
+import org.elasticsearch.Version
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+import org.elasticsearch.action.admin.indices.stats.IndexStats
 import org.scalastuff.esclient.ActionMagnet
 import scala.collection.concurrent.TrieMap
 import org.elasticsearch.client.Client
@@ -13,10 +16,13 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import com.busymachines.commons.Logging
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
+import scala.collection.JavaConversions._
 
-object ESClient {
+object ESClient extends Logging {
   private val clientsByClusterName = TrieMap[String, ESClient]()
-  
+
+  info("Using ElasticSearch client " + Version.CURRENT)
+
   def apply(config: ESConfig) = 
     clientsByClusterName.getOrElseUpdate(config.clusterName, {
       new ESClient(
@@ -47,7 +53,16 @@ class ESClient(val javaClient: Client, val config: ESConfig) extends Logging {
       }
       """))
   }
-    
+
+  def dropIndex(indexName: String) =
+    if (indexExists(indexName)) {
+      executeSync(new DeleteIndexRequest(indexName))
+    }
+
+  def listIndexNames: List[String] = {
+    javaClient.admin().indices().prepareRecoveries().execute().actionGet.shardResponses.keySet.toList
+  }
+
   def addMapping(indexName: String, typeName: String, mapping: ESMapping[_]) {
     val mappingConfiguration = mapping.mappingDefinition(typeName).toString
     try {

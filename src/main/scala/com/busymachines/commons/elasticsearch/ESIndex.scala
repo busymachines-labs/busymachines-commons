@@ -44,14 +44,11 @@ class ESIndex(val config: ESConfig, val indexName : String, _eventBus: => EventB
 
   def drop() {
     initialized.set(false)
-    if (client0.indexExists(indexName)) {
-      client0.executeSync(new DeleteIndexRequest(indexName))
-    }
+    client0.dropIndex(indexName)
   }
 
   private def initialize(client: ESClient): ESClient = {
-    info("Using ElasticSearch client " + Version.CURRENT)
-    if (!client.indexExists(indexName)) 
+    if (!client.indexExists(indexName))
       client.createIndex(indexName)
     initialized.set(true)
     // call initialize handlers
