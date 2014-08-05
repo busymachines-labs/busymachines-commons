@@ -8,7 +8,10 @@ import scala.collection.generic.CanBuildFrom
  * @param seq
  * @tparam A
  */
-class RichSeq[A](val seq: Seq[A]) extends AnyVal {
+class RichSeq[A, S[A] <: Seq[A]](val seq: S[A]) extends AnyVal {
+
+  def duplicates: Seq[A] =
+    seq.diff(seq.distinct)
 
   def modify(matches: A => Boolean, newA: => A, modify: A => A = (a: A) => a): List[A] =
     modifyFull(matches, newA, modify)._1

@@ -43,7 +43,7 @@ object Implicits extends CommonJsonFormats with CommonDomainJsonFormats with Ext
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
   implicit def richIterable[A, C[A] <: Iterable[A]](collection : C[A]) = new RichIterable[A, C](collection)
   implicit def richStringCollection[C <: Iterable[String]](collection : C)(implicit cbf: CanBuildFrom[C, String, C]) = new RichStringCollection[C](collection)
-  implicit def richSeq[A](seq : Seq[A]) = new RichSeq[A](seq)
+  implicit def richSeq[A, S[A] <: Seq[A]](seq : S[A]) = new RichSeq[A, S](seq)
   implicit def richIterableMap[K, V, I <: Iterable[V]](map : Map[K, I]) = new RichIterableMap[K, V, I](map)
   implicit def richListMap[K, V](map : Map[K, List[V]]) = new RichIterableMap[K, V, List[V]](map)
   implicit def richDouble(value : Double) = new RichDouble(value)
