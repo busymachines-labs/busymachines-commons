@@ -7,7 +7,7 @@ object RemoveTestIndices extends App {
   val config = new ESConfig("") {
     override val clusterName = "elasticsearch"
     override val hostNames = Seq("Localhost")
-    override val port = 9300
+    override val port = 9301
   }
 
   val client = ESClient(config)
