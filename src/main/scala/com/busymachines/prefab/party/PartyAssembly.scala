@@ -51,9 +51,6 @@ trait PartyAssembly {
   lazy val authenticationApiV1 = new AuthenticationApiV1(userAuthenticator)
   lazy val usersApiV1 = new UsersApiV1(partyService, userAuthenticator)
   lazy val partiesApiV1 = new PartiesApiV1(partyService, userAuthenticator)
-  lazy val mediaDao = new ESMediaDao(mediaIndex, mediaMimeTypeDetector)
-  lazy val mediaMimeTypeDetector: MimeTypeDetector = DefaultMimeTypeDetector
-  lazy val mediasApiV1 = new MediasApiV1(mediaDao, mediaMimeTypeDetector)
 
   // services
   def createPartyFixture() = PartyFixture.create(partyDao, credentialsDao)
