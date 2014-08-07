@@ -57,6 +57,10 @@ class ESClient(val javaClient: Client, val config: ESConfig) extends Logging {
   def dropIndex(indexName: String) =
     if (indexExists(indexName)) {
       executeSync(new DeleteIndexRequest(indexName))
+      Thread.sleep(2000)
+      while (indexExists(indexName)) {
+        Thread.sleep(1000)
+      }
     }
 
   def listIndexNames: List[String] = {
