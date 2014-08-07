@@ -1,16 +1,11 @@
 package com.busymachines.commons.elasticsearch.tools
 
-import com.busymachines.commons.elasticsearch.{ESConfig, ESClient}
+import com.busymachines.commons.elasticsearch.{ ESConfig, ESClient }
+import com.busymachines.commons.testing.DefaultTestESConfig
 
 object RemoveTestIndices extends App {
 
-  val config = new ESConfig("") {
-    override val clusterName = "elasticsearch"
-    override val hostNames = Seq("Localhost")
-    override val port = 9301
-  }
-
-  val client = ESClient(config)
-  for (indexName <- client.listIndexNames if indexName.startsWith("test-"))
+  val client = ESClient(DefaultTestESConfig)
+  for (indexName <- client.listIndexNames if indexName.startsWith("test"))
     client.dropIndex(indexName)
 }
