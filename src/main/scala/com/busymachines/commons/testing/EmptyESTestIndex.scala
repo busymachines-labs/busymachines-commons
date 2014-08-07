@@ -15,18 +15,12 @@ object EmptyESTestIndex {
     usedIndexes(baseName) = i + 1
     baseName + (if (i > 0) i else "")
   }
-  lazy val node = NodeBuilder.nodeBuilder().local(true).data(true).node();
 }
 
 class EmptyESTestIndex(c: Class[_], config: ESConfig = DefaultTestESConfig, eventBus: EventBus = DoNothingEventSystem)
   extends ESIndex(config, EmptyESTestIndex.getNextName("test-" + c.getSimpleName.toLowerCase), eventBus) {
 
   try {
-
-    EmptyESTestIndex.node.client().admin().cluster().health(new ClusterHealthRequest(indexName).waitForActiveShards(1)).actionGet();
-    //    client.javaClient.admin().cluster().prepareHealth().setWaitForGreenStatus().execute().actionGet();
-    //    val deleteQuery = org.elasticsearch.client.Requests.delete("_all")
-    //    client.javaClient.admin().indices().delete(deleteQuery)
     drop()
   } catch {
     case e: Throwable => {
