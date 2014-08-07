@@ -16,9 +16,9 @@ import com.busymachines.prefab.authentication.model.Authentication
 import spray.json.JsonFormat
 
 class AuthenticationConfig(baseName: String) extends CommonConfig(baseName) {
-  val expiration = duration("expiration")
-  val idleTime = duration("idleTime")
-  val maxCapacity = int("maxCapacity")
+  def expiration = duration("expiration")
+  def idleTime = duration("idleTime")
+  def maxCapacity = int("maxCapacity")
 }
 
 /**
