@@ -2,7 +2,9 @@ package com.busymachines.commons.elasticsearch
 
 import org.elasticsearch.Version
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.elasticsearch.action.admin.indices.stats.IndexStats
+import org.elasticsearch.index.engine.Engine.Refresh
 import org.scalastuff.esclient.ActionMagnet
 import scala.collection.concurrent.TrieMap
 import org.elasticsearch.client.Client
@@ -57,10 +59,11 @@ class ESClient(val javaClient: Client, val config: ESConfig) extends Logging {
   def dropIndex(indexName: String) =
     if (indexExists(indexName)) {
       executeSync(new DeleteIndexRequest(indexName))
-      Thread.sleep(2000)
-      while (indexExists(indexName)) {
-        Thread.sleep(1000)
-      }
+      executeSync(new RefreshRequest(indexName).force(true))
+//      Thread.sleep(2000)
+//      while (indexExists(indexName)) {
+//        Thread.sleep(1000)
+//      }
     }
 
   def listIndexNames: List[String] = {
