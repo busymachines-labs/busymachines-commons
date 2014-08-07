@@ -2,17 +2,66 @@ package com.busymachines.commons
 
 import com.busymachines.commons.domain.Id
 
-class NotAuthenticatedException(msg: String, cause: Option[Throwable] = None) extends Exception(msg, cause.getOrElse(null))
+/**
+ * An exception that holds an id and parameters that can be used to serialize exceptions and to
+ * construct translated messages.
+ */
+class CommonException(val message: String, _errorId: Option[String] = None, val parameters: Map[String, String], val cause: Option[Throwable])
+  extends Exception(message, cause.orNull) {
 
-class NotAuthorizedException(msg: String, cause: Option[Throwable] = None) extends Exception(msg, cause.getOrElse(null))
+  def this (message: String, errorId: String, parameters: (String, String)*) =
+    this(message, Some(errorId), parameters.toMap, None)
+
+  def this (message: String, parameters: (String, String)*) =
+    this(message, None, parameters.toMap, None)
+
+  def errorId =
+    _errorId.getOrElse(getClass.getSimpleName).stripSuffix("Exception")
+
+  override def toString =
+    s"$errorId:$message"
+}
+
+class NotAuthenticatedException(message: String, errorId: Option[String] = None, parameters: Map[String, String] = Map.empty, cause: Option[Throwable] = None)
+  extends CommonException(message, errorId, parameters, cause) {
+
+  def this (message: String, errorId: String, parameters: (String, String)*) =
+    this(message, Some(errorId), parameters.toMap, None)
+
+  def this (message: String, parameters: (String, String)*) =
+    this(message, None, parameters.toMap, None)
+}
+
+class NotAuthorizedException(message: String, errorId: Option[String] = None, parameters: Map[String, String] = Map.empty, cause: Option[Throwable] = None)
+  extends CommonException(message, errorId, parameters, cause) {
+
+  def this (message: String, errorId: String, parameters: (String, String)*) =
+    this(message, Some(errorId), parameters.toMap, None)
+
+  def this (message: String, parameters: (String, String)*) =
+    this(message, None, parameters.toMap, None)
+}
 
 /**
  * Thrown when a specified id was not valid. The message should be descriptive, contain the , english and is meant for end-user
  * consumption.
  */
-class EntityNotFoundException(val id: String, val `type`: String) extends Exception(s"${`type`.capitalize} with id $id not found") {
-  def this(id: Id[_], `type`: String) = this(id.toString, `type`)
+class EntityNotFoundException(message: String, errorId: Option[String] = None, parameters: Map[String, String] = Map.empty, cause: Option[Throwable] = None)
+  extends CommonException(message, errorId, parameters, cause) {
+
+  def this(id: String, `type`: String) =
+    this(s"${`type`.capitalize} with id '$id' not found", parameters = Map("type" -> `type`, "id" -> id))
+
+  def this(id: Id[_], `type`: String) =
+    this(id.value, `type`)
+
+  def this (message: String, errorId: String, parameters: (String, String)*) =
+    this(message, Some(errorId), parameters.toMap, None)
+
+  def this (message: String, parameters: (String, String)*) =
+    this(message, None, parameters.toMap, None)
 }
+
 /**
  * This exception should be used when known, application specific events occur. Any client of the library should
  * define its different exceptions by using a fixed set of possible values for the id parameter.
@@ -22,14 +71,14 @@ class EntityNotFoundException(val id: String, val `type`: String) extends Except
  *
  * @author Lorand Szakacs, lorand.szakacs@busymachines.com
  */
-class ApplicationException(val id: String, msg: String, val messageParameters: Map[String, String] = Map(), cause: Option[Throwable] = None) extends Exception(msg, cause.getOrElse(null)) {
-  lazy val message = getMessage
+class ApplicationException(message: String, errorId: Option[String] = None, parameters: Map[String, String] = Map.empty, cause: Option[Throwable] = None)
+  extends CommonException(message, errorId, parameters, cause) {
 
-  override def toString = s"id=$id\n${super.toString}"
+  def this (message: String, errorId: String, parameters: (String, String)*) =
+    this(message, Some(errorId), parameters.toMap, None)
 
+  def this (message: String, parameters: (String, String)*) =
+    this(message, None, parameters.toMap, None)
 }
-class ApplicationException2(msg: String, val id: String, val messageParameters: Map[String, String] = Map.empty, cause: Option[Throwable] = None) extends Exception(msg, cause.orNull) {
-  def message = getMessage
-  override def toString = s"$id:$msg"
-}
+
 
