@@ -12,11 +12,28 @@ object EmptyESTestIndex {
     usedIndexes(baseName) = i + 1
     baseName + (if (i > 0) i else "")
   }
+
+  private def sanitizeName(name: String) =
+    name.toLowerCase.trim
+      .replace("/", ".")
+      .replace("\\", ".")
+      .replace("*", ".")
+      .replace("?", ".")
+      .replace("\"", ".")
+      .replace("<", ".")
+      .replace(">", ".")
+      .replace("|", ".")
+      .replace(",", ".")
+      .replace("\t", ".")
+      .replace(" ", ".")
+      .replace("_", ".")
+      .replace("-", ".")
+      .replace("..", ".")
+      .replace("...", ".").takeRight(255)
 }
 
 class EmptyESTestIndex(c: Class[_], config: ESConfig = DefaultTestESConfig, eventBus: EventBus = DoNothingEventSystem)
-  extends ESIndex(config, EmptyESTestIndex.getNextName("test-" + c.getSimpleName.toLowerCase), eventBus) {
-
+  extends ESIndex(config, EmptyESTestIndex.sanitizeName(EmptyESTestIndex.getNextName("test-" + c.getSimpleName)), eventBus) {
   drop()
   Thread.sleep(1000)
 }
