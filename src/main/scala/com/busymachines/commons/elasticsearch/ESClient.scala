@@ -56,14 +56,10 @@ class ESClient(val javaClient: Client, val config: ESConfig) extends Logging {
       """))
   }
 
+  // Beware that the index cannot be created too shortly after a drop...
   def dropIndex(indexName: String) =
     if (indexExists(indexName)) {
       executeSync(new DeleteIndexRequest(indexName))
-      executeSync(new RefreshRequest(indexName).force(true))
-//      Thread.sleep(2000)
-//      while (indexExists(indexName)) {
-//        Thread.sleep(1000)
-//      }
     }
 
   def listIndexNames: List[String] = {

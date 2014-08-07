@@ -19,4 +19,5 @@ class EmptyESTestIndex(c : Class[_], config: ESConfig = DefaultTestESConfig, eve
   extends ESIndex(config, EmptyESTestIndex.getNextName("test-" + c.getName.toLowerCase),eventBus) {
 
   drop()
+  Thread.sleep(2000)
 }
