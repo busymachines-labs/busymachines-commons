@@ -36,7 +36,6 @@ trait PartyAssembly {
   def sequenceIndex = index
   def authenticationConfigBaseName = "authentication"
   def authenticationConfig = new AuthenticationConfig(authenticationConfigBaseName)
-  def mediaIndex = index
 
   // components
   lazy val sequenceDao = new ESSequenceDao(sequenceIndex)
