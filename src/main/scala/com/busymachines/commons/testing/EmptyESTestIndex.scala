@@ -10,7 +10,7 @@ object EmptyESTestIndex {
   def getNextName(baseName: String): String = {
     val i = usedIndexes.getOrElse(baseName, 0)
     usedIndexes(baseName) = i + 1
-    baseName + (if (i > 0) i else "")
+    sanitizeName(baseName + (if (i > 0) i else ""))
   }
 
   private def sanitizeName(name: String) =
@@ -30,10 +30,17 @@ object EmptyESTestIndex {
       .replace("-", ".")
       .replace("..", ".")
       .replace("...", ".").takeRight(255)
+
+  //TODO: THIS IS A TERRIBLE HACK, this is why traits mixins are better to bring in test data than function parameters. 
+  private def hackGetProjectBaseName(c: Class[_]) = {
+    val name = c.getCanonicalName
+    val projectName = if (name.contains("prefab")) "prefab-" else if (name.contains("commons")) "commons-" else if (name.contains("aurum")) "aurum-" else ""
+    "test-" + projectName + c.getSimpleName
+  }
 }
 
 class EmptyESTestIndex(c: Class[_], config: ESConfig = DefaultTestESConfig, eventBus: EventBus = DoNothingEventSystem)
-  extends ESIndex(config, EmptyESTestIndex.sanitizeName(EmptyESTestIndex.getNextName("test-" + c.getSimpleName)), eventBus) {
+  extends ESIndex(config, EmptyESTestIndex.getNextName(EmptyESTestIndex.hackGetProjectBaseName(c)), eventBus) {
   drop()
-  Thread.sleep(1000)
+  Thread.sleep(200)
 }
