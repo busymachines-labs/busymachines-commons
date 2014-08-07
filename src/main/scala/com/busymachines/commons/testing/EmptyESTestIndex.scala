@@ -24,12 +24,14 @@ class EmptyESTestIndex(c: Class[_], config: ESConfig = DefaultTestESConfig, even
   } catch {
     case e: Throwable => {
       debug(s"Failed to drop index: '${indexName}'' due to:${e.getMessage}: \n. Retrying.")
+      println(s"\nFailed to drop index: '${indexName}'' due to:${e.getMessage}: \n. Retrying.\n")
       Thread.sleep(2000)
       try {
         drop()
       } catch {
         case e: Throwable => {
           debug(s"Failed to drop index a second time: '${indexName}'' due to:${e.getMessage}: \n. Retrying for the last time.")
+          debug(s"\nFailed to drop index a second time: '${indexName}'' due to:${e.getMessage}: \n. Retrying for the last time.\n")
           Thread.sleep(2000)
           drop()
         }
