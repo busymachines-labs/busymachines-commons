@@ -19,7 +19,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ESMediaDao(index: ESIndex, mimeTypeDetector:MimeTypeDetector)(implicit ec: ExecutionContext) extends MediaDao with Logging {
 
-  protected val dao = new ESRootDao[HashedMedia](index, ESType[HashedMedia]("media", MediaMapping))
+  private val dao = new ESRootDao[HashedMedia](index, ESType[HashedMedia]("media", MediaMapping))
 
   def retrieveAll: Future[List[Media]] =
     dao.retrieveAll map { medias =>
