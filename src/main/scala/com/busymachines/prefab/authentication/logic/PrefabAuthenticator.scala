@@ -1,6 +1,6 @@
 package com.busymachines.prefab.authentication.logic
 
-import com.busymachines.commons.CommonConfig
+import com.busymachines.commons.{Logging, NotAuthorizedException, CommonConfig}
 import com.busymachines.commons.util.AsyncCache
 
 import scala.concurrent.Await
@@ -10,8 +10,8 @@ import scala.concurrent.duration.Duration
 
 import org.joda.time.DateTime
 import com.busymachines.commons.domain.Id
-import com.busymachines.prefab.authentication.db.AuthenticationDao
-import com.busymachines.prefab.authentication.model.Authentication
+import com.busymachines.prefab.authentication.db.{CredentialsDao, AuthenticationDao}
+import com.busymachines.prefab.authentication.model.{Credentials, Authentication}
 
 import spray.json.JsonFormat
 
@@ -35,7 +35,7 @@ class AuthenticationConfig(baseName: String) extends CommonConfig(baseName) {
  * A security context typically holds the principal and the authentication id, but 
  * this is not a requirement.
  */
-abstract class PrefabAuthenticator[Principal, SecurityContext](config: AuthenticationConfig, authenticationDao: AuthenticationDao)(implicit ec: ExecutionContext, principalFormat: JsonFormat[Principal]) {
+abstract class PrefabAuthenticator[Principal, SecurityContext](config: AuthenticationConfig, authenticationDao: AuthenticationDao)(implicit ec: ExecutionContext, principalFormat: JsonFormat[Principal]) extends Logging {
 
   private type CachedData = Option[(Principal, SecurityContext)]
 

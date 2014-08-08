@@ -10,19 +10,17 @@ import spray.http.HttpHeader
 import spray.http.HttpRequest
 import spray.routing.AuthenticationFailedRejection
 import spray.routing.AuthenticationFailedRejection._
-import spray.routing.HttpService._
 import spray.routing.RequestContext
 import spray.routing.authentication.HttpAuthenticator
-import spray.routing.authentication.ContextAuthenticator
 import spray.routing.directives.AuthMagnet
 import com.busymachines.commons.{CommonConfig, Logging}
 
 object AuthenticationDirectives {
-  val tokenKey = "Auth-Token"
+  val TokenKey = "Auth-Token"
 }
 
 trait AuthenticationDirectives extends Logging {
-  val tokenKey = AuthenticationDirectives.tokenKey
+  val tokenKey = AuthenticationDirectives.TokenKey
   implicit def toAuthentication[SecurityContext](authenticator: PrefabAuthenticator[_, SecurityContext])(implicit ec: ExecutionContext) = {
     AuthMagnet.fromContextAuthenticator {
       new HttpAuthenticator[SecurityContext] {

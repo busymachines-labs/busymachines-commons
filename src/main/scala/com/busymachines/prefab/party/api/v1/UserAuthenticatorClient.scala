@@ -38,7 +38,7 @@ class UserAuthenticatorClient(url : String, user : String, password : String)(im
       }
     }
     future.flatMap { token =>
-      pipeline(addHeader(AuthenticationDirectives.tokenKey, token)(request))
+      pipeline(addHeader(AuthenticationDirectives.TokenKey, token)(request))
     }.recoverWith {
       case e : UnsuccessfulResponseException if e.responseStatus == StatusCodes.Unauthorized =>
         authenticateFuture.clear

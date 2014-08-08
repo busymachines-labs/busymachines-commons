@@ -2,7 +2,7 @@ package com.busymachines.prefab.authentication.elasticsearch
 
 import com.busymachines.prefab.authentication.model.Authentication
 import com.busymachines.commons.elasticsearch.{ESType, ESIndex, ESRootDao}
-import com.busymachines.prefab.authentication.implicits._
+import com.busymachines.prefab.authentication.Implicits._
 import spray.json.JsonFormat
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._

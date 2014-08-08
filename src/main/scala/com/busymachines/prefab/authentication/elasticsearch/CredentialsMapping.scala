@@ -4,7 +4,7 @@ import com.busymachines.commons.Implicits._
 import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.prefab.authentication.model.Credentials
 import com.busymachines.prefab.authentication.model.PasswordCredentials
-import com.busymachines.prefab.authentication.implicits._
+import com.busymachines.prefab.authentication.Implicits._
 import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.authentication.model.PasswordHint
 

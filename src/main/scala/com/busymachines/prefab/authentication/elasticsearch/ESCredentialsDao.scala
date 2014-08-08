@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.dao.RootDao
 import com.busymachines.prefab.authentication.db.CredentialsDao
-import com.busymachines.prefab.authentication.implicits._
+import com.busymachines.prefab.authentication.Implicits._
 import com.busymachines.commons.domain.Id
 import scala.concurrent.Future
 import com.busymachines.commons.dao.Versioned
