@@ -42,5 +42,6 @@ object EmptyESTestIndex {
 class EmptyESTestIndex(c: Class[_], config: ESConfig = DefaultTestESConfig, eventBus: EventBus = DoNothingEventSystem)
   extends ESIndex(config, EmptyESTestIndex.getNextName(EmptyESTestIndex.hackGetProjectBaseName(c)), eventBus) {
   drop()
-  Thread.sleep(200)
+  client.javaClient.admin().cluster().prepareHealth().setWaitForActiveShards(1).execute().actionGet()
+  client.javaClient.admin().cluster().prepareHealth().setWaitForGreenStatus().execute().actionGet()
 }
