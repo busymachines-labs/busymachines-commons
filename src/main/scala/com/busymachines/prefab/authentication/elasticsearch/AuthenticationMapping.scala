@@ -3,7 +3,7 @@ package com.busymachines.prefab.authentication.elasticsearch
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.prefab.authentication.model.Authentication
-import com.busymachines.prefab.authentication.implicits._
+import com.busymachines.prefab.authentication.Implicits._
 import spray.json.JsObject
 import scala.concurrent.duration._
 import com.busymachines.commons.domain.Id

@@ -8,7 +8,7 @@ import com.busymachines.prefab.authentication.model.Credentials
 import com.busymachines.prefab.authentication.model.PasswordCredentials
 import com.busymachines.commons.Logging
 import com.busymachines.prefab.authentication.elasticsearch.ESCredentialsDao
-import com.busymachines.prefab.authentication.implicits._
+import com.busymachines.prefab.authentication.Implicits._
 import com.busymachines.commons.Implicits.richFuture
 import com.busymachines.prefab.party.db.PartyDao
 import com.busymachines.commons.domain.Id

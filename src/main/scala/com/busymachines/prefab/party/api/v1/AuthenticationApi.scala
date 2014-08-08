@@ -39,7 +39,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
             case Some(SecurityContext(tenantId, partyId, userId, partyName, loginName, authenticationId, permissions)) => {
               val message = "User %s has been successfully logged in".format(request.loginName)
               debug(message)
-              respondWithHeader(RawHeader(AuthenticationDirectives.tokenKey, authenticationId.toString)) {
+              respondWithHeader(RawHeader(AuthenticationDirectives.TokenKey, authenticationId.toString)) {
                 complete {
                   AuthenticationResponse(authenticationId.toString, userId.toString, partyId.toString,permissions.seq.map(_.name))
                 }
