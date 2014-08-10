@@ -61,25 +61,24 @@ object ESImport extends Logging {
             val id = 
             obj.fields.get("_id") match {
               case Some(JsString(id)) => id
-              case None => null
-            }
 
-              if (!dryRun) {
-                val request = new IndexRequest(indexName, t)
-                  .id(id)
-                  .create(!overwrite)
-                  .source(objectBare.toString)
-                  .refresh(false)
-  
-                val response = client.javaClient.execute(IndexAction.INSTANCE, request).get
-                if (!overwrite && !response.isCreated) {
-                  error(s"Couldn't create document: $obj")
-                  hasErrors = true
+                if (!dryRun) {
+                  val request = new IndexRequest(indexName, t)
+                    .id(id)
+                    .create(!overwrite)
+                    .source(objectBare.toString)
+                    .refresh(false)
+
+                  val response = client.javaClient.execute(IndexAction.INSTANCE, request).get
+                  if (!overwrite && !response.isCreated) {
+                    error(s"Couldn't create document: $obj")
+                    hasErrors = true
+                  }
                 }
-//          case _ =>
-//              error(s"Skipping document without id: $obj")
-//              hasErrors = true
-            }
+              case _ =>
+                  error(s"Skipping document without id: $obj")
+                  hasErrors = true
+              }
           }
         case _ =>
           error(s"Skipping document without type: $obj")
