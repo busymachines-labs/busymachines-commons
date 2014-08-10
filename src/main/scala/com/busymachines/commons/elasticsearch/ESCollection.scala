@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit
 import org.elasticsearch.common.unit.TimeValue
 
 import collection.JavaConversions._
+import scala.collection.mutable
 import scala.concurrent.{Future, ExecutionContext}
 import com.busymachines.commons.dao._
 import com.busymachines.commons.Logging
@@ -22,7 +23,7 @@ import org.elasticsearch.transport.RemoteTransportException
 import org.elasticsearch.index.engine.VersionConflictEngineException
 import org.elasticsearch.action.delete.DeleteRequest
 import java.util.UUID
-import spray.json.{JsString, JsValue, JsObject}
+import spray.json.{JsValue, JsObject, JsString}
 import scala.concurrent.duration.DurationInt
 
 import scala.util.Success
@@ -70,7 +71,10 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
   def scan (criteria: SearchCriteria[T], duration: FiniteDuration, batchSize: Int): Iterator[T] =
     new ScrollIterator[T](col = this, criteria = criteria, duration = duration, size = batchSize)
 
-  def search (criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] = {
+  private def logInvalidDocument(t: Throwable, json: JsValue, result: mutable.Buffer[Versioned[T]]) =
+    error(s"Fetched invalid $typeName (document skipped): $json")
+
+  def search (criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty, invalidDocument: (Throwable, JsValue, mutable.Buffer[Versioned[T]]) => Unit = logInvalidDocument): Future[SearchResult[T]] = {
     criteria match {
       case criteria: ESSearchCriteria[T] =>
 
@@ -95,13 +99,30 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
           request = request.addFacet (facet._2)
         }
 
-        client.execute (request.request).map { result =>
-          SearchResult (result.getHits.hits.toList.map { hit =>
-            val json = JsonParser.parse (hit.sourceAsString)
-            Versioned (mapping.jsonFormat.read (json), hit.version)
-          }, Some (result.getHits.getTotalHits),
-            if (result.getFacets != null) convertESFacetResponse (facets, result) else Map.empty)
-        }
+
+        for {
+          result <- client.execute (request.request)
+          hits = result.getHits.hits
+          builder = new mutable.ListBuffer[Versioned[T]]
+          _ = for {
+            hit <- hits
+            json = JsonParser.parse(hit.sourceAsString)
+            _ = try {
+              builder += Versioned(mapping.jsonFormat.read(json), hit.version)
+            } catch {
+              case t: Throwable =>
+                invalidDocument(t, json, builder)
+            }
+          } yield ""
+        } yield SearchResult(builder.result(), Some(result.getHits.getTotalHits), if (result.getFacets != null) convertESFacetResponse (facets, result) else Map.empty)
+
+//        client.execute (request.request).map { result =>
+//          SearchResult (result.getHits.hits.toList.map { hit =>
+//            val json = JsonParser.parse(hit.sourceAsString)
+//            Versioned(mapping.jsonFormat.read(json), hit.version)
+//          }, Some (result.getHits.getTotalHits),
+//            if (result.getFacets != null) convertESFacetResponse (facets, result) else Map.empty)
+//        }
       case _ =>
         throw new Exception ("Expected ElasticSearch search criteria")
     }
