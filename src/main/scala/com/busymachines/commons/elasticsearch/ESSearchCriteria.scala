@@ -41,6 +41,8 @@ object ESSearchCriteria {
     def prepend[A0](path: ESPath[A0, A]) = Or(children.map(_.prepend(path)))
   }
   case class All[A]() extends ESSearchCriteria[A] {
+    override def and(other: ESSearchCriteria[A]) = other
+    override def or(other: ESSearchCriteria[A]) = this
     def toFilter = FilterBuilders.matchAllFilter
     def prepend[A0](path : ESPath[A0, A]) = All[A0]()
   }
