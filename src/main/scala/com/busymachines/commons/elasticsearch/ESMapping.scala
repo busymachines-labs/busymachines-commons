@@ -196,10 +196,10 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
   private def implicitMappingField(field: ProductField, errors: ArrayBuffer[String]): Option[ESField[_, _]] = {
     field.format match {
       case DefaultProductFieldFormat(jsonName, default, jsonFormat) =>
-        if (jsonFormat.isInstanceOf[ProductFormat[_]])
-          errors.append(s"Field ${field.name} should be mapped explicitly in $mappingName")
+//          errors.append(s"Field ${field.name} should be mapped explicitly in $mappingName")
         val runtimeClass = if (field.isSeq) field.genericParameterTypes(0) else field.fieldType
-        val fieldType = if (runtimeClass == classOf[Float]) Float
+        val fieldType = if (jsonFormat.isInstanceOf[ProductFormat[_]]) String
+        else if (runtimeClass == classOf[Float]) Float
         else if (runtimeClass == classOf[Double]) Double
         else if (runtimeClass == classOf[Short]) Short
         else if (runtimeClass == classOf[Integer]) Integer

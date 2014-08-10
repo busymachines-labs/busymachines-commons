@@ -17,7 +17,9 @@ object Page {
       case (Some(f), Some(s)) => new Page(f, s)
     }
   def first(size: Int) = new Page(0, size)
-  val all = new Page(0, 99999999)
+
+  // @deprecated("Use streaming when handling large data sets")
+  val all = new Page(0, 9999)
   val none = new Page(0, 0)
 }
 case class Page(from: Int, size: Int)
