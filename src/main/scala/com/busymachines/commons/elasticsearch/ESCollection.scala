@@ -72,7 +72,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     new ScrollIterator[T](col = this, criteria = criteria, duration = duration, size = batchSize)
 
   private def logInvalidDocument(t: Throwable, json: JsValue, result: mutable.Buffer[Versioned[T]]) =
-    error(s"Fetched invalid $typeName (document skipped): $json")
+    error(s"Fetched invalid $typeName: ${t.getMessage}: $json (document skipped)")
 
   def search (criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty, invalidDocument: (Throwable, JsValue, mutable.Buffer[Versioned[T]]) => Unit = logInvalidDocument): Future[SearchResult[T]] = {
     criteria match {
