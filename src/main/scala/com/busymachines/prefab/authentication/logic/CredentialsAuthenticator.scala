@@ -7,7 +7,7 @@ import com.busymachines.commons.Implicits._
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 
 import org.joda.time.DateTime
 import com.busymachines.commons.domain.Id
@@ -57,5 +57,11 @@ abstract class CredentialsAuthenticator[SecurityContext](config: AuthenticationC
   def authenticateWithLoginNamePassword(loginName: String, password: String, validate : Credentials => Boolean = _ => true): Future[SecurityContext] =
     authenticateWithLoginName(loginName, credentials =>
       credentials.passwordCredentials.exists(p => p.login == loginName && p.hasPassword(password)) && validate(credentials))
+
+
+  override protected[authentication] def devmodeSecurityContext(devmodeAuth : Option[String]) : Option[SecurityContext] =
+    devmodeAuth.map { auth =>
+      Await.result(authenticateWithLoginName(auth), 1.minute)
+    }
 }
 
