@@ -1,5 +1,6 @@
 package com.busymachines.commons.logging
 
+@deprecated("","")
 object LogHelper {
 
   def toOption[T](value: T): Option[T] = if (value == null) None else Some(value)

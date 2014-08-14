@@ -18,12 +18,13 @@ import com.busymachines.commons.event.DoNothingEventSystem
 
 //object LoggingJsonFormats extends LoggingJsonFormats
 
+@deprecated("","")
 trait LoggingJsonFormats {
   implicit val logMessageFormat = format9(LogMessage)
 }
 
 //import LoggingJsonFormats._
-
+@deprecated("","")
 case class LogMessage(
   id: Id[LogMessage] = Id.generate[LogMessage],
   message: String,
@@ -35,6 +36,7 @@ case class LogMessage(
   `type`: String,
   timestamp: DateTime) extends HasId[LogMessage]
 
+@deprecated("","")
 object LogMessageMapping extends ESMapping[LogMessage] {
   val id = "_id" -> "id" :: String.as[Id[LogMessage]]
   val message = "@message" :: String & Analyzed & IncludeInAll
@@ -47,6 +49,7 @@ object LogMessageMapping extends ESMapping[LogMessage] {
   val timestamp = "@timestamp" :: Date & IncludeInAll
 }
 
+@deprecated("","")
 object LogstashAppender extends App {
 
   val fmt = DateTimeFormat.forPattern("'logstash-'yyyy.MM.d")
