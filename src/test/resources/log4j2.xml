@@ -16,21 +16,8 @@
         </Elastic>
     </Appenders>
     <Loggers>
-          <logger name="com.busymachines" level="DEBUG" additivity="false">
-            <AppenderRef ref="ElasticAp"/>
-          </logger>
-          
-          <!--PLEASE DO NOT REMOVE THIS BECAUSE OF RECURSIVE CALLS BY ELASTIC SEARCH CLIENT!!!!!!!!-->
-          <logger name="org.elasticsearch" level="DEBUG" additivity="false">
-            <AppenderRef ref="FileAp"/>
-          </logger>
-          
-          <logger name="org.elasticsearch.common.logging.slf4j.Slf4jESLogger" level="ERROR" additivity="false">
-            <AppenderRef ref="FileAp"/>
-          </logger>
-          
           <Root level="DEBUG">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ElasticAp"/>
            </Root>
     </Loggers>
 </Configuration>

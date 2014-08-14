@@ -31,7 +31,7 @@ import scala.util.Success
 /**
  * Collection of documents represented by type.
  */
-class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESMapping[T])(implicit ec: ExecutionContext) extends Logging {
+class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESMapping[T])(implicit ec: ExecutionContext){
   def this(index: ESIndex, esType: ESType[T])(implicit ec: ExecutionContext) =
     this(index, esType.name, esType.mapping)
 

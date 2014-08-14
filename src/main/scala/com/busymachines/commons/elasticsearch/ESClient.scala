@@ -20,10 +20,10 @@ import com.busymachines.commons.Logging
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import scala.collection.JavaConversions._
 
-object ESClient extends Logging {
+object ESClient {
   private val clientsByClusterName = TrieMap[String, ESClient]()
 
-  info("Using ElasticSearch client " + Version.CURRENT)
+//  info("Using ElasticSearch client " + Version.CURRENT)
 
   def apply(config: ESConfig) = 
     clientsByClusterName.getOrElseUpdate(config.clusterName, {
@@ -69,7 +69,7 @@ class ESClient(val javaClient: Client, val config: ESConfig) extends Logging {
   def addMapping(indexName: String, typeName: String, mapping: ESMapping[_]) {
     val mappingConfiguration = mapping.mappingDefinition(typeName).toString
     try {
-      debug(s"Schema for $indexName/$typeName: $mappingConfiguration")
+//      debug(s"Schema for $indexName/$typeName: $mappingConfiguration")
       executeSync(new PutMappingRequest(indexName).`type`(typeName).source(mappingConfiguration))
     }
     catch {

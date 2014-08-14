@@ -9,6 +9,8 @@ import org.apache.logging.log4j.core.config.plugins.Plugin
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute
 import org.apache.logging.log4j.core.config.plugins.PluginElement
 import org.apache.logging.log4j.core.config.plugins.PluginFactory
+import org.apache.logging.log4j.core.impl.Log4jLogEvent
+import org.apache.logging.log4j.spi.AbstractLogger
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
@@ -90,11 +92,15 @@ class ElasticAppender(name: String, layout: Layout[_ <: Serializable], filter: F
   //logger.debug(s"Config : host=$hosts port=$port clusterName=$clusterName indexNamePrefix=$indexNamePrefix indexNameDateFormat=$indexNameDateFormat indexDocumentType=$indexDocumentType")
   override def append(event: LogEvent): Unit = {
 //    if (!event.getSource().getClassName().contains("grizzled.slf4j.Logger"))
+      if(!(event.isInstanceOf[Log4jLogEvent]))
+      return ;
+
       send(event)
 //    else {}
   }
 
   def send(event: LogEvent) {
+
     val cli: CodeLocationInfo = CodeLocationInfo(
       level = Some(event.getLevel().toString()),
       thread = Some(event.getThreadName()),
@@ -128,4 +134,5 @@ class ElasticAppender(name: String, layout: Layout[_ <: Serializable], filter: F
 
     collection.create(message, true, None).await
   }
+
 }
