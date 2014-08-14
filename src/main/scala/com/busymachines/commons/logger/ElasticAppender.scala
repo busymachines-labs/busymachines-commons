@@ -125,18 +125,7 @@ class ElasticAppender(name: String, layout: Layout[_ <: Serializable], filter: F
       }
     }
     val message: LogMessage = LogMessage(cli, exceptionFormat, commonExceptionFormat)
-    //    val messageJson = message.toJson.prettyPrint.toString
-    //    try {
-    //      client.javaClient.prepareIndex(
-    //        actualIndexName, indexDocumentType)
-    //        .setSource(messageJson)
-    //        .execute
-    //        .actionGet
-    //    } catch {
-    //      case ex: Exception =>
-    //        println(s"Exception while using ElasticSearch client! ${ex.getMessage()}")
-    //    } finally {
-    //    }
+
     collection.create(message, true, None).await
   }
 }

@@ -159,7 +159,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     client.execute (request).map (response => Versioned (entity, response.getVersion))
       .andThen {
       case Success (v) =>
-        index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
+//        index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
     }
       .recover (convertException { e =>
       //      debug(s"Create ${indexName}/${typeName}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
@@ -242,7 +242,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     client.execute (request).map (response => Versioned (entity.entity, response.getVersion))
       .andThen {
       case Success (v) =>
-        index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
+//        index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
     }
       .recover (convertException { e =>
       //      debug(s"Update ${indexName}/${typeName}/${entity.id} failed: $e:\n${XContentHelper.convertToJson(request.source, true, true)}")
@@ -257,7 +257,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
         if (!response.isFound) {
           throw new IdNotFoundException (id, typeName)
         } else {
-          index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
+//          index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
         }
     }
   }
@@ -267,10 +267,10 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
   }
 
   def onChange (f: String => Unit) {
-    index.eventBus.subscribe {
-      case ESRootDaoMutationEvent (n, id) if n == eventName =>
-        f (id)
-    }
+//    index.eventBus.subscribe {
+//      case ESRootDaoMutationEvent (n, id) if n == eventName =>
+//        f (id)
+//    }
   }
 
   /**
