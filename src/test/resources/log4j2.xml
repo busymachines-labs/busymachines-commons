@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="ERROR" monitorInterval="30" packages="com.busymachines.commons.logger">
+<Configuration status="WARN" monitorInterval="30" packages="com.busymachines.commons.logger">
     <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+          <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
         <Elastic name="ElasticAp"
                  hostNames="localhost"
                  port="9300"
@@ -12,8 +15,17 @@
         </Elastic>
     </Appenders>
     <Loggers>
-        <Root level="ERROR">
+          <logger name="com.busymachines.commons.logger.LoggerTests" level="DEBUG" additivity="false">
             <AppenderRef ref="ElasticAp"/>
-        </Root>
+          </logger>
+          
+          <!--PLEASE DO NOT REMOVE THIS BECAUSE OF RECURSIVE CALLS BY ELASTIC SEARCH CLIENT!!!!!!!!-->
+          <logger name="org.elasticsearch" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+          </logger>
+          
+          <Root level="DEBUG">
+            <AppenderRef ref="Console"/>
+           </Root>
     </Loggers>
 </Configuration>

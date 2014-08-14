@@ -26,6 +26,6 @@ class LoggerTests extends FlatSpec {
   behavior of "Logger.debug"
 
   it should "debug stuff" in {
-
+    logger.debug("Debuggin stuff with Lorand")
   }
 }
