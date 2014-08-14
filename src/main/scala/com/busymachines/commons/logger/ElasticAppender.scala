@@ -19,9 +19,20 @@ import com.busymachines.commons.logger.domain.CodeLocationInfo
 import com.busymachines.commons.logger.domain.LogMessage
 import spray.json.pimpAny
 import com.busymachines.commons.logger.domain.Implicits._
+import com.busymachines.commons.Implicits._
 import com.busymachines.commons.CommonException
 import com.busymachines.commons.logger.domain.CommonExceptionInfo
 import com.busymachines.commons.logger.domain.DefaultExceptionInfo
+import com.busymachines.commons.elasticsearch.ESClient
+import com.busymachines.commons.testing.DefaultTestESConfig
+import org.elasticsearch.cluster.metadata.MetaDataDeleteIndexService.Request
+import com.busymachines.commons.elasticsearch.ESIndex
+import com.busymachines.commons.event.DoNothingEventSystem
+import com.busymachines.commons.elasticsearch.ESIndex
+import com.busymachines.commons.elasticsearch.ESCollection
+import com.busymachines.commons.logger.domain.LogMessageESMappings
+import com.busymachines.commons.elasticsearch.ESTypes
+import scala.concurrent.ExecutionContext
 
 /**
  * Created by Alexandru Matei on 14.08.2014.
@@ -41,17 +52,46 @@ object ElasticAppender {
     @PluginElement("Filters") filter: Filter): ElasticAppender = new ElasticAppender(name, layout, filter, ignoreExceptions, hosts, port, clusterName, indexNamePrefix, indexNameDateFormat, indexDocumentType);
 }
 
+object LoggerESTypes extends ESTypes {
+  val LogMessage = esType("log", LogMessageESMappings)
+}
+
 @Plugin(name = "Elastic", category = "Core", elementType = "appender", printObject = true)
 class ElasticAppender(name: String, layout: Layout[_ <: Serializable], filter: Filter, ignoreExceptions: Boolean, hosts: String, port: String, clusterName: String, indexNamePrefix: String, indexNameDateFormat: String, indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
   lazy val logger = LogManager.getLogger()
-  lazy val client = new TransportClient(ImmutableSettings.settingsBuilder().put("cluster.name", clusterName))
-    .addTransportAddresses(hosts.split(",").map(new InetSocketTransportAddress(_, port.toInt)): _*)
 
-  lazy val actualIndexName = s"$indexNamePrefix-${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
+  lazy val collection = {
+    import ExecutionContext.Implicits.global
+    val index = new ESIndex(DefaultTestESConfig, actualIndexName, DoNothingEventSystem)
+    val collection = new ESCollection[LogMessage](index, LoggerESTypes.LogMessage)
+    collection
+  }
 
-  logger.debug(s"Config : host=$hosts port=$port clusterName=$clusterName indexNamePrefix=$indexNamePrefix indexNameDateFormat=$indexNameDateFormat indexDocumentType=$indexDocumentType")
+  private def sanitizeName(name: String) =
+    name.toLowerCase.trim
+      .replace("/", ".")
+      .replace("\\", ".")
+      .replace("*", ".")
+      .replace("?", ".")
+      .replace("\"", ".")
+      .replace("<", ".")
+      .replace(">", ".")
+      .replace("|", ".")
+      .replace(",", ".")
+      .replace("\t", ".")
+      .replace(" ", ".")
+      .replace("_", ".")
+      .replace("-", ".")
+      .replace("..", ".")
+      .replace("...", ".").takeRight(255)
+
+  lazy val actualIndexName = sanitizeName(s"$indexNamePrefix-${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}")
+
+  //logger.debug(s"Config : host=$hosts port=$port clusterName=$clusterName indexNamePrefix=$indexNamePrefix indexNameDateFormat=$indexNameDateFormat indexDocumentType=$indexDocumentType")
   override def append(event: LogEvent): Unit = {
-    send(event)
+//    if (!event.getSource().getClassName().contains("grizzled.slf4j.Logger"))
+      send(event)
+//    else {}
   }
 
   def send(event: LogEvent) {
@@ -73,7 +113,7 @@ class ElasticAppender(name: String, layout: Layout[_ <: Serializable], filter: F
           cause = Some(e.getCause.toString),
           stackTrace = e.getStackTrace().toList.map(_.toString),
           errorId = Some(e.errorId),
-          parameters = e.parameters)
+          parameters = Some(e.parameters.mkString(",")))
         (None, Some(cExInfo))
       }
       case e: Throwable => {
@@ -85,17 +125,18 @@ class ElasticAppender(name: String, layout: Layout[_ <: Serializable], filter: F
       }
     }
     val message: LogMessage = LogMessage(cli, exceptionFormat, commonExceptionFormat)
-    val messageJson = message.toJson.prettyPrint.toString
-    try {
-      client.prepareIndex(
-        actualIndexName, indexDocumentType)
-        .setSource(messageJson)
-        .execute
-        .actionGet
-    } catch {
-      case ex: Exception =>
-        println(s"Exception while using ElasticSearch client! ${ex.getMessage()}")
-    } finally {
-    }
+    //    val messageJson = message.toJson.prettyPrint.toString
+    //    try {
+    //      client.javaClient.prepareIndex(
+    //        actualIndexName, indexDocumentType)
+    //        .setSource(messageJson)
+    //        .execute
+    //        .actionGet
+    //    } catch {
+    //      case ex: Exception =>
+    //        println(s"Exception while using ElasticSearch client! ${ex.getMessage()}")
+    //    } finally {
+    //    }
+    collection.create(message, true, None).await
   }
 }

@@ -20,11 +20,11 @@ case class CommonExceptionInfo(
   `type`: String = "CommonException",
   errorId: Option[String],
   message: Option[String],
-  parameters: Map[String, String],
+  parameters: Option[String],
   cause: Option[String],
   stackTrace: List[String])
 
 case class LogMessage(
-  codeLocation: CodeLocationInfo,
-  defaultException: Option[DefaultExceptionInfo] = None,
-  commonException: Option[CommonExceptionInfo] = None)
+  codeLocationInfo: CodeLocationInfo,
+  defaultExceptionInfo: Option[DefaultExceptionInfo] = None,
+  commonExceptionInfo: Option[CommonExceptionInfo] = None)
