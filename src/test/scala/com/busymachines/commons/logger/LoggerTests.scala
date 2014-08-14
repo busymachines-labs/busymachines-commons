@@ -1,4 +1,4 @@
-package com.busymachines.logger
+package com.busymachines.commons.logger
 
 import com.busymachines.commons.CommonException
 import org.apache.logging.log4j.LogManager
@@ -11,7 +11,7 @@ class LoggerTests extends FlatSpec {
 
   val logger = LogManager.getLogger()
 
-  behavior of "Logger"
+  behavior of "Logger.error"
 
   it should "log commons exceptions properly" in {
     val exc = new CommonException("This is a common exception", Some("12"), Map("party" -> "BusyMachines", "user" -> "Alexandru"), Some(new IndexOutOfBoundsException()))
@@ -21,5 +21,11 @@ class LoggerTests extends FlatSpec {
   it should "log default java exceptions" in {
     val exc = new IllegalArgumentException("Test illegal argument")
     logger.error(this.suiteName, exc)
+  }
+
+  behavior of "Logger.debug"
+
+  it should "debug stuff" in {
+
   }
 }

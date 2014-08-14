@@ -1,4 +1,4 @@
-package com.busymachines.logger
+package com.busymachines.commons.logger
 
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.Filter
@@ -15,13 +15,13 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.common.transport._
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import com.busymachines.logger.domain.CodeLocationInfo
-import com.busymachines.logger.domain.LogMessage
+import com.busymachines.commons.logger.domain.CodeLocationInfo
+import com.busymachines.commons.logger.domain.LogMessage
 import spray.json.pimpAny
-import com.busymachines.logger.domain.Implicits._
+import com.busymachines.commons.logger.domain.Implicits._
 import com.busymachines.commons.CommonException
-import com.busymachines.logger.domain.CommonExceptionInfo
-import com.busymachines.logger.domain.DefaultExceptionInfo
+import com.busymachines.commons.logger.domain.CommonExceptionInfo
+import com.busymachines.commons.logger.domain.DefaultExceptionInfo
 
 /**
  * Created by Alexandru Matei on 14.08.2014.

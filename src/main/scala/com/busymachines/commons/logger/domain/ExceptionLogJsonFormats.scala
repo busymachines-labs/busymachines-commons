@@ -1,4 +1,4 @@
-package com.busymachines.logger.domain
+package com.busymachines.commons.logger.domain
 
 import com.busymachines.commons.Implicits._
 
