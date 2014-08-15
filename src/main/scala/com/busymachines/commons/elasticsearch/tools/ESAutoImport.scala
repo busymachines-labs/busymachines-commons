@@ -22,7 +22,7 @@ class ESAutoImport(config: ESConfig, index: String, files: Seq[File], mappings: 
         if (lastModified != -1) {
           info(s"Importing file $file")
           try {
-            ESImport.importJson(config, index, file, overwrite = true, dryRun = false, mappings, (obj: JsObject) => {})
+            ESImport.importJson(config, index, file, overwrite = true, force = false, dryRun = false, mappings, (obj: JsObject) => {})
           } catch {
             case t: Throwable => logger.error(t)
           }

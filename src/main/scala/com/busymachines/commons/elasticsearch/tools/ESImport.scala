@@ -24,11 +24,11 @@ import com.busymachines.commons.elasticsearch.ESClient
 
 object ESImport extends Logging {
 
-  def importJson(config: ESConfig, index: String, file: File, overwrite: Boolean, dryRun: Boolean, mappings: String => Option[ESMapping[_]], f: JsObject => Unit): Boolean =
-    if (!file.getName.endsWith(".gz")) importJson(config, index, new InputStreamReader(new FileInputStream(file), "UTF-8"), overwrite, dryRun, mappings, f)
-    else importJson(config, index, new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), overwrite, dryRun, mappings, f)
+  def importJson(config: ESConfig, index: String, file: File, overwrite: Boolean, force: Boolean, dryRun: Boolean, mappings: String => Option[ESMapping[_]], f: JsObject => Unit): Boolean =
+    if (!file.getName.endsWith(".gz")) importJson(config, index, new InputStreamReader(new FileInputStream(file), "UTF-8"), overwrite, force, dryRun, mappings, f)
+    else importJson(config, index, new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "UTF-8"), overwrite, force, dryRun, mappings, f)
 
-  def importJson(config: ESConfig, indexName: String, reader: Reader, overwrite: Boolean, dryRun: Boolean, mappings: String => Option[ESMapping[_]], f: JsObject => Unit): Boolean = {
+  def importJson(config: ESConfig, indexName: String, reader: Reader, overwrite: Boolean, force: Boolean, dryRun: Boolean, mappings: String => Option[ESMapping[_]], f: JsObject => Unit): Boolean = {
 
     val client = ESClient(config)
     val typesEncountered = new HashSet[String]
@@ -125,7 +125,7 @@ object ESImport extends Logging {
     }
 
     // Stop processing if index existed
-    if (dryRun || !hasErrors)
+    if (dryRun || force || !hasErrors)
       parser.parse(reader)
     !hasErrors
   }
