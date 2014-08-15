@@ -14,8 +14,12 @@ class LoggerTests extends FlatSpec {
   behavior of "Logger.error"
 
   it should "log commons exceptions properly" in {
-    val exc = new CommonException("This is a common exception", Some("12"), Map("party" -> "BusyMachines", "user" -> "Alexandru"), Some(new IndexOutOfBoundsException()))
-    logger.error(this.suiteName, exc)
+    var x = 10000;
+    while(x>0){
+      val exc = new CommonException(s"This is a common exception ${x}", Some("12"), Map("party" -> "BusyMachines", "user" -> "Alexandru"), Some(new IndexOutOfBoundsException()))
+      logger.error(this.suiteName, exc)
+      x-=1;
+    }
   }
 
   ignore should "log default java exceptions" in {

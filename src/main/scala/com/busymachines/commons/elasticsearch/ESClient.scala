@@ -20,7 +20,7 @@ import com.busymachines.commons.Logging
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import scala.collection.JavaConversions._
 
-object ESClient {
+object ESClient{
   private val clientsByClusterName = TrieMap[String, ESClient]()
 
 //  info("Using ElasticSearch client " + Version.CURRENT)
@@ -34,7 +34,7 @@ object ESClient {
     })
 }
 
-class ESClient(val javaClient: Client, val config: ESConfig) extends Logging {
+class ESClient(val javaClient: Client, val config: ESConfig){
   
   def execute[Request, Response](request: Request)(implicit action: ActionMagnet[Request, Response]): Future[Response] =
     action.execute(javaClient, request)
@@ -75,7 +75,7 @@ class ESClient(val javaClient: Client, val config: ESConfig) extends Logging {
     catch {
       case e : Throwable =>
         val msg = s"Invalid schema for $indexName/$typeName: ${e.getMessage} in $mappingConfiguration"
-        error(msg, e)
+//        error(msg, e)
         throw new Exception(msg, e)
     }
   }

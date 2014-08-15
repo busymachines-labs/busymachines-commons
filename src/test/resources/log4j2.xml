@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" monitorInterval="30" packages="com.busymachines.commons.logger">
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-          <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-        </Console>
-        <File name="FileAp" fileName="output.log" bufferedIO="false" />
+        <File name="FileAp" fileName="output.log" bufferedIO="false" >
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
         <Elastic name="ElasticAp"
                  hostNames="localhost"
                  port="9300"
                  clusterName="elasticsearch"
                  indexNamePrefix="logger"
-                 indexNameDateFormat="yyyy-MM-dd"
+                 indexNameDateFormat="yyyy.MM.dd"
                  indexDocumentType="log">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Elastic>
     </Appenders>
     <Loggers>
-          <Root level="DEBUG">
+        <logger name="com.busymachines" level="TRACE" additivity="false">
             <AppenderRef ref="ElasticAp"/>
+        </logger>
+          <Root level="TRACE">
+            <AppenderRef ref="FileAp"/>
            </Root>
     </Loggers>
 </Configuration>
