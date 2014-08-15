@@ -13,7 +13,7 @@ class LoggerTests extends FlatSpec {
 
   behavior of "Logger.error"
 
-  it should "log commons exceptions properly" in {
+  ignore should "log commons exceptions properly" in {
     var x = 10000;
     while(x>0){
       val exc = new CommonException(s"This is a common exception ${x}", Some("12"), Map("party" -> "BusyMachines", "user" -> "Alexandru"), Some(new IndexOutOfBoundsException()))
