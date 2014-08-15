@@ -6,9 +6,6 @@ import com.busymachines.commons.elasticsearch.{ESCollection, ESIndex}
 import com.busymachines.commons.event.DoNothingEventSystem
 import com.busymachines.commons.logger.domain.{LoggerESTypes, LogMessage}
 import com.busymachines.commons.testing.DefaultTestESConfig
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 

@@ -20,6 +20,14 @@
                  <!--indexNameDateFormat="yyyy.MM.dd"-->
                  <!--indexDocumentType="log">-->
         <!--</ElasticAsyncMQ>-->
+        <!--<ElasticActor name="ElasticActor"-->
+                 <!--hostNames="localhost"-->
+                 <!--port="9300"-->
+                 <!--clusterName="elasticsearch"-->
+                 <!--indexNamePrefix="logger"-->
+                 <!--indexNameDateFormat="yyyy.MM.dd"-->
+                 <!--indexDocumentType="log">-->
+        <!--</ElasticActor>-->
     </Appenders>
     <Loggers>
         <logger name="com.busymachines" level="TRACE" additivity="false">

@@ -1,12 +1,10 @@
 package com.busymachines.commons.logger.appender
 
 import com.busymachines.commons.CommonException
-import com.busymachines.commons.Implicits._
 import com.busymachines.commons.elasticsearch.{ESCollection, ESIndex}
 import com.busymachines.commons.event.DoNothingEventSystem
 import com.busymachines.commons.logger.domain._
 import com.busymachines.commons.testing.DefaultTestESConfig
-import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.appender.AbstractAppender
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginElement, PluginFactory}
 import org.apache.logging.log4j.core.impl.Log4jLogEvent
