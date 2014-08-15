@@ -13,7 +13,7 @@ class LoggerTests extends FlatSpec {
 
   behavior of "Logger.error"
 
-  //TODO Check extra document creation 12k+ vs 10K
+
   ignore should "log commons exceptions properly" in {
     var x = 10000;
     while(x>0){

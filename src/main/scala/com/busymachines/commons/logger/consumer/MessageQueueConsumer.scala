@@ -6,9 +6,6 @@ import com.busymachines.commons.elasticsearch.{ESCollection, ESIndex}
 import com.busymachines.commons.event.DoNothingEventSystem
 import com.busymachines.commons.logger.domain.{LoggerESTypes, LogMessage}
 import com.busymachines.commons.testing.DefaultTestESConfig
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
@@ -20,7 +17,7 @@ class MessageQueueConsumer(messageQueue: LinkedBlockingQueue[LogMessage],cluster
                            hostNames:String, port:String, indexNamePrefix:String, indexNameDateFormat:String,
                            indexDocumentType:String) extends Runnable {
 
-  lazy val actualIndexName = s"${indexNamePrefix}-${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
+  lazy val actualIndexName = s"${indexNamePrefix}.${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
 
   lazy val collection = {
     import scala.concurrent.ExecutionContext.Implicits.global

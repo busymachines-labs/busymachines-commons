@@ -3,19 +3,13 @@ package com.busymachines.commons.logger.appender
 import java.util.concurrent.LinkedBlockingQueue
 
 import com.busymachines.commons.CommonException
-import com.busymachines.commons.Implicits._
-import com.busymachines.commons.elasticsearch.{ESCollection, ESIndex}
-import com.busymachines.commons.event.DoNothingEventSystem
-import com.busymachines.commons.logger.appender
 import com.busymachines.commons.logger.consumer.MessageQueueConsumer
 import com.busymachines.commons.logger.domain._
-import com.busymachines.commons.testing.DefaultTestESConfig
-import org.apache.logging.log4j.LogManager
+import com.busymachines.commons.logger.layout.ElasticLayout
 import org.apache.logging.log4j.core.appender.AbstractAppender
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginElement, PluginFactory}
 import org.apache.logging.log4j.core.impl.Log4jLogEvent
 import org.apache.logging.log4j.core.{Filter, Layout, LogEvent}
-import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
 /**
@@ -37,7 +31,7 @@ object ElasticAsyncAppenderMQ {
 }
 
 
-
+//TODO Check few document creation 5k+- vs 10K
 @Plugin(name = "ElasticAsyncMQ", category = "Core", elementType = "appender", printObject = true)
 class ElasticAsyncAppenderMQ(name: String, layout: Layout[_ <: Serializable], filter: Filter, ignoreExceptions: Boolean, hosts: String, port: String, clusterName: String, indexNamePrefix: String, indexNameDateFormat: String, indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
 
@@ -57,55 +51,16 @@ class ElasticAsyncAppenderMQ(name: String, layout: Layout[_ <: Serializable], fi
       send(event)
   }
 
-  def send(event: LogEvent) {
-    val message: LogMessage = doLayout(event)
-    try {
-      messageQueue.put(message)
-    } catch {
-      case ex: Exception => println(ex)
-    }
-  }
-  
-  def doLayout(event: LogEvent): LogMessage = {
-    val cli: CodeLocationInfo = createCodeLocation(event)
-    val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
-
-    LogMessage(cli, exceptionFormat, commonExceptionFormat)
-  }
-
-  def createExceptionInfo(event: LogEvent): (Option[DefaultExceptionInfo], Option[CommonExceptionInfo]) = {
-    val (exceptionFormat, commonExceptionFormat) = event.getThrown() match {
-      case null => (None, None)
-      case e: CommonException => {
-        val cExInfo = CommonExceptionInfo(
-          message = Some(e.getMessage),
-          cause = Some(e.getCause.toString),
-          stackTrace = e.getStackTrace().toList.map(_.toString),
-          errorId = Some(e.errorId),
-          parameters = Some(e.parameters.mkString(",")))
-        (None, Some(cExInfo))
+  def send(event: LogEvent)= getLayout match{
+    case e:ElasticLayout=>
+      try {
+        messageQueue.put(e.toSerializable(event))
       }
-      case e: Throwable => {
-        val exInfo = DefaultExceptionInfo(
-          message = Some(e.getMessage),
-          cause = Option(e.getCause()).map(_.toString),
-          stackTrace = e.getStackTrace().toList.map(_.toString))
-        (Some(exInfo), None)
+      catch {
+        case ex: Exception => println(s"Exception while appending to message queue ${ex.getMessage}")
       }
+    case _ => println(s"Unsupported layout! $getLayout")
     }
-    (exceptionFormat, commonExceptionFormat)
-  }
 
-  def createCodeLocation(event: LogEvent): CodeLocationInfo = {
-    val cli: CodeLocationInfo = CodeLocationInfo(
-      level = Some(event.getLevel().toString()),
-      thread = Some(event.getThreadName()),
-      className = Some(event.getSource().getClassName()),
-      fileName = Some(event.getSource().getFileName()),
-      methodName = Some(event.getSource().getMethodName()),
-      lineNumber = Some(event.getSource().getLineNumber()),
-      time = Some(DateTimeFormat.longDateTime().print(event.getTimeMillis())),
-      message = Some(event.getMessage().getFormattedMessage()))
-    cli
-  }
+
 }
