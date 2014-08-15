@@ -11,6 +11,7 @@
                  indexNamePrefix="logger"
                  indexNameDateFormat="yyyy.MM.dd"
                  indexDocumentType="log">
+            <ElasticLayout/>
         </Elastic>
         <!--<ElasticAsyncMQ name="ElasticMQ"-->
                  <!--hostNames="localhost"-->
@@ -19,6 +20,7 @@
                  <!--indexNamePrefix="logger"-->
                  <!--indexNameDateFormat="yyyy.MM.dd"-->
                  <!--indexDocumentType="log">-->
+            <!--<ElasticLayout/>-->
         <!--</ElasticAsyncMQ>-->
         <!--<ElasticActor name="ElasticActor"-->
                  <!--hostNames="localhost"-->
@@ -27,6 +29,7 @@
                  <!--indexNamePrefix="logger"-->
                  <!--indexNameDateFormat="yyyy.MM.dd"-->
                  <!--indexDocumentType="log">-->
+            <!--<ElasticLayout/>-->
         <!--</ElasticActor>-->
     </Appenders>
     <Loggers>

@@ -4,6 +4,7 @@ import com.busymachines.commons.CommonException
 import com.busymachines.commons.elasticsearch.{ESCollection, ESIndex}
 import com.busymachines.commons.event.DoNothingEventSystem
 import com.busymachines.commons.logger.domain._
+import com.busymachines.commons.logger.layout.ElasticLayout
 import com.busymachines.commons.testing.DefaultTestESConfig
 import org.apache.logging.log4j.core.appender.AbstractAppender
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginElement, PluginFactory}
@@ -31,7 +32,7 @@ object ElasticAppender {
 }
 
 
-
+//TODO Check extra document creation 12k+ vs 10K
 @Plugin(name = "Elastic", category = "Core", elementType = "appender", printObject = true)
 class ElasticAppender(name: String, layout: Layout[_ <: Serializable], filter: Filter, ignoreExceptions: Boolean, hosts: String, port: String, clusterName: String, indexNamePrefix: String, indexNameDateFormat: String, indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
 
@@ -55,51 +56,10 @@ class ElasticAppender(name: String, layout: Layout[_ <: Serializable], filter: F
   }
 
   def send(event: LogEvent) {
-    val message: LogMessage = doLayout(event)
-    //Eventual consistency
-    collection.create(message, false, None)
-  }
-
-  def doLayout(event: LogEvent): LogMessage = {
-    val cli: CodeLocationInfo = createCodeLocation(event)
-    val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
-
-    LogMessage(cli, exceptionFormat, commonExceptionFormat)
-  }
-
-  def createExceptionInfo(event: LogEvent): (Option[DefaultExceptionInfo], Option[CommonExceptionInfo]) = {
-    val (exceptionFormat, commonExceptionFormat) = event.getThrown() match {
-      case null => (None, None)
-      case e: CommonException => {
-        val cExInfo = CommonExceptionInfo(
-          message = Some(e.getMessage),
-          cause = Some(e.getCause.toString),
-          stackTrace = e.getStackTrace().toList.map(_.toString),
-          errorId = Some(e.errorId),
-          parameters = Some(e.parameters.mkString(",")))
-        (None, Some(cExInfo))
-      }
-      case e: Throwable => {
-        val exInfo = DefaultExceptionInfo(
-          message = Some(e.getMessage),
-          cause = Option(e.getCause()).map(_.toString),
-          stackTrace = e.getStackTrace().toList.map(_.toString))
-        (Some(exInfo), None)
-      }
+    getLayout match{
+      case e:ElasticLayout=>
+        collection.create(e.toSerializable(event),false,None)
+      case _ => println(s"Unsupported layout! $getLayout")
     }
-    (exceptionFormat, commonExceptionFormat)
-  }
-
-  def createCodeLocation(event: LogEvent): CodeLocationInfo = {
-    val cli: CodeLocationInfo = CodeLocationInfo(
-      level = Some(event.getLevel().toString()),
-      thread = Some(event.getThreadName()),
-      className = Some(event.getSource().getClassName()),
-      fileName = Some(event.getSource().getFileName()),
-      methodName = Some(event.getSource().getMethodName()),
-      lineNumber = Some(event.getSource().getLineNumber()),
-      time = Some(DateTimeFormat.longDateTime().print(event.getTimeMillis())),
-      message = Some(event.getMessage().getFormattedMessage()))
-    cli
   }
 }

@@ -17,7 +17,7 @@ class MessageQueueConsumer(messageQueue: LinkedBlockingQueue[LogMessage],cluster
                            hostNames:String, port:String, indexNamePrefix:String, indexNameDateFormat:String,
                            indexDocumentType:String) extends Runnable {
 
-  lazy val actualIndexName = s"${indexNamePrefix}-${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
+  lazy val actualIndexName = s"${indexNamePrefix}.${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
 
   lazy val collection = {
     import scala.concurrent.ExecutionContext.Implicits.global

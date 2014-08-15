@@ -12,8 +12,9 @@ import org.joda.time.format.DateTimeFormat
 /**
  * Created by Alexandru Matei on 15.08.2014.
  */
-@PluginFactory
+
 object ElasticLayout{
+  @PluginFactory
   def createLayout(
                     @PluginAttribute("locationInfo") locationInfo:Boolean,
                     @PluginAttribute("properties") properties:Boolean,

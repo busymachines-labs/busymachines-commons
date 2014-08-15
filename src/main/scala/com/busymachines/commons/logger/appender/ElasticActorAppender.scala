@@ -6,6 +6,7 @@ import com.busymachines.commons.logger.domain.CodeLocationInfo
 import com.busymachines.commons.logger.domain.CommonExceptionInfo
 import com.busymachines.commons.logger.domain.DefaultExceptionInfo
 import com.busymachines.commons.logger.domain.LogMessage
+import com.busymachines.commons.logger.layout.ElasticLayout
 import org.apache.logging.log4j.core.appender.AbstractAppender
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginElement, PluginFactory}
 import org.apache.logging.log4j.core.impl.Log4jLogEvent
@@ -30,7 +31,7 @@ object ElasticActorAppender {
                      @PluginElement("Filters") filter: Filter): ElasticActorAppender = new ElasticActorAppender(name, layout, filter, ignoreExceptions, hosts, port, clusterName, indexNamePrefix, indexNameDateFormat, indexDocumentType);
 }
 
-
+//TODO Check few document creation 5k+- vs 10K
 //TODO Check logger initializastion. Possible causes: actor system creation / sl4j bindings
 @Plugin(name = "ElasticActor", category = "Core", elementType = "appender", printObject = true)
 class ElasticActorAppender(name: String, layout: Layout[_ <: Serializable], filter: Filter, ignoreExceptions: Boolean, hosts: String, port: String, clusterName: String, indexNamePrefix: String, indexNameDateFormat: String, indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
@@ -49,57 +50,16 @@ class ElasticActorAppender(name: String, layout: Layout[_ <: Serializable], filt
     send(event)
   }
 
-  def send(event: LogEvent) {
-    val message: LogMessage = doLayout(event)
-    try {
-     elasticActor ! message
-    }
-    catch {
-      case ex: Exception => println(ex)
-    }
-  }
-
-  def doLayout(event: LogEvent): LogMessage = {
-    val cli: CodeLocationInfo = createCodeLocation(event)
-    val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
-
-    LogMessage(cli, exceptionFormat, commonExceptionFormat)
-  }
-
-  def createExceptionInfo(event: LogEvent): (Option[DefaultExceptionInfo], Option[CommonExceptionInfo]) = {
-    val (exceptionFormat, commonExceptionFormat) = event.getThrown() match {
-      case null => (None, None)
-      case e: CommonException => {
-        val cExInfo = CommonExceptionInfo(
-          message = Some(e.getMessage),
-          cause = Some(e.getCause.toString),
-          stackTrace = e.getStackTrace().toList.map(_.toString),
-          errorId = Some(e.errorId),
-          parameters = Some(e.parameters.mkString(",")))
-        (None, Some(cExInfo))
+  def send(event: LogEvent) = getLayout match{
+    case e:ElasticLayout=>
+      try {
+        elasticActor ! (e.toSerializable(event))
       }
-      case e: Throwable => {
-        val exInfo = DefaultExceptionInfo(
-          message = Some(e.getMessage),
-          cause = Option(e.getCause()).map(_.toString),
-          stackTrace = e.getStackTrace().toList.map(_.toString))
-        (Some(exInfo), None)
+      catch {
+        case ex: Exception => println(s"Exception while sending message to elastic actor ${ex.getMessage}")
       }
-    }
-    (exceptionFormat, commonExceptionFormat)
+    case _ => println(s"Unsupported layout! $getLayout")
   }
 
-  def createCodeLocation(event: LogEvent): CodeLocationInfo = {
-    val cli: CodeLocationInfo = CodeLocationInfo(
-      level = Some(event.getLevel().toString()),
-      thread = Some(event.getThreadName()),
-      className = Some(event.getSource().getClassName()),
-      fileName = Some(event.getSource().getFileName()),
-      methodName = Some(event.getSource().getMethodName()),
-      lineNumber = Some(event.getSource().getLineNumber()),
-      time = Some(DateTimeFormat.longDateTime().print(event.getTimeMillis())),
-      message = Some(event.getMessage().getFormattedMessage()))
-    cli
-  }
 }
 
