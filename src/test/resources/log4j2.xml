@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" monitorInterval="30" packages="com.busymachines.commons.logger">
+<Configuration status="WARN" monitorInterval="30" packages="com.busymachines.commons.logger" shutdownHook="disable">
     <Appenders>
         <File name="FileAp" fileName="output.log" bufferedIO="false" >
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
-        <Elastic name="ElasticAp"
+        <Elastic name="Elastic"
                  hostNames="localhost"
                  port="9300"
                  clusterName="elasticsearch"
@@ -12,10 +12,18 @@
                  indexNameDateFormat="yyyy.MM.dd"
                  indexDocumentType="log">
         </Elastic>
+        <!--<ElasticAsyncMQ name="ElasticMQ"-->
+                 <!--hostNames="localhost"-->
+                 <!--port="9300"-->
+                 <!--clusterName="elasticsearch"-->
+                 <!--indexNamePrefix="logger"-->
+                 <!--indexNameDateFormat="yyyy.MM.dd"-->
+                 <!--indexDocumentType="log">-->
+        <!--</ElasticAsyncMQ>-->
     </Appenders>
     <Loggers>
         <logger name="com.busymachines" level="TRACE" additivity="false">
-            <AppenderRef ref="ElasticAp"/>
+            <AppenderRef ref="Elastic"/>
         </logger>
           <Root level="TRACE">
             <AppenderRef ref="FileAp"/>

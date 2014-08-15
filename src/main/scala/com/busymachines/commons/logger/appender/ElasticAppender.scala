@@ -58,7 +58,8 @@ class ElasticAppender(name: String, layout: Layout[_ <: Serializable], filter: F
 
   def send(event: LogEvent) {
     val message: LogMessage = doLayout(event)
-    collection.create(message, true, None).await
+    //Eventual consistency
+    collection.create(message, false, None)
   }
 
   def doLayout(event: LogEvent): LogMessage = {

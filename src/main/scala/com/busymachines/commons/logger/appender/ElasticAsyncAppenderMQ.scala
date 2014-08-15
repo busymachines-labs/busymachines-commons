@@ -7,6 +7,7 @@ import com.busymachines.commons.Implicits._
 import com.busymachines.commons.elasticsearch.{ESCollection, ESIndex}
 import com.busymachines.commons.event.DoNothingEventSystem
 import com.busymachines.commons.logger.appender
+import com.busymachines.commons.logger.consumer.MessageQueueConsumer
 import com.busymachines.commons.logger.domain._
 import com.busymachines.commons.testing.DefaultTestESConfig
 import org.apache.logging.log4j.LogManager
@@ -37,19 +38,14 @@ object ElasticAsyncAppenderMQ {
 
 
 
-@Plugin(name = "ElasticAsync", category = "Core", elementType = "appender", printObject = true)
+@Plugin(name = "ElasticAsyncMQ", category = "Core", elementType = "appender", printObject = true)
 class ElasticAsyncAppenderMQ(name: String, layout: Layout[_ <: Serializable], filter: Filter, ignoreExceptions: Boolean, hosts: String, port: String, clusterName: String, indexNamePrefix: String, indexNameDateFormat: String, indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
 
-  val messageQueue = new LinkedBlockingQueue[String](15024)
+  lazy val messageQueue = new LinkedBlockingQueue[LogMessage](10024)
 
-  lazy val collection = {
-    import scala.concurrent.ExecutionContext.Implicits.global
-    val index = new ESIndex(DefaultTestESConfig, actualIndexName, DoNothingEventSystem)
-    val collection = new ESCollection[LogMessage](index, LoggerESTypes.LogMessage)
-    collection
-  }
-
-  lazy val actualIndexName = s"$indexNamePrefix.${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
+  val consumer = initializeConsumer
+  
+  def initializeConsumer=new Thread(new MessageQueueConsumer(messageQueue, clusterName, hosts, port, indexNamePrefix, indexNameDateFormat, indexDocumentType)).start()
 
   override def append(event: LogEvent): Unit = {
     if (event.getSource().getClassName().contains("grizzled.slf4j.Logger"))
@@ -63,9 +59,13 @@ class ElasticAsyncAppenderMQ(name: String, layout: Layout[_ <: Serializable], fi
 
   def send(event: LogEvent) {
     val message: LogMessage = doLayout(event)
-    collection.create(message, true, None).await
+    try {
+      messageQueue.put(message)
+    } catch {
+      case ex: Exception => println(ex)
+    }
   }
-
+  
   def doLayout(event: LogEvent): LogMessage = {
     val cli: CodeLocationInfo = createCodeLocation(event)
     val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
