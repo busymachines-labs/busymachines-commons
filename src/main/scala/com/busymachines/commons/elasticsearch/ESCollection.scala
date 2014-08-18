@@ -143,6 +143,16 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     }
   }
 
+  def bulk (list:Seq[T]): Unit ={
+    val bulkRequest=client.javaClient.prepareBulk()
+    list.foreach(o=>bulkRequest.add(client.javaClient.prepareIndex(indexName,typeName).setSource(mapping.jsonFormat.write(o).toString)))
+    println("Yo,action get!")
+    val x=bulkRequest.execute().actionGet()
+    println("Yo,after bulk sent!")
+    x
+
+  }
+
   def create (entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration] = None): Future[Versioned[T]] = {
     val json = mapping.jsonFormat.write (entity)
     val id: String = getIdFromJson (json)
