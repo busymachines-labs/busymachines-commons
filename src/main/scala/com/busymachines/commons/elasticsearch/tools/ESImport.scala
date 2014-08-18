@@ -48,7 +48,7 @@ object ESImport extends Logging {
                     client.addMapping(indexName, t, mapping)
                   true
                 case None =>
-                  error(s"Unknown type '$t', import aborted.")
+                  logger.error(s"Unknown type '$t', import aborted.")
                   hasErrors = true
                   false
               }
@@ -71,17 +71,17 @@ object ESImport extends Logging {
 
                   val response = client.javaClient.execute(IndexAction.INSTANCE, request).get
                   if (!overwrite && !response.isCreated) {
-                    error(s"Couldn't create document: $obj")
+                    logger.error(s"Couldn't create document: $obj")
                     hasErrors = true
                   }
                 }
               case _ =>
-                  error(s"Skipping document without id: $obj")
+                  logger.error(s"Skipping document without id: $obj")
                   hasErrors = true
               }
           }
         case _ =>
-          error(s"Skipping document without type: $obj")
+          logger.error(s"Skipping document without type: $obj")
           hasErrors = true
       }
     }
