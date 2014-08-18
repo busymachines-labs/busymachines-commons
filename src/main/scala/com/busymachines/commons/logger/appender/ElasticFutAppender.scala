@@ -26,6 +26,7 @@ object ElasticFutAppender {
   def createAppender(@PluginAttribute("name") name: String,
                      @PluginAttribute("ignoreExceptions") ignoreExceptions: Boolean,
                      @PluginAttribute("queueSize") queueSize: Int,
+                     @PluginAttribute("bulkSize") bulkSize: Int,
                      @PluginAttribute("hostNames") hosts: String,
                      @PluginAttribute("port") port: String,
                      @PluginAttribute("clusterName") clusterName: String,
@@ -33,12 +34,12 @@ object ElasticFutAppender {
                      @PluginAttribute("indexNameDateFormat") indexNameDateFormat: String,
                      @PluginAttribute("indexDocumentType") indexDocumentType: String,
                      @PluginElement("Layout") layout: Layout[_ <: Serializable],
-                     @PluginElement("Filters") filter: Filter): ElasticFutAppender = new ElasticFutAppender(name, layout, filter, ignoreExceptions, queueSize, hosts, port, clusterName, indexNamePrefix, indexNameDateFormat, indexDocumentType)
+                     @PluginElement("Filters") filter: Filter): ElasticFutAppender = new ElasticFutAppender(name, layout, filter, ignoreExceptions, queueSize, bulkSize, hosts, port, clusterName, indexNamePrefix, indexNameDateFormat, indexDocumentType)
 }
 
 //TODO Check extra document creation 12k+ vs 10K
 @Plugin(name = "ElasticFut", category = "Core", elementType = "appender", printObject = true)
-class ElasticFutAppender(name: String, layout: Layout[_ <: Serializable], filter: Filter, ignoreExceptions: Boolean, queueSize: Int, hosts: String, port: String, clusterName: String, indexNamePrefix: String, indexNameDateFormat: String, indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
+class ElasticFutAppender(name: String, layout: Layout[_ <: Serializable], filter: Filter, ignoreExceptions: Boolean, queueSize: Int, bulkSize: Int, hosts: String, port: String, clusterName: String, indexNamePrefix: String, indexNameDateFormat: String, indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
   lazy val messageQueue = new LinkedBlockingQueue[LogMessage](queueSize)
 
   lazy val collection = {
@@ -51,18 +52,14 @@ class ElasticFutAppender(name: String, layout: Layout[_ <: Serializable], filter
   import scala.concurrent.ExecutionContext.Implicits.global
 
   val process = Future {
-
     println("YO, feature started")
     while (true) {
-      //if (messageQueue.size() > 1001)
-      Thread.sleep(1000)
+      if (messageQueue.size() >= bulkSize)
         try {
-//          println("YO, sending bulk " + messageQueue.size())
           val listBuffer: ListBuffer[LogMessage] = ListBuffer[LogMessage]()
           println(s"BULKING!!")
-          (0 until messageQueue.size()).foreach(i => {
+          (0 until bulkSize).foreach(i => {
             listBuffer += messageQueue.take()})
-//          println(s"after list bufffer:${listBuffer.size}")
           collection.bulk(listBuffer)
         } catch {
           case ex: Exception => println(ex)

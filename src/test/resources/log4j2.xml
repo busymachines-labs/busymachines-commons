@@ -15,6 +15,7 @@
         <!--</Elastic>-->
         <ElasticFut name="ElasticF"
                     queueSize="50000"
+                    bulkSize="1000"
                     hostNames="localhost"
                     port="9300"
                     clusterName="elasticsearch"

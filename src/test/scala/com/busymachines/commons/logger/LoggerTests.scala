@@ -21,7 +21,7 @@ class LoggerTests extends FlatSpec {
       logger.error(this.suiteName, exc)
       x-=1;
     }
-    Thread.sleep(10000)
+    Thread.sleep(3000)
     println("EXITING TEST")
   }
 
