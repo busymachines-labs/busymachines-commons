@@ -197,7 +197,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
     field.format match {
       case DefaultProductFieldFormat(jsonName, default, jsonFormat) =>
 //          errors.append(s"Field ${field.name} should be mapped explicitly in $mappingName")
-        val runtimeClass = if (field.isSeq) field.genericParameterTypes(0) else field.fieldType
+        val runtimeClass = if (field.isSeq && field.genericParameterTypes.nonEmpty) field.genericParameterTypes(0) else field.fieldType
         val fieldType = if (jsonFormat.isInstanceOf[ProductFormat[_]]) String
         else if (runtimeClass == classOf[Float]) Float
         else if (runtimeClass == classOf[Double]) Double
