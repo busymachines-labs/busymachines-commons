@@ -16,7 +16,7 @@ case class PasswordCredentials(
     login: String,
     salt: String,
     passwordHash:String) {
-  
-  def hasPassword(password: String) = 
-    passwordHash == (password + salt).md5.toHexString
+
+  def hasPassword(password: String) =
+    passwordHash.equalsIgnoreCase((password + salt).md5.toHexString)
 }
