@@ -21,12 +21,12 @@ class RichLocalDate(val localDate: LocalDate) extends AnyVal {
 }
 
 trait JodaImplicits { this: CommonJsonFormats =>
-  
+
   implicit def toLocalDateTime(localDateTime: LocalDateTime) = new RichLocalDateTime(localDateTime)
   implicit def toLocalDate(localDate: LocalDate) = new RichLocalDate(localDate)
-  
+
   implicit val jodaTimeZoneFormat = stringFormat("JodaTimeZone", s => DateTimeZone.forID(s))
-  
+
   implicit val jodaLocalDateFormat = new RootJsonFormat[LocalDate] {
     def write(value: LocalDate) = JsString(value.toString)
     def read(value: JsValue): LocalDate = value match {
@@ -50,7 +50,7 @@ trait JodaImplicits { this: CommonJsonFormats =>
       case s => deserializationError("Couldn't convert '" + s + "' to a local date-time")
     }
   }
-  
+
   implicit val jodaDateTimeFormat = new RootJsonFormat[DateTime] {
     def write(value: DateTime) = JsString(value.toString())
     def read(value: JsValue): DateTime = value match {
@@ -63,19 +63,21 @@ trait JodaImplicits { this: CommonJsonFormats =>
     }
   }
 
+  //we use the representation in this standard: http://en.wikipedia.org/wiki/ISO_8601
   implicit val jodaDurationFormat = new RootJsonFormat[org.joda.time.Duration] {
-    def write(value: org.joda.time.Duration) = JsString(value.getMillis + "")
+    def write(value: org.joda.time.Duration) = JsString(value.toString)
     def read(value: JsValue): org.joda.time.Duration = value match {
       case JsString(s) =>
-        try org.joda.time.Duration.parse(s)
-        catch {
+        try {
+          org.joda.time.Duration.parse(s)
+        } catch {
           case e: Throwable => deserializationError("Couldn't convert '" + s + "' to a duration: " + e.getMessage)
         }
       case s => deserializationError("Couldn't convert '" + s + "' to a duration")
     }
   }
   implicit def jodaOrdering[A <: ReadablePartial] = new Ordering[A] {
-    def compare(x: A, y: A): Int = 
+    def compare(x: A, y: A): Int =
       x.compareTo(y)
   }
 }
