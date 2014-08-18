@@ -35,7 +35,7 @@ abstract class CredentialsAuthenticator[SecurityContext](config: AuthenticationC
   extends PrefabAuthenticator[Id[Credentials], SecurityContext](config, authenticationDao) {
 
   def authenticateWithLoginName(loginName: String, validate : Credentials => Boolean = _ => true): Future[SecurityContext] = {
-    debug(s"Trying to authenticate with username $loginName and password ****")
+    logger.debug(s"Trying to authenticate with username $loginName and password ****")
     credentialsDao.findByLogin(loginName).flatMap {
       _.map(_.entity).find(validate) match {
         case Some(credentials) =>

@@ -13,7 +13,8 @@ import spray.routing.AuthenticationFailedRejection._
 import spray.routing.RequestContext
 import spray.routing.authentication.HttpAuthenticator
 import spray.routing.directives.AuthMagnet
-import com.busymachines.commons.{CommonConfig, Logging}
+import com.busymachines.commons.CommonConfig
+import com.busymachines.commons.logger.Logging
 
 object AuthenticationDirectives {
   val TokenKey = "Auth-Token"
@@ -33,7 +34,7 @@ trait AuthenticationDirectives extends Logging {
           ctx.request.headers.find(_.is(tokenKey.toLowerCase)).map(_.value).
             orElse(ctx.request.uri.query.get(tokenKey)).map(Id[Authentication]) match {
               case Some(authenticationId) =>
-                debug(s"Request ${ctx.request.uri} with auth id $authenticationId")
+                logger.debug(s"Request ${ctx.request.uri} with auth id $authenticationId")
                 authenticator.authenticate(authenticationId) map {
                   case Some(securityContext) => Right(securityContext)
                   case None =>

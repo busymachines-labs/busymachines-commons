@@ -19,7 +19,7 @@ import org.scalatest.junit.JUnitRunner
 import spray.testkit.{ScalatestRouteTest, RouteTest}
 
 @RunWith(classOf[JUnitRunner])
-class AuthentificationApiTests extends FlatSpec with Logging with PartyAssembly with PartyApiV1Directives with RouteTest with ScalatestRouteTest {
+class AuthentificationApiTests extends FlatSpec with PartyAssembly with PartyApiV1Directives with RouteTest with ScalatestRouteTest {
 
   // system setup
   lazy implicit val actorSystem: ActorSystem = ActorSystem("Commons",ConfigFactory.load("tests.conf"))

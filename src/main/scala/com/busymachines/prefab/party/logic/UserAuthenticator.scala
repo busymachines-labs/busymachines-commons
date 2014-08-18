@@ -6,7 +6,7 @@ import com.busymachines.prefab.authentication.db.AuthenticationDao
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import com.busymachines.prefab.authentication.logic.PrefabAuthenticator
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.domain.Id
 import com.busymachines.prefab.authentication.model.Credentials
@@ -29,7 +29,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
         val permissions = party.userRoles.filter(role => user.roles.contains(role.id)).flatMap(_.permissions).toSet
         Some(SecurityContext(tenantId = party.tenant, party.id, user.id, party.describe, user.describe, id, permissions))
       case None =>  
-        debug(s"Cannot authenticate user with credentials: ${credentialsId}.")
+        logger.debug(s"Cannot authenticate user with credentials: ${credentialsId}.")
         None
     }
   }
@@ -53,7 +53,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
         case Versioned(credentials, _) => 
           val authenticationId = setAuthenticated(credentials.id).await(1.minute) 
           val context = createSecurityContext(credentials.id, authenticationId).await(1.minute)
-          debug(s"Authenticated test user: $loginName")
+          logger.debug(s"Authenticated test user: $loginName")
           context
       }
     }
@@ -82,7 +82,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
    * Authenticates a user regardless of the party it belongs to.
    */
   def authenticateWithLoginNamePassword(loginName: String, password: String, validate : Credentials => Boolean = _ => true): Future[Option[SecurityContext]] = {
-    debug(s"Trying to authenticate with username $loginName and password ****")
+    logger.debug(s"Trying to authenticate with username $loginName and password ****")
     credentialsDao.findByLogin(loginName).flatMap {
       credentials =>
         credentials.
@@ -96,7 +96,7 @@ class UserAuthenticator(config: AuthenticationConfig, partyDao : PartyDao, crede
                 createSecurityContext(credentials.id, authenticationId)
             }
           case None => 
-            debug(s"Cannot authenticate $loginName.")
+            logger.debug(s"Cannot authenticate $loginName.")
             Future.successful(None)
         }
     }

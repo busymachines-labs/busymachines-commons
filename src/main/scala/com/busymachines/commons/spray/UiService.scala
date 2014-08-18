@@ -47,7 +47,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
   
   if (CommonConfig.devmode)
     for (root <- resourceSourceRoots)
-      info(s"Tracking resource changes in: ${root.getPath.stripPrefix("./")} (DEVMODE)")
+      logger.info(s"Tracking resource changes in: ${root.getPath.stripPrefix("./")} (DEVMODE)")
 
   def route =
     get {
@@ -74,7 +74,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
           if (!isRoot) {
             // Non-root resource: cache on server and client
             cache.getOrElseUpdate((path, crc), {
-              debug(s"Caching resource : $doc")
+              logger.debug(s"Caching resource : $doc")
               respondWithHeader(`Cache-Control`(`public`, `max-age`(cacheTimeSecs))) {
                 getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
               }
@@ -82,7 +82,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
           } else {
             // Root resource: cache on server, not on client
             cache.getOrElseUpdate((path, crc), {
-              debug(s"Getting non-cachable resource : $doc")
+              logger.debug(s"Getting non-cachable resource : $doc")
               respondWithHeader(`Cache-Control`(`no-cache`)) {
                 getFromResource(doc, ext, mediaType, crc, shouldProcess, isRoot)
               }
@@ -174,7 +174,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
           val path = stripMin(m.group(2))
           loadResource(base, path, classLoader) match {
             case None =>
-              debug("Couldn't load resource " + base + "/" + path)
+              logger.debug("Couldn't load resource " + base + "/" + path)
               out.append(m.before).append(m.group(1)).append(m.group(2)).append(m.group(3)).append("!").append(m.group(4)).append(m.group(5)).append(m.after).append("\n")
             case Some(bytes) =>
               val crc = bytes.crc32

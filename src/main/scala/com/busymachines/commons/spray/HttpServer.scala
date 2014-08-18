@@ -1,7 +1,8 @@
 package com.busymachines.commons.spray
 
 import _root_.spray.http.HttpRequest
-import com.busymachines.commons.{CommonConfig, Logging, NotAuthorizedException, EntityNotFoundException}
+import com.busymachines.commons.{CommonConfig, NotAuthorizedException, EntityNotFoundException}
+import com.busymachines.commons.logger.Logging
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.event.Logging.DebugLevel
@@ -32,7 +33,7 @@ case class HttpServerConfig(baseName: String) extends CommonConfig(baseName) {
   val port = int("port")
 }
 
-abstract class HttpServer(config: HttpServerConfig)(implicit actorSystem : ActorSystem) extends CommonHttpService with CORSDirectives with Logging {
+abstract class HttpServer(config: HttpServerConfig)(implicit actorSystem : ActorSystem) extends CommonHttpService with CORSDirectives{
 
   val serverName : String = "http-server"
   val routingSettings = RoutingSettings(actorSystem)

@@ -1,7 +1,7 @@
 package com.busymachines.commons.spray
 
 import scala.concurrent.duration.FiniteDuration
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 import akka.actor.ActorRefFactory
 import spray.http.CacheDirectives
 import spray.http.HttpHeaders

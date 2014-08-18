@@ -1,6 +1,7 @@
 package com.busymachines.prefab.authentication.logic
 
-import com.busymachines.commons.{Logging, NotAuthorizedException, CommonConfig}
+import com.busymachines.commons.CommonConfig
+import com.busymachines.commons.logger.Logging
 import com.busymachines.commons.util.AsyncCache
 
 import scala.concurrent.Await

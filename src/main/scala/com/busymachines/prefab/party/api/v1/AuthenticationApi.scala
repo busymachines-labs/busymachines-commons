@@ -38,7 +38,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
           } yield context match {
             case Some(SecurityContext(tenantId, partyId, userId, partyName, loginName, authenticationId, permissions)) => {
               val message = "User %s has been successfully logged in".format(request.loginName)
-              debug(message)
+              logger.debug(message)
               respondWithHeader(RawHeader(AuthenticationDirectives.TokenKey, authenticationId.toString)) {
                 complete {
                   AuthenticationResponse(authenticationId.toString, userId.toString, partyId.toString,permissions.seq.map(_.name))
@@ -46,7 +46,7 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
               }
             }
             case None =>
-              debug("Tried to log in user %s but received 'Invalid userName or password.'".format(request.loginName))
+             logger.debug("Tried to log in user %s but received 'Invalid userName or password.'".format(request.loginName))
               respondWithStatus(StatusCodes.Forbidden) {
                 complete {
                   Map("message" -> "Invalid userName or password.")
@@ -79,14 +79,14 @@ class AuthenticationApiV1(authenticator: UserAuthenticator)(implicit actorRefFac
             case Some(securityContext) => {
               authenticator.deauthenticate(tokenValue)
               val message = s"User ${securityContext.user} has been succesfully logged out"
-              debug(message)
+              logger.debug(message)
               complete {
                 Map("message" -> message)
               }
             }
             case None => {
               val message = "User already logged out."
-              debug(message)
+              logger.debug(message)
               respondWithStatus(StatusCodes.NotFound) {
                 complete {
                   Map("message" -> message)

@@ -6,4 +6,4 @@ import com.busymachines.prefab.media.api.v1.model.MediaApiV1JsonFormats
 import spray.httpx.SprayJsonSupport
 import spray.routing.Directives
 
-trait MediaApiV1Directives extends Directives with Logging with AuthenticationDirectives 
+trait MediaApiV1Directives extends Directives with AuthenticationDirectives

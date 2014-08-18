@@ -6,4 +6,4 @@ import com.busymachines.prefab.authentication.spray.AuthenticationDirectives
 import spray.httpx.SprayJsonSupport
 import spray.routing.Directives
 
-trait PartyApiV1Directives extends Directives with Logging with SprayJsonSupport with AuthenticationDirectives
+trait PartyApiV1Directives extends Directives with AuthenticationDirectives with SprayJsonSupport
