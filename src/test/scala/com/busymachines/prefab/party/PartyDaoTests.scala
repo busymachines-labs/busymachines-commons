@@ -22,7 +22,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class PartyDaoTests extends FlatSpec with Logging {
 
-  val esIndex = new EmptyESTestIndex(getClass)
+  val esIndex = EmptyESTestIndex(getClass)
   val dao = new PartyDao(esIndex)
   
   "PartyDao" should "create & retrieve" in {

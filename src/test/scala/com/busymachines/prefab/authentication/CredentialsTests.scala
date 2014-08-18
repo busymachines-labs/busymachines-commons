@@ -16,15 +16,15 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class CredentialsTests extends FlatSpec with Logging {
 
-  val esIndex = new EmptyESTestIndex(getClass)
+  val esIndex = EmptyESTestIndex(getClass)
   val dao = new ESCredentialsDao(esIndex)
 
   "CredentialsDao" should "create & retrieve" in {
-    val credentials = Credentials(passwordCredentials=List(PasswordCredentials("login", "changeme")))
+    val credentials = Credentials(passwordCredentials = List(PasswordCredentials("login", "changeme")))
     dao.create(credentials).await
     assert(dao.retrieve(credentials.id).await.get.id === credentials.id)
     assert(dao.retrieve(credentials.id).await.get.passwordCredentials.head.hasPassword("changeme"))
 
   }
-  
+
 }

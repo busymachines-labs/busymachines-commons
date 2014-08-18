@@ -18,7 +18,7 @@ import scala.language.postfixOps
 @RunWith(classOf[JUnitRunner])
 class ItemDaoTests extends FlatSpec with Logging {
 
-  val esIndex = new EmptyESTestIndex(getClass)
+  val esIndex = EmptyESTestIndex(getClass)
   val dao = new ESRootDao[Item](esIndex, ESType("item", ItemMapping))
   val collection = new ESCollection[Item](esIndex, "item", ItemMapping)
 

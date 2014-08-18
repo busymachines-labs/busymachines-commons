@@ -25,7 +25,7 @@ class AuthentificationApiTests extends FlatSpec with PartyAssembly with PartyApi
   lazy implicit val actorSystem: ActorSystem = ActorSystem("Commons",ConfigFactory.load("tests.conf"))
   lazy implicit val executionContext = actorSystem.dispatcher
   lazy val eventBus = new LocalEventBus(actorSystem)
-  lazy val index = new EmptyESTestIndex(getClass, DefaultTestESConfig, eventBus)
+  lazy val index = EmptyESTestIndex(getClass, DefaultTestESConfig, eventBus)
   def actorRefFactory = actorSystem
   PartyFixture.createDevMode(partyDao, credentialsDao)
 
