@@ -34,4 +34,6 @@ object Country extends Enum[Country] {
   val Sweden = Value("SE", "Sweden")
   val Switzerland = Value("CH", "Switzerland")
   val UnitedKingdom = Value("UK", "United Kingdom")
+  
+  val UnitedStates = Value("US", "UnitedStates")
 }
