@@ -11,7 +11,7 @@ import akka.contrib.pattern.DistributedPubSubExtension
 import akka.contrib.pattern.DistributedPubSubMediator.Publish
 import akka.contrib.pattern.DistributedPubSubMediator.Subscribe
 import akka.contrib.pattern.DistributedPubSubMediator.SubscribeAck
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 
 class DistributedEventBus(actorSystem: ActorSystem, topic: String = "all") extends EventBus with Logging {
 
@@ -63,6 +63,6 @@ class DistributedPublisher(topic: String) extends Actor {
 
 class DistributedEventBusEndpointActor(f: PartialFunction[BusEvent, Any]) extends Actor with Logging {
   def receive = {
-    case event: BusEvent => f.applyOrElse(event, (_ : Any) => debug("Event ignored : " + event))
+    case event: BusEvent => f.applyOrElse(event, (_ : Any) => logger.debug("Event ignored : " + event))
   }
 }

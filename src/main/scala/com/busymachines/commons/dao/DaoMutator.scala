@@ -14,7 +14,7 @@ import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import scala.concurrent.Await
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 
 object DaoMutator {
   def apply[T <: HasId[T]: ClassTag](dao: RootDao[T])(implicit ec: ExecutionContext) = new RootDaoMutator[T](dao)
@@ -63,7 +63,7 @@ abstract class DaoMutator[T <: HasId[T]](dao: Dao[T])(implicit classTag: ClassTa
       case Some(parentId) =>
         createEntity(parentId, versionedEntity.entity)
       case None =>
-        debug(s"Updating entity: ${versionedEntity.entity.id}")
+        logger.debug(s"Updating entity: ${versionedEntity.entity.id}")
         dao.update(versionedEntity, false)
     })
     val futures = for ((id, future) <- writes) yield {

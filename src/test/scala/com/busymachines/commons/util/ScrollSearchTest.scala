@@ -3,7 +3,7 @@
 package com.busymachines.commons.util
 
 import akka.actor.ActorSystem
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 import com.busymachines.commons.elasticsearch.{ESMapping, ESSearchCriteria, ESCollection}
 import com.busymachines.commons.event.LocalEventBus
 import com.busymachines.commons.testing.{DefaultTestESConfig, EmptyESTestIndex}

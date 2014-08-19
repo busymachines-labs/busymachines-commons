@@ -5,6 +5,7 @@ import _root_.spray.http.StatusCodes
 import _root_.spray.routing.{ExceptionHandler, Route}
 import _root_.spray.httpx.SprayJsonSupport._
 import com.busymachines.commons.Implicits._
+import com.busymachines.commons.logger.Logging
 
 /**
  * @author Lorand Szakacs, lorand.szakacs@busymachines.com
@@ -19,19 +20,19 @@ object CommonExceptionHandler extends ExceptionHandler with Logging {
       ctx.complete(StatusCodes.NotFound, Map("message" -> e.message, "error" -> e.errorId) ++ e.parameters)
 
     case e: NotAuthorizedException => ctx =>
-      debug(s"Exception handler rejecting with forbidden because exception:\n${e.toString}")
+      logger.debug(s"Exception handler rejecting with forbidden because exception:\n${e.toString}")
       ctx.complete(StatusCodes.Forbidden, Map("message" -> e.message, "error" -> e.errorId) ++ e.parameters)
 
     case e: ApplicationException => ctx =>
-      debug(s"Request ${ctx.request} could not be handled normally:\n${e.message}", e)
+      logger.debug(s"Request ${ctx.request} could not be handled normally:\n${e.message}", e)
       ctx.complete(CommonStatusCodes.ApplicationExceptionStatus, Map("message" -> e.message, "error" -> e.errorId) ++ e.parameters)
 
     case e: CommonException => ctx =>
-      error(s"Request ${ctx.request} could not be handled normally:\n${e.message}", e)
+      logger.error(s"Request ${ctx.request} could not be handled normally:\n${e.message}", e)
       ctx.complete(StatusCodes.InternalServerError, Map("message" -> e.message, "error" -> e.errorId) ++ e.parameters)
 
     case e: Throwable => ctx =>
-      error(s"Request ${ctx.request} could not be handled normally:\n${e.getMessage}", e)
+      logger.error(s"Request ${ctx.request} could not be handled normally:\n${e.getMessage}", e)
       ctx.complete(StatusCodes.InternalServerError, Map("message" -> e.getMessage))
   }
 }

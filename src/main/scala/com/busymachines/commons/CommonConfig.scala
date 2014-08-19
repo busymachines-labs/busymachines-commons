@@ -4,6 +4,7 @@ import java.io.File
 
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.implicits.RichConfig
+import com.busymachines.commons.logger.Logging
 import com.typesafe.config._
 
 import scala.collection.concurrent.TrieMap
@@ -25,7 +26,7 @@ object CommonConfig extends CommonConfig("") with Logging {
   val devmode = booleanOption("devmode") getOrElse false
   
   if (devmode) {
-    info("Starting in development mode.")
+    logger.info("Starting in development mode.")
   }
 
   import scala.collection.JavaConversions._

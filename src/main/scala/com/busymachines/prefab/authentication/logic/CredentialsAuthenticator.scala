@@ -1,6 +1,6 @@
 package com.busymachines.prefab.authentication.logic
 
-import com.busymachines.commons.{Logging, NotAuthorizedException, CommonConfig}
+import com.busymachines.commons.{ NotAuthorizedException, CommonConfig}
 import com.busymachines.commons.util.AsyncCache
 import com.busymachines.commons.Implicits._
 

@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.net.URL
 
 import com.busymachines.commons.Implicits._
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 import com.busymachines.commons.dao.SearchResult.toResult
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Versioned.toEntity
@@ -86,7 +86,7 @@ class ESMediaDao(index: ESIndex, mimeTypeDetector:MimeTypeDetector)(implicit ec:
         }
       }
     } catch {
-      case t: Throwable => debug(t); None
+      case t: Throwable => logger.debug(t); None
     }
   }
 }

@@ -1,6 +1,6 @@
 package com.busymachines.commons.elasticsearch
 
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 import com.busymachines.commons.domain.{ Id, Sequence }
 import com.busymachines.commons.event.DoNothingEventSystem
 import com.busymachines.commons.testing.EmptyESTestIndex

@@ -8,7 +8,7 @@ import collection.JavaConversions._
 import scala.collection.mutable
 import scala.concurrent.{Future, ExecutionContext}
 import com.busymachines.commons.dao._
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 import org.elasticsearch.index.query.{QueryBuilders, FilterBuilders}
 import org.elasticsearch.action.get.GetRequest
 import com.busymachines.commons.util.JsonParser
@@ -50,7 +50,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       case response if !response.isExists =>
         None
       case response if response.isSourceEmpty =>
-        error (s"No source available for $typeName with id $id")
+//        logger.error (s"No source available for $typeName with id $id")
         None
       case response =>
         val json = JsonParser.parse (response.getSourceAsString)

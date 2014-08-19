@@ -2,7 +2,7 @@ package com.busymachines.commons.elasticsearch
 
 import scala.language.postfixOps
 import org.scalatest.FlatSpec
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 //import scala.concurrent.ExecutionContext.Implicits.global

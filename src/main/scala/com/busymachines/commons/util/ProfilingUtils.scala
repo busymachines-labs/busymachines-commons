@@ -1,6 +1,6 @@
 package com.busymachines.commons.util
 
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 
 object ProfilingUtils extends Logging {
 
@@ -18,7 +18,7 @@ object ProfilingUtils extends Logging {
       if (stdout) {
         println(m)
       }
-      debug(m)
+      logger.debug(m)
       result
     } else {
       block

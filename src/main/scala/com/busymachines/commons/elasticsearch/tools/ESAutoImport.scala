@@ -3,7 +3,7 @@ package com.busymachines.commons.elasticsearch.tools
 import java.io.File
 
 import akka.actor.Scheduler
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 import com.busymachines.commons.elasticsearch.{ESMapping, ESConfig, ESIndex}
 import spray.json.JsObject
 
@@ -20,7 +20,7 @@ class ESAutoImport(config: ESConfig, index: String, files: Seq[File], mappings: 
       val lastModified = if (file.exists) file.lastModified else -1
       if (lastModifiedMap.put(file, lastModified) != Some(lastModified)) {
         if (lastModified != -1) {
-          info(s"Importing file $file")
+          logger.info(s"Importing file $file")
           try {
             ESImport.importJson(config, index, file, overwrite = true, force = false, dryRun = false, mappings, (obj: JsObject) => {})
           } catch {

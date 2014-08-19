@@ -6,7 +6,7 @@ import scala.annotation.tailrec
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
-import com.busymachines.commons.Logging
+import com.busymachines.commons.logger.Logging
 
 object Versioned {
   implicit def toEntity[T](v: Versioned[T]) = v.entity
@@ -18,7 +18,7 @@ object RetryVersionConflictAsync extends Logging {
   def apply[A](maxRetries : Int = 3, n : Int = 1)(f : => Future[A])(implicit ec : ExecutionContext) : Future[A] = {
     f.recoverWith {
       case t : VersionConflictException if n <= maxRetries =>
-        debug(s"Version conflict attempt $n: ${t.getMessage}")
+        logger.debug(s"Version conflict attempt $n: ${t.getMessage}")
         apply(maxRetries, n + 1)(f)
     }
   }
