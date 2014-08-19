@@ -2,47 +2,19 @@
 <Configuration status="WARN" monitorInterval="30" packages="com.busymachines.commons.logger" shutdownHook="disable">
     <Appenders>
         <File name="FileAp" fileName="output.log" bufferedIO="false" >
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n %K"/>
         </File>
-        <!--<Elastic name="Elastic"-->
-                 <!--hostNames="localhost"-->
-                 <!--port="9300"-->
-                 <!--clusterName="elasticsearch"-->
-                 <!--indexNamePrefix="logger"-->
-                 <!--indexNameDateFormat="yyyy.MM.dd"-->
-                 <!--indexDocumentType="log">-->
-            <!--<ElasticLayout/>-->
-        <!--</Elastic>-->
         <ElasticFut name="ElasticF"
-                    queueSize="50000"
-                    bulkSize="1000"
+                    queueSize="1000"
+                    bulkSize="100"
                     hostNames="localhost"
                     port="9300"
                     clusterName="elasticsearch"
-                    indexNamePrefix="logger"
+                    indexNamePrefix="logstash"
                     indexNameDateFormat="yyyy.MM.dd"
                     indexDocumentType="log">
             <ElasticLayout/>
         </ElasticFut>
-
-        <!--<ElasticAsyncMQ name="ElasticMQ"-->
-                 <!--hostNames="localhost"-->
-                 <!--port="9300"-->
-                 <!--clusterName="elasticsearch"-->
-                 <!--indexNamePrefix="logger"-->
-                 <!--indexNameDateFormat="yyyy.MM.dd"-->
-                 <!--indexDocumentType="log">-->
-            <!--<ElasticLayout/>-->
-        <!--</ElasticAsyncMQ>-->
-        <!--<ElasticActor name="ElasticActor"-->
-                 <!--hostNames="localhost"-->
-                 <!--port="9300"-->
-                 <!--clusterName="elasticsearch"-->
-                 <!--indexNamePrefix="logger"-->
-                 <!--indexNameDateFormat="yyyy.MM.dd"-->
-                 <!--indexDocumentType="log">-->
-            <!--<ElasticLayout/>-->
-        <!--</ElasticActor>-->
     </Appenders>
     <Loggers>
         <logger name="com.busymachines" level="TRACE" additivity="false">
