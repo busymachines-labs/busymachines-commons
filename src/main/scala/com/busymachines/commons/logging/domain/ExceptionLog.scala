@@ -1,4 +1,4 @@
-package com.busymachines.commons.logger.domain
+package com.busymachines.commons.logging.domain
 
 import com.busymachines.commons.Implicits._
 import org.joda.time.DateTime

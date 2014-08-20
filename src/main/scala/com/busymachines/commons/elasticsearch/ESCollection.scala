@@ -8,7 +8,7 @@ import collection.JavaConversions._
 import scala.collection.mutable
 import scala.concurrent.{Future, ExecutionContext}
 import com.busymachines.commons.dao._
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import org.elasticsearch.index.query.{QueryBuilders, FilterBuilders}
 import org.elasticsearch.action.get.GetRequest
 import com.busymachines.commons.util.JsonParser

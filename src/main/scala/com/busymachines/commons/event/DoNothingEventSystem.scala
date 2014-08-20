@@ -1,6 +1,6 @@
 package com.busymachines.commons.event
 
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import akka.actor.ActorRef
 import scala.concurrent.Future
 

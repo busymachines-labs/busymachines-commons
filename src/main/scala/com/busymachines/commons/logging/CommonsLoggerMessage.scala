@@ -1,4 +1,4 @@
-package com.busymachines.commons.logger
+package com.busymachines.commons.logging
 
 import org.apache.logging.log4j.message.MapMessage
 import java.util.{ Map, HashMap }

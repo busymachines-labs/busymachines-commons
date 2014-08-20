@@ -5,7 +5,7 @@ import _root_.spray.http.StatusCodes
 import _root_.spray.routing.{ExceptionHandler, Route}
 import _root_.spray.httpx.SprayJsonSupport._
 import com.busymachines.commons.Implicits._
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 
 /**
  * @author Lorand Szakacs, lorand.szakacs@busymachines.com

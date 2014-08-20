@@ -1,9 +1,9 @@
-package com.busymachines.commons.logger
+package com.busymachines.commons.logging
 
 import java.util
 
 import com.busymachines.commons.CommonException
-import com.busymachines.commons.logger.domain.{CodeLocationInfo, CommonExceptionInfo, DefaultExceptionInfo, LogMessage}
+import com.busymachines.commons.logging.domain.{CodeLocationInfo, CommonExceptionInfo, DefaultExceptionInfo, LogMessage}
 import org.apache.logging.log4j.core.LogEvent
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginFactory}
 import org.apache.logging.log4j.core.layout.AbstractLayout

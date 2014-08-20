@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" monitorInterval="30" packages="com.busymachines.commons.logger" shutdownHook="disable">
+<Configuration status="WARN" monitorInterval="30" packages="com.busymachines.commons.logging" shutdownHook="disable">
     <Appenders>
         <File name="FileAp" fileName="output.log" bufferedIO="false" >
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n %K"/>

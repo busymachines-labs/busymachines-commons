@@ -6,7 +6,7 @@ import scala.annotation.tailrec
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 
 object Versioned {
   implicit def toEntity[T](v: Versioned[T]) = v.entity

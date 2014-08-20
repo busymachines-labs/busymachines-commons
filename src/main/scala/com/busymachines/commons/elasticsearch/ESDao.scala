@@ -8,7 +8,7 @@ import scala.concurrent.ExecutionContext
 import com.busymachines.commons.dao.SearchCriteria
 import scala.concurrent.Future
 import com.busymachines.commons.dao.Versioned
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.dao.SearchResult
 import com.busymachines.commons.dao.MoreThanOneResultException
 import com.busymachines.commons.dao.SearchSort

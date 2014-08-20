@@ -1,6 +1,6 @@
 package com.busymachines.commons.spray
 
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.{NotAuthorizedException}
 import spray.routing.{AuthenticationFailedRejection, Route, Rejection, RejectionHandler}
 

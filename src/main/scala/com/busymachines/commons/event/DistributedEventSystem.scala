@@ -11,7 +11,7 @@ import akka.contrib.pattern.DistributedPubSubExtension
 import akka.contrib.pattern.DistributedPubSubMediator.Publish
 import akka.contrib.pattern.DistributedPubSubMediator.Subscribe
 import akka.contrib.pattern.DistributedPubSubMediator.SubscribeAck
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 
 class DistributedEventBus(actorSystem: ActorSystem, topic: String = "all") extends EventBus with Logging {
 

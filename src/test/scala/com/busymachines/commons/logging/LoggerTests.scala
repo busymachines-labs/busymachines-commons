@@ -1,4 +1,4 @@
-package com.busymachines.commons.logger
+package com.busymachines.commons.logging
 
 import com.busymachines.commons.CommonException
 import org.apache.logging.log4j.LogManager

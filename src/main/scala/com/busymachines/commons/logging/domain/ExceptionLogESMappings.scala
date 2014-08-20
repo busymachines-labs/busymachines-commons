@@ -1,7 +1,8 @@
-package com.busymachines.commons.logger.domain
+package com.busymachines.commons.logging.domain
 
 import com.busymachines.commons.elasticsearch.ESMapping
-import com.busymachines.commons.logger.domain.Implicits._
+import com.busymachines.commons.logging.Implicits
+import Implicits._
 
 object LogMessageESMappings extends ESMapping[LogMessage] {
   val level = "level" :: String

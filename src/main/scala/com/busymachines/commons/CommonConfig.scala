@@ -4,7 +4,7 @@ import java.io.File
 
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.implicits.RichConfig
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.typesafe.config._
 
 import scala.collection.concurrent.TrieMap

@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.net.URL
 
 import com.busymachines.commons.Implicits._
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.dao.SearchResult.toResult
 import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.dao.Versioned.toEntity

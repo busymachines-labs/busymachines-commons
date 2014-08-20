@@ -15,7 +15,7 @@ import spray.json._
 import scala.collection.concurrent.TrieMap
 import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import scala.collection.mutable.HashSet
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
 import scala.concurrent.duration.DurationInt

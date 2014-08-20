@@ -1,4 +1,4 @@
-package com.busymachines.commons.logger.appender
+package com.busymachines.commons.logging.appender
 
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -24,8 +24,8 @@ import org.joda.time.format.DateTimeFormat
 import org.scalastuff.esclient.ActionMagnet
 
 import com.busymachines.commons.elasticsearch.{ESMapping, ESConfig}
-import com.busymachines.commons.logger.ESLayout
-import com.busymachines.commons.logger.domain.{LogMessageESMappings, ExceptionLogJsonFormats, LogMessage}
+import com.busymachines.commons.logging.{LoggingJsonFormats, ESLayout}
+import com.busymachines.commons.logging.domain.{LogMessageESMappings, LogMessage}
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -67,7 +67,7 @@ class ESAppender(
   cluster: String,
   indexNamePrefix: String,
   indexNameDateFormat: String,
-  indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) with ExceptionLogJsonFormats{
+  indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) with LoggingJsonFormats{
 
   private lazy val messageQueue = new LinkedBlockingQueue[LogMessage](queueSize)
   lazy val actualIndexName = s"$indexNamePrefix-${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"

@@ -2,7 +2,7 @@ package com.busymachines.commons.spray
 
 import _root_.spray.http.HttpRequest
 import com.busymachines.commons.{CommonConfig, NotAuthorizedException, EntityNotFoundException}
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.event.Logging.DebugLevel

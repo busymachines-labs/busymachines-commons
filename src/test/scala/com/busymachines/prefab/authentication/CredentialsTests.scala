@@ -6,7 +6,7 @@ import com.busymachines.commons.event.DoNothingEventSystem
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.busymachines.prefab.authentication.model.Credentials
 import com.busymachines.prefab.authentication.model.PasswordCredentials
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.busymachines.prefab.authentication.elasticsearch.ESCredentialsDao
 import com.busymachines.prefab.authentication.Implicits._
 import com.busymachines.commons.Implicits.richFuture

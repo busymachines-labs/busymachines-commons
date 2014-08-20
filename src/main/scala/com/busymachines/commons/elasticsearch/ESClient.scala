@@ -16,7 +16,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import scala.collection.JavaConversions._
 

@@ -14,7 +14,7 @@ import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.HasId
 import com.busymachines.commons.domain.Id
 import scala.concurrent.Await
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 
 object DaoMutator {
   def apply[T <: HasId[T]: ClassTag](dao: RootDao[T])(implicit ec: ExecutionContext) = new RootDaoMutator[T](dao)

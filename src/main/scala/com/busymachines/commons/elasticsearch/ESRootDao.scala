@@ -1,7 +1,7 @@
 package com.busymachines.commons.elasticsearch
 
 import collection.JavaConversions._
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.dao._
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.HasId

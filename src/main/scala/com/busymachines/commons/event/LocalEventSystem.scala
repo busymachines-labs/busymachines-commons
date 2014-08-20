@@ -3,7 +3,7 @@ package com.busymachines.commons.event
 import akka.actor.ActorSystem
 import akka.actor.ActorRef
 import akka.actor.Props
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import scala.concurrent.Future
 import akka.actor.Actor
 

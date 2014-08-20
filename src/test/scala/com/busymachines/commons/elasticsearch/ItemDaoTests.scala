@@ -1,7 +1,7 @@
 package com.busymachines.commons.elasticsearch
 
 import com.busymachines.commons.Implicits.richFuture
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.dao.{Page, Versioned}
 import com.busymachines.commons.domain.{GeoPoint, Id}

@@ -3,7 +3,7 @@ package com.busymachines.commons.util
 import java.util.concurrent.atomic.AtomicBoolean
 
 import _root_.spray.json._
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.spray.json.{DefaultProductFieldFormat, ProductField, ProductFieldFormat, ProductFormat}
 
 import scala.collection.concurrent.TrieMap

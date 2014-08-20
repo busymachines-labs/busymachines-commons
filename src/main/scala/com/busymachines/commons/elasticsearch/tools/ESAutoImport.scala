@@ -3,7 +3,7 @@ package com.busymachines.commons.elasticsearch.tools
 import java.io.File
 
 import akka.actor.Scheduler
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.elasticsearch.{ESMapping, ESConfig, ESIndex}
 import spray.json.JsObject
 

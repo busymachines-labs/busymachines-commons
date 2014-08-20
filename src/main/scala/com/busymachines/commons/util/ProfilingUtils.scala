@@ -1,6 +1,6 @@
 package com.busymachines.commons.util
 
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 
 object ProfilingUtils extends Logging {
 

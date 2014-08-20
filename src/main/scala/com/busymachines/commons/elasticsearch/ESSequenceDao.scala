@@ -2,7 +2,7 @@ package com.busymachines.commons.elasticsearch
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.Implicits._
 import com.busymachines.commons.dao.Versioned.toEntity
 import com.busymachines.commons.domain.Id

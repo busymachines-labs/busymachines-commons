@@ -35,9 +35,7 @@ import implicits.JodaImplicits
 import scala.concurrent.Future
 import _root_.spray.json.JsValue
 import com.busymachines.commons.domain.CommonDomainJsonFormats
-import com.busymachines.commons.logging.LoggingJsonFormats
-
-object Implicits extends CommonJsonFormats with CommonDomainJsonFormats with ExtensionsImplicits with JodaImplicits with LoggingJsonFormats {
+object Implicits extends CommonJsonFormats with CommonDomainJsonFormats with ExtensionsImplicits with JodaImplicits{
   implicit def richConfig(config : Config) = new RichConfig(config)
   implicit def richCommonConfigType[A <: CommonConfig](f : String => A) = new RichCommonConfigType[A](f)
   implicit def richJsValue(value : JsValue) = new RichJsValue(value)
