@@ -7,6 +7,7 @@ import com.busymachines.commons.logger.domain.{CodeLocationInfo, CommonException
 import org.apache.logging.log4j.core.LogEvent
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginFactory}
 import org.apache.logging.log4j.core.layout.AbstractLayout
+import org.elasticsearch.common.joda.time.format.ISODateTimeFormat
 import org.joda.time.format.DateTimeFormat
 
 /**
@@ -36,7 +37,7 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
     val cli: Option[CodeLocationInfo] = createCodeLocation(event)
     val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
 
-    LogMessage(cli, exceptionFormat, commonExceptionFormat)
+    LogMessage(cli, exceptionFormat, commonExceptionFormat,time = Some(ISODateTimeFormat.basicDateTime().print(event.getTimeMillis())))
 
   }
 
@@ -72,7 +73,6 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
         fileName = Some(event.getSource().getFileName()),
         methodName = Some(event.getSource().getMethodName()),
         lineNumber = Some(event.getSource().getLineNumber()),
-        time = Some(DateTimeFormat.longDateTime().print(event.getTimeMillis())),
         message = Some(event.getMessage().getFormattedMessage())))
       case false => None
     }

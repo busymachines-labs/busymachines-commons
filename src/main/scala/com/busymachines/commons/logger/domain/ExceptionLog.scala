@@ -39,7 +39,6 @@ case class CodeLocationInfo( level: Option[String],
                              fileName: Option[String],
                              lineNumber: Option[Int],
                              message: Option[String],
-                             time: Option[String],
                              thread: Option[String]) extends JsonFormat {
   def getAttr =List(formatValue("level", level),
     formatValue("className", className),
@@ -47,7 +46,6 @@ case class CodeLocationInfo( level: Option[String],
     formatValue("fileName", fileName),
     formatValue("lineNumber", lineNumber.map(r => r.toString)),
     formatValue("message", message),
-    formatValue("@timestamp", time),
     formatValue("thread", thread)
   )
 }
@@ -75,8 +73,10 @@ case class CommonExceptionInfo(`type`: Option[String] = Some("CommonException"),
 
 case class LogMessage(codeLocationInfo: Option[CodeLocationInfo] = None,
                       defaultExceptionInfo: Option[DefaultExceptionInfo] = None,
-                      commonExceptionInfo: Option[CommonExceptionInfo] = None) extends Serializable with JsonFormat {
+                      commonExceptionInfo: Option[CommonExceptionInfo] = None,
+                      time: Option[String]=None) extends Serializable with JsonFormat {
   def getAttr = List(formatValue("codeLocationInfo", codeLocationInfo),
     formatValue("defaultExceptionInfo", defaultExceptionInfo),
-    formatValue("commonExceptionInfo", commonExceptionInfo))
+    formatValue("commonExceptionInfo", commonExceptionInfo),
+    formatValue("@timestamp", time))
 }

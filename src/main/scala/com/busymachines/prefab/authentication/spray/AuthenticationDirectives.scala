@@ -14,7 +14,7 @@ import spray.routing.RequestContext
 import spray.routing.authentication.HttpAuthenticator
 import spray.routing.directives.AuthMagnet
 import com.busymachines.commons.CommonConfig
-import com.busymachines.commons.logger.Logging
+import com.busymachines.commons.logging.Logging
 
 object AuthenticationDirectives {
   val TokenKey = "Auth-Token"

@@ -1,6 +1,6 @@
 package com.busymachines.commons.logger
 
-import org.apache.logging.log4j.{ Level, LogManager }
+import org.apache.logging.log4j.{Level, LogManager}
 
 trait AdditionalParameters {
   def apply(originalMap: Map[String, String]): Map[String, String]
@@ -129,5 +129,4 @@ sealed class Logger {
       logger.fatal(commonsLogMessage, e)
     }
   }
-
 }

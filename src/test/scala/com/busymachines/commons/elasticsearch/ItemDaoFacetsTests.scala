@@ -19,7 +19,7 @@ import org.scalatest.junit.JUnitRunner
 class ItemDaoFacetsTests extends FlatSpec with Logging {
 
 //
-//  val esIndex = new EmptyESTestIndex(getClass, new DoNothingEventSystem)
+//  val esIndex = EmptyESTestIndex(getClass, new DoNothingEventSystem)
 //  val dao = new ESRootDao[Item](esIndex, ESType("item", ItemMapping))
 //
 //  val now = DateTime.now(DateTimeZone.UTC)
