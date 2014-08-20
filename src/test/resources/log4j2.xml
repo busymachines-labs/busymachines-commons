@@ -5,7 +5,7 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n %K"/>
         </File>
         <ESAppender name="ES" queueSize="1000" bulkSize="100">
-            <ESLayout/>
+            <ESLayout withCodeLocation/>
         </ESAppender>
     </Appenders>
     <Loggers>

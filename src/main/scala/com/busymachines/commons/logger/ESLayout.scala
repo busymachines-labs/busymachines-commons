@@ -33,7 +33,7 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
   override def getContentType: String = "text/plain"
 
   override def toSerializable(event: LogEvent): LogMessage = {
-    val cli: CodeLocationInfo = createCodeLocation(event)
+    val cli: Option[CodeLocationInfo] = createCodeLocation(event)
     val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
 
     LogMessage(cli, exceptionFormat, commonExceptionFormat)
