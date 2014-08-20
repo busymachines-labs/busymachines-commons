@@ -1,11 +1,11 @@
-package com.busymachines.commons.logger.layout
+package com.busymachines.commons.logger
 
 import java.util
 
 import com.busymachines.commons.CommonException
-import com.busymachines.commons.logger.domain.{CommonExceptionInfo, DefaultExceptionInfo, CodeLocationInfo, LogMessage}
+import com.busymachines.commons.logger.domain.{CodeLocationInfo, CommonExceptionInfo, DefaultExceptionInfo, LogMessage}
 import org.apache.logging.log4j.core.LogEvent
-import org.apache.logging.log4j.core.config.plugins.{PluginAttribute, PluginFactory, Plugin}
+import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginFactory}
 import org.apache.logging.log4j.core.layout.AbstractLayout
 import org.joda.time.format.DateTimeFormat
 
@@ -13,16 +13,16 @@ import org.joda.time.format.DateTimeFormat
  * Created by Alexandru Matei on 15.08.2014.
  */
 
-object ElasticLayout{
+object ESLayout{
   @PluginFactory
   def createLayout(
                     @PluginAttribute("locationInfo") locationInfo:Boolean,
                     @PluginAttribute("properties") properties:Boolean,
-                    @PluginAttribute("complete") complete:Boolean) = new ElasticLayout(locationInfo, properties, complete)
+                    @PluginAttribute("complete") complete:Boolean) = new ESLayout(locationInfo, properties, complete)
 
 }
-@Plugin(name = "ElasticLayout", category = "Core", elementType = "layout", printObject = true)
-class ElasticLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean) extends AbstractLayout[LogMessage](null,null) {
+@Plugin(name = "ESLayout", category = "Core", elementType = "layout", printObject = true)
+class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean) extends AbstractLayout[LogMessage](null,null) {
 
   //TODO ???? Find a better way to serialize this
   override def toByteArray(event: LogEvent): Array[Byte] = return toSerializable(event).toString.getBytes

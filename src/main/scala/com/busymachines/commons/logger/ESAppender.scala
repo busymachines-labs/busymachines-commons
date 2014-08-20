@@ -1,46 +1,56 @@
-package com.busymachines.commons.logger.appender
+package com.busymachines.commons.logger
 
 import java.util.concurrent.LinkedBlockingQueue
 
-import com.busymachines.commons.elasticsearch.{ESConfig, ESCollection, ESIndex}
+import com.busymachines.commons.elasticsearch.{ESCollection, ESConfig, ESIndex}
 import com.busymachines.commons.event.DoNothingEventSystem
-import com.busymachines.commons.logger.domain.{LoggerESTypes, LogMessage}
-import com.busymachines.commons.logger.layout.ElasticLayout
-import com.busymachines.commons.testing.DefaultTestESConfig
+import com.busymachines.commons.logger.domain.{LogMessage, LoggerESTypes}
 import org.apache.logging.log4j.core.appender.AbstractAppender
+import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginElement, PluginFactory}
 import org.apache.logging.log4j.core.impl.Log4jLogEvent
-import org.apache.logging.log4j.core.{LogEvent, Filter, Layout}
-import org.apache.logging.log4j.core.config.plugins.{PluginElement, Plugin, PluginAttribute, PluginFactory}
+import org.apache.logging.log4j.core.{Filter, Layout, LogEvent}
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
 
 /**
  * Created by Alexandru Matei on 14.08.2014.
  */
 
-object ElasticFutAppender {
+object ESAppender {
   @PluginFactory
   def createAppender(@PluginAttribute("name") name: String,
                      @PluginAttribute("ignoreExceptions") ignoreExceptions: Boolean,
                      @PluginAttribute("queueSize") queueSize: Int,
                      @PluginAttribute("bulkSize") bulkSize: Int,
-                     @PluginAttribute("hostNames") hosts: String,
-                     @PluginAttribute("port") port: String,
-                     @PluginAttribute("clusterName") clusterName: String,
-                     @PluginAttribute("indexNamePrefix") indexNamePrefix: String,
-                     @PluginAttribute("indexNameDateFormat") indexNameDateFormat: String,
-                     @PluginAttribute("indexDocumentType") indexDocumentType: String,
+                     @PluginAttribute(value ="hostNames", defaultString = "localhost") hosts: String,
+                     @PluginAttribute(value ="port", defaultInt = 9300) port: Int,
+                     @PluginAttribute(value ="clusterName", defaultString = "elasticsearch") clusterName: String,
+                     @PluginAttribute(value ="indexNamePrefix", defaultString = "logstash") indexNamePrefix: String,
+                     @PluginAttribute(value ="indexNameDateFormat", defaultString = "yyyy.MM.dd") indexNameDateFormat: String,
+                     @PluginAttribute(value ="indexDocumentType", defaultString = "log") indexDocumentType: String,
                      @PluginElement("Layout") layout: Layout[_ <: Serializable],
-                     @PluginElement("Filters") filter: Filter): ElasticFutAppender = new ElasticFutAppender(name, layout, filter, ignoreExceptions, queueSize, bulkSize, hosts, port, clusterName, indexNamePrefix, indexNameDateFormat, indexDocumentType)
+                     @PluginElement("Filters") filter: Filter): ESAppender = new ESAppender(name, layout, filter, ignoreExceptions, queueSize, bulkSize, hosts, port, clusterName, indexNamePrefix, indexNameDateFormat, indexDocumentType)
 }
 
-//TODO Check extra document creation 12k+ vs 10K
-@Plugin(name = "ElasticFut", category = "Core", elementType = "appender", printObject = true)
-class ElasticFutAppender(name: String, layout: Layout[_ <: Serializable], filter: Filter, ignoreExceptions: Boolean, queueSize: Int, bulkSize: Int, hosts: String, portNo: String, cluster: String, indexNamePrefix: String, indexNameDateFormat: String, indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
-  import scala.concurrent.ExecutionContext.Implicits.global
+@Plugin(name = "ESAppender", category = "Core", elementType = "appender", printObject = true)
+class ESAppender(
+                  name: String,
+                  layout: Layout[_ <: Serializable],
+                  filter: Filter,
+                  ignoreExceptions: Boolean,
+                  queueSize: Int,
+                  bulkSize: Int,
+                  hosts: String,
+                  portNo: Int,
+                  cluster: String ,
+                  indexNamePrefix: String ,
+                  indexNameDateFormat: String,
+                  indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
 
   lazy val messageQueue = new LinkedBlockingQueue[LogMessage](queueSize)
   lazy val actualIndexName = s"$indexNamePrefix.${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
@@ -52,7 +62,7 @@ class ElasticFutAppender(name: String, layout: Layout[_ <: Serializable], filter
         override def hostNames: Seq[String] = hosts.split(",")
         override def numberOfShards: Int = 1
         override def numberOfReplicas: Int = 0
-        override def port: Int = Integer.parseInt(portNo)
+        override def port: Int = portNo
       }, DoNothingEventSystem)
 
     val collection = new ESCollection[LogMessage](index, LoggerESTypes.LogMessage)
@@ -85,7 +95,7 @@ class ElasticFutAppender(name: String, layout: Layout[_ <: Serializable], filter
 
   def send(event: LogEvent) {
     getLayout match {
-      case e: ElasticLayout =>
+      case e: ESLayout =>
         try {
           messageQueue.put(e.toSerializable(event))
         }
