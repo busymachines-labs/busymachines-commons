@@ -1,9 +1,6 @@
 package com.busymachines.commons.logger
 
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.message.StructuredDataMessage
-import org.apache.logging.log4j.message.MapMessage
+import org.apache.logging.log4j.{ Level, LogManager }
 
 trait AdditionalParameters {
   def apply(originalMap: Map[String, String]): Map[String, String]
@@ -11,16 +8,11 @@ trait AdditionalParameters {
 
 trait Logging {
   implicit val defaultAdditionalParameters: AdditionalParameters = new AdditionalParameters { def apply(originalMap: Map[String, String]): Map[String, String] = originalMap }
-  //TODO: instance of Logger
   val logger = new Logger()
 }
 
-class Logger {
-  private lazy val logger = LogManager.getLogger(getClass)
-
-  private def toJavaMap(scalaMap: Map[String, String]): java.util.Map[String, String] = {
-    null
-  }
+sealed class Logger {
+  private lazy val logger = LogManager.getLogger()
 
   def isDebugEnabled(): Boolean = logger.isDebugEnabled()
 
@@ -37,9 +29,9 @@ class Logger {
   }
 
   def trace(message: => String, e: => Throwable, messageParameters: => Map[String, String])(implicit additionalParameters: AdditionalParameters) {
-    if (logger.isEnabled(Level.ALL)) {
-      val structuredMessage = new MapMessage(toJavaMap(additionalParameters(messageParameters)))
-      logger.trace(message, e)
+    if (logger.isEnabled(Level.TRACE)) {
+      val commonsLogMessage = CommonsLoggerMessage(message, e, additionalParameters(messageParameters))
+      logger.trace(commonsLogMessage, e)
     }
   }
 
@@ -56,7 +48,10 @@ class Logger {
   }
 
   def info(message: => String, e: Throwable, messageParameters: => Map[String, String])(implicit additionalParameters: AdditionalParameters) {
-    //TODO: call logger....
+    if (logger.isEnabled(Level.INFO)) {
+      val commonsLogMessage = CommonsLoggerMessage(message, e, additionalParameters(messageParameters))
+      logger.info(commonsLogMessage, e)
+    }
   }
 
   def warn(message: => String)(implicit additionalParameters: AdditionalParameters) {
@@ -72,7 +67,10 @@ class Logger {
   }
 
   def warn(message: => String, e: => Throwable, messageParameters: => Map[String, String])(implicit additionalParameters: AdditionalParameters) {
-    //TODO: add call to logger
+    if (logger.isEnabled(Level.WARN)) {
+      val commonsLogMessage = CommonsLoggerMessage(message, e, additionalParameters(messageParameters))
+      logger.warn(commonsLogMessage, e)
+    }
   }
 
   def debug(message: => String)(implicit additionalParameters: AdditionalParameters) {
@@ -88,7 +86,10 @@ class Logger {
   }
 
   def debug(message: => String, e: Throwable, messageParameters: => Map[String, String])(implicit additionalParameters: AdditionalParameters) {
-    //TODO: call logger....
+    if (logger.isEnabled(Level.DEBUG)) {
+      val commonsLogMessage = CommonsLoggerMessage(message, e, additionalParameters(messageParameters))
+      logger.debug(commonsLogMessage, e)
+    }
   }
 
   def error(message: => String)(implicit additionalParameters: AdditionalParameters) {
@@ -104,7 +105,10 @@ class Logger {
   }
 
   def error(message: => String, e: Throwable, messageParameters: => Map[String, String])(implicit additionalParameters: AdditionalParameters) {
-    //TODO: call logger....
+    if (logger.isEnabled(Level.ERROR)) {
+      val commonsLogMessage = CommonsLoggerMessage(message, e, additionalParameters(messageParameters))
+      logger.error(commonsLogMessage, e)
+    }
   }
 
   def fatal(message: => String)(implicit additionalParameters: AdditionalParameters) {
@@ -120,7 +124,10 @@ class Logger {
   }
 
   def fatal(message: => String, e: Throwable, messageParameters: => Map[String, String])(implicit additionalParameters: AdditionalParameters) {
-    //TODO: call logger....
+    if (logger.isEnabled(Level.FATAL)) {
+      val commonsLogMessage = CommonsLoggerMessage(message, e, additionalParameters(messageParameters))
+      logger.fatal(commonsLogMessage, e)
+    }
   }
 
 }
