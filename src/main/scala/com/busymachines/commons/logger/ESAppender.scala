@@ -85,7 +85,7 @@ class ESAppender(
     list.foreach(o => bulkRequest.add(javaClient.
       prepareIndex(actualIndexName, typeName).
       setSource(logMessageFormat.write(o).toString)))
-    bulkRequest.execute().actionGet()
+    bulkRequest.execute()
   }
 
   def initIndex() {
