@@ -18,11 +18,12 @@ object ESLayout{
   def createLayout(
                     @PluginAttribute("locationInfo") locationInfo:Boolean,
                     @PluginAttribute("properties") properties:Boolean,
-                    @PluginAttribute("complete") complete:Boolean) = new ESLayout(locationInfo, properties, complete)
+                    @PluginAttribute("complete") complete:Boolean,
+                    @PluginAttribute(value ="withCodeLocation", defaultBoolean = false) withCodeLoc:Boolean) = new ESLayout(locationInfo, properties, complete, withCodeLoc)
 
 }
 @Plugin(name = "ESLayout", category = "Core", elementType = "layout", printObject = true)
-class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean) extends AbstractLayout[LogMessage](null,null) {
+class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, withCodeLoc:Boolean) extends AbstractLayout[LogMessage](null,null) {
 
   //TODO ???? Find a better way to serialize this
   override def toByteArray(event: LogEvent): Array[Byte] = return toSerializable(event).toString.getBytes
@@ -61,16 +62,18 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean) exte
     (exceptionFormat, commonExceptionFormat)
   }
 
-  def createCodeLocation(event: LogEvent): CodeLocationInfo = {
-    val cli: CodeLocationInfo = CodeLocationInfo(
-      level = Some(event.getLevel().toString()),
-      thread = Some(event.getThreadName()),
-      className = Some(event.getSource().getClassName()),
-      fileName = Some(event.getSource().getFileName()),
-      methodName = Some(event.getSource().getMethodName()),
-      lineNumber = Some(event.getSource().getLineNumber()),
-      time = Some(DateTimeFormat.longDateTime().print(event.getTimeMillis())),
-      message = Some(event.getMessage().getFormattedMessage()))
-    cli
+  def createCodeLocation(event: LogEvent): Option[CodeLocationInfo] = {
+    withCodeLoc match{
+      case true => Some(CodeLocationInfo(
+        level = Some(event.getLevel().toString()),
+        thread = Some(event.getThreadName()),
+        className = Some(event.getSource().getClassName()),
+        fileName = Some(event.getSource().getFileName()),
+        methodName = Some(event.getSource().getMethodName()),
+        lineNumber = Some(event.getSource().getLineNumber()),
+        time = Some(DateTimeFormat.longDateTime().print(event.getTimeMillis())),
+        message = Some(event.getMessage().getFormattedMessage())))
+      case false => None
+    }
   }
 }

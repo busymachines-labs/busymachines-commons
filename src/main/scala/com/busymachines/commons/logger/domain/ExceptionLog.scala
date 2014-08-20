@@ -25,7 +25,7 @@ case class CommonExceptionInfo(
   stackTrace: List[String])
 
 case class LogMessage(
-  codeLocationInfo: CodeLocationInfo,
+  codeLocationInfo: Option[CodeLocationInfo] = None,
   defaultExceptionInfo: Option[DefaultExceptionInfo] = None,
   commonExceptionInfo: Option[CommonExceptionInfo] = None) extends Serializable{
   def toJson= ???
