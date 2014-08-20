@@ -38,7 +38,7 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
     val cli: Option[CodeLocationInfo] = createCodeLocation(event)
     val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
 
-    LogMessage(cli, exceptionFormat, commonExceptionFormat,timestamp = Some(new DateTime(event.getTimeMillis())))
+    LogMessage(codeLocationInfo = cli, commonExceptionInfo = commonExceptionFormat, defaultExceptionInfo = exceptionFormat, timestamp = Some(new DateTime(event.getTimeMillis())), level = Some(event.getLevel().toString()), thread = Some(event.getThreadName()), message = Some(event.getMessage().getFormattedMessage()))
 
   }
 
@@ -68,13 +68,10 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
   def createCodeLocation(event: LogEvent): Option[CodeLocationInfo] = {
     withCodeLoc match{
       case true => Some(CodeLocationInfo(
-        level = Some(event.getLevel().toString()),
-        thread = Some(event.getThreadName()),
         className = Some(event.getSource().getClassName()),
         fileName = Some(event.getSource().getFileName()),
         methodName = Some(event.getSource().getMethodName()),
-        lineNumber = Some(event.getSource().getLineNumber()),
-        message = Some(event.getMessage().getFormattedMessage())))
+        lineNumber = Some(event.getSource().getLineNumber())))
       case false => None
     }
   }

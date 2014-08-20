@@ -34,20 +34,16 @@ trait JsonFormat {
   }
 }
 
-case class CodeLocationInfo( level: Option[String],
+case class CodeLocationInfo(
                              className: Option[String],
                              methodName: Option[String],
                              fileName: Option[String],
-                             lineNumber: Option[Int],
-                             message: Option[String],
-                             thread: Option[String]) extends JsonFormat {
-  def getAttr =List(formatValue("level", level),
+                             lineNumber: Option[Int]) extends JsonFormat {
+  def getAttr =List(
     formatValue("className", className),
     formatValue("methodName", methodName),
     formatValue("fileName", fileName),
-    formatValue("lineNumber", lineNumber.map(r => r.toString)),
-    formatValue("message", message),
-    formatValue("thread", thread)
+    formatValue("lineNumber", lineNumber.map(r => r.toString))
   )
 }
 
@@ -72,10 +68,13 @@ case class CommonExceptionInfo(`type`: Option[String] = Some("CommonException"),
     formatValue("stackTrace", stackTrace))
 }
 
-case class LogMessage(codeLocationInfo: Option[CodeLocationInfo] = None,
+case class LogMessage(level: Option[String],
+                      timestamp: Option[DateTime]=None,
+                      message: Option[String],
+                      thread: Option[String],
+                      codeLocationInfo: Option[CodeLocationInfo] = None,
                       defaultExceptionInfo: Option[DefaultExceptionInfo] = None,
-                      commonExceptionInfo: Option[CommonExceptionInfo] = None,
-                      timestamp: Option[DateTime]=None) extends Serializable with JsonFormat {
+                      commonExceptionInfo: Option[CommonExceptionInfo] = None) extends Serializable with JsonFormat {
   def getAttr = List(formatValue("codeLocationInfo", codeLocationInfo),
     formatValue("defaultExceptionInfo", defaultExceptionInfo),
     formatValue("commonExceptionInfo", commonExceptionInfo))

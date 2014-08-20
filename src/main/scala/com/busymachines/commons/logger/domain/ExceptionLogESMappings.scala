@@ -4,20 +4,20 @@ import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.commons.logger.domain.Implicits._
 
 object LogMessageESMappings extends ESMapping[LogMessage] {
+  val level = "level" :: String
+  val time = "timestamp" :: Date
+  val message = "message" :: String
+  val thread = "thread" :: String
   val codeLocationInfo = "codeLocationInfo" :: Nested(CodeLocationInfoESMappings)
   val defaultExceptionInfo = "defaultExceptionInfo" :: Nested(DefaultExceptionInfoESMappings)
   val commonExceptionInfo = "commonExceptionInfo" :: Nested(CommonExceptionInfoESMappings)
-  val time = "timestamp" :: Date
 }
 
 object CodeLocationInfoESMappings extends ESMapping[CodeLocationInfo] {
-  val level = "level" :: String
   val className = "className" :: String
   val methodName = "methodName" :: String
   val fileName = "fileName" :: String
   val lineNumber = "lineNumber" :: Integer
-  val message = "message" :: String
-  val thread = "thread" :: String
 }
 
 object DefaultExceptionInfoESMappings extends ESMapping[DefaultExceptionInfo] {
