@@ -47,18 +47,13 @@ class LoggerTests extends FlatSpec with Logging {
   system: java 1.8_11 maxMetaSpaceSize = 2048 CPU = I5 1.7 GHz
 
    */
-  ignore should "log commons exceptions properly" in {
+  it should "log commons exceptions properly" in {
     var x = 10000;
     while (x > 0) {
       val exc = new CommonException(s"This is a common exception ${x}", Some("12"), Map("party" -> "BusyMachines", "user" -> "Alexandru"), Some(new IndexOutOfBoundsException()))
-      //      val map = new java.util.concurrent.ConcurrentHashMap[String,String]()
-      //      map.put("party", "KoffiePartners")
-      //      map.put("user", "Lorand")
-      //      val msg= new StructuredDataMessage("1","yo","la", map)
       logger.error(this.suiteName, exc)
       x -= 1;
     }
-    //    Thread.sleep(100)
   }
 
   ignore should "test to see how my data is represented" in {

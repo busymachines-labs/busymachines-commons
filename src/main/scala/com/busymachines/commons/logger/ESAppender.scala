@@ -2,6 +2,8 @@ package com.busymachines.commons.logger.appender
 
 import java.util.concurrent.LinkedBlockingQueue
 
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
+
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,9 +23,9 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.scalastuff.esclient.ActionMagnet
 
-import com.busymachines.commons.elasticsearch.ESConfig
+import com.busymachines.commons.elasticsearch.{ESMapping, ESConfig}
 import com.busymachines.commons.logger.ESLayout
-import com.busymachines.commons.logger.domain.LogMessage
+import com.busymachines.commons.logger.domain.{LogMessageESMappings, ExceptionLogJsonFormats, LogMessage}
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -63,7 +65,7 @@ class ESAppender(
   cluster: String,
   indexNamePrefix: String,
   indexNameDateFormat: String,
-  indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
+  indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) with ExceptionLogJsonFormats{
 
   private lazy val messageQueue = new LinkedBlockingQueue[LogMessage](queueSize)
   lazy val actualIndexName = s"$indexNamePrefix-${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
@@ -85,7 +87,7 @@ class ESAppender(
     val bulkRequest = javaClient.prepareBulk()
     list.foreach(o => bulkRequest.add(javaClient.
       prepareIndex(actualIndexName, indexDocumentType).
-      setSource(o.toJson)))
+      setSource(logMessageFormat.write(o).toString)))
     bulkRequest.execute()
   }
 
@@ -97,7 +99,20 @@ class ESAppender(
     def indexExists(indexName: String): Boolean =
       executeSync(new IndicesExistsRequest(indexName)).isExists
 
-    def createIndex(indexName: String) {
+    def addMapping(indexName: String, typeName: String, mapping: ESMapping[_]) {
+      val mappingConfiguration = mapping.mappingDefinition(typeName).toString
+      try {
+        //      debug(s"Schema for $indexName/$typeName: $mappingConfiguration")
+        executeSync(new PutMappingRequest(indexName).`type`(typeName).source(mappingConfiguration))
+      }
+      catch {
+        case e : Throwable =>
+          val msg = s"Invalid schema for $indexName/$typeName: ${e.getMessage} in $mappingConfiguration"
+          //        error(msg, e)
+          throw new Exception(msg, e)
+      }
+    }
+    def createIndex(indexName: String, typeName:String, mapping:ESMapping[_]) {
       executeSync(new CreateIndexRequest(indexName).settings(
         s"""
        {
@@ -105,10 +120,11 @@ class ESAppender(
         "number_of_replicas" : ${config.numberOfReplicas}
       }
       """))
+      addMapping(indexName,typeName,mapping)
     }
 
     if (!indexExists(actualIndexName))
-      createIndex(actualIndexName)
+      createIndex(actualIndexName,indexDocumentType,LogMessageESMappings)
   }
 
   /**

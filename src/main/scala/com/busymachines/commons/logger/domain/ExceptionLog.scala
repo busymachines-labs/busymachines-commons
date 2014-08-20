@@ -1,6 +1,7 @@
 package com.busymachines.commons.logger.domain
 
 import com.busymachines.commons.Implicits._
+import org.joda.time.DateTime
 
 trait JsonFormat {
   def toJson: String = "{" + getAttr.filterNot(s => s == "").mkString(",") + "}"
@@ -74,9 +75,9 @@ case class CommonExceptionInfo(`type`: Option[String] = Some("CommonException"),
 case class LogMessage(codeLocationInfo: Option[CodeLocationInfo] = None,
                       defaultExceptionInfo: Option[DefaultExceptionInfo] = None,
                       commonExceptionInfo: Option[CommonExceptionInfo] = None,
-                      time: Option[String]=None) extends Serializable with JsonFormat {
+                      timestamp: Option[DateTime]=None) extends Serializable with JsonFormat {
   def getAttr = List(formatValue("codeLocationInfo", codeLocationInfo),
     formatValue("defaultExceptionInfo", defaultExceptionInfo),
-    formatValue("commonExceptionInfo", commonExceptionInfo),
-    formatValue("@timestamp", time))
+    formatValue("commonExceptionInfo", commonExceptionInfo))
+//    formatValue("@timestamp", timestamp))
 }

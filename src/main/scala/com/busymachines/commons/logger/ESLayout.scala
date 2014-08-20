@@ -8,6 +8,7 @@ import org.apache.logging.log4j.core.LogEvent
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginFactory}
 import org.apache.logging.log4j.core.layout.AbstractLayout
 import org.elasticsearch.common.joda.time.format.ISODateTimeFormat
+import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
 /**
@@ -37,7 +38,7 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
     val cli: Option[CodeLocationInfo] = createCodeLocation(event)
     val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
 
-    LogMessage(cli, exceptionFormat, commonExceptionFormat,time = Some(ISODateTimeFormat.basicDateTime().print(event.getTimeMillis())))
+    LogMessage(cli, exceptionFormat, commonExceptionFormat,timestamp = Some(new DateTime(event.getTimeMillis())))
 
   }
 
