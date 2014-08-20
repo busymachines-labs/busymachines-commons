@@ -7,6 +7,7 @@ import com.busymachines.commons.logger.domain.{CodeLocationInfo, CommonException
 import org.apache.logging.log4j.core.LogEvent
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginFactory}
 import org.apache.logging.log4j.core.layout.AbstractLayout
+import org.apache.logging.log4j.message.MapMessage
 import org.elasticsearch.common.joda.time.format.ISODateTimeFormat
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -15,31 +16,48 @@ import org.joda.time.format.DateTimeFormat
  * Created by Alexandru Matei on 15.08.2014.
  */
 
-object ESLayout{
+object ESLayout {
   @PluginFactory
   def createLayout(
-                    @PluginAttribute("locationInfo") locationInfo:Boolean,
-                    @PluginAttribute("properties") properties:Boolean,
-                    @PluginAttribute("complete") complete:Boolean,
-                    @PluginAttribute(value ="withCodeLocation", defaultBoolean = false) withCodeLoc:Boolean) = new ESLayout(locationInfo, properties, complete, withCodeLoc)
+                    @PluginAttribute("locationInfo") locationInfo: Boolean,
+                    @PluginAttribute("properties") properties: Boolean,
+                    @PluginAttribute("complete") complete: Boolean,
+                    @PluginAttribute(value = "withCodeLocation", defaultBoolean = false) withCodeLoc: Boolean) = new ESLayout(locationInfo, properties, complete, withCodeLoc)
 
 }
+
 @Plugin(name = "ESLayout", category = "Core", elementType = "layout", printObject = true)
-class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, withCodeLoc:Boolean) extends AbstractLayout[LogMessage](null,null) {
+class ESLayout(locationInfo: Boolean, properties: Boolean, complete: Boolean, withCodeLoc: Boolean) extends AbstractLayout[LogMessage](null, null) {
 
   //TODO ???? Find a better way to serialize this
   override def toByteArray(event: LogEvent): Array[Byte] = return toSerializable(event).toString.getBytes
 
-  override def getContentFormat: util.Map[String, String] = new java.util.HashMap[String,String]()
+  override def getContentFormat: util.Map[String, String] = new java.util.HashMap[String, String]()
 
   override def getContentType: String = "text/plain"
 
   override def toSerializable(event: LogEvent): LogMessage = {
-    val cli: Option[CodeLocationInfo] = createCodeLocation(event)
+
     val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
 
-    LogMessage(codeLocationInfo = cli, commonExceptionInfo = commonExceptionFormat, defaultExceptionInfo = exceptionFormat, timestamp = Some(new DateTime(event.getTimeMillis())), level = Some(event.getLevel().toString()), thread = Some(event.getThreadName()), message = Some(event.getMessage().getFormattedMessage()))
+    LogMessage(codeLocationInfo = createCodeLocation(event),
+      commonExceptionInfo = commonExceptionFormat,
+      defaultExceptionInfo = exceptionFormat,
+      timestamp = Some(new DateTime(event.getTimeMillis())),
+      level = Some(event.getLevel().toString()),
+      thread = Some(event.getThreadName()),
+      message = Some(event.getMessage().getFormattedMessage()),
+      logParams = getLogParams(event)
+    )
 
+  }
+
+  def getLogParams(event: LogEvent) = event.getMessage match {
+    case e: CommonsLoggerMessage => e.parameters
+    case e: MapMessage => {
+      scala.collection.JavaConversions.mapAsScalaMap(e.getData).toSeq
+    }
+    case _ => List()
   }
 
   def createExceptionInfo(event: LogEvent): (Option[DefaultExceptionInfo], Option[CommonExceptionInfo]) = {
@@ -66,7 +84,7 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
   }
 
   def createCodeLocation(event: LogEvent): Option[CodeLocationInfo] = {
-    withCodeLoc match{
+    withCodeLoc match {
       case true => Some(CodeLocationInfo(
         className = Some(event.getSource().getClassName()),
         fileName = Some(event.getSource().getFileName()),

@@ -8,6 +8,7 @@ object LogMessageESMappings extends ESMapping[LogMessage] {
   val time = "timestamp" :: Date
   val message = "message" :: String
   val thread = "thread" :: String
+  val logParams = "logParams" :: String
   val codeLocationInfo = "codeLocationInfo" :: Nested(CodeLocationInfoESMappings)
   val defaultExceptionInfo = "defaultExceptionInfo" :: Nested(DefaultExceptionInfoESMappings)
   val commonExceptionInfo = "commonExceptionInfo" :: Nested(CommonExceptionInfoESMappings)

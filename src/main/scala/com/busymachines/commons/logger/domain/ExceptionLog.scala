@@ -72,6 +72,7 @@ case class LogMessage(level: Option[String],
                       timestamp: Option[DateTime]=None,
                       message: Option[String],
                       thread: Option[String],
+                      logParams: Seq[(String,String)],
                       codeLocationInfo: Option[CodeLocationInfo] = None,
                       defaultExceptionInfo: Option[DefaultExceptionInfo] = None,
                       commonExceptionInfo: Option[CommonExceptionInfo] = None) extends Serializable with JsonFormat {
