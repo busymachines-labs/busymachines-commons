@@ -8,9 +8,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
-import org.apache.logging.log4j.core.{Filter, Layout, LogEvent}
+import org.apache.logging.log4j.core.{ Filter, Layout, LogEvent }
 import org.apache.logging.log4j.core.appender.AbstractAppender
-import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginElement, PluginFactory}
+import org.apache.logging.log4j.core.config.plugins.{ Plugin, PluginAttribute, PluginElement, PluginFactory }
 import org.apache.logging.log4j.core.impl.Log4jLogEvent
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest
@@ -23,7 +23,7 @@ import org.scalastuff.esclient.ActionMagnet
 
 import com.busymachines.commons.elasticsearch.ESConfig
 import com.busymachines.commons.logger.ESLayout
-import com.busymachines.commons.logger.domain.{ExceptionLogJsonFormats, LogMessage}
+import com.busymachines.commons.logger.domain.{ ExceptionLogJsonFormats, LogMessage }
 
 /**
  * Created by Alexandru Matei on 14.08.2014.
@@ -58,7 +58,7 @@ class ESAppender(
   cluster: String,
   indexNamePrefix: String,
   indexNameDateFormat: String,
-  indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) with ExceptionLogJsonFormats {
+  indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
 
   lazy val config = new ESConfig("") {
     override def clusterName: String = "elasticsearch"
@@ -79,6 +79,7 @@ class ESAppender(
 
   val typeName = "log"
 
+  import ExceptionLogJsonFormats._
   def bulk(list: Seq[LogMessage]): Unit = {
     val bulkRequest = javaClient.prepareBulk()
     list.foreach(o => bulkRequest.add(javaClient.
