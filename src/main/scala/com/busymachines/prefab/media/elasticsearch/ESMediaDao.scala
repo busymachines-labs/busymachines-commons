@@ -86,7 +86,7 @@ class ESMediaDao(index: ESIndex, mimeTypeDetector:MimeTypeDetector)(implicit ec:
         }
       }
     } catch {
-      case t: Throwable => logger.debug(t); None
+      case t: Throwable => logger.debug("readURL encountered an exception", t); None
     }
   }
 }
