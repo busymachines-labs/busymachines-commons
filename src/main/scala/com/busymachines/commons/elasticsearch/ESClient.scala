@@ -19,13 +19,14 @@ import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import com.busymachines.commons.logging.Logging
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import scala.collection.JavaConversions._
+import com.busymachines.commons.CommonException
 
-object ESClient{
+object ESClient extends Logging {
   private val clientsByClusterName = TrieMap[String, ESClient]()
 
-//  info("Using ElasticSearch client " + Version.CURRENT)
+  logger.info("Using ElasticSearch client " + Version.CURRENT)
 
-  def apply(config: ESConfig) = 
+  def apply(config: ESConfig) =
     clientsByClusterName.getOrElseUpdate(config.clusterName, {
       new ESClient(
         new TransportClient(ImmutableSettings.settingsBuilder().put("cluster.name", config.clusterName)) {
@@ -34,20 +35,20 @@ object ESClient{
     })
 }
 
-class ESClient(val javaClient: Client, val config: ESConfig){
-  
+class ESClient(val javaClient: Client, val config: ESConfig) extends Logging {
+
   def execute[Request, Response](request: Request)(implicit action: ActionMagnet[Request, Response]): Future[Response] =
     action.execute(javaClient, request)
 
   def executeSync[Request, Response](request: Request)(implicit action: ActionMagnet[Request, Response]): Response =
     Await.result(action.execute(javaClient, request), 30 seconds)
 
-  def indexExists(indexName: String): Boolean =  
+  def indexExists(indexName: String): Boolean =
     executeSync(new IndicesExistsRequest(indexName)).isExists
 
   def createIndex(indexName: String) {
     executeSync(new CreateIndexRequest(indexName).settings(
-    s"""
+      s"""
        {
         "number_of_shards" : ${config.numberOfShards},
         "number_of_replicas" : ${config.numberOfReplicas},
@@ -69,14 +70,14 @@ class ESClient(val javaClient: Client, val config: ESConfig){
   def addMapping(indexName: String, typeName: String, mapping: ESMapping[_]) {
     val mappingConfiguration = mapping.mappingDefinition(typeName).toString
     try {
-//      debug(s"Schema for $indexName/$typeName: $mappingConfiguration")
+      logger.debug(s"Schema for $indexName/$typeName: $mappingConfiguration")
       executeSync(new PutMappingRequest(indexName).`type`(typeName).source(mappingConfiguration))
-    }
-    catch {
-      case e : Throwable =>
+    } catch {
+      case e: Throwable =>
         val msg = s"Invalid schema for $indexName/$typeName: ${e.getMessage} in $mappingConfiguration"
-//        error(msg, e)
-        throw new Exception(msg, e)
+        val commonException = new CommonException(message = msg, cause = Some(e), parameters = Map("indexName" -> indexName, "typeName" -> typeName))
+        logger.error(msg, commonException)
+        throw commonException
     }
   }
 }
