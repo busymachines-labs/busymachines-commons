@@ -99,7 +99,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
           request = request.addFacet (facet._2)
         }
 
-        println(request.toString)
+//        println(request.toString)
 
         for {
           result <- client.execute (request.request)
