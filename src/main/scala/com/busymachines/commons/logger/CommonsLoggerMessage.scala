@@ -1,6 +1,7 @@
 package com.busymachines.commons.logger
 
-import org.apache.logging.log4j.message.StructuredDataMessage
+import org.apache.logging.log4j.message.MapMessage
+import java.util.{ Map, HashMap }
 
 /**
  *  This class is used to pass around the information from our Logger class to the actual log4j Logger.
@@ -10,15 +11,17 @@ import org.apache.logging.log4j.message.StructuredDataMessage
 class CommonsLoggerMessage(
   val message: String,
   val cause: Option[Throwable],
-  val messageParameters: Map[String, String])
-  extends org.apache.logging.log4j.message.Message {
-  override def getFormattedMessage(): String = message
-  override def getFormat(): String = ""
-  override def getParameters(): Array[Object] = null
+  val parameters: Seq[(String, String)],
+  javaMap: java.util.Map[String, String]) extends MapMessage(javaMap) {
+
   override def getThrowable(): Throwable = cause.orNull
 }
 
 object CommonsLoggerMessage {
-  def apply(message: String, cause: Throwable, messageParameters: Map[String, String]) = 
-    new CommonsLoggerMessage(message, if (cause == null) None else Some(cause), messageParameters)
+  def apply(message: String, cause: Option[Throwable], parameters: Seq[(String, String)]) = {
+    val paramsWithMessage = parameters :+ ("message", message)
+    val javaMap: java.util.Map[String, String] = new HashMap[String, String]()
+    paramsWithMessage.foreach(pair => javaMap.put(pair._1, pair._2))
+    new CommonsLoggerMessage(message, cause, parameters, javaMap)
+  }
 }

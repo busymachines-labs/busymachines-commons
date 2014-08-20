@@ -1,6 +1,6 @@
 package com.busymachines.commons.logger
 
-import org.apache.logging.log4j.{Level, LogManager}
+import org.apache.logging.log4j.{ Level, LogManager }
 
 trait AdditionalParameters {
   def apply: Seq[(String, String)]
@@ -63,7 +63,7 @@ sealed class Logger {
 
   private def log(level: Level, message: => String, cause: Option[Throwable], parameters: Seq[(String, String)])(implicit ap: AdditionalParameters) {
     if (logger.isEnabled(level)) {
-      val commonsLogMessage = CommonsLoggerMessage(message, cause.orNull, (parameters ++ ap.apply).toMap)
+      val commonsLogMessage = CommonsLoggerMessage(message, cause, parameters ++ ap.apply)
       logger.log(level, commonsLogMessage, cause.orNull)
     }
   }
