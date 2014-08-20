@@ -34,6 +34,8 @@ object ESAppender {
     @PluginAttribute("ignoreExceptions") ignoreExceptions: Boolean,
     @PluginAttribute("queueSize") queueSize: Int,
     @PluginAttribute("bulkSize") bulkSize: Int,
+    //sleep time is in milliseconds
+    @PluginAttribute(value = "sleepTime", defaultInt = 1000) sleepTime: Int,
     @PluginAttribute(value = "hostNames", defaultString = "localhost") hosts: String,
     @PluginAttribute(value = "port", defaultInt = 9300) port: Int,
     @PluginAttribute(value = "clusterName", defaultString = "elasticsearch") clusterName: String,
@@ -41,7 +43,7 @@ object ESAppender {
     @PluginAttribute(value = "indexNameDateFormat", defaultString = "yyyy.MM.dd") indexNameDateFormat: String,
     @PluginAttribute(value = "indexDocumentType", defaultString = "log") indexDocumentType: String,
     @PluginElement("Layout") layout: Layout[_ <: Serializable],
-    @PluginElement("Filters") filter: Filter): ESAppender = new ESAppender(name, layout, filter, ignoreExceptions, queueSize, bulkSize, hosts, port, clusterName, indexNamePrefix, indexNameDateFormat, indexDocumentType)
+    @PluginElement("Filters") filter: Filter): ESAppender = new ESAppender(name, layout, filter, ignoreExceptions, queueSize, bulkSize, sleepTime, hosts, port, clusterName, indexNamePrefix, indexNameDateFormat, indexDocumentType)
 }
 
 @Plugin(name = "ESAppender", category = "Core", elementType = "appender", printObject = true)
@@ -52,6 +54,7 @@ class ESAppender(
   ignoreExceptions: Boolean,
   queueSize: Int,
   bulkSize: Int,
+  sleepTime: Int,
   hosts: String,
   portNo: Int,
   cluster: String,
@@ -167,7 +170,7 @@ class ESAppender(
         }
       } else {
         try {
-          Thread.sleep(1000)
+          Thread.sleep(sleepTime)
           if (messageQueue.size() >= bulkSize) {
             //if it's larger we just continue the normal flow of the application
           } else {
