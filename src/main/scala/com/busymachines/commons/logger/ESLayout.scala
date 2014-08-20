@@ -37,7 +37,7 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
     val cli: Option[CodeLocationInfo] = createCodeLocation(event)
     val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
 
-    LogMessage(cli, exceptionFormat, commonExceptionFormat)
+    LogMessage(cli, exceptionFormat, commonExceptionFormat,time = Some(ISODateTimeFormat.basicDateTime().print(event.getTimeMillis())))
 
   }
 
@@ -73,7 +73,6 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
         fileName = Some(event.getSource().getFileName()),
         methodName = Some(event.getSource().getMethodName()),
         lineNumber = Some(event.getSource().getLineNumber()),
-        time = Some(ISODateTimeFormat.basicDateTime().print(event.getTimeMillis())),
         message = Some(event.getMessage().getFormattedMessage())))
       case false => None
     }
