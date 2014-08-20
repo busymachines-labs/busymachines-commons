@@ -66,7 +66,7 @@ class ESAppender(
   indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
 
   private lazy val messageQueue = new LinkedBlockingQueue[LogMessage](queueSize)
-  lazy val actualIndexName = s"$indexNamePrefix.${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
+  lazy val actualIndexName = s"$indexNamePrefix-${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
   lazy val config = new ESConfig("") {
     override def clusterName: String = cluster
     override def indexName: String = actualIndexName
