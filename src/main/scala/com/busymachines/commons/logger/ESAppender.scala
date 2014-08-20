@@ -115,7 +115,6 @@ class ESAppender(
 
   val process = Future {
     initIndex()
-    println(s"bulkSize=${bulkSize}")
     while (true) {
       if (messageQueue.size() >= bulkSize) {
         try {
