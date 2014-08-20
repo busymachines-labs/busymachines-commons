@@ -1,11 +1,13 @@
 package com.busymachines.commons.logger.appender
 
 import java.util.concurrent.LinkedBlockingQueue
+
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
+
 import org.apache.logging.log4j.core.{ Filter, Layout, LogEvent }
 import org.apache.logging.log4j.core.appender.AbstractAppender
 import org.apache.logging.log4j.core.config.plugins.{ Plugin, PluginAttribute, PluginElement, PluginFactory }
@@ -18,9 +20,10 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.scalastuff.esclient.ActionMagnet
+
 import com.busymachines.commons.elasticsearch.ESConfig
 import com.busymachines.commons.logger.ESLayout
-import com.busymachines.commons.logger.domain.{ ExceptionLogJsonFormats, LogMessage }
+import com.busymachines.commons.logger.domain.LogMessage
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -62,22 +65,28 @@ class ESAppender(
   indexNameDateFormat: String,
   indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) {
 
+  private lazy val messageQueue = new LinkedBlockingQueue[LogMessage](queueSize)
+  lazy val actualIndexName = s"$indexNamePrefix.${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
   lazy val config = new ESConfig("") {
-    override def clusterName: String = "elasticsearch"
-    override def indexName: String = "logger"
-    override def hostNames: Seq[String] = Seq("localhost")
+    override def clusterName: String = cluster
+    override def indexName: String = actualIndexName
+    override def hostNames: Seq[String] = hosts.split(",")
     override def numberOfShards: Int = 1
     override def numberOfReplicas: Int = 0
-    override def port: Int = 9300
+    override def port: Int = portNo
   }
-
-  lazy val actualIndexName = s"$indexNamePrefix.${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
-  val typeName = "log"
-
   lazy val javaClient = {
     new TransportClient(ImmutableSettings.settingsBuilder().put("cluster.name", config.clusterName)) {
       addTransportAddresses(config.hostNames.map(new InetSocketTransportAddress(_, config.port)): _*)
     }
+  }
+
+  def bulk(list: Seq[LogMessage]): Unit = {
+    val bulkRequest = javaClient.prepareBulk()
+    list.foreach(o => bulkRequest.add(javaClient.
+      prepareIndex(actualIndexName, indexDocumentType).
+      setSource(o.toJson)))
+    bulkRequest.execute()
   }
 
   def initIndex() {
@@ -101,17 +110,6 @@ class ESAppender(
     if (!indexExists(actualIndexName))
       createIndex(actualIndexName)
   }
-
-  import ExceptionLogJsonFormats._
-  def bulk(list: Seq[LogMessage]): Unit = {
-    val bulkRequest = javaClient.prepareBulk()
-    list.foreach(o => bulkRequest.add(javaClient.
-      prepareIndex(actualIndexName, typeName).
-      setSource(logMessageFormat.write(o).toString)))
-    bulkRequest.execute()
-  }
-
-  private val messageQueue = new LinkedBlockingQueue[LogMessage](queueSize)
 
   /**
    * This is basically Java right here. Looks horrible, don't judge.

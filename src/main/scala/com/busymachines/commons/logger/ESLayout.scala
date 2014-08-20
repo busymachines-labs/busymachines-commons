@@ -37,6 +37,7 @@ class ESLayout(locationInfo:Boolean, properties:Boolean, complete: Boolean, with
     val (exceptionFormat: Option[DefaultExceptionInfo], commonExceptionFormat: Option[CommonExceptionInfo]) = createExceptionInfo(event)
 
     LogMessage(cli, exceptionFormat, commonExceptionFormat)
+
   }
 
   def createExceptionInfo(event: LogEvent): (Option[DefaultExceptionInfo], Option[CommonExceptionInfo]) = {
