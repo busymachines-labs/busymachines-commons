@@ -12,7 +12,9 @@ case class CodeLocationInfo(
   message: Option[String],
   time: Option[String],
   thread: Option[String]) extends JsonFormat{
-  def toJson:String = ???
+  def toJson:String ={
+
+  }
 }
 
 case class DefaultExceptionInfo(
@@ -37,7 +39,6 @@ case class LogMessage(
   codeLocationInfo: Option[CodeLocationInfo] = None,
   defaultExceptionInfo: Option[DefaultExceptionInfo] = None,
   commonExceptionInfo: Option[CommonExceptionInfo] = None) extends Serializable{
-  def toJson= {
-    "LogMessage{"+codeLocationInfo.map(r=>r.toJson).getOrElse("")+defaultExceptionInfo.map(r=>r.toJson).getOrElse("")+commonExceptionInfo.map(r=>r.toJson).getOrElse("")+"}"
-  }
+  def toJson= "LogMessage{"+codeLocationInfo.map(r=>r.toJson).getOrElse("")+defaultExceptionInfo.map(r=>r.toJson).getOrElse("")+commonExceptionInfo.map(r=>r.toJson).getOrElse("")+"}"
+
 }
