@@ -5,31 +5,27 @@ import java.util.concurrent.atomic.AtomicBoolean
 import scala.collection.concurrent.TrieMap
 import scala.language.postfixOps
 
-import org.elasticsearch.Version
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 
-import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.event.EventBus
 
-class ESIndex(val config: ESConfig, val indexName : String, _eventBus: => EventBus) {
-  def this(config : ESConfig, eventBus: => EventBus) = this(config, config.indexName, eventBus)
+class ESIndex(val config: ESConfig, val indexName: String, _eventBus: => EventBus) {
+  def this(config: ESConfig, eventBus: => EventBus) = this(config, config.indexName, eventBus)
 
   private val nrOfShards = config.numberOfShards
   private val nrOfReplicas = config.numberOfReplicas
   private val initializeHandlers = TrieMap[() => Unit, Unit]()
   private val initialized = new AtomicBoolean(false)
 
-  private val client0 = 
+  private val client0 =
     ESClient(config)
-  
+
   lazy val client =
     initialize(client0)
 
   def eventBus = _eventBus
 
-  def onInitialize(handler : () => Unit) {
+  def onInitialize(handler: () => Unit) {
     if (initialized.get)
       handler()
     initializeHandlers.put(handler, {})
@@ -52,8 +48,8 @@ class ESIndex(val config: ESConfig, val indexName : String, _eventBus: => EventB
       client.createIndex(indexName)
     initialized.set(true)
     // call initialize handlers
-    for ((handler, _) <- initializeHandlers) 
-    	handler()
+    for ((handler, _) <- initializeHandlers)
+      handler()
     client
   }
 }
