@@ -47,6 +47,8 @@ object ESAppender {
     @PluginAttribute(value = "indexNamePrefix", defaultString = "logstash") indexNamePrefix: String,
     @PluginAttribute(value = "indexNameDateFormat", defaultString = "yyyy.MM.dd") indexNameDateFormat: String,
     @PluginAttribute(value = "indexDocumentType", defaultString = "log") indexDocumentType: String,
+    @PluginAttribute(value = "shardsNo", defaultInt = 1) shardsNo: Int,
+    @PluginAttribute(value = "replicasNo", defaultInt = 0) replicasNo: Int,
     @PluginElement("Layout") layout: Layout[_ <: Serializable],
     @PluginElement("Filters") filter: Filter): ESAppender = new ESAppender(name, layout, filter, ignoreExceptions, queueSize, bulkSize, sleepTime, hosts, port, clusterName, indexNamePrefix, indexNameDateFormat, indexDocumentType)
 }
