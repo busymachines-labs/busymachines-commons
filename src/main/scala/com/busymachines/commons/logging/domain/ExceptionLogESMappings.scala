@@ -2,14 +2,16 @@ package com.busymachines.commons.logging.domain
 
 import com.busymachines.commons.elasticsearch.ESMapping
 import com.busymachines.commons.logging.Implicits
+
 import Implicits._
+import com.busymachines.commons.Implicits._
 
 object LogMessageESMappings extends ESMapping[LogMessage] {
   val level = "level" :: String
   val time = "timestamp" :: Date
   val message = "message" :: String
   val thread = "thread" :: String
-  val logParams = "logParams" :: String
+  val fields = "fields" :: Object[Map[String,String]]
   val codeLocationInfo = "codeLocationInfo" :: Nested(CodeLocationInfoESMappings)
   val defaultExceptionInfo = "defaultExceptionInfo" :: Nested(DefaultExceptionInfoESMappings)
   val commonExceptionInfo = "commonExceptionInfo" :: Nested(CommonExceptionInfoESMappings)

@@ -47,17 +47,18 @@ class ESLayout(locationInfo: Boolean, properties: Boolean, complete: Boolean, wi
       level = Some(event.getLevel().toString()),
       thread = Some(event.getThreadName()),
       message = Some(event.getMessage().getFormattedMessage()),
-      logParams = getLogParams(event)
+      fields = getLogParams(event)
     )
 
   }
 
-  def getLogParams(event: LogEvent) = event.getMessage match {
-    case e: CommonsLoggerMessage => e.parameters
+  import scala.collection.JavaConversions._
+  def getLogParams(event: LogEvent):Map[String,String] = event.getMessage match {
+    case e: CommonsLoggerMessage => e.parameters.toMap[String,String]
     case e: MapMessage => {
-      scala.collection.JavaConversions.mapAsScalaMap(e.getData).toSeq
+      e.getData.toMap
     }
-    case _ => List()
+    case _ => Map.empty[String,String]
   }
 
   def createExceptionInfo(event: LogEvent): (Option[DefaultExceptionInfo], Option[CommonExceptionInfo]) = {
