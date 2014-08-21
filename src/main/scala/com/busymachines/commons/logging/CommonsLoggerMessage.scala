@@ -1,7 +1,6 @@
 package com.busymachines.commons.logging
 
 import org.apache.logging.log4j.message.MapMessage
-import java.util.{ Map, HashMap }
 
 /**
  *  This class is used to pass around the information from our Logger class to the actual log4j Logger.
@@ -14,14 +13,15 @@ class CommonsLoggerMessage(
   val parameters: Seq[(String, String)],
   javaMap: java.util.Map[String, String]) extends MapMessage(javaMap) {
 
-  override def getThrowable(): Throwable = cause.orNull
+  override def getThrowable: Throwable = cause.orNull
 }
 
 object CommonsLoggerMessage {
   def apply(message: String, cause: Option[Throwable], parameters: Seq[(String, String)]) = {
-    val paramsWithMessage = parameters :+ ("message", message)
-    val javaMap: java.util.Map[String, String] = new HashMap[String, String]()
-    paramsWithMessage.foreach(pair => javaMap.put(pair._1, pair._2))
+    val javaMap = new java.util.HashMap[String, String]()
+    javaMap.put("message", message)
+    for ((key, value) <- parameters)
+      javaMap.put(key, value)
     new CommonsLoggerMessage(message, cause, parameters, javaMap)
   }
 }
