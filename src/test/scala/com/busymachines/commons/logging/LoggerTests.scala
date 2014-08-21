@@ -72,7 +72,7 @@ class LoggerTests extends FlatSpec with Logging {
     val mp=Map("party" -> "BusyMachines", "user" -> "Paul")
     while (x > 0) {
       val exc = new CommonException(s"Third commons exception ${x}", Some("12"), mp, Some(new NullPointerException()))
-      logger.debug(this.suiteName, exc, "party" -> "BusyMachines", "user" -> "Paul")
+      logger.error(this.suiteName, exc, "party" -> "BusyMachines", "user" -> "Paul")
       x -= 1;
     }
   }
