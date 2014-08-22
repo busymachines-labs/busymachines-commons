@@ -10,6 +10,7 @@ object LogMessageESMappings extends ESMapping[LogMessage] {
   val level = "level" :: String
   val time = "timestamp" :: Date
   val message = "message" :: String
+  val tag = "tag" :: String
   val thread = "thread" :: String
   val fields = "fields" :: Object[Map[String,String]]
   val codeLocationInfo = "codeLocationInfo" :: Nested(CodeLocationInfoESMappings)

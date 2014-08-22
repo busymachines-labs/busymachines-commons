@@ -47,9 +47,15 @@ class ESLayout(locationInfo: Boolean, properties: Boolean, complete: Boolean, wi
       level = Some(event.getLevel().toString()),
       thread = Some(event.getThreadName()),
       message = Some(event.getMessage().getFormattedMessage()),
-      fields = getLogParams(event)
+      fields = getLogParams(event),
+      tag = getLogTag(event)
     )
 
+  }
+
+  def getLogTag(event:LogEvent)= event.getMessage match{
+    case e:CommonsLoggerMessage=> e.tag
+    case _ => None
   }
 
   import scala.collection.JavaConversions._

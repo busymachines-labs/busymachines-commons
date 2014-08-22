@@ -9,7 +9,7 @@
                 queueSize="1000"
                 bulkSize="100"
                 sleepTime="500"
-                indexNamePrefix="agilexs">
+                indexNamePrefix="commons">
             <ESLayout withCodeLocation="false" />
         </ESAppender>
     </Appenders>

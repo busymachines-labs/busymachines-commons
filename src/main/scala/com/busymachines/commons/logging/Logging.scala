@@ -11,11 +11,12 @@ object DefaultAdditionalParameters extends AdditionalParameters {
 }
 
 trait Logging {
+  def loggerTag: Option[String] = None
   implicit def defaultAdditionalParameters = DefaultAdditionalParameters
-  val logger = new Logger()
+  val logger = new Logger(loggerTag)
 }
 
-sealed class Logger {
+sealed class Logger(tag: Option[String]) {
   private lazy val logger = LogManager.getLogger
 
   def isTraceEnabled = logger.isTraceEnabled
@@ -63,7 +64,7 @@ sealed class Logger {
 
   private def log(level: Level, message: => String, cause: Option[Throwable], parameters: Seq[(String, String)])(implicit ap: AdditionalParameters) {
     if (logger.isEnabled(level)) {
-      val commonsLogMessage = CommonsLoggerMessage(message, cause, parameters ++ ap.apply)
+      val commonsLogMessage = CommonsLoggerMessage(message, cause, parameters ++ ap.apply, tag)
       logger.log(level, commonsLogMessage, cause.orNull)
     }
   }

@@ -9,5 +9,5 @@ trait LoggingJsonFormats {
   implicit val defaultExceptionFormat = format4(DefaultExceptionInfo)
 
   implicit val commonExceptionFormat = format6(CommonExceptionInfo)
-  implicit val logMessageFormat = format8(LogMessage)
+  implicit val logMessageFormat = format9(LogMessage)
 }

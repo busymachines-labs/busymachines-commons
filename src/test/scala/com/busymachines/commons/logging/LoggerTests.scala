@@ -11,64 +11,32 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException
  */
 class LoggerTests extends FlatSpec with Logging {
 
-  //  val logger = LogManager.getLogger()
+  override def loggerTag=Some("logger test")
 
   behavior of "Logger.error"
 
-  /*
-  FACTS:
-  ---
-  queue size : 50000
-  log # : 10000
-  bulk size : 1000
-  codeLocationInfo : true
-  thread sleep time : 300ms
-  system: java 1.8_11 maxMetaSpaceSize = 2048 CPU = I5 1.7 GHz
-  ---
-  queue size : 50000
-  log # : 10000
-  bulk size : 100
-  codeLocationInfo : true
-  thread sleep time : 0ms
-  system: java 1.8_11 maxMetaSpaceSize = 2048 CPU = I5 1.7 GHz
-  ---
-  queue size : 1000
-  log # : 10000
-  bulk size : 100
-  codeLocationInfo : true
-  thread sleep time : 0ms
-  system: java 1.8_11 maxMetaSpaceSize = 2048 CPU = I5 1.7 GHz
-  ---
-  queue size : 1000
-  log # : 50000
-  bulk size : 100
-  codeLocationInfo : true
-  thread sleep time : 0ms
-  system: java 1.8_11 maxMetaSpaceSize = 2048 CPU = I5 1.7 GHz
-
-   */
   it should "log commons exceptions properly" in {
-    var x = 8000;
+    var x = 10000;
     val mp=Map("party" -> "BusyMachines", "user" -> "Alexandru")
     while (x > 0) {
       val exc = new CommonException(s"This is a common exception ${x}", Some("12"), mp, Some(new IndexOutOfBoundsException()))
-      logger.error(this.suiteName, exc, "party" -> "BusyMachines", "user" -> "Alexandru")
+      logger.info(this.suiteName, exc, "party" -> "BusyMachines", "user" -> "Alexandru")
       x -= 1;
     }
   }
 
-  it should "log commons exceptions properly 2" in {
-    var x = 20000;
+  ignore should "log commons exceptions properly 2" in {
+    var x = 10000;
     val mp=Map("party" -> "BusyMachines", "user" -> "Lorand")
     while (x > 0) {
       val exc = new CommonException(s"Second commons exception ${x}", Some("12"), mp, Some(new OutOfMemoryError()))
-      logger.trace(this.suiteName, exc, "party" -> "BusyMachines", "user" -> "Lorand")
+      logger.debug(this.suiteName, exc, "party" -> "BusyMachines", "user" -> "Lorand")
       x -= 1;
     }
   }
 
-  it should "log commons exceptions properly 3" in {
-    var x = 10000;
+  ignore should "log commons exceptions properly 3" in {
+    var x = 100;
     val mp=Map("party" -> "BusyMachines", "user" -> "Paul")
     while (x > 0) {
       val exc = new CommonException(s"Third commons exception ${x}", Some("12"), mp, Some(new NullPointerException()))
