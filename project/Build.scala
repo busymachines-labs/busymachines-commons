@@ -71,7 +71,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "commons-codec" % "commons-codec" % "1.9", // just for base64, can be removed when we switch to java 1.8
     //    libraryDependencies += "com.google.zxing" % "javase" % "2.3.0" withSources(),
     //    libraryDependencies += "com.github.scopt" %% "scopt" % "3.2.0" withSources(),
-    libraryDependencies += "com.codahale.metrics" % "metrics-core" % "3.0.1" withSources(),
+    libraryDependencies += "com.netaporter.salad" %% "salad-metrics-core" % "0.2.7",
     libraryDependencies <++= scalaBinaryVersion {
       case "2.11" => Seq(
         "io.spray" %% "spray-json" % "1.2.6" withSources(),
