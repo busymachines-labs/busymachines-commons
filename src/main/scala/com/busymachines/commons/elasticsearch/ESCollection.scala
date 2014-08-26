@@ -253,7 +253,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
         //        index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
       }
       .recover(convertException { e =>
-        logger.error(s"Create ${indexName}/${typeName}/${entity.toString} failed :\n${XContentHelper.convertToJson(request.source, true, true)}", e)
+        logger.trace(s"Create $indexName/$typeName/$entity failed :\n${XContentHelper.convertToJson(request.source, true, true)}", e)
         throw e
       })
   }
