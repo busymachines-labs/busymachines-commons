@@ -1,31 +1,31 @@
 package com.busymachines.commons.elasticsearch
 
-import java.util.concurrent.TimeUnit
-import org.elasticsearch.common.unit.TimeValue
-import collection.JavaConversions._
+import java.util.UUID
+
+import scala.collection.JavaConversions.{asScalaBuffer, asScalaSet}
 import scala.collection.mutable
-import scala.concurrent.{ Future, ExecutionContext }
-import com.busymachines.commons.dao._
-import com.busymachines.commons.logging.Logging
-import org.elasticsearch.index.query.{ QueryBuilders, FilterBuilders }
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.util.Success
+
+import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
-import com.busymachines.commons.util.JsonParser
+import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchType
-import org.elasticsearch.search.facet.{ FacetBuilders, FacetBuilder }
+import org.elasticsearch.common.xcontent.XContentHelper
+import org.elasticsearch.index.engine.VersionConflictEngineException
+import org.elasticsearch.index.query.{FilterBuilders, QueryBuilders}
+import org.elasticsearch.search.facet.{FacetBuilder, FacetBuilders}
 import org.elasticsearch.search.facet.histogram.HistogramFacet
 import org.elasticsearch.search.facet.terms.TermsFacet
-import scala.concurrent.duration.{ FiniteDuration, Duration }
-import org.elasticsearch.action.index.IndexRequest
-import com.busymachines.commons.domain.Id
 import org.elasticsearch.transport.RemoteTransportException
-import org.elasticsearch.index.engine.VersionConflictEngineException
-import org.elasticsearch.action.delete.DeleteRequest
-import java.util.UUID
-import spray.json.{ JsValue, JsObject, JsString }
-import scala.concurrent.duration.DurationInt
-import scala.util.Success
-import org.elasticsearch.common.xcontent.XContentHelper
+
 import com.busymachines.commons.CommonException
+import com.busymachines.commons.dao.{Facet, HistogramFacetValue, IdNotFoundException, MoreThanOneResultException, Page, RetryVersionConflictAsync, ScrollIterator, SearchCriteria, SearchResult, SearchSort, TermFacetValue, VersionConflictException, Versioned}
+import com.busymachines.commons.logging.Logging
+import com.busymachines.commons.util.JsonParser
+
+import spray.json.{JsNumber, JsObject, JsString, JsValue}
 
 /**
  * Collection of documents represented by type.
@@ -390,6 +390,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       case JsObject(fields) =>
         fields.get("_id") match {
           case Some(JsString(id)) => id.toString
+          case Some(JsNumber(id)) => id.toString
           case _ => UUID.randomUUID.toString
         }
       case _ => UUID.randomUUID.toString
