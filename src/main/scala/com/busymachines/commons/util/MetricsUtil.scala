@@ -5,8 +5,7 @@ import com.netaporter.salad.metrics.spray.metrics.MetricsDirectiveFactory
 object MetricsUtil {
 
   def apiCounter(mf: MetricsDirectiveFactory, label: String) =
-    mf.counter(label).all.count &
-      mf.timer(label).time & mf.meter(label).meter
+    mf.counter(label).all.count & mf.meter(label).meter & mf.timer(label).time
 
   def crudApiCounters(mf: MetricsDirectiveFactory, labelPrefix: String) =
     (apiCounter(mf, s"$labelPrefix.create"),
