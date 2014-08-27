@@ -6,7 +6,7 @@ object MetricsUtil {
 
   def apiCounter(mf: MetricsDirectiveFactory, label: String) =
     mf.counter(label).all.count &
-      mf.timer(label).time
+      mf.timer(label).time & mf.meter(label).meter
 
   def crudApiCounters(mf: MetricsDirectiveFactory, labelPrefix: String) =
     (apiCounter(mf, s"$labelPrefix.create"),
