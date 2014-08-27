@@ -71,11 +71,12 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "commons-codec" % "commons-codec" % "1.9", // just for base64, can be removed when we switch to java 1.8
     //    libraryDependencies += "com.google.zxing" % "javase" % "2.3.0" withSources(),
     //    libraryDependencies += "com.github.scopt" %% "scopt" % "3.2.0" withSources(),
-    libraryDependencies += "com.netaporter.salad" %% "salad-metrics-core" % "0.2.7",
+    libraryDependencies += "com.netaporter.salad" %% "salad-metrics-core" % "0.2.7" withSources(),
     libraryDependencies <++= scalaBinaryVersion {
       case "2.11" => Seq(
         "io.spray" %% "spray-json" % "1.2.6" withSources(),
         "io.spray" %% "spray-can" % "1.3.1" withSources(),
+        "io.spray" %% "spray-http" % "1.3.1" withSources(),
         "io.spray" %% "spray-client" % "1.3.1" withSources(),
         "io.spray" %% "spray-servlet" % "1.3.1" withSources(),
         "io.spray" %% "spray-routing" % "1.3.1" withSources(),
@@ -84,6 +85,7 @@ object BusyMachinesCommonsBuild extends Build {
       case _ => Seq(
         "io.spray" %% "spray-json" % "1.2.6" withSources(),
         "io.spray" % "spray-can" % "1.3.1" withSources(),
+        "io.spray" % "spray-http" % "1.3.1" withSources(),
         "io.spray" % "spray-client" % "1.3.1" withSources(),
         "io.spray" % "spray-servlet" % "1.3.1" withSources(),
         "io.spray" % "spray-routing" % "1.3.1" withSources(),
