@@ -3,17 +3,21 @@ package com.busymachines.commons.domain
 import com.busymachines.commons.{EnumValue, Enum}
 
 /**
- *  For adding additional countries see list from:
- *  http://userpage.chemie.fu-berlin.de/diverse/doc/ISO_3166.html
+ * For adding additional countries see list from:
+ * http://userpage.chemie.fu-berlin.de/diverse/doc/ISO_3166.html
  *
  * Created by Lorand Szakacs, lorand.szakacs@busymachines.com, on 11.07.2014.
  */
 trait Country extends EnumValue[Country]
+
 object Country extends Enum[Country] {
+
   case class Value(name: String, description: String) extends Val with NextId with Country
+
   val Austria = Value("AT", "Austria")
   val Belgium = Value("BE", "Belgium")
   val BosniaAndHerzegovina = Value("BA", "Bosnia And Herzegovina")
+  val Croatia = Value("HR", "Croatia")
   val CzechRepublic = Value("CZ", "CzechRepublic")
   val Denmark = Value("DK", "Denmark")
   val Estonia = Value("EE", "Estonia")
@@ -34,6 +38,6 @@ object Country extends Enum[Country] {
   val Sweden = Value("SE", "Sweden")
   val Switzerland = Value("CH", "Switzerland")
   val UnitedKingdom = Value("UK", "United Kingdom")
-  
+
   val UnitedStates = Value("US", "UnitedStates")
 }
