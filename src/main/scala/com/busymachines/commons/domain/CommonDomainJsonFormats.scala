@@ -24,9 +24,9 @@ trait CommonDomainJsonFormats {
   implicit val termFacetValueFormat = format2(TermFacetValue)
   implicit val histogramValueFormat = format7(HistogramFacetValue)
 
-  implicit def versionedFormat[T <: HasId[T]](implicit tFormat: JsonFormat[T]) = format2(Versioned[T])
+  implicit def versionedFormat[T](implicit tFormat: JsonFormat[T]) = format2(Versioned[T])
 
-  class SearchResultFormat[T <: HasId[T]](fieldName: String)(implicit tFormat: JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
+  class SearchResultFormat[T](fieldName: String)(implicit tFormat: JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
     def write(result: SearchResult[T]) = {
       val jsonResult = JsArray(result.result.map(_.entity).map(tFormat.write))
       val jsonFacetResult = JsObject(result.facets.map(facet => facet._1 -> JsArray(facet._2.map {
