@@ -16,23 +16,26 @@ object CommonExceptionHandler extends ExceptionHandler with Logging {
   override def isDefinedAt(x: Throwable): Boolean = true
 
   override def apply(v1: Throwable): Route = v1 match {
+    case e: IllegalArgumentException => ctx =>
+      ctx.complete(StatusCodes.BadRequest, Map("message" -> e.getMessage))
+
     case e: EntityNotFoundException => ctx =>
       ctx.complete(StatusCodes.NotFound, Map("message" -> e.message, "error" -> e.errorId) ++ e.parameters)
 
     case e: NotAuthorizedException => ctx =>
-      logger.debug(s"Exception handler rejecting with forbidden because exception:\n${e.toString}")
+      logger.debug(s"Exception handler rejecting with forbidden because exception:\n${e.toString }")
       ctx.complete(StatusCodes.Forbidden, Map("message" -> e.message, "error" -> e.errorId) ++ e.parameters)
 
     case e: ApplicationException => ctx =>
-      logger.debug(s"Request ${ctx.request} could not be handled normally:\n${e.message}", e)
+      logger.debug(s"Request ${ctx.request } could not be handled normally:\n${e.message }", e)
       ctx.complete(CommonStatusCodes.ApplicationExceptionStatus, Map("message" -> e.message, "error" -> e.errorId) ++ e.parameters)
 
     case e: CommonException => ctx =>
-      logger.error(s"Request ${ctx.request} could not be handled normally:\n${e.message}", e)
+      logger.error(s"Request ${ctx.request } could not be handled normally:\n${e.message }", e)
       ctx.complete(StatusCodes.InternalServerError, Map("message" -> e.message, "error" -> e.errorId) ++ e.parameters)
 
     case e: Throwable => ctx =>
-      logger.error(s"Request ${ctx.request} could not be handled normally:\n${e.getMessage}", e)
+      logger.error(s"Request ${ctx.request } could not be handled normally:\n${e.getMessage }", e)
       ctx.complete(StatusCodes.InternalServerError, Map("message" -> e.getMessage))
   }
 }
