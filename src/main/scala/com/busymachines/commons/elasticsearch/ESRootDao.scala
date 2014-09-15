@@ -47,16 +47,22 @@ class ESRootDao[T <: HasId[T] : JsonFormat : ClassTag] (index: ESIndex, t: ESTyp
     propertySearchQuery (mapping._all, searchQuery)
 
   def propertySearchText (field: ESField[_, String], searchText: String): ESSearchCriteria[T] =
-    propertySearchQuery (field, s"*${collection.escapeQueryText (searchText)}*")
+    propertySearchQuery (field, s"*${ESSearchCriteria.escapeQueryString (searchText)}*")
 
   def propertySearchQuery (property: ESField[_, String], searchQuery: String): ESSearchCriteria[T] =
-    (property queryString searchQuery).asInstanceOf[ESSearchCriteria[T]]
+    (property query searchQuery).asInstanceOf[ESSearchCriteria[T]]
 
-  def retrieve (ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
-    collection.retrieve (ids.map (_.value))
+	def retrieve(ids: Seq[Id[T]]): Future[List[T]] =
+	  collection.retrieve(ids.map (_.value))
+	  
+  def retrieveVersioned(ids: Seq[Id[T]]): Future[List[Versioned[T]]] =
+    collection.versioned.retrieve(ids.map (_.value))
 
-  def retrieve (id: Id[T]): Future[Option[Versioned[T]]] =
-    collection.retrieve (id.value)
+  def retrieve (id: Id[T]): Future[Option[T]] =
+    collection.retrieve(id.value)
+
+  def retrieveVersioned(id: Id[T]): Future[Option[Versioned[T]]] =
+    collection.versioned.retrieve(id.value)
 
   def reindexAll () =
     collection.reindexAll ()
@@ -64,35 +70,68 @@ class ESRootDao[T <: HasId[T] : JsonFormat : ClassTag] (index: ESIndex, t: ESTyp
   def scan (criteria: SearchCriteria[T], duration: FiniteDuration = 5 minutes, batchSize: Int = 100): Iterator[T] =
     collection.scan (criteria, duration, batchSize)
 
-  def search (criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] =
-    collection.search (criteria, page, sort, facets)
+  def find(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort): Future[List[T]] =
+    collection.find(criteria, page, sort)
 
-  def create (entity: T, refreshAfterMutation: Boolean, ttl: Option[Duration]): Future[Versioned[T]] =
-    collection.create (entity, refreshAfterMutation, ttl)
+  def findVersioned(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort): Future[List[Versioned[T]]] =
+    collection.versioned.find(criteria, page, sort)
 
-  def getOrCreate (id: Id[T], refreshAfterMutation: Boolean)(create: => T): Future[Versioned[T]] =
-    collection.getOrCreate (id.value, refreshAfterMutation)(create)
+  def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]] =
+    collection.search(criteria, page, sort, facets)
 
-  def getOrCreateAndModify (id: Id[T], refreshAfterMutation: Boolean)(create: => T)(modify: T => T): Future[Versioned[T]] =
-    collection.getOrCreateAndModify (id.value, refreshAfterMutation)(create)(modify)
+  def searchVersioned(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[VersionedSearchResult[T]] =
+    collection.versioned.search(criteria, page, sort, facets)
 
-  def getOrCreateAndModifyOptionally (id: Id[T], refreshAfterMutation: Boolean)(create: => T)(modify: T => Option[T]): Future[Versioned[T]] =
-    collection.getOrCreateAndModifyOptionally (id.value, refreshAfterMutation)(create)(modify)
+  def create (entity: T, refresh: Boolean, ttl: Option[Duration]): Future[T] =
+    collection.versioned.create (entity, refresh, ttl).map(_.entity)
 
-  def modify (id: Id[T], refreshAfterMutation: Boolean)(modify: T => T): Future[Versioned[T]] =
-    collection.modify (id.value, refreshAfterMutation)(modify)
+  def createVersioned (entity: T, refresh: Boolean, ttl: Option[Duration]): Future[Versioned[T]] =
+    collection.versioned.create (entity, refresh, ttl)
 
-  def modifyOptionally (id: Id[T], refreshAfterMutation: Boolean)(modify: T => Option[T]): Future[Versioned[T]] =
-    collection.modifyOptionally (id.value, refreshAfterMutation)(modify)
+  def retrieveOrCreate (id: Id[T], refreshAfterMutation: Boolean)(create: => T): Future[T] =
+    collection.retrieveOrCreate (id.value, refreshAfterMutation)(create)
+
+  def retrieveOrCreateAndModify (id: Id[T], refresh: Boolean)(create: => T)(modify: T => T): Future[T] =
+    collection.retrieveOrCreateAndModify (id.value, refresh)(create)(modify)
+
+  def retrieveOrCreateAndModifyOptionally (id: Id[T], refresh: Boolean)(create: => T)(modify: T => Option[T]): Future[T] =
+    collection.retrieveOrCreateAndModifyOptionally (id.value, refresh)(create)(modify)
+
+  def retrieveOrCreateVersioned (id: Id[T], refreshAfterMutation: Boolean)(create: => T): Future[Versioned[T]] =
+    collection.versioned.retrieveOrCreate (id.value, refreshAfterMutation)(create)
+
+  def retrieveOrCreateAndModifyVersioned (id: Id[T], refresh: Boolean)(create: => T)(modify: T => T): Future[Versioned[T]] =
+    collection.versioned.retrieveOrCreateAndModify (id.value, refresh)(create)(modify)
+
+  def retrieveOrCreateAndModifyOptionallyVersioned (id: Id[T], refresh: Boolean)(create: => T)(modify: T => Option[T]): Future[Versioned[T]] =
+    collection.versioned.retrieveOrCreateAndModifyOptionally (id.value, refresh)(create)(modify)
+
+  def modify (id: Id[T], refresh: Boolean)(modify: T => T): Future[T] =
+    collection.modify (id.value, refresh)(modify)
+
+  def modifyVersioned (id: Id[T], refresh: Boolean)(modify: Versioned[T] => T): Future[Versioned[T]] =
+    collection.versioned.modify (id.value, refresh)(modify)
+
+  def modifyOptionally (id: Id[T], refresh: Boolean)(modify: T => Option[T]): Future[T] =
+    collection.modifyOptionally (id.value, refresh)(modify)
+
+  def modifyOptionallyVersioned (id: Id[T], refresh: Boolean)(modify: Versioned[T] => Option[Versioned[T]]): Future[Versioned[T]] =
+    collection.versioned.modifyOptionally (id.value, refresh)(modify)
 
   /**
    * @throws VersionConflictException
    */
-  def update (entity: Versioned[T], refreshAfterMutation: Boolean): Future[Versioned[T]] =
-    collection.update (entity, refreshAfterMutation)
+  def update (entity: Versioned[T], refresh: Boolean): Future[T] =
+    collection.update (entity, refresh)
 
-  def delete (id: Id[T], refreshAfterMutation: Boolean): Future[Unit] =
-    collection.delete (id.value, refreshAfterMutation)
+  def updateVersioned (entity: Versioned[T], refresh: Boolean): Future[Versioned[T]] =
+    collection.versioned.update (entity, refresh)
+
+  def delete (id: Id[T], refresh: Boolean): Future[Unit] =
+    collection.delete (id.value, refresh)
+
+  def deleteVersioned (id: Id[T], refresh: Boolean): Future[Long] =
+    collection.versioned.delete (id.value, refresh)
 
   //  def query(queryBuilder: QueryBuilder, page: Page): Future[SearchResult[T]] = {
   //    val request = client.javaClient.prepareSearch(index.name).setTypes(t.name).setQuery(queryBuilder).addSort("_id", SortOrder.ASC).setFrom(page.from).setSize(page.size).setVersion(true).request
@@ -115,6 +154,7 @@ class ESRootDao[T <: HasId[T] : JsonFormat : ClassTag] (index: ESIndex, t: ESTyp
   //    }
   //  }
 
+  @deprecated("Use ESCollection.scan", "0.6")
   def retrieveAll: Future[List[Versioned[T]]] =
     collection.retrieveAll
 

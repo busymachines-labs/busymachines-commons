@@ -23,7 +23,7 @@ class DaoCache[T <: HasId[T]](dao: Dao[T], autoInvalidate : Boolean = false, onI
   
   def retrieve(id: Id[T], timeout: Duration, onRetrieve : T => T = t => t): Option[Versioned[T]] =
     _idCache.getOrElseUpdate(id, {
-      Await.result(dao.retrieve(id), timeout) map {
+      Await.result(dao.retrieveVersioned(id), timeout) map {
         case Versioned(entity, version) => 
           Versioned(onRetrieve(entity), version)
       }
@@ -34,7 +34,7 @@ class DaoCache[T <: HasId[T]](dao: Dao[T], autoInvalidate : Boolean = false, onI
     val missingIds = cached.collect { case (id, None) => id }
     val retrieved = missingIds match {
       case Seq() => List()
-      case ids => Await.result(dao.retrieve(ids), timeout)
+      case ids => Await.result(dao.retrieveVersioned(ids), timeout)
     }
     val result = cached.collect { case (id, Some(v)) => id -> v } ++ retrieved.map(v => v.entity.id -> Some(v))
     _idCache ++= result
@@ -43,7 +43,7 @@ class DaoCache[T <: HasId[T]](dao: Dao[T], autoInvalidate : Boolean = false, onI
 
   def search(criteria: SearchCriteria[T], page : Page = Page.all, timeout: Duration, maxSearchResultSize: Int = this.maxSearchResultSize): List[Versioned[T]] = {
     val key = (criteria, page)
-    val result = _searchCache.getOrElseUpdate(key, Await.result(dao.search(criteria, page), timeout).map {
+    val result = _searchCache.getOrElseUpdate(key, Await.result(dao.searchVersioned(criteria, page), timeout).result.map {
         case v @ Versioned(obj, version) => _idCache.getOrElseUpdate(obj.id, Some(v)) match {
           case Some(v) => v
           case None => v

@@ -11,6 +11,7 @@ trait MediaDao {
    * Retrieves all medias stored.
    * @return
    */
+  @deprecated("don't use all", "0.6")
   def retrieveAll: Future[List[Media]]
 
   /**

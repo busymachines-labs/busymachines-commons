@@ -35,7 +35,8 @@ trait ESPath[A, T] {
 
   def geo_distance(geoPoint: GeoPoint, radiusKm: Double) = nest(Nil, this, GeoDistance(this, geoPoint, radiusKm))
   def range(value: (T, T), radiusKm: Double) = nest(Nil, this, Range(this, value))
-  def queryString(query: String) = nest(Nil, this, Query(this, query))
+  def search(s: String) = nest(Nil, this, Query(this, s"*${escapeQueryString(s)}*"))
+  def query(query: String) = nest(Nil, this, Query(this, query))
 
   /**
    * Nest given (usually compound) criteria inside a single nested filter.

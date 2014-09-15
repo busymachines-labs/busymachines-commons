@@ -40,7 +40,7 @@ abstract class ESMapping[A :ClassTag :ProductFormat] {
   lazy val fieldsByPropertyName = _explicitFields.groupBy(_.propertyName).mapValues(_.head)
 
   // Predefined fields
-  val _all = ESField[Any, String]("_all", "", String.options, false, false, None)
+  val _all = ESField[A, String]("_all", "", String.options, false, false, None)
 
   /**
    * Use this format to convert case classes to and from json.

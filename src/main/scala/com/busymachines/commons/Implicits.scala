@@ -8,9 +8,9 @@ import com.busymachines.commons.util.ExtensionsImplicits
 
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.ExecutionContext
-import scala.xml.Elem
+import scala.xml.{XML, Elem}
 import scala.xml.factory.XMLLoader
-import com.busymachines.commons.dao.{SearchResult, Versioned}
+import com.busymachines.commons.dao.{VersionedSearchResult, SearchResult, Versioned}
 import com.busymachines.commons.implicits._
 import com.typesafe.config.Config
 import implicits.RichAny
@@ -50,6 +50,7 @@ object Implicits extends CommonJsonFormats with CommonDomainJsonFormats with Ext
   implicit def richUrl(url : URL) = new RichUrl(url)
   implicit def richInputStream(is : InputStream) = new RichInputStream(is)
   implicit def richXml(xml : XMLLoader[Elem]) = new RichXml(xml)
+  implicit def richXmlType(xml : XML.type) = new RichXmlType(xml)
   implicit def richOption[A](option : Option[A]) = new RichOption(option)
   implicit def richFunction[A, B](f : A => Option[B]) = new RichFunction(f)
   implicit def richFuture[A](f : Future[A]) = new RichFuture[A](f)
@@ -57,13 +58,5 @@ object Implicits extends CommonJsonFormats with CommonDomainJsonFormats with Ext
   implicit def richLocale(a : Locale) = new RichLocale(a)
   implicit def richAny[A](a : A) = new RichAny[A](a)
   implicit def convertToUnit(f : Future[_])(implicit ec : ExecutionContext) : Future[Unit] = f.map(_ => Unit)
-
-  implicit def richVersionedFuture[A](future: Future[Versioned[A]])(implicit ec: ExecutionContext) = future.map(_.entity)
-  implicit def richVersionedListFuture[A](future: Future[List[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
-  implicit def richVersionedSeqFuture[A](future: Future[Seq[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
-  implicit def richVersionedOptionFuture[A](future: Future[Option[Versioned[A]]])(implicit ec: ExecutionContext) = future.map(_.map(_.entity))
-  implicit def richSearchResult[A](future: Future[SearchResult[A]])(implicit ec: ExecutionContext) = future.map(_.result)
-  implicit def richVersionedSearchResult[A](future: Future[SearchResult[A]])(implicit ec: ExecutionContext) = future.map(_.result.map(_.entity))
-
 }
 

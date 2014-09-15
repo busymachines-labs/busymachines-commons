@@ -9,7 +9,7 @@ object BusyMachinesCommonsBuild extends Build {
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = Seq(
     sbtPlugin := false,
     organization := "com.busymachines",
-    version := "0.5-SNAPSHOT"
+    version := "0.6-SNAPSHOT"
   ) ++
     Defaults.defaultSettings ++
     compilerSettings ++
@@ -22,7 +22,7 @@ object BusyMachinesCommonsBuild extends Build {
 
   def compilerSettings = Seq(
     scalaVersion := "2.11.2",
-    crossScalaVersions := Seq("2.11.1", "2.10.4"),
+    crossScalaVersions := Seq("2.11.2", "2.10.4"),
     javacOptions in Compile ++= Seq("-encoding", "utf8", "-g"),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8"),
 //    scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),

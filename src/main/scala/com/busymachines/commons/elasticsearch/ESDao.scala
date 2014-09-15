@@ -3,15 +3,10 @@ package com.busymachines.commons.elasticsearch
 import spray.json.JsonFormat
 import com.busymachines.commons.domain.{Money, HasId}
 import com.busymachines.commons.Implicits._
-import com.busymachines.commons.dao.Dao
+import com.busymachines.commons.dao._
 import scala.concurrent.ExecutionContext
-import com.busymachines.commons.dao.SearchCriteria
 import scala.concurrent.Future
-import com.busymachines.commons.dao.Versioned
 import com.busymachines.commons.logging.Logging
-import com.busymachines.commons.dao.SearchResult
-import com.busymachines.commons.dao.MoreThanOneResultException
-import com.busymachines.commons.dao.SearchSort
 
 object MoneyMapping extends ESMapping[Money] {
   val currency = "currency" :: String
@@ -24,11 +19,14 @@ abstract class ESDao[T <: HasId[T]: JsonFormat](val typeName: String)(implicit e
 
   def defaultSort: SearchSort = ESSearchSort.asc("_id")
 
-  def searchSingle(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T]): Future[Option[Versioned[T]]] = {
-    search(criteria).map {
-      case SearchResult(Nil, _, _) => None
-      case SearchResult(first :: Nil, _, _) => Some(first)
-      case SearchResult(many, _, _) =>
+  def findSingle(criteria: SearchCriteria[T], onMany: List[T] => T): Future[Option[T]] =
+    findSingleVersioned(criteria, v => Versioned(onMany(v.map(_.entity)), -1)).map(_.map(_.entity))
+    
+  def findSingleVersioned(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T]): Future[Option[Versioned[T]]] = {
+    searchVersioned(criteria).map {
+      case VersionedSearchResult(Nil, _, _) => None
+      case VersionedSearchResult(first :: Nil, _, _) => Some(first)
+      case VersionedSearchResult(many, _, _) =>
         try {
           Some(onMany(many))
         } catch {

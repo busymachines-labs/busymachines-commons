@@ -28,6 +28,20 @@ trait CommonDomainJsonFormats {
 
   class SearchResultFormat[T](fieldName: String)(implicit tFormat: JsonFormat[T]) extends RootJsonWriter[SearchResult[T]] {
     def write(result: SearchResult[T]) = {
+      val jsonResult = JsArray(result.result.map(tFormat.write))
+      val jsonFacetResult = JsObject(result.facets.map(facet => facet._1 -> JsArray(facet._2.map {
+        case v: HistogramFacetValue => histogramValueFormat.write(v)
+        case v: TermFacetValue => termFacetValueFormat.write(v)
+      })))
+      result.totalCount match {
+        case Some(totalCount) => JsObject(fieldName -> jsonResult, "totalCount" -> JsNumber(totalCount), "facets" -> jsonFacetResult)
+        case None => JsObject(fieldName -> jsonResult)
+      }
+    }
+  }
+
+  class VersionedSearchResultFormat[T](fieldName: String)(implicit tFormat: JsonFormat[T]) extends RootJsonWriter[VersionedSearchResult[T]] {
+    def write(result: VersionedSearchResult[T]) = {
       val jsonResult = JsArray(result.result.map(_.entity).map(tFormat.write))
       val jsonFacetResult = JsObject(result.facets.map(facet => facet._1 -> JsArray(facet._2.map {
         case v: HistogramFacetValue => histogramValueFormat.write(v)

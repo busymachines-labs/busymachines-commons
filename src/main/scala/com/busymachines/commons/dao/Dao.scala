@@ -40,21 +40,41 @@ trait SearchCriteria[T]
  */
 trait Dao[T <: HasId[T]] {
   
-  def retrieve(id: Id[T]): Future[Option[Versioned[T]]]
+  def retrieve(id: Id[T]): Future[Option[T]]
 
-  def retrieve(ids: Seq[Id[T]]): Future[List[Versioned[T]]]
+  def retrieveVersioned(id: Id[T]): Future[Option[Versioned[T]]]
+
+  def retrieve(ids: Seq[Id[T]]): Future[List[T]]
+
+  def retrieveVersioned(ids: Seq[Id[T]]): Future[List[Versioned[T]]]
 
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[SearchResult[T]]
 
-  def searchSingle(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T] = _ => throw new MoreThanOneResultException): Future[Option[Versioned[T]]]
+  def searchVersioned(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty): Future[VersionedSearchResult[T]]
 
-  def modify(id: Id[T], reindex: Boolean = true)(f: T => T): Future[Versioned[T]]
+  def find(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort): Future[List[T]]
 
-  def modifyOptionally(id: Id[T], reindex: Boolean = true)(f: T => Option[T]): Future[Versioned[T]]
+  def findVersioned(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort): Future[List[Versioned[T]]]
 
-  def update(entity: Versioned[T], reindex: Boolean = true): Future[Versioned[T]]
+  def findSingle(criteria: SearchCriteria[T], onMany: List[T] => T = _ => throw new MoreThanOneResultException): Future[Option[T]]
 
-  def delete(id: Id[T], reindex: Boolean = true): Future[Unit]
+  def findSingleVersioned(criteria: SearchCriteria[T], onMany: List[Versioned[T]] => Versioned[T] = _ => throw new MoreThanOneResultException): Future[Option[Versioned[T]]]
+
+  def modify(id: Id[T], reindex: Boolean = true)(f: T => T): Future[T]
+
+  def modifyVersioned(id: Id[T], reindex: Boolean = true)(f: Versioned[T] => T): Future[Versioned[T]]
+
+  def modifyOptionally(id: Id[T], refresh: Boolean = true)(f: T => Option[T]): Future[T]
+
+  def modifyOptionallyVersioned (id: Id[T], refresh: Boolean = true)(f: Versioned[T] => Option[Versioned[T]]): Future[Versioned[T]]
+
+  def update(entity: Versioned[T], refresh: Boolean = true): Future[T]
+
+  def updateVersioned(entity: Versioned[T], refresh: Boolean = true): Future[Versioned[T]]
+
+  def delete(id: Id[T], refresh: Boolean = true): Future[Unit]
+
+  def deleteVersioned(id: Id[T], refresh: Boolean = true): Future[Long]
 
   def onChange(f: Id[T] => Unit): Unit
 

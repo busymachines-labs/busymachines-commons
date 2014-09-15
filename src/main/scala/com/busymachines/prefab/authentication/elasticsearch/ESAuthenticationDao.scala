@@ -17,7 +17,7 @@ class ESAuthenticationDao(index : ESIndex, indexType : String = "authentication"
   with AuthenticationDao {
   
   def retrieveAuthentication(id : Id[Authentication]) : Future[Option[Authentication]] = 
-    retrieve(id).map(_.map(_.entity.asInstanceOf[Authentication]))
+    retrieve(id)
   
   def createAuthentication(authentication : Authentication) : Future[Unit] = {
     val millis = authentication.expirationTime.getMillis - DateTime.now.getMillis

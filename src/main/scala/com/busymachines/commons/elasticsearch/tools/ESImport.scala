@@ -60,7 +60,7 @@ object ESImport extends Logging {
   
             val id = 
             obj.fields.get("_id") match {
-              case Some(JsString(id)) => id
+              case Some(JsString(id)) =>
 
                 if (!dryRun) {
                   val request = new IndexRequest(indexName, t)

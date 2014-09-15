@@ -163,4 +163,44 @@ object ESSearchCriteria {
       case value => value
     }
   }
+
+  /**
+   * Escapes a string special ES characters as specified here : {@link http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_reserved_characters}
+   */
+  private[elasticsearch] def escapeQueryString(s: String): String = {
+    var b0: StringBuilder = null
+    def b = {
+      if (b0 == null) b0 = new StringBuilder; b0
+    }
+    var p = 0
+    val l = s.length
+    while (p < l) {
+      val c = s.charAt(p)
+      p += 1
+      c match {
+        case '+' => b.append("\\+")
+        case '-' => b.append("\\-")
+        case '!' => b.append("\\!")
+        case '(' => b.append("\\(")
+        case ')' => b.append("\\)")
+        case '{' => b.append("\\{")
+        case '}' => b.append("\\}")
+        case '[' => b.append("\\[")
+        case ']' => b.append("\\]")
+        case '^' => b.append("\\^")
+        case '\"' => b.append("\\\"")
+        case '~' => b.append("\\~")
+        case '*' => b.append("\\*")
+        case '?' => b.append("\\?")
+        case ':' => b.append("\\:")
+        case '\\' => b.append("\\\\")
+        case ' ' => b.append("\\ ")
+        case '&' if p < l && s.charAt(p) == '&' => b.append("\\&")
+        case '|' if p < l && s.charAt(p) == '|' => b.append("\\|")
+        case c => b.append(c)
+      }
+    }
+    if (b0 == null) s
+    else b0.toString
+  }
 }

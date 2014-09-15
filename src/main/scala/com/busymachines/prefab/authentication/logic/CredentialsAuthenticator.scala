@@ -37,7 +37,7 @@ abstract class CredentialsAuthenticator[SecurityContext](config: AuthenticationC
   def authenticateWithLoginName(loginName: String, validate : Credentials => Boolean = _ => true): Future[SecurityContext] = {
     logger.debug(s"Trying to authenticate with username $loginName and password ****")
     credentialsDao.findByLogin(loginName).flatMap {
-      _.map(_.entity).find(validate) match {
+      _.find(validate) match {
         case Some(credentials) =>
           setAuthenticated(credentials.id) flatMap {
             authenticationId =>

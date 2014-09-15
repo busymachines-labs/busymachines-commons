@@ -22,9 +22,9 @@ class ESSequenceDao(index: ESIndex, `type`: String = "sequence")(implicit ec: Ex
 
   def next(sequence: Id[Sequence], incrementValue: Long, minimumValue: Long, retries: Int): Future[Long] =
     RetryVersionConflictAsync(retries) {
-      increment(sequence, incrementValue, minimumValue).map(_.entity.value)
+      increment(sequence, incrementValue, minimumValue).map(_.value)
     }
 
-  private def increment(sequence: Id[Sequence], incrementValue: Long, minimumValue: Long): Future[Versioned[Sequence]] =
-    getOrCreateAndModify(sequence, false)(Sequence(sequence, 0))(s => s.copy(value = Math.max(s.value + incrementValue, minimumValue)))
+  private def increment(sequence: Id[Sequence], incrementValue: Long, minimumValue: Long): Future[Sequence] =
+    retrieveOrCreateAndModify(sequence, false)(Sequence(sequence, 0))(s => s.copy(value = Math.max(s.value + incrementValue, minimumValue)))
 }

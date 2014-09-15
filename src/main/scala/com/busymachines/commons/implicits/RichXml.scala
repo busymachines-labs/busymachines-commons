@@ -15,3 +15,12 @@ class RichXml(val xml : XMLLoader[Elem]) extends AnyVal {
   def fromURL(username : String, password : String, url : String) : Elem =
     xml.load(new URL(url).openStream(username, password))
 }
+
+class RichXmlType(val xml : XML.type) extends AnyVal {
+
+  /**
+   * Loads XML from a url using basic authentication.
+   */
+  def fromURL(username : String, password : String, url : String) : Elem =
+    XML.load(new URL(url).openStream(username, password))
+}
