@@ -40,7 +40,7 @@ abstract class PrefabAuthenticator[Principal, SecurityContext](config: Authentic
 
   private type CachedData = Option[(Principal, SecurityContext)]
 
-  private val cache = AsyncCache.expiringLru[Id[Authentication], CachedData](config.maxCapacity, 50, config.expiration * 1.2, config.idleTime)
+  private val cache = AsyncCache.expiringLru[Id[Authentication], CachedData](50, config.maxCapacity, config.expiration, config.idleTime)
 
   /**
    * Re-authenticates based on given authentication id (token).
