@@ -1,6 +1,6 @@
 package com.busymachines.commons.logging
 
-import org.apache.logging.log4j.{ Level, LogManager }
+import org.apache.logging.log4j.{Level, LogManager}
 
 trait AdditionalParameters {
   def apply: Seq[(String, String)]
@@ -12,7 +12,7 @@ object DefaultAdditionalParameters extends AdditionalParameters {
 
 trait Logging {
   def loggerTag: Option[String] = None
-  implicit def defaultAdditionalParameters = DefaultAdditionalParameters
+  implicit def defaultAdditionalParameters: AdditionalParameters = DefaultAdditionalParameters
   val logger = new Logger(loggerTag)
 }
 
@@ -20,10 +20,15 @@ sealed class Logger(tag: Option[String]) {
   private lazy val logger = LogManager.getLogger
 
   def isTraceEnabled = logger.isTraceEnabled
+
   def isDebugEnabled = logger.isDebugEnabled
+
   def isInfoEnabled = logger.isInfoEnabled
+
   def isWarnEnabled = logger.isWarnEnabled
+
   def isErrorEnabled = logger.isErrorEnabled
+
   def isFatalEnabled = logger.isFatalEnabled
 
   def trace(message: => String, parameters: (String, String)*)(implicit ap: AdditionalParameters) =
