@@ -13,11 +13,11 @@ object DefaultAdditionalParameters extends AdditionalParameters {
 trait Logging {
   def loggerTag: Option[String] = None
   implicit def defaultAdditionalParameters: AdditionalParameters = DefaultAdditionalParameters
-  val logger = new Logger(loggerTag)
+  val logger = new Logger(loggerTag,getClass)
 }
 
-sealed class Logger(tag: Option[String]) {
-  private lazy val logger = LogManager.getLogger
+sealed class Logger[T](tag: Option[String], name: Class[T]) {
+  private lazy val logger = LogManager.getLogger(name)
 
   def isTraceEnabled = logger.isTraceEnabled
 
