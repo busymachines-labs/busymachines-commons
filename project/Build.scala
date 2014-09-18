@@ -16,6 +16,7 @@ object BusyMachinesCommonsBuild extends Build {
     eclipseSettings ++
     publishSettings ++
     dependencies ++
+    runSettings ++
     site.settings ++
     site.sphinxSupport() ++ site.includeScaladoc()
   )
@@ -32,6 +33,9 @@ object BusyMachinesCommonsBuild extends Build {
     //    },
     incOptions := incOptions.value.withNameHashing(nameHashing = true)
   )
+
+  def runSettings = Seq(
+    parallelExecution in Test:= false)
 
   def eclipseSettings = Seq(
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
