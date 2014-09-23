@@ -25,7 +25,7 @@ import org.scalastuff.esclient.ActionMagnet
 
 import com.busymachines.commons.elasticsearch.{ESMapping, ESConfig}
 import com.busymachines.commons.logging.{LoggingJsonFormats, ESLayout}
-import com.busymachines.commons.logging.domain.{LogMessageESMappings, LogMessage}
+import com.busymachines.commons.logging.domain.{IndexSelector, LogMessageESMappings, LogMessage}
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -70,10 +70,10 @@ class ESAppender(
   indexDocumentType: String) extends AbstractAppender(name, filter, layout, ignoreExceptions) with LoggingJsonFormats{
 
   private lazy val messageQueue = new LinkedBlockingQueue[LogMessage](queueSize)
-  lazy val actualIndexName = s"$indexNamePrefix-${DateTimeFormat.forPattern(indexNameDateFormat).print(DateTime.now)}"
+  lazy val actualIndexName = new IndexSelector(indexNamePrefix,indexNameDateFormat,DateTime.now)
   lazy val config = new ESConfig("") {
     override def clusterName: String = cluster
-    override def indexName: String = actualIndexName
+    override def indexName: String = actualIndexName.getName
     override def hostNames: Seq[String] = hosts.split(",")
     override def numberOfShards: Int = 1
     override def numberOfReplicas: Int = 0
@@ -86,9 +86,11 @@ class ESAppender(
   }
 
   def bulk(list: Seq[LogMessage]): Unit = {
+    if (actualIndexName.isUpdated)
+      initIndex()
     val bulkRequest = javaClient.prepareBulk()
     list.foreach(o => bulkRequest.add(javaClient.
-      prepareIndex(actualIndexName, indexDocumentType).
+      prepareIndex(actualIndexName.getName, indexDocumentType).
       setSource(logMessageFormat.write(o).toString)))
     bulkRequest.execute()
   }
@@ -125,8 +127,8 @@ class ESAppender(
       addMapping(indexName,typeName,mapping)
     }
 
-    if (!indexExists(actualIndexName))
-      createIndex(actualIndexName,indexDocumentType,LogMessageESMappings)
+    if (!indexExists(actualIndexName.getName))
+      createIndex(actualIndexName.getName,indexDocumentType,LogMessageESMappings)
   }
 
   /**

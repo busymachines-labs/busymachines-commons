@@ -15,12 +15,13 @@ class LoggerTests extends FlatSpec with Logging {
 
   behavior of "Logger.error"
 
-  it should "log commons exceptions properly" in {
-    var x = 10000;
+  ignore should "log commons exceptions properly" in {
+    var x = 100000;
     val mp=Map("party" -> "BusyMachines", "user" -> "Alexandru")
     while (x > 0) {
       val exc = new CommonException(s"This is a common exception ${x}", Some("12"), mp, Some(new IndexOutOfBoundsException()))
       logger.info(this.suiteName, exc, "party" -> "BusyMachines", "user" -> "Alexandru")
+      Thread.sleep(100)
       x -= 1;
     }
   }

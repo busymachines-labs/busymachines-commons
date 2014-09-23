@@ -46,11 +46,16 @@ class ESLayout(locationInfo: Boolean, properties: Boolean, complete: Boolean, wi
       timestamp = Some(new DateTime(event.getTimeMillis())),
       level = Some(event.getLevel().toString()),
       thread = Some(event.getThreadName()),
-      message = Some(event.getMessage().getFormattedMessage()),
+      message = Some(getLogMessage(event)),
       fields = getLogParams(event),
       tag = getLogTag(event)
     )
 
+  }
+
+  def getLogMessage(event:LogEvent) = event.getMessage match{
+    case e:CommonsLoggerMessage=> e.message
+    case _ => event.getMessage.getFormattedMessage
   }
 
   def getLogTag(event:LogEvent)= event.getMessage match{

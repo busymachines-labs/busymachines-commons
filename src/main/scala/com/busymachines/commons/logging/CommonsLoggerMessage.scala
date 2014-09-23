@@ -15,6 +15,8 @@ class CommonsLoggerMessage private(
   val tag:Option[String]) extends MapMessage(javaMap) {
 
   override def getThrowable: Throwable = cause.orNull
+
+  override def toString: String = message
 }
 
 object CommonsLoggerMessage {
