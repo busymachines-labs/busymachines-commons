@@ -31,7 +31,7 @@ import spray.json.JsonFormat
  * A security context typically holds the principal and the authentication id, but 
  * this is not a requirement.
  */
-abstract class CredentialsAuthenticator[SecurityContext](config: AuthenticationConfig, authenticationDao: AuthenticationDao, credentialsDao: CredentialsDao)(implicit ec: ExecutionContext)
+abstract class CredentialsAuthenticator[SecurityContext](config: AuthenticationConfig, authenticationDao: AuthenticationDao, credentialsDao: CredentialsDao, hashFunction: (String => Array[Byte]))(implicit ec: ExecutionContext)
   extends PrefabAuthenticator[Id[Credentials], SecurityContext](config, authenticationDao) {
 
   def authenticateWithLoginName(loginName: String, validate : Credentials => Boolean = _ => true): Future[SecurityContext] = {
@@ -56,7 +56,7 @@ abstract class CredentialsAuthenticator[SecurityContext](config: AuthenticationC
    */
   def authenticateWithLoginNamePassword(loginName: String, password: String, validate : Credentials => Boolean = _ => true): Future[SecurityContext] =
     authenticateWithLoginName(loginName, credentials =>
-      credentials.passwordCredentials.exists(p => p.login == loginName && p.hasPassword(password)) && validate(credentials))
+      credentials.passwordCredentials.exists(p => p.login == loginName && p.hasPassword(password, hashFunction)) && validate(credentials))
 
 
   override protected[authentication] def devmodeSecurityContext(devmodeAuth : Option[String]) : Option[SecurityContext] =

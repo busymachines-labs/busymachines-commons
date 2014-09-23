@@ -9,13 +9,14 @@ object BusyMachinesCommonsBuild extends Build {
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = Seq(
     sbtPlugin := false,
     organization := "com.busymachines",
-    version := "0.6-SNAPSHOT"
+    version := "0.6.1-SNAPSHOT"
   ) ++
     Defaults.defaultSettings ++
     compilerSettings ++
     eclipseSettings ++
     publishSettings ++
     dependencies ++
+    runSettings ++
     site.settings ++
     site.sphinxSupport() ++ site.includeScaladoc()
   )
@@ -25,13 +26,16 @@ object BusyMachinesCommonsBuild extends Build {
     crossScalaVersions := Seq("2.11.2", "2.10.4"),
     javacOptions in Compile ++= Seq("-encoding", "utf8", "-g"),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8"),
-//    scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),
+    //    scalacOptions ++= Seq("-deprecation", "-unchecked", "-encoding", "utf8", "-feature", "-language:implicitConversions", "-language:postfixOps", "-language:higherKinds", "-language:existentials", "-language:reflectiveCalls"),
     //    scalacOptions <++= scalaBinaryVersion map {
     //      case "2.11" => Seq("-Ydelambdafy:method")
     //      case _ => Nil
     //    },
     incOptions := incOptions.value.withNameHashing(nameHashing = true)
   )
+
+  def runSettings = Seq(
+    parallelExecution in Test:= false)
 
   def eclipseSettings = Seq(
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
@@ -47,30 +51,19 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1" % "test" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.4" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.3.4" withSources(),
-    //    libraryDependencies += "com.typesafe.akka" %% "akka-cluster" % "2.3.3" withSources(),
     libraryDependencies += "com.typesafe.akka" %% "akka-contrib" % "2.3.3" withSources(),
     libraryDependencies += "org.elasticsearch" % "elasticsearch" % "1.3.0" withSources(),
     libraryDependencies += "org.scalastuff" %% "esclient" % "1.3.0" withSources(),
     libraryDependencies += "org.scalastuff" %% "json-parser" % "2.0.2" withSources(),
     libraryDependencies += "org.clapper" %% "grizzled-slf4j" % "1.0.2" withSources(),
-    //    libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.13" withSources(),
 
-//    libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.0.0",
     libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.0.1" withSources(),
     libraryDependencies += "org.apache.logging.log4j" % "log4j-api" % "2.0.1" withSources(),
     libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.0" withSources(),
-    //    libraryDependencies += "com.typesafe" % "config" % "1.0.0" withSources(),
     libraryDependencies += "joda-time" % "joda-time" % "2.3" withSources(),
     libraryDependencies += "org.joda" % "joda-convert" % "1.6" withSources(), // for class file error in joda-time
-    //    libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.2" withSources(),
     libraryDependencies += "javax.mail" % "mail" % "1.4.5" withSources(),
-    //    libraryDependencies += "com.google.guava" % "guava" % "17.0" withSources(),
-    //    libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1", // for class file error in guava
-    //    libraryDependencies += "com.google.code.findbugs" % "jsr305" % "2.0.1", // for class file error in guava
-    //    libraryDependencies += "org.apache.pdfbox" % "pdfbox" % "1.8.3" withSources(),
     libraryDependencies += "commons-codec" % "commons-codec" % "1.9", // just for base64, can be removed when we switch to java 1.8
-    //    libraryDependencies += "com.google.zxing" % "javase" % "2.3.0" withSources(),
-    //    libraryDependencies += "com.github.scopt" %% "scopt" % "3.2.0" withSources(),
     libraryDependencies += "com.netaporter.salad" %% "salad-metrics-core" % "0.2.7" withSources(),
     libraryDependencies <++= scalaBinaryVersion {
       case "2.11" => Seq(
@@ -105,29 +98,29 @@ object BusyMachinesCommonsBuild extends Build {
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials_busymachines_snapshots"),
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials_busymachines_releases"),
     pomExtra := <scm>
-                  <connection>scm:git:git@github.com:busymachines/busymachines-commons.git</connection>
-                  <url>https://github.com/busymachines/busymachines-commons</url>
-                </scm>
-                <developers>
-                  <developer>
-                    <id>ruudditerwich</id>
-                    <name>Ruud Diterwich</name>
-                    <url>https://github.com/rditerwich</url>
-                  </developer>
-                  <developer>
-                    <id>paulsabou</id>
-                    <name>Paul Sabou</name>
-                    <url>https://github.com/paulsabou</url>
-                  </developer>
-                </developers>,
+      <connection>scm:git:git@github.com:busymachines/busymachines-commons.git</connection>
+      <url>https://github.com/busymachines/busymachines-commons</url>
+    </scm>
+      <developers>
+        <developer>
+          <id>ruudditerwich</id>
+          <name>Ruud Diterwich</name>
+          <url>https://github.com/rditerwich</url>
+        </developer>
+        <developer>
+          <id>paulsabou</id>
+          <name>Paul Sabou</name>
+          <url>https://github.com/paulsabou</url>
+        </developer>
+      </developers>,
     publishTo <<= version { (v: String) =>
-          val nexus = "http://archiva.busymachines.com"
-          if (v.trim.endsWith("SNAPSHOT")) 
-            Some(Resolver.url("snapshots", new URL(nexus + "/repository/snapshots/"))(Resolver.ivyStylePatterns))
-          else
-            Some(Resolver.url("snapshots", new URL(nexus + "/repository/releases/"))(Resolver.ivyStylePatterns))
-        })
-                
+      val nexus = "http://archiva.busymachines.com"
+      if (v.trim.endsWith("SNAPSHOT"))
+        Some(Resolver.url("snapshots", new URL(nexus + "/repository/snapshots/"))(Resolver.ivyStylePatterns))
+      else
+        Some(Resolver.url("snapshots", new URL(nexus + "/repository/releases/"))(Resolver.ivyStylePatterns))
+    })
+
 }
 
 

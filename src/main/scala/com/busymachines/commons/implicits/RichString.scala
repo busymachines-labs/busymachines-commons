@@ -14,9 +14,11 @@ class RichString(val s: String) extends AnyVal {
     if (s.trim.nonEmpty) s
     else other
 
+  @scala.deprecated("Should be removed", "")
   def sha256Hash: Array[Byte] =
     MessageDigest.getInstance("SHA-256").digest(s.getBytes("UTF-8"))
 
+  @scala.deprecated("Should be removed", "")
   def md5: Array[Byte] =
     s.getBytes("UTF-8").md5
 
