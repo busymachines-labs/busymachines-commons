@@ -55,7 +55,7 @@ class ScrollSearchTest extends FlatSpec with Logging {
 
   "ScrollSearch" should s"create fixture by adding $totalDocs documents" in {
     createDocFixture
-    assert (collection.retrieveAll.await.size == totalDocs)
+    assert (collection.search(ESSearchCriteria.All[SomeDocument]).await.totalCount.getOrElse(0) == totalDocs)
   }
 
   it should "retrieve first 10 documents" in {
