@@ -30,9 +30,6 @@ case class PasswordCredentials(
 
   def hasPassword(password: String, hashFunction: String => Array[Byte]) = {
     val toCompareHash = hashFunction(password + salt).toHexString
-
-    println(s"$password\t$salt\t$passwordHash\t$toCompareHash\n")
-
     passwordHash.equalsIgnoreCase(toCompareHash)
   }
 }

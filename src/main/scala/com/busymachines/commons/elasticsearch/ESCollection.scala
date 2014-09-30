@@ -85,6 +85,18 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       }
     }
 
+    //TODO Removed count because it's based on query not on filters and for now we support just filters
+    /*def count(criteria: SearchCriteria[T]):Future[Long] = criteria match {
+      case criteria: ESSearchCriteria[T] =>
+        client.execute(client.javaClient.prepareCount(indexName)
+          .setTypes(typeName)
+          .setQuery(QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), criteria.toFilter))
+          .request).map(_.getCount)
+
+      case _ =>
+        throw new Exception("Expected ElasticSearch search criteria")
+    }*/
+
     def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty, invalidDocument: (Throwable, JsValue, mutable.Buffer[Versioned[T]]) => Unit = logInvalidDocument): Future[VersionedSearchResult[T]] = {
       criteria match {
         case criteria: ESSearchCriteria[T] =>
