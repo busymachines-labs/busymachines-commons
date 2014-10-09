@@ -3,7 +3,6 @@ package com.busymachines.commons.spray
 import java.io.File
 import com.busymachines.commons.CommonConfig
 import com.busymachines.commons.util.ProfilingUtils
-
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.DurationInt
 import scala.io.Source
@@ -27,6 +26,7 @@ import spray.util.actorSystem
 import ProfilingUtils.time
 import scala.collection.concurrent.TrieMap
 import spray.httpx.encoding.Gzip
+import java.util.Properties
 
 /**
  * Class that serves ui content. For url's with an extension, the corresponding resource is read from the
@@ -124,6 +124,30 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
     dirs.map(new File(_, "src/main/resources/" + root)).filter(_.exists)
   }
 
+  
+  def mkWebjarsPath(path: String, classLoader: ClassLoader) = {
+    val parts = path.split("/")
+    if (parts.size >= 3 && parts(0) == "webjars") {
+      if (!parts(2).isEmpty && !Character.isDigit(parts(2).charAt(0))) {
+        Option(classLoader.getResource("META-INF/maven/org.webjars/" + parts(1) + "/pom.properties")) match {
+          case Some(propertiesFile) =>
+            val p = new Properties()
+            p.load(propertiesFile.openStream())
+            Option(p.getProperty("version")) match {
+              case Some(version) => 
+                val r = parts(0) + "/" + parts(1) + "/" + version + "/" + parts.drop(2).mkString("/")
+    println("parts: " + parts.mkString(" "))
+                println("result: " + r)
+                r
+              case None => path
+            }
+          case None => path
+        }
+      }
+      else path
+    } else path
+  }
+  
   def loadResource(basePath: String, relativePath: String, classLoader: ClassLoader): Option[Array[Byte]] = {
     val path = resolve(basePath, relativePath)
     def readFromClassPath = Option(classLoader.getResource(root + "/" + path)).map(resource => FileUtils.readAllBytes(resource.openStream))
@@ -171,7 +195,7 @@ class UiService(resourceRoot: String = "public", rootDocument: String = "index.h
       pattern.findFirstMatchIn(line) match {
         case Some(m) =>
           val base = ""
-          val path = stripMin(m.group(2))
+          val path = stripMin(mkWebjarsPath(m.group(2), classLoader))
           loadResource(base, path, classLoader) match {
             case None =>
               logger.debug("Couldn't load resource " + base + "/" + path)

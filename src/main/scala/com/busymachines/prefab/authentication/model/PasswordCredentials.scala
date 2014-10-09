@@ -16,7 +16,7 @@ object HashFunctions {
 
 object PasswordCredentials extends ((String, String, String) => PasswordCredentials) {
 
-  def apply(login: String, password: String, hashFunction: String => Array[Byte]) = {
+  def apply(login: String, password: String, hashFunction: String => Array[Byte] = HashFunctions.sha256) = {
     val salt = 0.to(12).map(_ => Random.nextPrintableChar()).mkString
     val passwordHash = hashFunction(password + salt).toHexString
     new PasswordCredentials(login, salt, passwordHash)
@@ -28,7 +28,7 @@ case class PasswordCredentials(
   salt: String,
   passwordHash: String) {
 
-  def hasPassword(password: String, hashFunction: String => Array[Byte]) = {
+  def hasPassword(password: String, hashFunction: String => Array[Byte] = HashFunctions.sha256) = {
     val toCompareHash = hashFunction(password + salt).toHexString
     passwordHash.equalsIgnoreCase(toCompareHash)
   }

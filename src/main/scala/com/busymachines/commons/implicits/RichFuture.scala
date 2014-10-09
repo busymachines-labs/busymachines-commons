@@ -3,6 +3,9 @@ package com.busymachines.commons.implicits
 import scala.concurrent.{ExecutionContext, Await, Future}
 import scala.concurrent.duration._
 import scala.collection.generic.CanBuildFrom
+import scala.util.Try
+import scala.util.Failure
+import scala.concurrent.Promise
 
 class RichFutureType(future: Future.type) {
 
@@ -29,6 +32,15 @@ class RichFutureType(future: Future.type) {
 }
 
 class RichFuture[A](future: Future[A]) {
-  def await[A](duration: Duration) = Await.result(future, duration)
-  def await[A] = Await.result(future, 1.minute)
+  def await(duration: Duration) = Await.result(future, duration)
+  def await = Await.result(future, 1.minute)
+  
+  // Like flatMap, but also handles errors
+  def chainWith[B](pf: PartialFunction[Try[A], Future[B]])(implicit executor: ExecutionContext): Future[B] = {
+    val p = Promise[B]()
+    future.onComplete { result =>
+      pf(result).andThen { case result2 => p.complete(result2)} 
+    }
+    p.future
+  }
 } 
