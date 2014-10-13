@@ -346,8 +346,6 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     }
   }
 
-  def bulkUpdate(updates: Seq[T])
-
   def create(entity: T, refresh: Boolean, ttl: Option[Duration] = None): Future[T] =
     versioned.create(entity, refresh, ttl).map(_.entity)
 
