@@ -3,6 +3,7 @@ package com.busymachines.commons.elasticsearch
 import java.util.UUID
 
 import org.elasticsearch.action.bulk.{BulkItemResponse, BulkResponse}
+import org.elasticsearch.action.update.UpdateRequest
 
 import scala.collection.JavaConversions.{asScalaBuffer, asScalaSet}
 import scala.collection.mutable
@@ -13,7 +14,7 @@ import scala.util.{Try, Failure, Success}
 
 import org.elasticsearch.action.delete.{DeleteRequestBuilder, DeleteRequest}
 import org.elasticsearch.action.get.GetRequest
-import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.action.index.{IndexRequestBuilder, IndexRequest}
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.common.xcontent.XContentHelper
 import org.elasticsearch.index.engine.VersionConflictEngineException
@@ -235,10 +236,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       }
     }
 
-    /**
-     * @throws VersionConflictException
-     */
-    def update(entity: Versioned[T], refresh: Boolean): Future[Versioned[T]] = {
+    private def createUpdateRequest(entity: Versioned[T], refresh: Boolean): IndexRequest = {
       val newJson = mapping.jsonFormat.write(entity.entity)
 
       val id: String = getIdFromJson(newJson)
@@ -248,6 +246,14 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
         .id(id)
         .source(newJson.toString)
         .version(entity.version)
+      request
+    }
+
+    /**
+     * @throws VersionConflictException
+     */
+    def update(entity: Versioned[T], refresh: Boolean): Future[Versioned[T]] = {
+      val request: IndexRequest = createUpdateRequest(entity, refresh)
 
       // Call synchronously, useful for debugging: proper stack trace is reported. TODO make config flag.
       //      val response = client.execute(IndexAction.INSTANCE, request).get
@@ -273,6 +279,42 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
             //          index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
             response.getVersion
           }
+      }
+    }
+
+    def bulkCreate(toCreate: Seq[T], refreshAfterBulk: Boolean = false): Future[Seq[Try[Versioned[T]]]] = {
+      val bulkRequest = client.javaClient.prepareBulk()
+      toCreate.foreach { entity =>
+        val request = client.javaClient.prepareIndex(indexName, typeName).setSource(mapping.jsonFormat.write(entity).toString()).setRefresh(false)
+        bulkRequest.add(request)
+      }
+      bulkRequest.setRefresh(refreshAfterBulk)
+      org.scalastuff.esclient.ActionMagnet.bulkAction.execute(client.javaClient, bulkRequest.request()) map { bulkResponse: BulkResponse =>
+        processBulkResponse(bulkResponse) { response =>
+          if (response.isFailed) {
+            bulkResponseException(response)
+          } else {
+            Success(Versioned(response.getResponse, response.getVersion))
+          }
+        }
+      }
+    }
+
+    def bulkUpdate(toUpdate: Seq[Versioned[T]], refreshAfterBulk: Boolean = false): Future[Seq[Try[Versioned[T]]]] = {
+      val bulkRequest = client.javaClient.prepareBulk()
+      toUpdate.foreach { entity =>
+        val request = createUpdateRequest(entity, false)
+        bulkRequest.add(request)
+      }
+      bulkRequest.setRefresh(refreshAfterBulk)
+      org.scalastuff.esclient.ActionMagnet.bulkAction.execute(client.javaClient, bulkRequest.request()) map { bulkResponse: BulkResponse =>
+        processBulkResponse(bulkResponse) { response =>
+          if (response.isFailed) {
+            bulkResponseException(response)
+          } else {
+            Success(Versioned(response.getResponse, response.getVersion))
+          }
+        }
       }
     }
   }
@@ -318,18 +360,8 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       cause = None))
   }
 
-  def bulkCreate(toCreate: Seq[T]): Future[Seq[Try[T]]] = {
-    val bulkRequest = client.javaClient.prepareBulk()
-    toCreate.foreach { entity => bulkRequest.add(client.javaClient.prepareIndex(indexName, typeName).setSource(mapping.jsonFormat.write(entity).toString())) }
-    org.scalastuff.esclient.ActionMagnet.bulkAction.execute(client.javaClient, bulkRequest.request()) map { bulkResponse: BulkResponse =>
-      processBulkResponse(bulkResponse) { response =>
-        if (response.isFailed) {
-          bulkResponseException(response)
-        } else {
-          Success(response.getResponse)
-        }
-      }
-    }
+  def bulkCreate(toCreate: Seq[T], refreshAfterBulk: Boolean = false): Future[Seq[Try[T]]] = {
+    versioned.bulkCreate(toCreate, refreshAfterBulk).map(_.map(_.map(_.entity)))
   }
 
   def bulkDelete(idsToDelete: Seq[String]): Future[Seq[Try[Unit]]] = {
