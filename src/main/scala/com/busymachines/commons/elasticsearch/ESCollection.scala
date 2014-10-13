@@ -282,11 +282,11 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       }
     }
 
-    def bulkCreate(toCreate: Seq[T], refreshAfterBulk: Boolean = false): Future[Seq[Try[Versioned[T]]]] = {
+    def bulkCreate(toCreate: Seq[T], refreshAfterBulk: Boolean = false)(idOfEntity: T => String): Future[Seq[Try[Versioned[T]]]] = {
       val bulkRequest = client.javaClient.prepareBulk()
-      toCreate.foreach { entity =>
+      toCreate.foreach { entity: T =>
         val request = client.javaClient.prepareIndex(indexName, typeName).setSource(mapping.jsonFormat.write(entity).toString()).setRefresh(false)
-        bulkRequest.add(request)
+        bulkRequest.add(request.setId(idOfEntity(entity)))
       }
       bulkRequest.setRefresh(refreshAfterBulk)
       org.scalastuff.esclient.ActionMagnet.bulkAction.execute(client.javaClient, bulkRequest.request()) map { bulkResponse: BulkResponse =>
@@ -300,7 +300,8 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       }
     }
 
-    def bulkUpdate(toUpdate: Seq[Versioned[T]], refreshAfterBulk: Boolean = false): Future[Seq[Try[Versioned[T]]]] = {
+    //TODO: the fact that update extracts a
+    def bulkUpdate(toUpdate: Seq[Versioned[T]], refreshAfterBulk: Boolean = false)(idOfEntity: T => String): Future[Seq[Try[Versioned[T]]]] = {
       val bulkRequest = client.javaClient.prepareBulk()
       toUpdate.foreach { entity =>
         val request = createUpdateRequest(entity, false)
@@ -360,8 +361,8 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       cause = None))
   }
 
-  def bulkCreate(toCreate: Seq[T], refreshAfterBulk: Boolean = false): Future[Seq[Try[T]]] = {
-    versioned.bulkCreate(toCreate, refreshAfterBulk).map(_.map(_.map(_.entity)))
+  def bulkCreate(toCreate: Seq[T], refreshAfterBulk: Boolean = false)(idOfEntity: T => String): Future[Seq[Try[T]]] = {
+    versioned.bulkCreate(toCreate, refreshAfterBulk)(idOfEntity).map(_.map(_.map(_.entity)))
   }
 
   def bulkDelete(idsToDelete: Seq[String]): Future[Seq[Try[Unit]]] = {
