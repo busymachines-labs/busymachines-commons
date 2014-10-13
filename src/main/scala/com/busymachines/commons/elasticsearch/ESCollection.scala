@@ -2,13 +2,16 @@ package com.busymachines.commons.elasticsearch
 
 import java.util.UUID
 
+import org.elasticsearch.action.bulk.{BulkItemResponse, BulkResponse}
+
 import scala.collection.JavaConversions.{asScalaBuffer, asScalaSet}
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{Duration, FiniteDuration}
-import scala.util.Success
+import scala.util.{Try, Failure, Success}
 
-import org.elasticsearch.action.delete.DeleteRequest
+import org.elasticsearch.action.delete.{DeleteRequestBuilder, DeleteRequest}
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchType
@@ -151,6 +154,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
           throw new Exception("Expected ElasticSearch search criteria")
       }
     }
+
     def create(entity: T, refresh: Boolean, ttl: Option[Duration] = None): Future[Versioned[T]] = {
       val json = mapping.jsonFormat.write(entity)
       val id: String = getIdFromJson(json)
@@ -171,7 +175,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
         //        index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
       }
         .recover(convertException { e =>
-        logger.error(s"Create ${indexName}/${typeName}/${entity.toString} failed :\n${XContentHelper.convertToJson(request.source, true, true)}", e)
+        logger.error(s"Create ${indexName }/${typeName }/${entity.toString } failed :\n${XContentHelper.convertToJson(request.source, true, true) }", e)
         throw e
       })
     }
@@ -212,7 +216,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       RetryVersionConflictAsync(10) {
         retrieve(id).flatMap {
           case None => throw new IdNotFoundException(id.toString, typeName)
-          case Some(v @ Versioned(entity, version)) =>
+          case Some(v@Versioned(entity, version)) =>
             update(Versioned(modify(v), version), refresh)
         }
       }
@@ -222,7 +226,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
       RetryVersionConflictAsync(10) {
         retrieve(id).flatMap {
           case None => throw new IdNotFoundException(id.toString, typeName)
-          case Some(v @ Versioned(entity, version)) =>
+          case Some(v@Versioned(entity, version)) =>
             modify(v) match {
               case Some(Versioned(newEntity, newVersion)) => update(Versioned(newEntity, newVersion), refresh)
               case None => Future.successful(Versioned(entity, version))
@@ -254,7 +258,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
         //        index.eventBus.publish (ESRootDaoMutationEvent (eventName, id))
       }
         .recover(convertException { e =>
-        logger.trace(s"Create $indexName/$typeName/$entity failed :\n${XContentHelper.convertToJson(request.source, true, true)}", e)
+        logger.trace(s"Create $indexName/$typeName/$entity failed :\n${XContentHelper.convertToJson(request.source, true, true) }", e)
         throw e
       })
     }
@@ -297,11 +301,52 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
   def search(criteria: SearchCriteria[T], page: Page = Page.first, sort: SearchSort = defaultSort, facets: Seq[Facet] = Seq.empty, invalidDocument: (Throwable, JsValue, mutable.Buffer[Versioned[T]]) => Unit = logInvalidDocument): Future[SearchResult[T]] =
     versioned.search(criteria, page, sort, facets, invalidDocument).map(result => SearchResult(result.result.map(_.entity), result.totalCount, result.facets))
 
-  def bulk(list: Seq[T]): Unit = {
-    val bulkRequest = client.javaClient.prepareBulk()
-    list.foreach(o => bulkRequest.add(client.javaClient.prepareIndex(indexName, typeName).setSource(mapping.jsonFormat.write(o).toString)))
-    bulkRequest.execute()
+  private def processBulkResponse[A](bulkResponse: BulkResponse)(processResponseItem: BulkItemResponse => Try[A]): Seq[Try[A]] = {
+    val responseIterator = bulkResponse.iterator()
+    val result = ListBuffer[Try[A]]()
+    while (responseIterator.hasNext) {
+      result += processResponseItem(responseIterator.next())
+    }
+    result.toSeq
   }
+
+  private def bulkResponseException[A](response: BulkItemResponse): Try[A] = {
+    Try(throw new CommonException(
+      message = response.getFailureMessage,
+      _errorId = Some("BulkRequestAction"),
+      parameters = Map("id" -> response.getFailure.getId, "index" -> response.getFailure.getIndex, "type" -> response.getFailure.getType),
+      cause = None))
+  }
+
+  def bulkCreate(toCreate: Seq[T]): Future[Seq[Try[T]]] = {
+    val bulkRequest = client.javaClient.prepareBulk()
+    toCreate.foreach { entity => bulkRequest.add(client.javaClient.prepareIndex(indexName, typeName).setSource(mapping.jsonFormat.write(entity).toString())) }
+    org.scalastuff.esclient.ActionMagnet.bulkAction.execute(client.javaClient, bulkRequest.request()) map { bulkResponse: BulkResponse =>
+      processBulkResponse(bulkResponse) { response =>
+        if (response.isFailed) {
+          bulkResponseException(response)
+        } else {
+          Success(response.getResponse)
+        }
+      }
+    }
+  }
+
+  def bulkDelete(idsToDelete: Seq[String]): Future[Seq[Try[Unit]]] = {
+    val bulkRequest = client.javaClient.prepareBulk()
+    idsToDelete.foreach(id => bulkRequest.add(client.javaClient.prepareDelete().setId(id).request()))
+    org.scalastuff.esclient.ActionMagnet.bulkAction.execute(client.javaClient, bulkRequest.request()) map { bulkResponse: BulkResponse =>
+      processBulkResponse(bulkResponse) { response =>
+        if (response.isFailed) {
+          bulkResponseException(response)
+        } else {
+          Success({})
+        }
+      }
+    }
+  }
+
+  def bulkUpdate(updates: Seq[T])
 
   def create(entity: T, refresh: Boolean, ttl: Option[Duration] = None): Future[T] =
     versioned.create(entity, refresh, ttl).map(_.entity)
@@ -318,16 +363,16 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
   def modify(id: String, refresh: Boolean)(modify: T => T): Future[T] =
     versioned.modify(id, refresh)(v => modify(v.entity)).map(_.entity)
 
-  def modifyOptionally(id: String, refresh: Boolean)(modify: T => Option[T]): Future[T] = 
+  def modifyOptionally(id: String, refresh: Boolean)(modify: T => Option[T]): Future[T] =
     versioned.modifyOptionally(id, refresh)(v => modify(v.entity).map(Versioned(_, v.version))).map(_.entity)
 
   /**
    * @throws VersionConflictException
    */
-  def update(entity: Versioned[T], refresh: Boolean): Future[T] = 
+  def update(entity: Versioned[T], refresh: Boolean): Future[T] =
     versioned.update(entity, refresh).map(_.entity)
 
-  def delete(id: String, refresh: Boolean): Future[Unit] = 
+  def delete(id: String, refresh: Boolean): Future[Unit] =
     versioned.delete(id, refresh).map(_ => Unit)
 
   def reindexAll() = {
@@ -371,7 +416,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
 
   private def convertESFacetResponse(facets: Seq[Facet], response: org.elasticsearch.action.search.SearchResponse) =
     response.getFacets.facetsAsMap.entrySet.map { entry =>
-      val facet = facets.collectFirst { case x if x.name == entry.getKey => x }.getOrElse(throw new CommonException(message = s"The ES response contains facet ${entry.getKey} that were not requested", cause = None, parameters = Map.empty))
+      val facet = facets.collectFirst { case x if x.name == entry.getKey => x }.getOrElse(throw new CommonException(message = s"The ES response contains facet ${entry.getKey } that were not requested", cause = None, parameters = Map.empty))
       entry.getValue match {
         case histogramFacet: HistogramFacet =>
           facet.name -> histogramFacet.getEntries.map(histogramEntry =>
@@ -385,7 +430,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
         case termFacet: TermsFacet =>
           facet.name -> termFacet.getEntries.map(termEntry => TermFacetValue(termEntry.getTerm.string, termEntry.getCount)).toList
         case _ => {
-          val exc = new CommonException(message = s"Only script histogram facets are supported for now. Unknown facet:${entry.getValue()}", cause = None, parameters = Map.empty)
+          val exc = new CommonException(message = s"Only script histogram facets are supported for now. Unknown facet:${entry.getValue() }", cause = None, parameters = Map.empty)
           logger.error("Only ES facets supported for now. Retrieved: {}", exc)
           throw exc
         }
@@ -393,7 +438,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     }.toMap
 
   private def logInvalidDocument(t: Throwable, json: JsValue, result: mutable.Buffer[Versioned[T]]) =
-    logger.error(s"Fetched invalid $typeName: ${t.getMessage}: $json (document skipped)", t)
+    logger.error(s"Fetched invalid $typeName: ${t.getMessage }: $json (document skipped)", t)
 
   private def convertException(f: Throwable => Versioned[T]): PartialFunction[Throwable, Versioned[T]] = {
     case t: Throwable =>
