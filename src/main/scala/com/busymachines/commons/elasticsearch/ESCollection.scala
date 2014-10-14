@@ -4,6 +4,7 @@ import java.util.UUID
 
 import org.elasticsearch.action.bulk.{BulkItemResponse, BulkResponse}
 import org.elasticsearch.action.update.UpdateRequest
+import org.elasticsearch.search.fetch.source.FetchSourceContext
 
 import scala.collection.JavaConversions.{asScalaBuffer, asScalaSet}
 import scala.collection.mutable
@@ -13,7 +14,7 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.util.{Try, Failure, Success}
 
 import org.elasticsearch.action.delete.{DeleteRequestBuilder, DeleteRequest}
-import org.elasticsearch.action.get.GetRequest
+import org.elasticsearch.action.get.{MultiGetRequest, MultiGetRequestBuilder, GetRequest}
 import org.elasticsearch.action.index.{IndexRequestBuilder, IndexRequest}
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.common.xcontent.XContentHelper
@@ -28,6 +29,7 @@ import com.busymachines.commons.CommonException
 import com.busymachines.commons.dao._
 import com.busymachines.commons.logging.Logging
 import com.busymachines.commons.util.JsonParser
+import scala.collection.JavaConversions._
 
 import spray.json.{JsNumber, JsObject, JsString, JsValue}
 
@@ -376,6 +378,16 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
           Success({})
         }
       }
+    }
+  }
+
+  def exists(ids:Seq[String]):Future[Map[String,Boolean]] = {
+    val requestBuilder = new MultiGetRequestBuilder(client.javaClient)
+    val donteFetchSource = new FetchSourceContext(false)
+    for (id <- ids) requestBuilder.add(new MultiGetRequest.Item(this.indexName,this.typeName,id).fetchSourceContext(donteFetchSource))
+
+    org.scalastuff.esclient.ActionMagnet.multiGetAction.execute(client.javaClient,requestBuilder.request()) map { responses =>
+      responses.map(r=>r.getId -> r.getResponse.isExists).toMap
     }
   }
 
