@@ -383,8 +383,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
 
   def exists(ids:Seq[String]):Future[Map[String,Boolean]] = {
     val requestBuilder = new MultiGetRequestBuilder(client.javaClient)
-    val donteFetchSource = new FetchSourceContext(false)
-    for (id <- ids) requestBuilder.add(new MultiGetRequest.Item(this.indexName,this.typeName,id).fetchSourceContext(donteFetchSource))
+    for (id <- ids) requestBuilder.add(new MultiGetRequest.Item(this.indexName,this.typeName,id).fields("_id"))
 
     org.scalastuff.esclient.ActionMagnet.multiGetAction.execute(client.javaClient,requestBuilder.request()) map { responses =>
       responses.map(r=>r.getId -> r.getResponse.isExists).toMap
