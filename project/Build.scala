@@ -35,7 +35,7 @@ object BusyMachinesCommonsBuild extends Build {
   )
 
   def runSettings = Seq(
-    parallelExecution in Test:= false)
+    parallelExecution in Test := false)
 
   def eclipseSettings = Seq(
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
@@ -111,6 +111,11 @@ object BusyMachinesCommonsBuild extends Build {
           <id>paulsabou</id>
           <name>Paul Sabou</name>
           <url>https://github.com/paulsabou</url>
+        </developer>
+        <developer>
+          <id>lorandszakacs</id>
+          <name>Lorand Szakacs</name>
+          <url>https://github.com/lorandszakacs</url>
         </developer>
       </developers>,
     publishTo <<= version { (v: String) =>
