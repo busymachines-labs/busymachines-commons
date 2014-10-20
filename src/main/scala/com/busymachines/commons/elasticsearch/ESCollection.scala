@@ -40,11 +40,14 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
   def this(index: ESIndex, esType: ESType[T])(implicit ec: ExecutionContext) =
     this(index, esType.name, esType.mapping)
 
+  private val EsIDField: String = "_id"
+
   implicit val client = index.client
   val indexName = index.indexName
   val eventName = mapping.mappingName + "_" + indexName + "_" + typeName
   val all: SearchCriteria[T] = ESSearchCriteria.All[T]()
-  val defaultSort: SearchSort = ESSearchSort.asc("_id")
+
+  val defaultSort: SearchSort = ESSearchSort.asc(EsIDField)
 
   // Add mapping.
   index.onInitialize { () => index.addMapping(typeName, mapping) }
@@ -381,12 +384,12 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
     }
   }
 
-  def exists(ids:Seq[String]):Future[Map[String,Boolean]] = {
+  def exists(ids: Seq[String]): Future[Map[String, Boolean]] = {
     val requestBuilder = new MultiGetRequestBuilder(client.javaClient)
-    for (id <- ids) requestBuilder.add(new MultiGetRequest.Item(this.indexName,this.typeName,id).fields("_id"))
+    for (id <- ids) requestBuilder.add(new MultiGetRequest.Item(this.indexName, this.typeName, id).fields(EsIDField))
 
-    org.scalastuff.esclient.ActionMagnet.multiGetAction.execute(client.javaClient,requestBuilder.request()) map { responses =>
-      responses.map(r=>r.getId -> r.getResponse.isExists).toMap
+    org.scalastuff.esclient.ActionMagnet.multiGetAction.execute(client.javaClient, requestBuilder.request()) map { responses =>
+      responses.map(r => r.getId -> r.getResponse.isExists).toMap
     }
   }
 
@@ -498,7 +501,7 @@ class ESCollection[T](val index: ESIndex, val typeName: String, val mapping: ESM
   private def getIdFromJson(json: JsValue): String =
     json match {
       case JsObject(fields) =>
-        fields.get("_id") match {
+        fields.get(EsIDField) match {
           case Some(JsString(id)) => id.toString
           case Some(JsNumber(id)) => id.toString
           case _ => UUID.randomUUID.toString
