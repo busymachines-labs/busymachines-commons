@@ -59,4 +59,6 @@ trait CommonDomainJsonFormats {
   implicit val countryJsonFormat = enumFormat(Country)
 
   implicit val languageJsonFormat = enumFormat(Language)
+
+  implicit val timezoneJsonFormat = enumFormat(TimeZone)
 }
