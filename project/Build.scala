@@ -63,7 +63,7 @@ object BusyMachinesCommonsBuild extends Build {
     libraryDependencies += "joda-time" % "joda-time" % "2.3" withSources(),
     libraryDependencies += "org.joda" % "joda-convert" % "1.6" withSources(), // for class file error in joda-time
     libraryDependencies += "javax.mail" % "mail" % "1.4.5" withSources(),
-    libraryDependencies += "commons-codec" % "commons-codec" % "1.9", // just for base64, can be removed when we switch to java 1.8
+    libraryDependencies += "commons-codec" % "commons-codec" % "1.5", // just for base64, can be removed when we switch to java 1.8
     libraryDependencies += "com.netaporter.salad" %% "salad-metrics-core" % "0.2.7" withSources(),
     libraryDependencies <++= scalaBinaryVersion {
       case "2.11" => Seq(
