@@ -16,5 +16,6 @@ object TimeZone extends Enum[TimeZone] {
   val Europe_Bucharest = Value("Europe/Bucharest")
   val Europe_London = Value("Europe/London")
   val Europe_Paris = Value("Europe/Paris")
+  val UTC = Value("UTC")
 
 }
