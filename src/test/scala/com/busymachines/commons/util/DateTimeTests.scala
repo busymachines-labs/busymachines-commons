@@ -6,6 +6,7 @@ import org.joda.time.{DateTime, DateTimeZone, LocalDateTime}
 import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
+import com.busymachines.commons.Implicits._
 
 @RunWith(classOf[JUnitRunner])
 class DateTimeTests extends FlatSpec {
@@ -39,6 +40,14 @@ class DateTimeTests extends FlatSpec {
     val localDateTime = DateTime.parse("1971-12-11T00:00:00.000").toLocalDateTime
     assert(localDateTime === toLocalDateTime(date))
     assert(date === toDate(localDateTime))
+  }
+  
+  "Joda DateTimes objects " should "be correctly Compared and Sorted" in {
+    val d1 : DateTime = LocalDateTime.parse("1971-12-11T00:00").toDateTime(DateTimeZone.UTC)
+    val d2 : DateTime = LocalDateTime.parse("1973-12-11T00:00").toDateTime(DateTimeZone.UTC)
+    val d3 : DateTime = LocalDateTime.parse("1972-12-11T00:00").toDateTime(DateTimeZone.UTC)
+    val d4 : DateTime = LocalDateTime.parse("1974-12-11T00:00").toDateTime(DateTimeZone.UTC)
+    assert(List(d1, d2, d3, d4).sorted == List(d1,d3,d2,d4))
   }
   
   private def toDate(local: LocalDateTime): Date = 

@@ -12,6 +12,7 @@ import spray.json.deserializationError
 import org.joda.time.ReadablePartial
 import spray.json.RootJsonFormat
 import org.joda.time.JodaAccessor
+import org.joda.time.base.BaseDateTime
 
 class RichLocalDateTime(val localDateTime: LocalDateTime) extends AnyVal {
   def localMillis: Long = JodaAccessor.localMillis(localDateTime)
@@ -77,6 +78,11 @@ trait JodaImplicits { this: CommonJsonFormats =>
     }
   }
   implicit def jodaOrdering[A <: ReadablePartial] = new Ordering[A] {
+    def compare(x: A, y: A): Int =
+      x.compareTo(y)
+  }
+  
+  implicit def jodaDateTimeOrdering[A <: BaseDateTime] = new Ordering[A] {
     def compare(x: A, y: A): Int =
       x.compareTo(y)
   }
