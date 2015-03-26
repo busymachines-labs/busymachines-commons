@@ -9,7 +9,7 @@ object BusyMachinesCommonsBuild extends Build {
   lazy val project = Project(id = "busymachines-commons", base = file("."), settings = Seq(
     sbtPlugin := false,
     organization := "com.busymachines",
-    version := "0.6.1-SNAPSHOT"
+    version := "0.6.23-SNAPSHOT"
   ) ++
     Defaults.defaultSettings ++
     compilerSettings ++

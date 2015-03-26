@@ -3,7 +3,7 @@ package com.busymachines.commons.logging
 import java.util
 
 import com.busymachines.commons.CommonException
-import com.busymachines.commons.logging.domain.{CodeLocationInfo, CommonExceptionInfo, DefaultExceptionInfo, LogMessage}
+import com.busymachines.commons.logging.domain._
 import org.apache.logging.log4j.core.LogEvent
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginFactory}
 import org.apache.logging.log4j.core.layout.AbstractLayout
@@ -47,7 +47,9 @@ class ESLayout(locationInfo: Boolean, properties: Boolean, complete: Boolean, wi
       level = Some(event.getLevel().toString()),
       thread = Some(event.getThreadName()),
       message = Some(getLogMessage(event)),
-      fields = getLogParams(event),
+      extraData1 = getLogParams(event).lift(0).flatMap(_.value),
+      extraData2 = getLogParams(event).lift(1).flatMap(_.value),
+      extraData = getLogParams(event),
       tag = getLogTag(event)
     )
 
@@ -64,12 +66,12 @@ class ESLayout(locationInfo: Boolean, properties: Boolean, complete: Boolean, wi
   }
 
   import scala.collection.JavaConversions._
-  def getLogParams(event: LogEvent):Map[String,String] = event.getMessage match {
-    case e: CommonsLoggerMessage => e.parameters.toMap[String,String]
+  def getLogParams(event: LogEvent):List[HarnessData] = event.getMessage match {
+    case e: CommonsLoggerMessage => e.parameters.toMap.map{case (k,v) => HarnessData(Some(k),Some(v))}.toList
     case e: MapMessage => {
-      e.getData.toMap
+      e.getData.toMap.map{case (k,v) => HarnessData(Some(k),Some(v))}.toList
     }
-    case _ => Map.empty[String,String]
+    case _ => List.empty
   }
 
   def createExceptionInfo(event: LogEvent): (Option[DefaultExceptionInfo], Option[CommonExceptionInfo]) = {

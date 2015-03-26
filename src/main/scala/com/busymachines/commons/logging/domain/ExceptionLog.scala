@@ -68,12 +68,18 @@ case class CommonExceptionInfo(`type`: Option[String] = Some("CommonException"),
     formatValue("stackTrace", stackTrace))
 }
 
+case class HarnessData(property: Option[String], value: Option[String]) extends Serializable with JsonFormat{
+  def getAttr  = List(formatValue("property", property), formatValue("value", value))
+}
+
 case class LogMessage(level: Option[String],
                       timestamp: Option[DateTime]=None,
                       message: Option[String],
                       tag: Option[String],
                       thread: Option[String],
-                      fields: Map[String,String],
+                      extraData1: Option[String],
+                      extraData2: Option[String],
+                      extraData: List[HarnessData],
                       codeLocationInfo: Option[CodeLocationInfo] = None,
                       defaultExceptionInfo: Option[DefaultExceptionInfo] = None,
                       commonExceptionInfo: Option[CommonExceptionInfo] = None) extends Serializable with JsonFormat {
