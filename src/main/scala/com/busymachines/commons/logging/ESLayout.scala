@@ -8,9 +8,8 @@ import org.apache.logging.log4j.core.LogEvent
 import org.apache.logging.log4j.core.config.plugins.{Plugin, PluginAttribute, PluginFactory}
 import org.apache.logging.log4j.core.layout.AbstractLayout
 import org.apache.logging.log4j.message.MapMessage
-import org.elasticsearch.common.joda.time.format.ISODateTimeFormat
 import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.{ISODateTimeFormat}
 
 /**
  * Created by Alexandru Matei on 15.08.2014.
@@ -47,8 +46,11 @@ class ESLayout(locationInfo: Boolean, properties: Boolean, complete: Boolean, wi
       level = Some(event.getLevel().toString()),
       thread = Some(event.getThreadName()),
       message = Some(getLogMessage(event)),
-      extraData1 = getLogParams(event).lift(0).flatMap(_.value),
-      extraData2 = getLogParams(event).lift(1).flatMap(_.value),
+      serialNumber = getLogParams(event).lift(0).flatMap(_.value),
+      readingId = getLogParams(event).lift(1).flatMap(_.value),
+      rawData= getLogParams(event).lift(2).flatMap(_.value),
+      readingDateTime = getLogParams(event).lift(3).flatMap(_.value).map(r=>
+        ISODateTimeFormat.basicDateTime().parseDateTime(r)),
       extraData = getLogParams(event),
       tag = getLogTag(event)
     )

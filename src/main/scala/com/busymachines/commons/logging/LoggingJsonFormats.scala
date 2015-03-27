@@ -10,5 +10,5 @@ trait LoggingJsonFormats {
 
   implicit val harnessDataFormat = format2(HarnessData)
   implicit val commonExceptionFormat = format6(CommonExceptionInfo)
-  implicit val logMessageFormat = format11(LogMessage)
+  implicit val logMessageFormat = format13(LogMessage)
 }

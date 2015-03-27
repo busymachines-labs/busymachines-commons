@@ -13,9 +13,10 @@ object LogMessageESMappings extends ESMapping[LogMessage] {
   val tag = "tag" :: String
   val thread = "thread" :: String
   //Hack to overcome Kibana's lack of nested queries
-  //First 2 parameters that get logged are saved also in extraData1 and extraData2
-  val extraData1 = "extraData1" :: String
-  val extraData2 = "extraData2" :: String
+  val serialNumber = "serialNumber" :: String
+  val readingID = "readingId" :: String
+  val rawReading = "rawReading" :: String
+  val readingDateTime = "readingDateTime" :: Date
   val extraData = "extraData" :: Nested(HarnessDataMapping)
   val codeLocationInfo = "codeLocationInfo" :: Nested(CodeLocationInfoESMappings)
   val defaultExceptionInfo = "defaultExceptionInfo" :: Nested(DefaultExceptionInfoESMappings)
