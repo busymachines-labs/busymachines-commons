@@ -8,15 +8,15 @@ import com.busymachines.commons.Implicits._
 object InstallOnUbuntuCommand {
   import com.busymachines.commons.installer.InstallCommand._
 
-  def install(name: String, description: String, version: String, user: Option[String], vmArgs: String, app: App, args: String) {
-    try install2(name, description, version, user, vmArgs, app, args)
+  def install(name: String, description: String, version: String, user: Option[String], vmArgs: String, app: App, args: String, appendToLog: Boolean = false) {
+    try install2(name, description, version, user, vmArgs, app, args, appendToLog)
     catch { 
       case e: Exception =>
         println("Error: " + e.getMessage)
       }
     }
   
-  def install2(name: String, description: String, version: String, userName: Option[String], vmArgs: String, app: App, args: String) {
+  def install2(name: String, description: String, version: String, userName: Option[String], vmArgs: String, app: App, args: String, appendToLog: Boolean = false) {
     println(s"Installing $name")
     
     // check user principal
@@ -58,7 +58,7 @@ java $vmArgs -Dconfig.file=/etc/$name.conf -Dlog4j.configurationFile=/etc/$name.
 
         val command = s"java $vmArgs -Dconfig.file=/etc/$name.conf -Dlog4j.configurationFile=/etc/$name.d/log4j2.xml -cp $jarFileNames $appClassName $args"
 
-        val initScriptContent = mkInitScript(name, description, command, "", userName.getOrElse("root"))
+        val initScriptContent = mkInitScript(name, description, command, "", userName.getOrElse("root"), appendToLog)
         initScriptContent.copyTo(initScript)
         setPermissions(initScript, OWNER_EXECUTE, OWNER_READ, OWNER_WRITE, GROUP_EXECUTE, GROUP_READ, OTHERS_EXECUTE, OTHERS_READ)
         println("Created " + initScript)
@@ -82,14 +82,15 @@ java $vmArgs -Dconfig.file=/etc/$name.conf -Dlog4j.configurationFile=/etc/$name.
     setOwner(logFile, user)
   }
   
-  def mkInitScript(name: String, description: String, command: String, args: String, user: String) =
+  def mkInitScript(name: String, description: String, command: String, args: String, user: String, appendToLog: Boolean = false) =
     initScriptTemplate.
       replace("<GEN_MARKER>", genmarker).
       replaceAll("<NAME>", name).
       replaceAll("<DESCRIPTION>", description).
       replaceAll("<COMMAND>", command).
       replaceAll("<USER>", user).
-      replace("<ARGS>", args)
+      replace("<ARGS>", args).
+      replace("<WRITE_OR_APPEND_TO_LOG_OPERATOR>", if(appendToLog) ">>" else ">")
 
 
   val initScriptTemplate = """#!/bin/bash
@@ -115,7 +116,7 @@ start() {
     return 1
   fi
   echo 'Starting <NAME>...' >&2
-  local CMD="$SCRIPT > \"$LOGFILE\" & echo \$!"
+  local CMD="$SCRIPT <WRITE_OR_APPEND_TO_LOG_OPERATOR> \"$LOGFILE\" & echo \$!"
   su -c "$CMD" $RUNAS > "$PIDFILE"
   echo 'Service started' >&2
 }

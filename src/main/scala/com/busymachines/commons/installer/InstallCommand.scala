@@ -15,12 +15,12 @@ object InstallCommand {
   
   val genmarker = "### This file has been generated ###"
 
-  def install(name: String, description: String, version: String, user: Option[String], vmArgs: String, app: App, args: String) = {
+  def install(name: String, description: String, version: String, user: Option[String], vmArgs: String, app: App, args: String, appendToLog: Boolean = false) = {
     if (new File("/etc/init.d").isDirectory) {
-      InstallOnUbuntuCommand.install(name, description, version, user, vmArgs, app, args)
+      InstallOnUbuntuCommand.install(name, description, version, user, vmArgs, app, args, appendToLog)
     }
     else if (new File("/Library/LaunchDaemons").isDirectory) {
-      InstallOnUbuntuCommand.install(name, description, version, user, vmArgs, app, args)
+      InstallOnUbuntuCommand.install(name, description, version, user, vmArgs, app, args, appendToLog)
 //      InstallOnOsxCommand.install(name, description, user)
     }
     else {
