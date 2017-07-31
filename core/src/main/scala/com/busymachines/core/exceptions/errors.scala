@@ -1,7 +1,7 @@
 package com.busymachines.core.exceptions
 
 /**
-  * ``THERE'S NOTHING WRONG WITH ERRORS!``
+  * ``THERE'S EVERYTHING WRONG WITH ERRORS!``
   *
   * The more meaningful design decisions are the ones made in failures.scala
   * file detailing the definitions of various [[com.busymachines.core.exceptions.FailureMessage]]
