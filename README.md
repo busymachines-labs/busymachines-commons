@@ -4,6 +4,13 @@ Light-weight, modular, libraries for varying technology stacks, built _primarily
 
 ## Quickstart
 
+Current version is `0.1.0-SNAPSHOT`.
+
+Currently there is no CI that automatically publishes versions, so you'll have to clone the repo, and do a `+ publishLocal` from the `sbt` repl for each module(`core`). This will be fixed ASAP.
+
+Then the available modules are:
+* `"com.busymachines" %% "busymachines-commons-core" % "0.1.0-SNAPSHOT"`  
+
 ## Library Structure
 
 The idea behind these sets of libraries is to help jumpstart backend RESTful api application servers with varying technology stacks. That's why you will have to pick and choose the modules suited for your specific stack.
