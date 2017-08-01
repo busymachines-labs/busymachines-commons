@@ -1,6 +1,6 @@
 # busymachines-commons-core
 
-This module is vanilla scala _*only*_, cross-compiled against versions `2.11.11`, `2.12.3`, and `2.13.0-M2`.
+This module is vanilla scala _*only*_, cross-compiled against versions `2.11.11`, `2.12.3`.
 
 Here you find very basic buildings blocks for structuring your exceptions in meaningful ways, and very basic types. Generally, we are very conservative in what we put here, and this core will become stable really fast.
 
