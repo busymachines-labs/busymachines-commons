@@ -1,6 +1,6 @@
-package com.busymachines.core.exceptions
+package busymachines.core.exceptions
 
-import com.busymachines.core.exceptions.FailureMessage.Parameters
+import busymachines.core.exceptions.FailureMessage.Parameters
 import org.scalatest.FlatSpec
 
 /**

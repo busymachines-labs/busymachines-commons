@@ -1,4 +1,4 @@
-package com.busymachines.core.exceptions
+package busymachines.core.exceptions
 
 /**
   * ``THERE'S NOTHING WRONG WITH FAILURE!``

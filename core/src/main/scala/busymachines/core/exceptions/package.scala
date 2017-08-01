@@ -1,6 +1,6 @@
-package com.busymachines.core
+package busymachines.core
 
-import com.busymachines.core.exceptions.FailureMessage.StringOrSeqString
+import busymachines.core.exceptions.FailureMessage.StringOrSeqString
 
 import scala.language.implicitConversions
 

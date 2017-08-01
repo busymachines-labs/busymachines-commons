@@ -1,10 +1,10 @@
-package com.busymachines.core.exceptions
+package busymachines.core.exceptions
 
 /**
   * ``THERE'S EVERYTHING WRONG WITH ERRORS!``
   *
   * The more meaningful design decisions are the ones made in failures.scala
-  * file detailing the definitions of various [[com.busymachines.core.exceptions.FailureMessage]]
+  * file detailing the definitions of various [[busymachines.core.exceptions.FailureMessage]]
   *
   * Since the types here are a minority, the design here emulates the one
   * from the other more commonly used file.
