@@ -100,9 +100,9 @@ object FailureMessage {
     */
   sealed trait StringOrSeqString
 
-  case class StringWrapper(s: String) extends StringOrSeqString
+  case class StringWrapper private[exceptions](s: String) extends StringOrSeqString
 
-  case class SeqStringWrapper(ses: Seq[String]) extends StringOrSeqString
+  case class SeqStringWrapper private[exceptions](ses: Seq[String]) extends StringOrSeqString
 
   type Parameters = Map[String, StringOrSeqString]
 }
