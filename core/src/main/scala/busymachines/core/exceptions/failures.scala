@@ -157,15 +157,30 @@ object SemanticFailures {
   /**
     * Meaning:
     *
-    * "you cannot find something; it may or may not exist"
+    * "you cannot find something; it may or may not exist, and I'm not going
+    * to tell you anything else"
     */
   trait NotFound
 
   private[exceptions] case object NotFoundID extends FailureID {
-    override def name: String = "000"
+    override def name: String = "0"
   }
 
   private[exceptions] val `Not found` = "Not found"
+
+  /**
+    * Meaning:
+    *
+    * "something is wrong in the way you authorized, you can try again slightly
+    * differently"
+    */
+  trait Unauthorized
+
+  private[exceptions] case object UnauthorizedID extends FailureID {
+    override def name: String = "1"
+  }
+
+  private[exceptions] val `Unauthorized` = "Unauthorized"
 
   /**
     * Meaning:
@@ -176,7 +191,7 @@ object SemanticFailures {
   trait Forbidden
 
   private[exceptions] case object ForbiddenID extends FailureID {
-    override def name: String = "100"
+    override def name: String = "2"
   }
 
   private[exceptions] val `Forbidden` = "Forbidden"
@@ -189,7 +204,7 @@ object SemanticFailures {
   trait Denied
 
   private[exceptions] case object DeniedID extends FailureID {
-    override def name: String = "200"
+    override def name: String = "3"
   }
 
   private[exceptions] val `Denied` = "Denied"
@@ -209,7 +224,7 @@ object SemanticFailures {
   trait InvalidInput
 
   private[exceptions] case object InvalidInputID extends FailureID {
-    override def name: String = "300"
+    override def name: String = "4"
   }
 
   private[exceptions] val `Invalid Input` = "Invalid input"
@@ -223,7 +238,7 @@ object SemanticFailures {
   trait Conflict
 
   private[exceptions] case object ConflictID extends FailureID {
-    override def name: String = "400"
+    override def name: String = "5"
   }
 
   private[exceptions] val `Conflict` = "Conflict"
@@ -298,6 +313,75 @@ object NotFoundFailures extends NotFoundFailures(SemanticFailures.`Not found`, S
     new ReifiedNotFoundFailures(SemanticFailures.`Not found`, msgs.map(this.apply))
 }
 
+
+//=============================================================================
+//=============================================================================
+//=============================================================================
+
+/**
+  * See scaladoc at top of file for general picture.
+  *
+  * See [[SemanticFailures.Unauthorized]] for intended use.
+  */
+abstract class UnauthorizedFailure(
+  message: String,
+  cause: Option[Throwable] = None
+) extends Failure(message, cause) with SemanticFailures.Unauthorized
+
+object UnauthorizedFailure extends NotFoundFailure(SemanticFailures.`Unauthorized`, None) {
+
+  override def id: FailureID = SemanticFailures.UnauthorizedID
+
+  private final class ReifiedUnauthorizedFailure(
+    message: String,
+    cause: Option[Throwable] = None
+  ) extends UnauthorizedFailure(message, cause) {
+    override def id: FailureID = SemanticFailures.UnauthorizedID
+  }
+
+  def apply(msg: String): UnauthorizedFailure =
+    new ReifiedUnauthorizedFailure(msg)
+
+  def apply(msg: String, cause: Throwable): UnauthorizedFailure =
+    new ReifiedUnauthorizedFailure(msg, Some(cause))
+
+  def apply(cause: Throwable): UnauthorizedFailure =
+    new ReifiedUnauthorizedFailure(cause.getMessage, Some(cause))
+}
+
+/**
+  * Plural counterpart of [[UnauthorizedFailure]]
+  *
+  * See scaladoc at top of file for general picture.
+  *
+  * See [[SemanticFailures.Unauthorized]] for intended use.
+  */
+abstract class UnauthorizedFailures(
+  message: String,
+  messages: Seq[FailureMessage]
+) extends Failures(message, messages) with SemanticFailures.Unauthorized
+
+object UnauthorizedFailures extends NotFoundFailures(SemanticFailures.`Unauthorized`, Seq.empty) {
+
+  override def id: FailureID = SemanticFailures.UnauthorizedID
+
+  private final class ReifiedUnauthorizedFailures(
+    message: String,
+    messages: Seq[FailureMessage]
+  ) extends UnauthorizedFailures(message, messages) {
+    override def id: FailureID = SemanticFailures.UnauthorizedID
+
+    def apply(msg: String): UnauthorizedFailures =
+      new ReifiedUnauthorizedFailures(msg, Seq.empty)
+
+    def apply(msg: String, messages: Seq[FailureMessage]): UnauthorizedFailures =
+      new ReifiedUnauthorizedFailures(msg, messages)
+
+    def apply(msgs: Seq[String]): UnauthorizedFailures =
+      new ReifiedUnauthorizedFailures(SemanticFailures.`Unauthorized`, msgs.map(this.apply))
+  }
+
+}
 
 //=============================================================================
 //=============================================================================
