@@ -37,12 +37,7 @@ Currently, if you want to contribute use the `fork+pull request` model, and Busy
 
 This used to be the resting place of the `busymachines-commons` library that we used internally for various projects, it reached version `0.6.5`, but it fell into disrepair. If you require that library, by any chance, then check-out the `zz_deprecated/release-0.6.5` branch, and good luck from there. That bit will never be maintained again. And what you find resembles what was only by accident.
 
-People who have created this history of 935 commits are:
-*
-
-### Past Contributors
-
-People who have contributed to the new version are (listed in order of commits):
+People who have created this history of 935 commits are (listed in order of commits):
 * @rditerwich
 * @paulsabou
 * @mateialexandru
@@ -59,3 +54,7 @@ You can use github API to get a list of contributors from a public project. At t
 ```
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://api.github.com/repos/busymachines/busymachines-commons/contributors  > contributors.json
 ```
+### Contributors
+
+People who have contributed to the new version are:
+* @lorandszakacs

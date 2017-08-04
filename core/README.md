@@ -7,10 +7,11 @@ Here you find very basic buildings blocks for structuring your exceptions in mea
 ## Failures (exceptions) and Errors
 
 This library provides a `DSL` (although it's a bit of a stretch to call it that) to define, and instantiate semantically rich failures.
-[Look at the scala doc in failures.scala](src/main/scala/com/busymachines/core/exceptions/failures.scala) for more information.
-Essentially we have 5 types of failures (with a plural counterpart to each):
+Look at the scaladoc in [failures.scala](src/main/scala/com/busymachines/core/exceptions/failures.scala) for more information.
+Essentially we have 6 types of failures (with a plural counterpart to each):
 
 * `NotFoundFailure`
+* `UnauthorizedFailure`
 * `ForbiddenFailure`
 * `DeniedFailure`
 * `InvalidInputFailure`
