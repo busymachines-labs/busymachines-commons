@@ -1,6 +1,13 @@
 # busymachines-commons-core
 
+## artifacts
+
 This module is vanilla scala _*only*_, cross-compiled against versions `2.11.11`, `2.12.3`.
+
+The full module id is:
+`"com.busymachines" %% "busymachines-commons-core" % "0.1.0"`
+
+## Description
 
 Here you find very basic buildings blocks for structuring your exceptions in meaningful ways, and very basic types. Generally, we are very conservative in what we put here, and this core will become stable really fast.
 
@@ -24,7 +31,7 @@ Which can be used in two differing styles.
 ```scala
 val option: Option[String] = ??? //...
 option.getOrElse(throw NotFoundFailure)
-option.getOrElse(throw NotFoundFailure("this specific option, instead of generic"))
+option.getOrElse(throw NotFoundFailure("this specific message, instead of generic"))
 
 ```
 
