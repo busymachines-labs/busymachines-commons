@@ -4,14 +4,12 @@ Light-weight, modular, libraries for varying technology stacks, built _primarily
 
 ## Quickstart
 
-Current version is `0.1.0-SNAPSHOT`.
-
-*_Currently there is no CI that automatically publishes versions, so you'll have to clone the repo, and do a `+ publishLocal` from the `sbt` repl for each module(`core`). This will be fixed ASAP._*
+Current version is `0.1.0`. All modules share this same version.  
 
 These modules are are cross-compiled for Scala versions: `2.12.3` and `2.11.11`. We try our best to keep them up to date.
 
 Modules:
-* `"com.busymachines" %% "busymachines-commons-core" % "0.1.0-SNAPSHOT"` [README.md](/core)
+* `"com.busymachines" %% "busymachines-commons-core" % "0.1.0"` [README.md](/core)
 
 ## Library Structure
 
@@ -19,10 +17,10 @@ The idea behind these sets of libraries is to help jumpstart backend RESTful api
 
 Basically, as long as modules reside in the same repository they will be versioned with the same number, and released at the same time to avoid confusion. The moment we realize that a module has to take a life of its own, it will be moved to a separate module and versioned independently.
 
-* [core](/core) `0.1.0-SNAPSHOT`
+* [core](/core) `0.1.0`
 
 ### Current version
-The latest version is `N/A`. Will keep you up to date.
+The latest version is `0.1.0`. All modules share this same version. They might start diverging at some time in the future.
 
 ## Developer's Guide
 
@@ -35,6 +33,11 @@ The build is fairly straightforward. The root folder contains a phantom build fr
 ## Contributing
 
 Currently, if you want to contribute use the `fork+pull request` model, and Busy Machines team members will have a look at your PR asap. Currently, the active maintainers of this library are:
+* @lorandszakacs
+
+### Contributors
+
+People who have contributed to the new version are:
 * @lorandszakacs
 
 ### History
@@ -58,7 +61,3 @@ You can use github API to get a list of contributors from a public project. At t
 ```
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://api.github.com/repos/busymachines/busymachines-commons/contributors  > contributors.json
 ```
-### Contributors
-
-People who have contributed to the new version are:
-* @lorandszakacs
