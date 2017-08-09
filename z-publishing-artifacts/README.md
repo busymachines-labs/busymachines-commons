@@ -12,8 +12,8 @@ Note that for this to work you need to have [PGP installed](https://gpgtools.org
 Loads the [sbt-pgp](https://github.com/sbt/sbt-pgp) as a global plugin for you machine, and [pgp.sbt](pgp.sbt) contains the paths to your PGP keys, and—optionally—the path to the `gpg` command on your system if it's not available in your global `$PATH` variable`:
 
 ```scala
-com.typesafe.sbt.pgp.PgpKeys.pgpSecretRing := file("~/.gnupgp/secring.asc")
-com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupgp/pubring.asc")
+com.typesafe.sbt.pgp.PgpKeys.pgpSecretRing := file("~/.gnupg/secring.gpg")
+com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupg/pubring.gpg")
 // com.typesafe.sbt.pgp.PgpKeys.gpgCommand := "/path/to/gpg"
 ```
 
