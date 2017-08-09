@@ -3,9 +3,39 @@ import Keys._
 
 object Dependencies {
 
-  lazy val commonsVersion = "0.1.0"
+  lazy val commonsVersion = "0.1.1"
 
-  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.1" withSources()
-
+  //============================================================================================
+  //=================================== http://busymachines.com/ ===============================
+  //========================================  busymachines =====================================
+  //============================================================================================
   lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % commonsVersion withSources()
+
+  lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % commonsVersion withSources()
+
+  //============================================================================================
+  //================================= http://typelevel.org/scala/ ==============================
+  //========================================  typelevel ========================================
+  //============================================================================================
+  lazy val catsVersion = "1.0.0-MF"
+  lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
+  lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % catsVersion
+
+  lazy val circeVersion: String = "0.8.0"
+
+  lazy val circeCore: ModuleID = "io.circe" %% "circe-core" % circeVersion
+  lazy val circeGeneric: ModuleID = "io.circe" %% "circe-core" % circeVersion
+  lazy val circeParser: ModuleID = "io.circe" %% "circe-core" % circeVersion
+
+  lazy val circe: Seq[ModuleID] = Seq(
+    circeCore,
+    circeGeneric,
+    circeParser
+  )
+
+  //============================================================================================
+  //=========================================  testing =========================================
+  //============================================================================================
+  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.1"
+
 }
