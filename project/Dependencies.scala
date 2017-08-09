@@ -17,7 +17,7 @@ object Dependencies {
   //================================= http://typelevel.org/scala/ ==============================
   //========================================  typelevel ========================================
   //============================================================================================
-  lazy val catsVersion = "1.0.0-MF"
+  lazy val catsVersion = "0.9.0"
   lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
   lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % catsVersion
 

@@ -28,7 +28,8 @@ lazy val root = Project(
   base = file("."))
   .settings(publishArtifact in ThisProject := false)
   .aggregate(
-    core
+    core,
+    json
   )
 
 lazy val core = project
@@ -36,4 +37,20 @@ lazy val core = project
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
     libraryDependencies += Dependencies.scalaTest % Test withSources()
+  )
+
+lazy val json = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      Dependencies.shapeless withSources(),
+      Dependencies.scalaTest % Test withSources()
+    ) ++ Dependencies.circe.map(c => c withSources())
+  )
+  .dependsOn(
+    core
+  )
+  .aggregate(
+    core
   )
