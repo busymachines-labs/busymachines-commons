@@ -40,10 +40,14 @@ You ought to follow the instructions here to create your PGP file:
 
 ## Publishing
 
-Full workflow to [publish to sonatype](http://www.scala-sbt.org/release/docs/Using-Sonatype.html#Using+Sonatype) can be found on the sbt website, and you really need to read it all.
+Full workflow to [publish to sonatype](http://www.scala-sbt.org/release/docs/Using-Sonatype.html#Using+Sonatype) can be found on the sbt website, and you really need to read it all. _DO NOT FORGET_ to distribute your PGP keys to the keyserver pool by running the sbt task from `PGP Tips'n'tricks` section from the aforementione guide.
 
-And then you run the commands outlined on the [sbt-sonatype](https://github.com/xerial/sbt-sonatype#publishing-your-artifact) page. Copy pasted from there for our convenience:
--------
+### Open staging profile
+
+Outlined here on the [sbt-sonatype](https://github.com/xerial/sbt-sonatype/blob/master/workflow.md) plugin page.
+
+### Then Run the commands outlined on the [sbt-sonatype](https://github.com/xerial/sbt-sonatype#publishing-your-artifact) page. Copy pasted from there for our convenience:
+
 The general steps for publishing your artifact to the Central Repository are as follows:
 
  * `publishSigned` to deploy your artifact to staging repository at Sonatype.
@@ -55,7 +59,7 @@ The general steps for publishing your artifact to the Central Repository are as 
 
 Note: If your project version has "SNAPSHOT" suffix, your project will be published to the [snapshot repository](http://oss.sonatype.org/content/repositories/snapshots) of Sonatype, and you cannot use `sonatypeRelease` command.
 
-### Command Line Usage
+#### Command Line Usage
 
 Publish a GPG-signed artifact to Sonatype:
 ```

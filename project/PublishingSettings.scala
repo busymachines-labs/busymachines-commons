@@ -37,12 +37,13 @@ object PublishingSettings {
 
     pomIncludeRepository := { _ => false },
 
-    publishTo := Some(
+    publishTo := {
+      val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value)
-        Opts.resolver.sonatypeSnapshots
+        Some("snapshots" at nexus + "content/repositories/snapshots")
       else
-        Opts.resolver.sonatypeStaging
-    ),
+        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    },
 
     publishArtifact in Test := false,
 
@@ -50,8 +51,8 @@ object PublishingSettings {
 
     scmInfo := Some(
       ScmInfo(
-        url("https://github.com/(account)/(project)"),
-        "scm:git@github.com:(account)/(project).git"
+        url("https://github.com/busymachines/busymachines-commons"),
+        "scm:git@github.com:busymachines/busymachines-commons.git"
       )
     ),
     developers := List(
