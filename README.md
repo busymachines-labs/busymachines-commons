@@ -26,7 +26,11 @@ The latest version is `N/A`. Will keep you up to date.
 
 ## Developer's Guide
 
-This section will have to be expanded more once there are more projects living here.
+If you are responsible for publishing this library then you _have_ to follow instructions listed in [z-publishing-artifacts/README.md](z-publishing-artifacts/README.md), otherwise you can simply ignore that folder.
+
+### build structure
+The build is fairly straightforward. The root folder contains a phantom build from which all modules are configured, and an essentially empty project "busymachines-commons" that is never published, but one that is extremely useful for importing into your IDEs. Most top level folders `X` correspond to the specific `busymachines-commons-X` library. All dependencies are spelled out in the `./build.sbt` file
+
 
 ## Contributing
 
