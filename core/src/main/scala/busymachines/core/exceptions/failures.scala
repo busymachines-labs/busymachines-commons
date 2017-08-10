@@ -30,6 +30,7 @@ package busymachines.core.exceptions
   * There are the following semantically meaningful exceptions (with their plural counterparts elided)
   * that you ought to be using:
   * - [[NotFoundFailure]]     -  [[SemanticFailures.NotFound]]
+  * - [[UnauthorizedFailure]] -  [[SemanticFailures.Unauthorized]]
   * - [[ForbiddenFailure]]    -  [[SemanticFailures.Forbidden]]
   * - [[DeniedFailure]]       -  [[SemanticFailures.Denied]]
   * - [[InvalidInputFailure]] -  [[SemanticFailures.InvalidInput]]
