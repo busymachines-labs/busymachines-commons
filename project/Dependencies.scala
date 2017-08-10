@@ -1,14 +1,13 @@
 import sbt._
-import Keys._
 
 object Dependencies {
-
-  lazy val commonsVersion = "0.2.0-SNAPSHOT"
 
   //============================================================================================
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
+  lazy val commonsVersion: String = "0.2.0-SNAPSHOT"
+
   lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % commonsVersion withSources()
 
   lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % commonsVersion withSources()
@@ -17,7 +16,8 @@ object Dependencies {
   //================================= http://typelevel.org/scala/ ==============================
   //========================================  typelevel ========================================
   //============================================================================================
-  lazy val catsVersion = "0.9.0"
+
+  lazy val catsVersion: String = "0.9.0"
   lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
   lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % catsVersion
 
@@ -36,8 +36,28 @@ object Dependencies {
   )
 
   //============================================================================================
+  //================================= http://akka.io/docs/ =====================================
+  //======================================== akka ==============================================
+  //============================================================================================
+
+  lazy val akkaVersion: String = "2.5.4"
+  lazy val akkaActor: ModuleID = "com.typesafe.akka" %% "akka-actor" % akkaVersion
+  lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
+  lazy val akkaCluster: ModuleID = "com.typesafe.akka" %% "akka-cluster" % akkaVersion
+  lazy val akkaClusterSharding: ModuleID = "com.typesafe.akka" %% "akka-cluster-sharding" % akkaVersion
+  lazy val akkaDistributedData: ModuleID = "com.typesafe.akka" %% "akka-distributed-data" % akkaVersion
+  lazy val akkaPersistence: ModuleID = "com.typesafe.akka" %% "akka-persistence" % akkaVersion
+
+  lazy val akkaHttpVersion: String = "10.0.9"
+  lazy val akkHttp: ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+
+  //============================================================================================
   //=========================================  testing =========================================
   //============================================================================================
-  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.1"
+  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.3"
+
+  lazy val akkaTestKit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % akkaVersion
+  lazy val akkaStreamTestKit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
+  lazy val akkaHttpTestKit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion
 
 }
