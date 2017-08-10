@@ -51,3 +51,5 @@ private[json_test] case class SquareMelon(
   weight: Int,
   tastes: Seq[Taste]
 ) extends TastyMelon
+
+

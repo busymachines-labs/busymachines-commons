@@ -1,9 +1,12 @@
-package busymachines.json_test
+package busymachines.json_test.semiauto
 
+import busymachines.json_test._
 import org.scalatest.FlatSpec
 
 
 /**
+  *
+  * Here we test [[busymachines.json.Encoder]] derivation
   *
   * See the [[Melon]] hierarchy
   *
@@ -11,16 +14,6 @@ import org.scalatest.FlatSpec
   * @since 09 Aug 2017
   *
   */
-private[json_test] object melonsDefaultSemiAutoEncoders {
-
-  import busymachines.json._
-  import busymachines.json.semiauto._
-
-  implicit val tasteEncoder: Encoder[Taste] = deriveEnumerationEncoder[Taste]
-  implicit val melonEncoder: ObjectEncoder[Melon] = deriveEncoder[Melon]
-  implicit val anarchistMelonEncoder: Encoder[AnarchistMelon] = deriveEncoder[AnarchistMelon]
-}
-
 class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
 
   import busymachines.json.syntax._
@@ -75,8 +68,8 @@ class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
   //-----------------------------------------------------------------------------------------------
 
   it should "... be able to serialize case objects of the hierarchy" in {
-    val winterMelon: Melon = SmallMelon
-    val rawJson = winterMelon.asJson.spaces2
+    val smallMelon: Melon = SmallMelon
+    val rawJson = smallMelon.asJson.spaces2
     assertResult(
       """
         |{
@@ -88,10 +81,10 @@ class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... deserialize hierarchies of case objects as enums (i.e. plain strings)" in {
+  it should "... serialize hierarchies of case objects as enums (i.e. plain strings)" in {
     val taste: List[Taste] = List(SweetTaste, SourTaste)
 
-    val jsonRaw = taste.asJson.spaces2
+    val rawJson = taste.asJson.spaces2
     assertResult(
       """
         |[
@@ -99,19 +92,19 @@ class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
         |  "SourTaste"
         |]
       """.stripMargin.trim
-    )(jsonRaw)
+    )(rawJson)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... deserialize list of all case classes from the hierarchy" in {
+  it should "... serialize list of all case classes from the hierarchy" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
     val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)
     val smallMelon: Melon = SmallMelon
     val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
     val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
 
-    val jsonRaw = melons.asJson.spaces2
+    val rawJson = melons.asJson.spaces2
     assertResult(
       """
         |
@@ -140,7 +133,7 @@ class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
         |]
         |
       """.stripMargin.trim
-    )(jsonRaw)
+    )(rawJson)
   }
   //-----------------------------------------------------------------------------------------------
 
