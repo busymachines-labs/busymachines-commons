@@ -12,6 +12,8 @@ package object json {
 
   object semiauto extends SemiAutoDerivation
 
+  object auto extends io.circe.generic.extras.AutoDerivation
+
   type Encoder[A] = io.circe.Encoder[A]
   final val Encoder: io.circe.Encoder.type = io.circe.Encoder
   type ObjectEncoder[A] = io.circe.ObjectEncoder[A]
