@@ -171,7 +171,8 @@ object FailureMessages {
   */
 abstract class Failure(
   override val message: String,
-  val cause: Option[Throwable] = None
+  val cause: Option[Throwable] = None,
+  override val parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends Exception(message, cause.orNull) with FailureMessage
 
 /**
@@ -292,28 +293,39 @@ object SemanticFailures {
   */
 abstract class NotFoundFailure(
   message: String,
-  cause: Option[Throwable] = None
-) extends Failure(message, cause) with SemanticFailures.NotFound
+  cause: Option[Throwable] = None,
+  parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
+) extends Failure(message, cause, parameters) with SemanticFailures.NotFound
 
-object NotFoundFailure extends NotFoundFailure(SemanticFailures.`Not found`, None) {
+object NotFoundFailure extends NotFoundFailure(SemanticFailures.`Not found`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.NotFoundID
 
   private final class ReifiedNotFoundFailure(
     message: String,
-    cause: Option[Throwable] = None
-  ) extends NotFoundFailure(message, cause) {
+    cause: Option[Throwable],
+    parameters: FailureMessage.Parameters
+  ) extends NotFoundFailure(message, cause, parameters) {
     override def id: FailureID = SemanticFailures.NotFoundID
   }
 
   def apply(msg: String): NotFoundFailure =
-    new ReifiedNotFoundFailure(msg)
+    new ReifiedNotFoundFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
   def apply(msg: String, cause: Throwable): NotFoundFailure =
-    new ReifiedNotFoundFailure(msg, Some(cause))
+    new ReifiedNotFoundFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(msg: String, params: FailureMessage.Parameters): NotFoundFailure =
+    new ReifiedNotFoundFailure(message = msg, cause = None, parameters = params)
 
   def apply(cause: Throwable): NotFoundFailure =
-    new ReifiedNotFoundFailure(cause.getMessage, Some(cause))
+    new ReifiedNotFoundFailure(message = cause.getMessage, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(cause: Throwable, params: FailureMessage.Parameters): NotFoundFailure =
+    new ReifiedNotFoundFailure(message = cause.getMessage, cause = None, parameters = params)
+
+  def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): NotFoundFailure =
+    new ReifiedNotFoundFailure(message = msg, cause = Some(cause), parameters = params)
 }
 
 /**
@@ -361,28 +373,39 @@ object NotFoundFailures extends NotFoundFailures(SemanticFailures.`Not found`, S
   */
 abstract class UnauthorizedFailure(
   message: String,
-  cause: Option[Throwable] = None
-) extends Failure(message, cause) with SemanticFailures.Unauthorized
+  cause: Option[Throwable] = None,
+  parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
+) extends Failure(message, cause, parameters) with SemanticFailures.Unauthorized
 
-object UnauthorizedFailure extends NotFoundFailure(SemanticFailures.`Unauthorized`, None) {
+object UnauthorizedFailure extends UnauthorizedFailure(SemanticFailures.`Unauthorized`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.UnauthorizedID
 
   private final class ReifiedUnauthorizedFailure(
     message: String,
-    cause: Option[Throwable] = None
-  ) extends UnauthorizedFailure(message, cause) {
+    cause: Option[Throwable],
+    parameters: FailureMessage.Parameters
+  ) extends UnauthorizedFailure(message, cause, parameters) {
     override def id: FailureID = SemanticFailures.UnauthorizedID
   }
 
   def apply(msg: String): UnauthorizedFailure =
-    new ReifiedUnauthorizedFailure(msg)
+    new ReifiedUnauthorizedFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
   def apply(msg: String, cause: Throwable): UnauthorizedFailure =
-    new ReifiedUnauthorizedFailure(msg, Some(cause))
+    new ReifiedUnauthorizedFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(msg: String, params: FailureMessage.Parameters): UnauthorizedFailure =
+    new ReifiedUnauthorizedFailure(message = msg, cause = None, parameters = params)
 
   def apply(cause: Throwable): UnauthorizedFailure =
-    new ReifiedUnauthorizedFailure(cause.getMessage, Some(cause))
+    new ReifiedUnauthorizedFailure(message = cause.getMessage, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(cause: Throwable, params: FailureMessage.Parameters): UnauthorizedFailure =
+    new ReifiedUnauthorizedFailure(message = cause.getMessage, cause = None, parameters = params)
+
+  def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): UnauthorizedFailure =
+    new ReifiedUnauthorizedFailure(message = msg, cause = Some(cause), parameters = params)
 }
 
 /**
@@ -397,7 +420,7 @@ abstract class UnauthorizedFailures(
   messages: Seq[FailureMessage]
 ) extends Failures(message, messages) with SemanticFailures.Unauthorized
 
-object UnauthorizedFailures extends NotFoundFailures(SemanticFailures.`Unauthorized`, Seq.empty) {
+object UnauthorizedFailures extends UnauthorizedFailures(SemanticFailures.`Unauthorized`, Seq.empty) {
 
   override def id: FailureID = SemanticFailures.UnauthorizedID
 
@@ -406,16 +429,16 @@ object UnauthorizedFailures extends NotFoundFailures(SemanticFailures.`Unauthori
     messages: Seq[FailureMessage]
   ) extends UnauthorizedFailures(message, messages) {
     override def id: FailureID = SemanticFailures.UnauthorizedID
-
-    def apply(msg: String): UnauthorizedFailures =
-      new ReifiedUnauthorizedFailures(msg, Seq.empty)
-
-    def apply(msg: String, messages: Seq[FailureMessage]): UnauthorizedFailures =
-      new ReifiedUnauthorizedFailures(msg, messages)
-
-    def apply(msgs: Seq[String]): UnauthorizedFailures =
-      new ReifiedUnauthorizedFailures(SemanticFailures.`Unauthorized`, msgs.map(this.apply))
   }
+
+  def apply(msg: String): UnauthorizedFailures =
+    new ReifiedUnauthorizedFailures(msg, Seq.empty)
+
+  def apply(msg: String, messages: Seq[FailureMessage]): UnauthorizedFailures =
+    new ReifiedUnauthorizedFailures(msg, messages)
+
+  def apply(msgs: Seq[String]): UnauthorizedFailures =
+    new ReifiedUnauthorizedFailures(SemanticFailures.`Unauthorized`, msgs.map(this.apply))
 
 }
 
@@ -431,28 +454,39 @@ object UnauthorizedFailures extends NotFoundFailures(SemanticFailures.`Unauthori
   */
 abstract class ForbiddenFailure(
   message: String,
-  cause: Option[Throwable] = None
-) extends Failure(message, cause) with SemanticFailures.Forbidden
+  cause: Option[Throwable] = None,
+  parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
+) extends Failure(message, cause, parameters) with SemanticFailures.Forbidden
 
-object ForbiddenFailure extends ForbiddenFailure(SemanticFailures.`Forbidden`, None) {
+object ForbiddenFailure extends ForbiddenFailure(SemanticFailures.`Forbidden`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.ForbiddenID
 
   private final class ReifiedForbiddenFailure(
     message: String,
-    cause: Option[Throwable] = None
-  ) extends ForbiddenFailure(message, cause) {
+    cause: Option[Throwable],
+    parameters: FailureMessage.Parameters
+  ) extends ForbiddenFailure(message, cause, parameters) {
     override def id: FailureID = SemanticFailures.ForbiddenID
   }
 
   def apply(msg: String): ForbiddenFailure =
-    new ReifiedForbiddenFailure(msg)
+    new ReifiedForbiddenFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
   def apply(msg: String, cause: Throwable): ForbiddenFailure =
-    new ReifiedForbiddenFailure(msg, Some(cause))
+    new ReifiedForbiddenFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(msg: String, params: FailureMessage.Parameters): ForbiddenFailure =
+    new ReifiedForbiddenFailure(message = msg, cause = None, parameters = params)
 
   def apply(cause: Throwable): ForbiddenFailure =
-    new ReifiedForbiddenFailure(cause.getMessage, Some(cause))
+    new ReifiedForbiddenFailure(message = cause.getMessage, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(cause: Throwable, params: FailureMessage.Parameters): ForbiddenFailure =
+    new ReifiedForbiddenFailure(message = cause.getMessage, cause = None, parameters = params)
+
+  def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): ForbiddenFailure =
+    new ReifiedForbiddenFailure(message = msg, cause = Some(cause), parameters = params)
 }
 
 /**
@@ -501,28 +535,39 @@ object ForbiddenFailures extends ForbiddenFailures(SemanticFailures.`Forbidden`,
   */
 abstract class DeniedFailure(
   message: String,
-  cause: Option[Throwable] = None
-) extends Failure(message, cause) with SemanticFailures.Denied
+  cause: Option[Throwable] = None,
+  parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
+) extends Failure(message, cause, parameters) with SemanticFailures.Denied
 
-object DeniedFailure extends ForbiddenFailure(SemanticFailures.`Denied`, None) {
+object DeniedFailure extends DeniedFailure(SemanticFailures.`Denied`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.DeniedID
 
   private final class ReifiedDeniedFailure(
     message: String,
-    cause: Option[Throwable] = None
-  ) extends DeniedFailure(message, cause) {
+    cause: Option[Throwable],
+    parameters: FailureMessage.Parameters
+  ) extends DeniedFailure(message, cause, parameters) {
     override def id: FailureID = SemanticFailures.DeniedID
   }
 
   def apply(msg: String): DeniedFailure =
-    new ReifiedDeniedFailure(msg)
+    new ReifiedDeniedFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
   def apply(msg: String, cause: Throwable): DeniedFailure =
-    new ReifiedDeniedFailure(msg, Some(cause))
+    new ReifiedDeniedFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(msg: String, params: FailureMessage.Parameters): DeniedFailure =
+    new ReifiedDeniedFailure(message = msg, cause = None, parameters = params)
 
   def apply(cause: Throwable): DeniedFailure =
-    new ReifiedDeniedFailure(cause.getMessage, Some(cause))
+    new ReifiedDeniedFailure(message = cause.getMessage, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(cause: Throwable, params: FailureMessage.Parameters): DeniedFailure =
+    new ReifiedDeniedFailure(message = cause.getMessage, cause = None, parameters = params)
+
+  def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): DeniedFailure =
+    new ReifiedDeniedFailure(message = msg, cause = Some(cause), parameters = params)
 }
 
 /**
@@ -571,28 +616,39 @@ object DeniedFailures extends DeniedFailures(SemanticFailures.`Denied`, Seq.empt
   */
 abstract class InvalidInputFailure(
   message: String,
-  cause: Option[Throwable] = None
-) extends Failure(message, cause) with SemanticFailures.InvalidInput
+  cause: Option[Throwable] = None,
+  parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
+) extends Failure(message, cause, parameters) with SemanticFailures.InvalidInput
 
-object InvalidInputFailure extends ForbiddenFailure(SemanticFailures.`Invalid Input`, None) {
+object InvalidInputFailure extends InvalidInputFailure(SemanticFailures.`Invalid Input`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.InvalidInputID
 
   private final class ReifiedInvalidInputFailure(
     message: String,
-    cause: Option[Throwable] = None
-  ) extends InvalidInputFailure(message, cause) {
+    cause: Option[Throwable],
+    parameters: FailureMessage.Parameters
+  ) extends InvalidInputFailure(message, cause, parameters) {
     override def id: FailureID = SemanticFailures.InvalidInputID
   }
 
   def apply(msg: String): InvalidInputFailure =
-    new ReifiedInvalidInputFailure(msg)
+    new ReifiedInvalidInputFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
   def apply(msg: String, cause: Throwable): InvalidInputFailure =
-    new ReifiedInvalidInputFailure(msg, Some(cause))
+    new ReifiedInvalidInputFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(msg: String, params: FailureMessage.Parameters): InvalidInputFailure =
+    new ReifiedInvalidInputFailure(message = msg, cause = None, parameters = params)
 
   def apply(cause: Throwable): InvalidInputFailure =
-    new ReifiedInvalidInputFailure(cause.getMessage, Some(cause))
+    new ReifiedInvalidInputFailure(message = cause.getMessage, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(cause: Throwable, params: FailureMessage.Parameters): InvalidInputFailure =
+    new ReifiedInvalidInputFailure(message = cause.getMessage, cause = None, parameters = params)
+
+  def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): InvalidInputFailure =
+    new ReifiedInvalidInputFailure(message = msg, cause = Some(cause), parameters = params)
 }
 
 /**
@@ -641,29 +697,39 @@ object InvalidInputFailures extends InvalidInputFailures(SemanticFailures.`Inval
   */
 abstract class ConflictFailure(
   message: String,
-  cause: Option[Throwable] = None
-) extends Failure(message, cause) with SemanticFailures.Conflict
+  cause: Option[Throwable] = None,
+  parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
+) extends Failure(message, cause, parameters) with SemanticFailures.Conflict
 
-object ConflictFailure extends ConflictFailure(SemanticFailures.`Conflict`, None) {
+object ConflictFailure extends ConflictFailure(SemanticFailures.`Conflict`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.ConflictID
 
   private final class ReifiedConflictFailure(
     message: String,
-    cause: Option[Throwable] = None
-  ) extends
-    ConflictFailure(message, cause) {
+    cause: Option[Throwable],
+    parameters: FailureMessage.Parameters
+  ) extends ConflictFailure(message, cause, parameters) {
     override def id: FailureID = SemanticFailures.ConflictID
   }
 
   def apply(msg: String): ConflictFailure =
-    new ReifiedConflictFailure(msg)
+    new ReifiedConflictFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
   def apply(msg: String, cause: Throwable): ConflictFailure =
-    new ReifiedConflictFailure(msg, Some(cause))
+    new ReifiedConflictFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(msg: String, params: FailureMessage.Parameters): ConflictFailure =
+    new ReifiedConflictFailure(message = msg, cause = None, parameters = params)
 
   def apply(cause: Throwable): ConflictFailure =
-    new ReifiedConflictFailure(cause.getMessage, Some(cause))
+    new ReifiedConflictFailure(message = cause.getMessage, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
+
+  def apply(cause: Throwable, params: FailureMessage.Parameters): ConflictFailure =
+    new ReifiedConflictFailure(message = cause.getMessage, cause = None, parameters = params)
+
+  def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): ConflictFailure =
+    new ReifiedConflictFailure(message = msg, cause = Some(cause), parameters = params)
 }
 
 /**
