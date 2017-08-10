@@ -91,6 +91,13 @@ trait FailureID {
   def name: String
 }
 
+object FailureID {
+
+  private case class GenericFailureID(override val name: String) extends FailureID
+
+  def apply(id: String): FailureID = GenericFailureID(id)
+}
+
 object FailureMessage {
 
   /**
@@ -105,6 +112,16 @@ object FailureMessage {
   case class SeqStringWrapper private[exceptions](ses: Seq[String]) extends StringOrSeqString
 
   type Parameters = Map[String, StringOrSeqString]
+
+  private case class GenericFailureMessage(
+    override val id: FailureID,
+    override val message: String,
+    override val parameters: Parameters
+  ) extends FailureMessage
+
+  def apply(id: FailureID, message: String, parameters: Parameters = Map.empty): FailureMessage = {
+    GenericFailureMessage(id, message, parameters)
+  }
 }
 
 trait FailureMessage {
@@ -126,6 +143,19 @@ trait FailureMessage {
   */
 trait FailureMessages extends FailureMessage {
   def messages: Seq[FailureMessage]
+}
+
+object FailureMessages {
+
+  private case class GenericFailureMessages(
+    override val id: FailureID,
+    override val message: String,
+    override val messages: Seq[FailureMessage],
+  ) extends FailureMessages
+
+  def apply(id: FailureID, message: String, messages: Seq[FailureMessage]): FailureMessages = {
+    GenericFailureMessages(id, message, messages)
+  }
 }
 
 /**
