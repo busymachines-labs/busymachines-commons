@@ -2,6 +2,11 @@ import sbt._
 
 object Dependencies {
 
+  lazy val `scala_2.11`: String = "2.11.11"
+  lazy val `scala_2.12`: String = "2.12.3"
+  lazy val `scala_2.13`: String = "2.13.0-M2"
+  lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.11`, `scala_2.12`)
+
   //============================================================================================
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
@@ -40,7 +45,7 @@ object Dependencies {
   //======================================== akka ==============================================
   //============================================================================================
 
-  lazy val akkaVersion: String = "2.5.4"
+  lazy val akkaVersion: String = "2.4.19"
   lazy val akkaActor: ModuleID = "com.typesafe.akka" %% "akka-actor" % akkaVersion
   lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
   lazy val akkaCluster: ModuleID = "com.typesafe.akka" %% "akka-cluster" % akkaVersion
@@ -49,7 +54,12 @@ object Dependencies {
   lazy val akkaPersistence: ModuleID = "com.typesafe.akka" %% "akka-persistence" % akkaVersion
 
   lazy val akkaHttpVersion: String = "10.0.9"
-  lazy val akkHttp: ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+  lazy val akkaHttp: ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+
+  /**
+    * https://github.com/hseeberger/akka-http-json
+    */
+  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.17.0"
 
   //============================================================================================
   //=========================================  testing =========================================
