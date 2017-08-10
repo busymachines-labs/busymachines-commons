@@ -6,6 +6,13 @@ package busymachines.json_test
   * @since 09 Aug 2017
   *
   */
+
+private[json_test] case class AnarchistMelon(
+  noGods: Boolean,
+  noMasters: Boolean,
+  noSuperTypes: Boolean
+)
+
 private[json_test] sealed trait Melon {
   def weight: Int
 }

@@ -18,12 +18,31 @@ private[json_test] object melonsDefaultSemiAutoEncoders {
 
   implicit val tasteEncoder: Encoder[Taste] = deriveEnumerationEncoder[Taste]
   implicit val melonEncoder: ObjectEncoder[Melon] = deriveEncoder[Melon]
+  implicit val anarchistMelonEncoder: Encoder[AnarchistMelon] = deriveEncoder[AnarchistMelon]
 }
 
 class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
 
   import busymachines.json.syntax._
   import melonsDefaultSemiAutoEncoders._
+
+  //-----------------------------------------------------------------------------------------------
+
+  it should "... be able to serialize anarchist melon (i.e. not part of any hierarchy)" in {
+    val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
+    val rawJson = anarchistMelon.asJson.spaces2
+
+    assertResult(
+      """
+        |{
+        |  "noGods" : true,
+        |  "noMasters" : true,
+        |  "noSuperTypes" : true
+        |}
+      """.stripMargin.trim
+    )(rawJson)
+  }
+
 
   //-----------------------------------------------------------------------------------------------
 
