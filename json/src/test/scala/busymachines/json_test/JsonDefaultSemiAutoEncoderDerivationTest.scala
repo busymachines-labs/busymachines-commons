@@ -2,8 +2,6 @@ package busymachines.json_test
 
 import org.scalatest.FlatSpec
 
-import scala.collection.immutable
-
 
 /**
   *
@@ -13,7 +11,6 @@ import scala.collection.immutable
   * @since 09 Aug 2017
   *
   */
-
 private[json_test] object melonsDefaultSemiAutoEncoders {
 
   import busymachines.json._
