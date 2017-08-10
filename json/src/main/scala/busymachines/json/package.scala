@@ -21,12 +21,14 @@ package object json {
   final val ObjectDecoder: io.circe.ObjectEncoder.type = io.circe.ObjectEncoder
 
   type Configuration = io.circe.generic.extras.Configuration
-  final val Configuration: io.circe.generic.extras.Configuration.type =
-    io.circe.generic.extras.Configuration
+  final val Configuration: io.circe.generic.extras.Configuration.type = io.circe.generic.extras.Configuration
 
   type Json = io.circe.Json
+  val Json: io.circe.Json.type = io.circe.Json
   type JsonObject = io.circe.JsonObject
+  val JsonObject: io.circe.JsonObject.type = io.circe.JsonObject
   type HCursor = io.circe.HCursor
+  val HCursor: io.circe.HCursor.type = io.circe.HCursor
 
   type JsonDecodingResult[A] = Either[Failure, A]
   type JsonParsingResult = Either[Failure, Json]
