@@ -100,6 +100,14 @@ object FailureID {
 
 object FailureMessage {
 
+  type Value = StringOrSeqString
+
+  object Value {
+    def apply(s: String) = StringWrapper(s)
+
+    def apply(ses: Seq[String]) = SeqStringWrapper(ses)
+  }
+
   /**
     * This is a hack until dotty (scala 3.0) comes along with union types.
     * Until then, boiler plate freedom is given by the implicit
@@ -107,9 +115,9 @@ object FailureMessage {
     */
   sealed trait StringOrSeqString
 
-  case class StringWrapper private[exceptions](s: String) extends StringOrSeqString
+  case class StringWrapper private(s: String) extends StringOrSeqString
 
-  case class SeqStringWrapper private[exceptions](ses: Seq[String]) extends StringOrSeqString
+  case class SeqStringWrapper private(ses: Seq[String]) extends StringOrSeqString
 
   type Parameters = Map[String, StringOrSeqString]
 
