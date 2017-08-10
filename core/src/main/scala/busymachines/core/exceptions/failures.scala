@@ -113,13 +113,19 @@ object FailureMessage {
 
   type Parameters = Map[String, StringOrSeqString]
 
+  object Parameters {
+    def apply(ps: (String, StringOrSeqString)*): Parameters = Map.apply(ps: _*)
+
+    def empty: Parameters = Map.empty[String, StringOrSeqString]
+  }
+
   private case class GenericFailureMessage(
     override val id: FailureID,
     override val message: String,
     override val parameters: Parameters
   ) extends FailureMessage
 
-  def apply(id: FailureID, message: String, parameters: Parameters = Map.empty): FailureMessage = {
+  def apply(id: FailureID, message: String, parameters: Parameters = FailureMessage.Parameters.empty): FailureMessage = {
     GenericFailureMessage(id, message, parameters)
   }
 }
@@ -129,7 +135,7 @@ trait FailureMessage {
 
   def message: String
 
-  def parameters: FailureMessage.Parameters = Map.empty
+  def parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 }
 
 /**
