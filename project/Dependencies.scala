@@ -25,11 +25,13 @@ object Dependencies {
 
   lazy val circeCore: ModuleID = "io.circe" %% "circe-core" % circeVersion
   lazy val circeGeneric: ModuleID = "io.circe" %% "circe-generic" % circeVersion
+  lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeVersion
   lazy val circeParser: ModuleID = "io.circe" %% "circe-parser" % circeVersion
 
   lazy val circe: Seq[ModuleID] = Seq(
     circeCore,
     circeGeneric,
+    circeGenericExtras,
     circeParser
   )
 
