@@ -15,4 +15,24 @@ package object syntax {
       encoder.encodeObject(wrappedEncodeable)
   }
 
+  implicit final class DecoderOpsString(val rawJson: String) extends AnyVal {
+    def unsafeAsJson: Json = JsonParsing.unsafeParseString(rawJson)
+
+    def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
+      JsonDecoding.unsafeDecodeAs[A](rawJson)
+
+    def decodeAs[A](implicit decoder: Decoder[A]): JsonDecodingResult[A] = {
+      JsonDecoding.decodeAs[A](rawJson)
+    }
+  }
+
+  implicit final class DecoderOpsJson(val js: Json) extends AnyVal {
+    def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
+      JsonDecoding.unsafeDecodeAs[A](js)
+
+    def decodeAs[A](implicit decoder: Decoder[A]): JsonDecodingResult[A] = {
+      JsonDecoding.decodeAs[A](js)
+    }
+  }
+
 }

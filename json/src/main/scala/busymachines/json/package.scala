@@ -1,5 +1,7 @@
 package busymachines
 
+import busymachines.core.exceptions._
+
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
@@ -32,4 +34,7 @@ package object json {
 
   final implicit val defaultDerivationConfiguration: Configuration = Configuration.default
     .withDiscriminator(JsonTypeString)
+
+  type JsonDecodingResult[A] = Either[Failure, A]
+  type JsonParsingResult = Either[Failure, Json]
 }
