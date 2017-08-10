@@ -3,7 +3,7 @@ import Keys._
 
 object Dependencies {
 
-  lazy val commonsVersion = "0.1.1"
+  lazy val commonsVersion = "0.2.0-SNAPSHOT"
 
   //============================================================================================
   //=================================== http://busymachines.com/ ===============================
