@@ -28,11 +28,6 @@ package object json {
   type JsonObject = io.circe.JsonObject
   type HCursor = io.circe.HCursor
 
-  final val JsonTypeString: String = "_type"
-
-  final implicit val defaultDerivationConfiguration: Configuration = Configuration.default
-    .withDiscriminator(JsonTypeString)
-
   type JsonDecodingResult[A] = Either[Failure, A]
   type JsonParsingResult = Either[Failure, Json]
 }

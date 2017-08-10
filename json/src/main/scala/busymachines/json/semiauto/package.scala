@@ -6,4 +6,4 @@ package busymachines.json
   * @since 10 Aug 2017
   *
   */
-package object semiauto extends SemiAutoDerivation
+package object semiauto extends DefaultTypeDiscriminatorConfig with SemiAutoDerivation

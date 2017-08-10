@@ -12,9 +12,9 @@ import org.scalatest.FlatSpec
   */
 class JsonDefaultAutoSemiAutoInteractionTest extends FlatSpec {
 
+  import busymachines.json._
   import busymachines.json.syntax._
   import busymachines.json.auto._
-  import busymachines.json._
 
   it should "... auto should use the explicit codec for sub-hierarchies of Melon" in {
     implicit val explicitImplicitTasteCodec = semiauto.deriveEnumerationCodec[Taste]

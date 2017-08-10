@@ -75,7 +75,7 @@ class JsonDefaultAutoDerivationTest extends FlatSpec {
   it should "... deserialize hierarchies of case objects using the default method with _type" in {
     val taste: List[Taste] = List(SweetTaste, SourTaste)
     val rawJson = taste.asJson.spaces2
-    assert(rawJson.contains(JsonTypeString), "... tested default json serialization method")
+    assert(rawJson.contains("_type"), "... tested default json serialization method")
     val read = rawJson.unsafeDecodeAs[List[Taste]]
     assertResult(read)(taste)
   }

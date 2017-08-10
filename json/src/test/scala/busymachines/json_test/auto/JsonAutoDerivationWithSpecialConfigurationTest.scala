@@ -13,7 +13,13 @@ import org.scalatest.FlatSpec
 class JsonAutoDerivationWithSpecialConfigurationTest extends FlatSpec {
 
   import busymachines.json.syntax._
-  import busymachines.json.auto._
+
+  /**
+    * unfortunately this exclusion is absolutely necessary if you want to use the non-default _type
+    * discriminator for sealed hierarchies of classes AND auto-derivation at the same time
+    */
+
+  import busymachines.json.auto.{defaultDerivationConfiguration => _, _}
 
   final implicit val _melonManiaDiscriminatorConfig: Configuration =
     Configuration.default.withDiscriminator("_melonMania")
