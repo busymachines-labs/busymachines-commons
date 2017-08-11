@@ -1,5 +1,5 @@
-com.typesafe.sbt.pgp.PgpKeys.pgpSecretRing := file("~/.gnupgp/secring.asc")
-com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupgp/pubring.asc")
+com.typesafe.sbt.pgp.PgpKeys.pgpSecretRing := file("~/.gnupg/secring.gpg")
+com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupg/pubring.gpg")
 // com.typesafe.sbt.pgp.PgpKeys.gpgCommand := "/path/to/gpg"
 
 //for easy copy pasting just run this in your sbt scala REPL (invoked by > console):
