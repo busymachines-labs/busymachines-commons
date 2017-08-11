@@ -6,7 +6,12 @@ Current version is `0.2.0-M1`. SBT module id:
 ## How it works
 This module is a thin layer over [circe](https://circe.github.io/circe/), additionally, it depends on [shapeless](https://github.com/milessabin/shapeless). The latter being the mechanism through which `auto` and `semiauto` derivation can be made to work.
 
-You can glean 99% of what's going on here by first understanding `circe`. This module provides just convenience, and a principled way of using it. The only
+You can glean 99% of what's going on here by first understanding `circe`. This module provides just convenience, and a principled way of using it. The only "real" contribution of this is that provides a `Codec` type class, which is lacking from `circe`.
+
+### Transitive dependencies
+- circe 0.8.0 (with all its modules)
+- shapeless 2.3.2
+- cats 0.9.0
 
 ## Common usage
 
@@ -81,7 +86,7 @@ implicit val codec: Codec[AnarchistMelon] = deriveCodec[AnarchistMelon]
 
 ## Dealing with hierarchies
 
-Unlike the `AnarchistMelon` in our previous example, regular melons accept hierarchy. And, like in real life, we have many hierarchies in code. But `circe` helps us trivially deal with them.
+Unlike the `AnarchistMelon` in our previous example, regular melons accept hierarchy. And, like in real life, we have many hierarchies in code. But `circe` helps to wrangle them in—for dealing with real life hierarchies you should google Murray Bookchin.
 
 Take the following hierarchy:  
 
