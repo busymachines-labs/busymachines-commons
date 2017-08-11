@@ -64,7 +64,7 @@ trait FailureMessageJsonCodec {
           Right[DecodingFailure, FailureMessage.Parameters](FailureMessage.Parameters.empty)
         }
       }
-      m2.flatMap(identity)
+      m2.right.flatMap(x => identity(x))
     }
 
     override def apply(a: FailureMessage.Parameters): Json = {
@@ -119,7 +119,7 @@ trait FailureMessageJsonCodec {
     override def apply(c: HCursor): Result[FailureMessages] = {
       for {
         fm <- c.as[FailureMessage].right
-        msgs <- c.getOrElse[Seq[FailureMessage]](CoreJsonConstants.messages)(Seq.empty[FailureMessages])
+        msgs <- c.getOrElse[Seq[FailureMessage]](CoreJsonConstants.messages)(Seq.empty[FailureMessages]).right
       } yield FailureMessages.apply(fm.id, fm.message, msgs)
     }
   }

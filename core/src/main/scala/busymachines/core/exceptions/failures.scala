@@ -165,7 +165,7 @@ object FailureMessages {
   private case class GenericFailureMessages(
     override val id: FailureID,
     override val message: String,
-    override val messages: Seq[FailureMessage],
+    override val messages: Seq[FailureMessage]
   ) extends FailureMessages
 
   def apply(id: FailureID, message: String, messages: Seq[FailureMessage]): FailureMessages = {
