@@ -1,5 +1,7 @@
-
 # Created by https://www.gitignore.io/api/sbt,java,macos,linux,scala,eclipse,intellij
+
+### CUSTOM ###
+playground/
 
 ### Eclipse ###
 
