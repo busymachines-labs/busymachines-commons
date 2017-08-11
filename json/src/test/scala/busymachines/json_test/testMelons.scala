@@ -7,6 +7,16 @@ package busymachines.json_test
   *
   */
 
+private[json_test] object AnEnum extends Enumeration {
+  type AnEnum = Value
+  val One = Value
+}
+
+private[json_test] object AnEnumWithDifferentName extends Enumeration {
+  type AnEnumWithDifferentName = Value
+  val One = Value("o ne")
+}
+
 private[json_test] case class AnarchistMelon(
   noGods: Boolean,
   noMasters: Boolean,

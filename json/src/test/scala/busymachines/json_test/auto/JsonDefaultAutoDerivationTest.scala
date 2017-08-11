@@ -1,6 +1,7 @@
 package busymachines.json_test.auto
 
-import busymachines.json_test._
+import busymachines.json_test.AnEnum.{AnEnum, Value}
+import busymachines.json_test.{AnEnumWithDifferentName, _}
 import org.scalatest.FlatSpec
 
 /**
@@ -14,6 +15,8 @@ import org.scalatest.FlatSpec
   *
   */
 class JsonDefaultAutoDerivationTest extends FlatSpec {
+
+
 
   import busymachines.json.syntax._
   import busymachines.json.auto._
@@ -94,6 +97,45 @@ class JsonDefaultAutoDerivationTest extends FlatSpec {
     assertResult(melons)(read)
   }
 
-  //-----------------------------------------------------------------------------------------------
 
+  //-----------------------------------------------------------------------------------------------
+  it should ".... serialize / deserialize an enum type when given with the correct string " in {
+
+
+    val rawJson = AnEnum.One.asJson.noSpaces
+    val read = rawJson.unsafeDecodeAs[AnEnum]
+
+    assertResult(AnEnum.One)(read)
+
+  }
+
+  //-----------------------------------------------------------------------------------------------
+  it should ".... deserialize values of an enum regardless of case type" in {
+    val strings = Seq("one", "onE", "oNe", "oNE", "One", "OnE", "ONe", "ONE") map {str => s""" "$str" """.trim.decodeAs[AnEnum]}
+
+    strings.find{_.isLeft} match {
+      case Some(Left(failure)) => fail(failure)
+      case _ => succeed
+    }
+  }
+
+  //-----------------------------------------------------------------------------------------------
+  it should ".... deserialize value to an  enum value should fail if the value / string doesn't exist in the enum" in {
+    "\"two\"".decodeAs[AnEnum] match  {
+      case Left(_) => succeed
+      case _ => fail("AnEnum with only one value: One, was instantiated when decoding a string of value two ")
+    }
+  }
+
+
+  //-----------------------------------------------------------------------------------------------
+  it should ".... serialize / deserialize an enum type with custom names " in {
+    val rawJson = AnEnumWithDifferentName.One.asJson.noSpaces
+    val read = rawJson.unsafeDecodeAs[AnEnumWithDifferentName.AnEnumWithDifferentName]
+
+    assert (rawJson equalsIgnoreCase "\"o ne\"")
+    assertResult(AnEnumWithDifferentName.One)(read)
+  }
+
+  //-----------------------------------------------------------------------------------------------
 }
