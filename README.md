@@ -22,7 +22,7 @@ The idea behind these sets of libraries is to help jumpstart backend RESTful api
 Basically, as long as modules reside in the same repository they will be versioned with the same number, and released at the same time to avoid confusion. The moment we realize that a module has to take a life of its own, it will be moved to a separate module and versioned independently.
 
 * [core](/core) `0.1.0`
-* [json](/json) `0.1.0`
+* [json](/json) `0.2.0-M1`
 
 ### Current version
 
