@@ -26,7 +26,9 @@ val `compile->compile;test->test` = "compile->compile;test->test"
 lazy val root = Project(
   id = "busymachines-commons",
   base = file("."))
-  .settings(publishArtifact in ThisProject := false)
+  .settings(
+    publishArtifact in ThisProject := false
+  )
   .aggregate(
     core,
     json
@@ -36,6 +38,7 @@ lazy val core = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
+    name in ThisProject := "busymachines-commons-core",
     libraryDependencies += Dependencies.scalaTest % Test withSources()
   )
 
@@ -43,10 +46,14 @@ lazy val json = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
-    libraryDependencies ++= Seq(
-      Dependencies.shapeless withSources(),
-      Dependencies.scalaTest % Test withSources()
-    ) ++ Dependencies.circe.map(c => c withSources())
+    name in ThisProject := "busymachines-commons-json",
+    libraryDependencies ++=
+      Dependencies.circe.map(c => c withSources()) ++ Seq(
+        Dependencies.shapeless withSources(),
+        Dependencies.cats withSources(),
+
+        Dependencies.scalaTest % Test withSources()
+      )
   )
   .dependsOn(
     core
