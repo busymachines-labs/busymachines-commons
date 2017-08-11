@@ -17,11 +17,6 @@ private[json_test] sealed trait Melon {
   def weight: Int
 }
 
-private[json_test] object Melon {
-  val WinterMelon: String = "Winter"
-  val WaterMelon: String = "Water"
-}
-
 private[json_test] case class WinterMelon(
   fuzzy: Boolean,
   weight: Int
