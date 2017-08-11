@@ -2,7 +2,7 @@
 
 This folder is useful to you _only_ if you are responsible for publishing this library to the Sonatype repository, otherwise it can be completely ignored.
 
-The contents of this folder ought to be copied to your `~/.sbt/0.13` folder. And the appropriate values assigned to each sbt key.
+The contents of this folder ought to be copied to your `~/.sbt/1.0` folder. And the appropriate values assigned to each sbt key.
 
 ## [plugins/plugins.sbt](plugins/plugins.sbt)
 
