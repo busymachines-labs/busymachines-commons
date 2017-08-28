@@ -45,7 +45,7 @@ object Dependencies {
   //======================================== akka ==============================================
   //============================================================================================
 
-  lazy val akkaVersion: String = "2.4.19"
+  lazy val akkaVersion: String = "2.5.4"
   lazy val akkaActor: ModuleID = "com.typesafe.akka" %% "akka-actor" % akkaVersion
   lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
   lazy val akkaCluster: ModuleID = "com.typesafe.akka" %% "akka-cluster" % akkaVersion
