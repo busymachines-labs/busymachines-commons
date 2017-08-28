@@ -61,3 +61,17 @@ lazy val json = project
   .aggregate(
     core
   )
+
+lazy val rest = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-rest",
+    libraryDependencies ++= Nil
+  )
+  .dependsOn(
+    core
+  )
+  .aggregate(
+    core
+  )
