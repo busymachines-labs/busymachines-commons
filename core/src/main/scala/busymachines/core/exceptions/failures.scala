@@ -158,6 +158,24 @@ trait FailureMessage {
   */
 trait FailureMessages extends FailureMessage {
   def messages: Seq[FailureMessage]
+
+  final def hasNotFound: Boolean =
+    messages.exists(_.isInstanceOf[NotFoundFailure])
+
+  final def hasUnauthorized: Boolean =
+    messages.exists(_.isInstanceOf[UnauthorizedFailure])
+
+  final def hasForbidden: Boolean =
+    messages.exists(_.isInstanceOf[ForbiddenFailure])
+
+  final def hasDenied: Boolean =
+    messages.exists(_.isInstanceOf[DeniedFailure])
+
+  final def hasInvalidInput: Boolean =
+    messages.exists(_.isInstanceOf[InvalidInputFailure])
+
+  final def hasConflict: Boolean =
+    messages.exists(_.isInstanceOf[ConflictFailure])
 }
 
 object FailureMessages {
