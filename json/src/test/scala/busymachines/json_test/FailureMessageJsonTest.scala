@@ -199,23 +199,22 @@ class FailureMessageJsonTest extends FlatSpec {
 
   behavior of "... serializing composite FailureMessages"
 
-  it should "... encode a NotFoundFailures" in {
-    val failure: FailureMessages = NotFoundFailures(
+  it should "... encode Failures" in {
+    val failure: FailureMessages = Failures(
+      FailureID("test"),
       "test message",
-      Seq(
-        NotFoundFailure(
-          "one",
-          FailureMessage.Parameters(
-            "3" -> "1",
-            "4" -> Seq("1", "2")
-          )
-        ),
-        NotFoundFailure(
-          "two",
-          FailureMessage.Parameters(
-            "5" -> "6",
-            "6" -> Seq("6", "7")
-          )
+      NotFoundFailure(
+        "one",
+        FailureMessage.Parameters(
+          "3" -> "1",
+          "4" -> Seq("1", "2")
+        )
+      ),
+      NotFoundFailure(
+        "two",
+        FailureMessage.Parameters(
+          "5" -> "6",
+          "6" -> Seq("6", "7")
         )
       )
     )
@@ -223,7 +222,7 @@ class FailureMessageJsonTest extends FlatSpec {
     assert(rawJson ==
       """
         |{
-        |  "id" : "0",
+        |  "id" : "test",
         |  "message" : "test message",
         |  "messages" : [
         |    {
@@ -258,298 +257,19 @@ class FailureMessageJsonTest extends FlatSpec {
     assert(read.parameters == failure.parameters, "parameters")
   }
 
-  it should "... encode a UnauthorizedFailures" in {
-    val failure: FailureMessages = UnauthorizedFailures(
-      msg = "test message",
-      messages = Seq(
-        NotFoundFailure(
-          "one",
-          FailureMessage.Parameters(
-            "3" -> "1",
-            "4" -> Seq("1", "2")
-          )
-        ),
-        NotFoundFailure(
-          "two",
-          FailureMessage.Parameters(
-            "5" -> "6",
-            "6" -> Seq("6", "7")
-          )
-        )
-      )
-    )
-    val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
+  it should "... fail when decoding and empty Failures" in {
+    val rawJson =
       """
         |{
-        |  "id" : "1",
+        |  "id" : "test",
         |  "message" : "test message",
-        |  "messages" : [
-        |    {
-        |      "id" : "0",
-        |      "message" : "one",
-        |      "parameters" : {
-        |        "3" : "1",
-        |        "4" : [
-        |          "1",
-        |          "2"
-        |        ]
-        |      }
-        |    },
-        |    {
-        |      "id" : "0",
-        |      "message" : "two",
-        |      "parameters" : {
-        |        "5" : "6",
-        |        "6" : [
-        |          "6",
-        |          "7"
-        |        ]
-        |      }
-        |    }
-        |  ]
+        |  "messages" : []
         |}
-        |""".stripMargin.trim)
+        |""".stripMargin.trim
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
-    assert(read.parameters == failure.parameters, "parameters")
-  }
-
-  it should "... encode a ForbiddenFailures" in {
-    val failure: FailureMessages = ForbiddenFailures(
-      "test message",
-      Seq(
-        NotFoundFailure(
-          "one",
-          FailureMessage.Parameters(
-            "3" -> "1",
-            "4" -> Seq("1", "2")
-          )
-        ),
-        NotFoundFailure(
-          "two",
-          FailureMessage.Parameters(
-            "5" -> "6",
-            "6" -> Seq("6", "7")
-          )
-        )
-      )
-    )
-    val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """
-        |{
-        |  "id" : "2",
-        |  "message" : "test message",
-        |  "messages" : [
-        |    {
-        |      "id" : "0",
-        |      "message" : "one",
-        |      "parameters" : {
-        |        "3" : "1",
-        |        "4" : [
-        |          "1",
-        |          "2"
-        |        ]
-        |      }
-        |    },
-        |    {
-        |      "id" : "0",
-        |      "message" : "two",
-        |      "parameters" : {
-        |        "5" : "6",
-        |        "6" : [
-        |          "6",
-        |          "7"
-        |        ]
-        |      }
-        |    }
-        |  ]
-        |}
-        |""".stripMargin.trim)
-
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
-    assert(read.parameters == failure.parameters, "parameters")
-  }
-
-  it should "... encode a DeniedFailures" in {
-    val failure: FailureMessages = DeniedFailures(
-      "test message",
-      Seq(
-        NotFoundFailure(
-          "one",
-          FailureMessage.Parameters(
-            "3" -> "1",
-            "4" -> Seq("1", "2")
-          )
-        ),
-        NotFoundFailure(
-          "two",
-          FailureMessage.Parameters(
-            "5" -> "6",
-            "6" -> Seq("6", "7")
-          )
-        )
-      )
-    )
-    val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """
-        |{
-        |  "id" : "3",
-        |  "message" : "test message",
-        |  "messages" : [
-        |    {
-        |      "id" : "0",
-        |      "message" : "one",
-        |      "parameters" : {
-        |        "3" : "1",
-        |        "4" : [
-        |          "1",
-        |          "2"
-        |        ]
-        |      }
-        |    },
-        |    {
-        |      "id" : "0",
-        |      "message" : "two",
-        |      "parameters" : {
-        |        "5" : "6",
-        |        "6" : [
-        |          "6",
-        |          "7"
-        |        ]
-        |      }
-        |    }
-        |  ]
-        |}
-        |""".stripMargin.trim)
-
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
-    assert(read.parameters == failure.parameters, "parameters")
-  }
-
-  it should "... encode a InvalidInputFailures" in {
-    val failure: FailureMessages = InvalidInputFailures(
-      "test message",
-      Seq(
-        NotFoundFailure(
-          "one",
-          FailureMessage.Parameters(
-            "3" -> "1",
-            "4" -> Seq("1", "2")
-          )
-        ),
-        NotFoundFailure(
-          "two",
-          FailureMessage.Parameters(
-            "5" -> "6",
-            "6" -> Seq("6", "7")
-          )
-        )
-      )
-    )
-    val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """
-        |{
-        |  "id" : "4",
-        |  "message" : "test message",
-        |  "messages" : [
-        |    {
-        |      "id" : "0",
-        |      "message" : "one",
-        |      "parameters" : {
-        |        "3" : "1",
-        |        "4" : [
-        |          "1",
-        |          "2"
-        |        ]
-        |      }
-        |    },
-        |    {
-        |      "id" : "0",
-        |      "message" : "two",
-        |      "parameters" : {
-        |        "5" : "6",
-        |        "6" : [
-        |          "6",
-        |          "7"
-        |        ]
-        |      }
-        |    }
-        |  ]
-        |}
-        |""".stripMargin.trim)
-
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
-    assert(read.parameters == failure.parameters, "parameters")
-  }
-
-  it should "... encode a ConflictFailures" in {
-    val failure: FailureMessages = ConflictFailures(
-      "test message",
-      Seq(
-        NotFoundFailure(
-          "one",
-          FailureMessage.Parameters(
-            "3" -> "1",
-            "4" -> Seq("1", "2")
-          )
-        ),
-        NotFoundFailure(
-          "two",
-          FailureMessage.Parameters(
-            "5" -> "6",
-            "6" -> Seq("6", "7")
-          )
-        )
-      )
-    )
-    val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """
-        |{
-        |  "id" : "5",
-        |  "message" : "test message",
-        |  "messages" : [
-        |    {
-        |      "id" : "0",
-        |      "message" : "one",
-        |      "parameters" : {
-        |        "3" : "1",
-        |        "4" : [
-        |          "1",
-        |          "2"
-        |        ]
-        |      }
-        |    },
-        |    {
-        |      "id" : "0",
-        |      "message" : "two",
-        |      "parameters" : {
-        |        "5" : "6",
-        |        "6" : [
-        |          "6",
-        |          "7"
-        |        ]
-        |      }
-        |    }
-        |  ]
-        |}
-        |""".stripMargin.trim)
-
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
-    assert(read.parameters == failure.parameters, "parameters")
+    rawJson.decodeAs[FailureMessages] match {
+      case Left(_) => //yey!!!
+      case Right(_) => fail("should have failed")
+    }
   }
 }
