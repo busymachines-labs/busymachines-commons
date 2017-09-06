@@ -208,9 +208,22 @@ abstract class Failure(
   * Primarily used as containers for validation failures.
   */
 abstract class Failures(
+  override val id: FailureID,
   override val message: String,
-  val messages: Seq[FailureMessage]
+  override val messages: Seq[FailureMessage]
 ) extends Exception(message) with FailureMessages
+
+object Failures {
+
+  private final class ReifiedUnauthorizedFailures(
+    id: FailureID,
+    message: String,
+    messages: Seq[FailureMessage]
+  ) extends Failures(id, message, messages)
+
+  def apply(id: FailureID, msg: String, messages: Seq[FailureMessage]): Failures =
+    new ReifiedUnauthorizedFailures(id, msg, messages)
+}
 
 /**
   * Marker traits, so that both the [[Failure]] and [[Failures]]
@@ -355,40 +368,6 @@ object NotFoundFailure extends NotFoundFailure(SemanticFailures.`Not found`, Non
     new ReifiedNotFoundFailure(message = msg, cause = Some(cause), parameters = params)
 }
 
-/**
-  * Plural counterpart of [[NotFoundFailure]]
-  *
-  * See scaladoc at top of file for general picture.
-  *
-  * See [[SemanticFailures.NotFound]] for intended use.
-  */
-abstract class NotFoundFailures(
-  message: String,
-  messages: Seq[FailureMessage]
-) extends Failures(message, messages) with SemanticFailures.NotFound
-
-object NotFoundFailures extends NotFoundFailures(SemanticFailures.`Not found`, Seq.empty) {
-
-  override def id: FailureID = SemanticFailures.NotFoundID
-
-  private final class ReifiedNotFoundFailures(
-    message: String,
-    messages: Seq[FailureMessage]
-  ) extends NotFoundFailures(message, messages) {
-    override def id: FailureID = SemanticFailures.NotFoundID
-  }
-
-  def apply(msg: String): NotFoundFailures =
-    new ReifiedNotFoundFailures(msg, Seq.empty)
-
-  def apply(msg: String, messages: Seq[FailureMessage]): NotFoundFailures =
-    new ReifiedNotFoundFailures(msg, messages)
-
-  def apply(msgs: Seq[String]): NotFoundFailures =
-    new ReifiedNotFoundFailures(SemanticFailures.`Not found`, msgs.map(this.apply))
-}
-
-
 //=============================================================================
 //=============================================================================
 //=============================================================================
@@ -433,40 +412,6 @@ object UnauthorizedFailure extends UnauthorizedFailure(SemanticFailures.`Unautho
 
   def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): UnauthorizedFailure =
     new ReifiedUnauthorizedFailure(message = msg, cause = Some(cause), parameters = params)
-}
-
-/**
-  * Plural counterpart of [[UnauthorizedFailure]]
-  *
-  * See scaladoc at top of file for general picture.
-  *
-  * See [[SemanticFailures.Unauthorized]] for intended use.
-  */
-abstract class UnauthorizedFailures(
-  message: String,
-  messages: Seq[FailureMessage]
-) extends Failures(message, messages) with SemanticFailures.Unauthorized
-
-object UnauthorizedFailures extends UnauthorizedFailures(SemanticFailures.`Unauthorized`, Seq.empty) {
-
-  override def id: FailureID = SemanticFailures.UnauthorizedID
-
-  private final class ReifiedUnauthorizedFailures(
-    message: String,
-    messages: Seq[FailureMessage]
-  ) extends UnauthorizedFailures(message, messages) {
-    override def id: FailureID = SemanticFailures.UnauthorizedID
-  }
-
-  def apply(msg: String): UnauthorizedFailures =
-    new ReifiedUnauthorizedFailures(msg, Seq.empty)
-
-  def apply(msg: String, messages: Seq[FailureMessage]): UnauthorizedFailures =
-    new ReifiedUnauthorizedFailures(msg, messages)
-
-  def apply(msgs: Seq[String]): UnauthorizedFailures =
-    new ReifiedUnauthorizedFailures(SemanticFailures.`Unauthorized`, msgs.map(this.apply))
-
 }
 
 //=============================================================================
@@ -516,40 +461,6 @@ object ForbiddenFailure extends ForbiddenFailure(SemanticFailures.`Forbidden`, N
     new ReifiedForbiddenFailure(message = msg, cause = Some(cause), parameters = params)
 }
 
-/**
-  * Plural counterpart of [[ForbiddenFailure]]
-  *
-  * See scaladoc at top of file for general picture.
-  *
-  * See [[SemanticFailures.Forbidden]] for intended use.
-  */
-abstract class ForbiddenFailures(
-  message: String,
-  messages: Seq[FailureMessage]
-) extends Failures(message, messages) with SemanticFailures.Forbidden
-
-object ForbiddenFailures extends ForbiddenFailures(SemanticFailures.`Forbidden`, Seq.empty) {
-
-  override def id: FailureID = SemanticFailures.ForbiddenID
-
-  private final class ReifiedForbiddenFailures(
-    message: String,
-    messages: Seq[FailureMessage]
-  ) extends ForbiddenFailures(message, messages) {
-    override def id: FailureID = SemanticFailures.ForbiddenID
-  }
-
-  def apply(msg: String): ForbiddenFailures =
-    new ReifiedForbiddenFailures(msg, Seq.empty)
-
-  def apply(msg: String, messages: Seq[FailureMessage]): ForbiddenFailures =
-    new ReifiedForbiddenFailures(msg, messages)
-
-  def apply(msgs: Seq[String]): ForbiddenFailures =
-    new ReifiedForbiddenFailures(SemanticFailures.`Forbidden`, msgs.map(this.apply))
-}
-
-
 //=============================================================================
 //=============================================================================
 //=============================================================================
@@ -596,40 +507,6 @@ object DeniedFailure extends DeniedFailure(SemanticFailures.`Denied`, None, Fail
   def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): DeniedFailure =
     new ReifiedDeniedFailure(message = msg, cause = Some(cause), parameters = params)
 }
-
-/**
-  * Plural counterpart of [[DeniedFailure]]
-  *
-  * See scaladoc at top of file for general picture.
-  *
-  * See [[SemanticFailures.Denied]] for intended use.
-  */
-abstract class DeniedFailures(
-  message: String,
-  messages: Seq[FailureMessage]
-) extends Failures(message, messages) with SemanticFailures.Denied
-
-object DeniedFailures extends DeniedFailures(SemanticFailures.`Denied`, Seq.empty) {
-
-  override def id: FailureID = SemanticFailures.DeniedID
-
-  private final class ReifiedDeniedFailures(
-    message: String,
-    messages: Seq[FailureMessage]
-  ) extends DeniedFailures(message, messages) {
-    override def id: FailureID = SemanticFailures.DeniedID
-  }
-
-  def apply(msg: String): DeniedFailures =
-    new ReifiedDeniedFailures(msg, Seq.empty)
-
-  def apply(msg: String, messages: Seq[FailureMessage]): DeniedFailures =
-    new ReifiedDeniedFailures(msg, messages)
-
-  def apply(msgs: Seq[String]): DeniedFailures =
-    new ReifiedDeniedFailures(SemanticFailures.`Denied`, msgs.map(this.apply))
-}
-
 
 //=============================================================================
 //=============================================================================
@@ -678,40 +555,6 @@ object InvalidInputFailure extends InvalidInputFailure(SemanticFailures.`Invalid
     new ReifiedInvalidInputFailure(message = msg, cause = Some(cause), parameters = params)
 }
 
-/**
-  * Plural counterpart of [[InvalidInputFailure]]
-  *
-  * See scaladoc at top of file for general picture.
-  *
-  * See [[SemanticFailures.InvalidInput]] for intended use.
-  */
-abstract class InvalidInputFailures(
-  message: String,
-  messages: Seq[FailureMessage]
-) extends Failures(message, messages) with SemanticFailures.InvalidInput
-
-object InvalidInputFailures extends InvalidInputFailures(SemanticFailures.`Invalid Input`, Seq.empty) {
-
-  override def id: FailureID = SemanticFailures.InvalidInputID
-
-  private final class ReifiedInvalidInputFailures(
-    message: String,
-    messages: Seq[FailureMessage]
-  ) extends InvalidInputFailures(message, messages) {
-    override def id: FailureID = SemanticFailures.InvalidInputID
-  }
-
-  def apply(msg: String): InvalidInputFailures =
-    new ReifiedInvalidInputFailures(msg, Seq.empty)
-
-  def apply(msg: String, messages: Seq[FailureMessage]): InvalidInputFailures =
-    new ReifiedInvalidInputFailures(msg, messages)
-
-  def apply(msgs: Seq[String]): InvalidInputFailures =
-    new ReifiedInvalidInputFailures(SemanticFailures.`Invalid Input`, msgs.map(this.apply))
-}
-
-
 //=============================================================================
 //=============================================================================
 //=============================================================================
@@ -758,37 +601,3 @@ object ConflictFailure extends ConflictFailure(SemanticFailures.`Conflict`, None
   def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): ConflictFailure =
     new ReifiedConflictFailure(message = msg, cause = Some(cause), parameters = params)
 }
-
-/**
-  * Plural counterpart of [[ConflictFailure]]
-  *
-  * See scaladoc at top of file for general picture.
-  *
-  * See [[SemanticFailures.Conflict]] for intended use.
-  */
-abstract class ConflictFailures(
-  message: String,
-  messages: Seq[FailureMessage]
-) extends Failures(message, messages) with SemanticFailures.Conflict
-
-object ConflictFailures extends ConflictFailures(SemanticFailures.`Conflict`, Seq.empty) {
-
-  override def id: FailureID = SemanticFailures.ConflictID
-
-  private final class ReifiedConflictFailures(
-    message: String,
-    messages: Seq[FailureMessage]
-  ) extends ConflictFailures(message, messages) {
-    override def id: FailureID = SemanticFailures.ConflictID
-  }
-
-  def apply(msg: String): ConflictFailures =
-    new ReifiedConflictFailures(msg, Seq.empty)
-
-  def apply(msg: String, messages: Seq[FailureMessage]): ConflictFailures =
-    new ReifiedConflictFailures(msg, messages)
-
-  def apply(msgs: Seq[String]): ConflictFailures =
-    new ReifiedConflictFailures(SemanticFailures.`Conflict`, msgs.map(this.apply))
-}
-

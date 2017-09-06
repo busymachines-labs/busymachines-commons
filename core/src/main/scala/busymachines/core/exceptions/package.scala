@@ -17,5 +17,4 @@ package object exceptions {
 
   implicit def seqOfStringToStringOrSeqStringWrapper(ses: Seq[String]): StringOrSeqString =
     FailureMessage.SeqStringWrapper(ses)
-
 }
