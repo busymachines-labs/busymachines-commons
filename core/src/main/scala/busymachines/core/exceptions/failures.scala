@@ -155,9 +155,15 @@ trait FailureMessage {
   * should be used to convey the general context withing which
   * [[FailureMessages#messages]] where gathered.
   *
+  * Guaranteed to have non-empty FailureMessages
   */
 trait FailureMessages extends FailureMessage {
-  def messages: Seq[FailureMessage]
+  def firstMessage: FailureMessage
+
+  def restOfMessages: Seq[FailureMessage]
+
+  final def messages: Seq[FailureMessage] =
+    firstMessage +: restOfMessages
 
   final def hasNotFound: Boolean =
     messages.exists(_.isInstanceOf[NotFoundFailure])
@@ -183,11 +189,12 @@ object FailureMessages {
   private case class GenericFailureMessages(
     override val id: FailureID,
     override val message: String,
-    override val messages: Seq[FailureMessage]
+    override val firstMessage: FailureMessage,
+    override val restOfMessages: Seq[FailureMessage],
   ) extends FailureMessages
 
-  def apply(id: FailureID, message: String, messages: Seq[FailureMessage]): FailureMessages = {
-    GenericFailureMessages(id, message, messages)
+  def apply(id: FailureID, message: String, msg: FailureMessage, msgs: FailureMessage*): FailureMessages = {
+    GenericFailureMessages(id, message, msg, msgs)
   }
 }
 
@@ -210,7 +217,8 @@ abstract class Failure(
 abstract class Failures(
   override val id: FailureID,
   override val message: String,
-  override val messages: Seq[FailureMessage]
+  override val firstMessage: FailureMessage,
+  override val restOfMessages: Seq[FailureMessage],
 ) extends Exception(message) with FailureMessages
 
 object Failures {
@@ -218,11 +226,12 @@ object Failures {
   private final class ReifiedUnauthorizedFailures(
     id: FailureID,
     message: String,
-    messages: Seq[FailureMessage]
-  ) extends Failures(id, message, messages)
+    firstMessage: FailureMessage,
+    restOfMessages: Seq[FailureMessage],
+  ) extends Failures(id, message, firstMessage, restOfMessages)
 
-  def apply(id: FailureID, msg: String, messages: Seq[FailureMessage]): Failures =
-    new ReifiedUnauthorizedFailures(id, msg, messages)
+  def apply(id: FailureID, message: String, fmsg: FailureMessage, fmsgs: FailureMessage*): Failures =
+    new ReifiedUnauthorizedFailures(id, message, fmsg, fmsgs)
 }
 
 /**
