@@ -8,10 +8,21 @@ package busymachines
   */
 package object rest {
 
+  import akka.http.scaladsl
+  import akka.http.scaladsl.settings
   import akka.http.scaladsl.server
   import akka.http.scaladsl.model
 
+  val Http: scaladsl.Http.type = scaladsl.Http
+
+  type HttpRequest = model.HttpRequest
+  val HttpRequest: model.HttpRequest.type = model.HttpRequest
+
+  type HttpResponse = model.HttpResponse
+  val HttpResponse: model.HttpResponse.type = model.HttpResponse
+
   type Route = server.Route
+  val Route: server.Route.type = server.Route
 
   type Directives = server.Directives
   val Directives: server.Directives.type = server.Directives
@@ -25,6 +36,9 @@ package object rest {
   type StatusCode = model.StatusCode
   val StatusCode: model.StatusCode.type = model.StatusCode
   val StatusCodes: model.StatusCodes.type = model.StatusCodes
+
+  type RoutingSettings = settings.RoutingSettings
+  val RoutingSettings: settings.RoutingSettings.type = settings.RoutingSettings
 
   import de.heikoseeberger.akkahttpcirce
 

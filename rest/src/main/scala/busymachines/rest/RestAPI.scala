@@ -102,9 +102,13 @@ object RestAPI {
     * and working with the given [[RejectionHandler]].
     *
     */
-  def combineWithRejectionHandler(rejectionHandler: RejectionHandler = RejectionHandler.default)(api: RestAPI, apis: RestAPI*): RestAPI = {
+  def seal(api: RestAPI, apis: RestAPI*)(implicit
+    routingSettings: RoutingSettings,
+    rejectionHandler: RejectionHandler = RejectionHandler.default,
+  ): RestAPI = {
     val r = combine(api, apis: _ *)
-    new ReifiedRestAPI(handleRejections(rejectionHandler)(r.route))
+    val sealedRoute = Route.seal(r.route)
+    new ReifiedRestAPI(sealedRoute)
   }
 
   /**
