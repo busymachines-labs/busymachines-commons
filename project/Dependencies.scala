@@ -22,12 +22,16 @@ object Dependencies {
   //========================================  typelevel ========================================
   //============================================================================================
 
-  lazy val catsVersion: String = "0.9.0"
   lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
-  lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % catsVersion
 
-  lazy val circeVersion: String = "0.8.0"
+  lazy val catsVersion: String = "1.0.0-MF"
+  lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % catsVersion
+  lazy val catsMacros: ModuleID = "org.typelevel" %% "cats-macros" % catsVersion
+  lazy val catsKernel: ModuleID = "org.typelevel" %% "cats-kernel" % catsVersion
+  lazy val catsLaws: ModuleID = "org.typelevel" %% "cats-laws" % catsVersion
+  lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
 
+  lazy val circeVersion: String = "0.9.0-M1"
   lazy val circeCore: ModuleID = "io.circe" %% "circe-core" % circeVersion
   lazy val circeGeneric: ModuleID = "io.circe" %% "circe-generic" % circeVersion
   lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeVersion
@@ -53,13 +57,16 @@ object Dependencies {
   lazy val akkaDistributedData: ModuleID = "com.typesafe.akka" %% "akka-distributed-data" % akkaVersion
   lazy val akkaPersistence: ModuleID = "com.typesafe.akka" %% "akka-persistence" % akkaVersion
 
-  lazy val akkaHttpVersion: String = "10.0.9"
+  lazy val akkaHttpVersion: String = "10.0.10"
   lazy val akkaHttp: ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 
   /**
     * https://github.com/hseeberger/akka-http-json
     */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.17.0"
+  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.19.0-M1"
+  //required only while circe is at version 0.9.0-M1
+  lazy val akkaCirceIntegrationResolver: MavenRepository = Resolver.bintrayRepo("hseeberger", "maven")
+
 
   //============================================================================================
   //=========================================  testing =========================================
@@ -68,6 +75,6 @@ object Dependencies {
 
   lazy val akkaTestKit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % akkaVersion
   lazy val akkaStreamTestKit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
-  lazy val akkaHttpTestKit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion
+  lazy val akkaHttpTestKit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion
 
 }
