@@ -23,6 +23,8 @@ val `compile->compile;test->test` = "compile->compile;test->test"
   * it is NOT published as an artifact. It doesn't have any source files, it is just a convenient
   * way to propagate all commands to the modules via the aggregation
   */
+resolvers in ThisBuild += Dependencies.akkaCirceIntegrationResolver
+
 lazy val root = Project(
   id = "busymachines-commons",
   base = file("."))
@@ -31,7 +33,9 @@ lazy val root = Project(
   )
   .aggregate(
     core,
-    json
+    json,
+    rest,
+    `rest-testkit`
   )
 
 lazy val core = project
@@ -50,7 +54,7 @@ lazy val json = project
     libraryDependencies ++=
       Dependencies.circe.map(c => c withSources()) ++ Seq(
         Dependencies.shapeless withSources(),
-        Dependencies.cats withSources(),
+        Dependencies.catsCore withSources(),
 
         Dependencies.scalaTest % Test withSources()
       )
@@ -60,4 +64,53 @@ lazy val json = project
   )
   .aggregate(
     core
+  )
+
+lazy val rest = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-rest",
+    libraryDependencies ++= Seq(
+      Dependencies.akkaHttp withSources(),
+      Dependencies.akkaActor withSources(),
+
+      /**
+        * http://doc.akka.io/docs/akka-http/current/scala/http/introduction.html#using-akka-http
+        * {{{
+        * Only when running against Akka 2.5 explicitly depend on akka-streams in same version as akka-actor
+        * }}}
+        */
+      Dependencies.akkaStream withSources(),
+      Dependencies.akkaHttpCirceIntegration withSources()
+    )
+  )
+  .dependsOn(
+    core,
+    json
+  )
+  .aggregate(
+    core,
+    json
+  )
+
+lazy val `rest-testkit` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-rest-testkit",
+    libraryDependencies ++= Seq(
+      Dependencies.akkaHttpTestKit withSources(),
+      Dependencies.scalaTest withSources()
+    )
+  )
+  .dependsOn(
+    core,
+    json,
+    rest
+  )
+  .aggregate(
+    core,
+    json,
+    rest
   )

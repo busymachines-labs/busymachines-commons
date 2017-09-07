@@ -6,14 +6,16 @@ Light-weight, modular, libraries for varying technology stacks, built _primarily
 
 #### versions
 - stable: `0.1.0`
-- milestone: `0.2.0-M1`
+- milestone: `0.2.0-M2`
 - snapshot: `0.2.0-SNAPSHOT`
 
 These modules are are cross-compiled for Scala versions: `2.12.3` and `2.11.11`. We try our best to keep them up to date.
 
 Modules:
-* `"com.busymachines" %% "busymachines-commons-core" % "0.1.0"` [README.md](/core)
-* `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-M1"` [README.md](/json)
+* `"com.busymachines" %% "busymachines-commons-core" % "0.1.0"` or `"0.2.0-M2"` [README.md](/core)
+* `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-M2"` [README.md](/json)
+* `"com.busymachines" %% "busymachines-commons-rest" % "0.2.0-M2"` [README.md](/rest)
+* `"com.busymachines" %% "busymachines-commons-rest-testkit" % "0.2.0-M2" % Test` [README.md](/rest-testkit)
 
 ## Library Structure
 
@@ -22,7 +24,9 @@ The idea behind these sets of libraries is to help jumpstart backend RESTful api
 Basically, as long as modules reside in the same repository they will be versioned with the same number, and released at the same time to avoid confusion. The moment we realize that a module has to take a life of its own, it will be moved to a separate module and versioned independently.
 
 * [core](/core) `0.1.0`
-* [json](/json) `0.2.0-M1`
+* [json](/json) `0.2.0-M2`
+* [rest](/rest) `0.2.0-M2`
+* [rest-testkit](/rest-testkit) `0.2.0-M2` - contains helpers that allow testing. Should never wind up in production code.
 
 ### Current version
 
