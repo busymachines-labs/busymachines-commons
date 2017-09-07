@@ -28,6 +28,7 @@ resolvers in ThisBuild += Dependencies.akkaCirceIntegrationResolver
 lazy val root = Project(
   id = "busymachines-commons",
   base = file("."))
+  .settings(Settings.commonSettings)
   .settings(
     publishArtifact in ThisProject := false
   )
