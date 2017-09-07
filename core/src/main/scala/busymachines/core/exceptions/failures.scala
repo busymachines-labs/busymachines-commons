@@ -12,7 +12,7 @@ package busymachines.core.exceptions
   * Furthermore, these exceptions being part of the ``core`` of the application
   * —by reading this file— you have not gauged their full potentiality, yet.
   * The intention is to give richer interpretations to these "common failures"
-  * in other ``busymachines-commons`` module than could be done to the likes
+  * in other ``busymachines-commons`` modules than could be done to the likes
   * of [[Throwable]].
   *
   * The reason why there is a trait [[FailureMessage]], and some types
@@ -20,12 +20,13 @@ package busymachines.core.exceptions
   * be achieved either through a monad stack approach to building applications,
   * or to a more vanilla scala approach, respectively.
   *
-  * There are two quasi-parallel hierarchies of failures:
-  * I) the [[FailureMessage]] representing one single failure
-  * II) the [[FailureMessages]] representing a container of multiple [[FailureMessage]].
-  * The intended use of the [[FailureMessages.id]] (and other ones inherited from [[FailureMessage]]
-  * is to signal the general "context" within which the specific [[FailureMessages.messages]]
-  * where gathered.
+  * There is a hierarchy of [[FailureMessage]] representing one single failure,
+  * in richer details.
+  *
+  * [[FailureMessages]] represents a container of multiple [[FailureMessage]]s.
+  * The intended use of the [[FailureMessages.id]] is to signal the general "context"
+  * within which the specific [[FailureMessages.messages]] where gathered. While each
+  * specific [[FailureMessage]] contains information about what went wrong.
   *
   * There are the following semantically meaningful exceptions (with their plural counterparts elided)
   * that you ought to be using:
@@ -209,6 +210,26 @@ abstract class Failure(
   override val parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends Exception(message, cause.orNull) with FailureMessage
 
+object Failure {
+
+  private final class ReifiedFailure(
+    override val id: FailureID,
+    override val message: String,
+    override val parameters: FailureMessage.Parameters,
+    cause: Option[Throwable] = None
+  ) extends Failure(
+    message = message, cause = cause, parameters = parameters
+  )
+
+  def apply(fm: FailureMessage): Failure = {
+    new ReifiedFailure(fm.id, fm.message, fm.parameters, None)
+  }
+
+  def apply(fm: FailureMessage, cause: Throwable): Failure = {
+    new ReifiedFailure(fm.id, fm.message, fm.parameters, Option(cause))
+  }
+}
+
 /**
   * Similar to [[Failure]] but encapsulate multiple causes.
   *
@@ -223,7 +244,7 @@ abstract class Failures(
 
 object Failures {
 
-  private final class ReifiedUnauthorizedFailures(
+  private final class ReifiedFailures(
     id: FailureID,
     message: String,
     firstMessage: FailureMessage,
@@ -231,7 +252,7 @@ object Failures {
   ) extends Failures(id, message, firstMessage, restOfMessages)
 
   def apply(id: FailureID, message: String, fmsg: FailureMessage, fmsgs: FailureMessage*): Failures =
-    new ReifiedUnauthorizedFailures(id, message, fmsg, fmsgs)
+    new ReifiedFailures(id, message, fmsg, fmsgs)
 }
 
 /**
