@@ -64,8 +64,6 @@ private[rest_test] class CRUDRoutesTest extends RestAPITest with JsonSupport {
       None
     )
     post("/crud", p) {
-      expectStatus(StatusCodes.Created)
-
       assert {
         responseAs[SomeTestDTOGet] ==
           SomeTestDTOGet(
