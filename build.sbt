@@ -30,7 +30,7 @@ lazy val root = Project(
   base = file("."))
   .settings(Settings.commonSettings)
   .settings(
-    publishArtifact in ThisProject := false
+    publishArtifact := false
   )
   .aggregate(
     core,

@@ -33,6 +33,10 @@ object PublishingSettings {
 
     sonatypeProfileName := Settings.organizationName,
 
+    publishArtifact in Compile := true,
+
+    publishArtifact in Test := false,
+
     publishMavenStyle := true,
 
     pomIncludeRepository := { _ => false },
@@ -44,8 +48,6 @@ object PublishingSettings {
       else
         Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
-
-    publishArtifact in Test := false,
 
     licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
 
