@@ -10,11 +10,12 @@ import busymachines.rest_test.routes._
   * @since 07 Sep 2017
   *
   */
-class RoutesCompositionTest extends RestAPITest with JsonSupport {
+private[rest_test] class RoutesCompositionTest extends RestAPITest with JsonSupport {
   private lazy val combinedAPI: RestAPI = {
     val eh = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()
-    RestAPI.seal(eh, crud)
+    val au = new AuthenticatedRoutesRestAPIForTesting()
+    RestAPI.seal(eh, crud, au)
   }
 
   override implicit protected val testedRoute: Route = combinedAPI.route
@@ -31,7 +32,7 @@ class RoutesCompositionTest extends RestAPITest with JsonSupport {
 
   it should "return 400 for InvalidInput" in {
     get("/invalid_input") {
-      assert(response.status == StatusCodes.BadRequest)
+      expectStatus(StatusCodes.BadRequest)
       val fm = responseAs[FailureMessage]
       assert(fm.id == FailureID("4"))
     }
@@ -63,4 +64,22 @@ class RoutesCompositionTest extends RestAPITest with JsonSupport {
     }
   }
 
+  //===========================================================================
+
+  behavior of "Authentications"
+
+  //===========================================================================
+
+  it should "... return 200 OK when providing proper Basic authentication" in {
+    context(BasicAuthenticationContextForTesting) { implicit cc =>
+      get("/authentication") {
+        expectStatus(StatusCodes.OK)
+
+        assert {
+          responseAs[SomeTestDTOGet] ==
+            SomeTestDTOGet(int = 42, string = "dXNlcm5hbWU6cGFzc3dvcmQ=", None)
+        }
+      }
+    }
+  }
 }

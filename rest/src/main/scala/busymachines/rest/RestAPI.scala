@@ -10,7 +10,6 @@ import busymachines.core.exceptions._
   *
   */
 trait RestAPI {
-
   def route: Route =
     handleExceptions(exceptionHandler)(routeDefinition)
 

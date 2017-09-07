@@ -1,6 +1,5 @@
 package busymachines.rest_test
 
-import akka.http.scaladsl.server.Route
 import busymachines.rest._
 import busymachines.rest_test.routes._
 
@@ -10,7 +9,7 @@ import busymachines.rest_test.routes._
   * @since 07 Sep 2017
   *
   */
-class CRUDRoutesTest extends RestAPITest with JsonSupport {
+private[rest_test] class CRUDRoutesTest extends RestAPITest with JsonSupport {
   private lazy val crudAPI = new CRUDRoutesRestAPIForTesting()
   override implicit val testedRoute: Route = Route.seal(crudAPI.route)
   private implicit val cc: CallerContext = Contexts.none
@@ -27,19 +26,20 @@ class CRUDRoutesTest extends RestAPITest with JsonSupport {
     get("/crud") {
       expectStatus(StatusCodes.OK)
 
-      val r = responseAs[Seq[SomeTestDTOGet]]
-      assert(r == Seq(
-        SomeTestDTOGet(
-          int = 1,
-          string = "one",
-          option = None
-        ),
-        SomeTestDTOGet(
-          int = 2,
-          string = "two",
-          option = None
+      assert {
+        responseAs[Seq[SomeTestDTOGet]] == Seq(
+          SomeTestDTOGet(
+            int = 1,
+            string = "one",
+            option = None
+          ),
+          SomeTestDTOGet(
+            int = 2,
+            string = "two",
+            option = None
+          )
         )
-      ))
+      }
     }
   }
 
@@ -49,8 +49,10 @@ class CRUDRoutesTest extends RestAPITest with JsonSupport {
     get("/crud/55") {
       expectStatus(StatusCodes.OK)
 
-      val r = responseAs[SomeTestDTOGet]
-      assert(r == SomeTestDTOGet(55, "wabbalubbadubdub", Option(42)))
+      assert {
+        responseAs[SomeTestDTOGet] ==
+          SomeTestDTOGet(55, "wabbalubbadubdub", Option(42))
+      }
     }
   }
 
@@ -64,13 +66,14 @@ class CRUDRoutesTest extends RestAPITest with JsonSupport {
     post("/crud", p) {
       expectStatus(StatusCodes.Created)
 
-      assert(
+      assert {
         responseAs[SomeTestDTOGet] ==
           SomeTestDTOGet(
             42,
             "lalala",
             None
-          ))
+          )
+      }
     }
   }
 
@@ -84,13 +87,14 @@ class CRUDRoutesTest extends RestAPITest with JsonSupport {
     put("/crud/77", p) {
       expectStatus(StatusCodes.OK)
 
-      assert(
+      assert {
         responseAs[SomeTestDTOGet] ==
           SomeTestDTOGet(
             77,
             "lalala",
             Option(42)
-          ))
+          )
+      }
     }
   }
 
@@ -103,13 +107,14 @@ class CRUDRoutesTest extends RestAPITest with JsonSupport {
     patch("/crud/77", p) {
       expectStatus(StatusCodes.OK)
 
-      assert(
+      assert {
         responseAs[SomeTestDTOGet] ==
           SomeTestDTOGet(
             77,
             "lalala",
             None
-          ))
+          )
+      }
     }
   }
 

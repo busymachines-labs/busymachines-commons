@@ -6,22 +6,22 @@ package busymachines.rest_test.routes
   * @since 07 Sep 2017
   *
   */
-case class SomeTestDTOGet(
+private[rest_test] case class SomeTestDTOGet(
   int: Int,
   string: String,
   option: Option[Int]
 )
 
-case class SomeTestDTOPost(
+private[rest_test] case class SomeTestDTOPost(
   string: String,
   option: Option[Int]
 )
 
-case class SomeTestDTOPut(
+private[rest_test] case class SomeTestDTOPut(
   string: String,
   option: Option[Int]
 )
 
-case class SomeTestDTOPatch(
+private[rest_test] case class SomeTestDTOPatch(
   string: String
 )
