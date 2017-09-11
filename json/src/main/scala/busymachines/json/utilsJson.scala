@@ -2,6 +2,7 @@ package busymachines.json
 
 import io.circe.parser._
 import busymachines.core.exceptions._
+import io.circe.Printer
 
 /**
   *
@@ -59,6 +60,17 @@ object JsonParsing {
       case Left(t) => throw t
     }
   }
+
+}
+
+object PrettyJson {
+  val noSpacesNoNulls: Printer = Printer.noSpaces.copy(dropNullValues = true)
+  val spaces2NoNulls: Printer = Printer.spaces2.copy(dropNullValues = true)
+  val spaces4NoNulls: Printer = Printer.spaces4.copy(dropNullValues = true)
+
+  val noSpaces: Printer = Printer.noSpaces
+  val spaces2: Printer = Printer.spaces2
+  val spaces4: Printer = Printer.spaces4
 
 }
 
