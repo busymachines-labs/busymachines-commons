@@ -10,7 +10,7 @@ import busymachines.rest_test.routes._
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class RoutesCompositionTest extends RestAPITest with JsonSupport {
+private[rest_test] class RoutesCompositionTest extends ExampleRestAPITestBaseClass {
   private lazy val combinedAPI: RestAPI = {
     val eh = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()

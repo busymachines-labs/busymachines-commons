@@ -9,9 +9,9 @@ import busymachines.rest_test.routes._
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class CRUDRoutesTest extends RestAPITest with JsonSupport {
+private[rest_test] class CRUDRoutesTest extends ExampleRestAPITestBaseClass {
   private lazy val crudAPI = new CRUDRoutesRestAPIForTesting()
-  override implicit val testedRoute: Route = Route.seal(crudAPI.route)
+  override implicit val testedRoute: Route = RestAPI.seal(crudAPI).route
   private implicit val cc: CallerContext = Contexts.none
 
   import busymachines.json.auto._
