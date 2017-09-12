@@ -207,9 +207,7 @@ private[rest] trait DefaultContexts {
       override def apply(httpRequest: HttpRequest): HttpRequest = httpRequest
     }
 
-    def withRawHeader(name: String, value: String): CallerContext = new CallerContext {
-      override def apply(httpRequest: HttpRequest): HttpRequest = httpRequest.addHeader(RawHeader(name, value))
-    }
+    def withRawHeader(name: String, value: String): CallerContext = (httpRequest: HttpRequest) => httpRequest.addHeader(RawHeader(name, value))
   }
 
 }
