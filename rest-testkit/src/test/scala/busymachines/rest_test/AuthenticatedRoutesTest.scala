@@ -13,7 +13,8 @@ import org.scalatest.Outcome
 private[rest_test] class AuthenticatedRoutesTest extends ExampleRestAPITestBaseClassWithFixture {
 
   /**
-    * A fixture would have to be more complicated than this to warrant all the hassle
+    * A fixture would have to be more complicated than this to warrant all the hassle.
+    * But this is here for illustrative purposes
     *
     */
   override protected def withFixture(test: OneArgTest): Outcome = {
@@ -24,6 +25,8 @@ private[rest_test] class AuthenticatedRoutesTest extends ExampleRestAPITestBaseC
   }
 
   import busymachines.json._
+  //this also works, and gets us faster compilation times:
+  //import SomeTestDTOJsonCodec._
 
   //===========================================================================
 

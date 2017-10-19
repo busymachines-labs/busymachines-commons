@@ -15,8 +15,8 @@ private[rest_test] class DefaultExceptionHandlerTest extends ExampleRestAPITestB
   override implicit val testedRoute: Route = RestAPI.seal(defApi).route
   implicit val context: CallerContext = Contexts.none
 
+  import SomeTestDTOJsonCodec._
   import busymachines.json.FailureMessageJsonCodec._
-  import busymachines.json._
 
   behavior of "DefaultExceptionHandler"
 

@@ -1,5 +1,7 @@
 package busymachines.rest_test.routes
 
+import busymachines.rest.JsonSupport
+
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com

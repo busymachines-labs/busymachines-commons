@@ -21,8 +21,8 @@ private[rest_test] class RoutesCompositionTest extends ExampleRestAPITestBaseCla
   override implicit protected val testedRoute: Route = combinedAPI.route
   private implicit val cc: CallerContext = Contexts.none
 
+  import SomeTestDTOJsonCodec._
   import busymachines.json.FailureMessageJsonCodec._
-  import busymachines.json._
 
   //===========================================================================
 

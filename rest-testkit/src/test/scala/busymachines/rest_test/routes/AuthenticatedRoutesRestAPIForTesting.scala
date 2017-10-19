@@ -6,14 +6,40 @@ import scala.concurrent.Future
 
 /**
   *
+  * You have several options of bringing in your json. Ordered from slowest compile time to fastest:
+  * ==========================
+  * 1:
+  * {{{
+  *   busymachines.json._
+  *   class AuthenticatedRoutesRestAPIForTesting ... with JsonSupport
+  * }}}
+  *
+  * ==========================
+  * 2:
+  * {{{
+  *   import SomeTestDTOJsonCodec._ //this already extends JsonSupport
+  * }}}
+  * ==========================
+  * 3:
+  * {{{
+  *   class AuthenticatedRoutesRestAPIForTesting ... with SomeTestDTOJsonCodec
+  * }}}
+  * ==========================
+  *
+  *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class AuthenticatedRoutesRestAPIForTesting extends RestAPI with Directives with JsonSupport
+private[rest_test] class AuthenticatedRoutesRestAPIForTesting extends RestAPI with Directives with SomeTestDTOJsonCodec
   with RestAPIAuthentications.Basic {
 
-  import busymachines.json._
+  //  Alternantively, if you remove SomeTestDTOJsonCodec mixing
+  //  import busymachines.rest.JsonSupport._
+  //  import busymachines.json._
+
+  //Alternatively, if none of the above:
+  //import SomeTestDTOJsonCodec._
 
   override protected def routeDefinition: Route = {
     pathPrefix("authentication") {
