@@ -15,14 +15,6 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /**
-  *
-  * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
-  * @since 11 Sep 2017
-  *
-  */
-
-
-/**
   * The reason why the methods [[RestAPIRequestBuildingSugar#get]], etc.
   * have only the [[CallerContext]] as an implicit parameter is to reduce
   * the amount of implicit resolution that has to be done in the actual
@@ -35,6 +27,9 @@ import scala.language.postfixOps
   * Ideally, you'd want to resolve all at call site, but that puts too much
   * of a compilation burden on your tests. So we sacrifice a bit of test
   * flexibility for compile time.
+  *
+  * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
+  * @since 11 Sep 2017
   *
   */
 private[rest] trait RestAPIRequestBuildingSugar {
