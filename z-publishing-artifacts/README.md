@@ -50,7 +50,7 @@ Outlined here on the [sbt-sonatype](https://github.com/xerial/sbt-sonatype/blob/
 
 The general steps for publishing your artifact to the Central Repository are as follows:
 
- * `sonatypeOpen` "com.busymachines" — this lives until you do `sonatypeClose`. Look out for the terminal output of `[info] Created successfully: combusymachines-1009`. The last part is the ID of the staging repository where a subsequent `publishSigned` will push your libraries. You can see this repository online at[https://oss.sonatype.org/#stagingRepositories](https://oss.sonatype.org/#stagingRepositories). You can login using the sonatype jira credentials you had to gain in previous steps.
+ * `sonatypeOpen` "com.busymachines" — this lives until you do `sonatypeClose`. Look out for the terminal output of `[info] Created successfully: combusymachines-1009`. The last part is the ID of the staging repository where a subsequent `publishSigned` will push your libraries. You can see this repository online at [https://oss.sonatype.org/#stagingRepositories](https://oss.sonatype.org/#stagingRepositories). You can login using the sonatype jira credentials you had to gain in previous steps.
  * `publishSigned` to deploy your artifact to staging repository at Sonatype.
  * `sonatypeRelease` do `sonatypeClose` and `sonatypePromote` in one step.
    * `sonatypeClose` closes your staging repository at Sonatype. This step verifies Maven central sync requirement, GPG-signature, javadoc
@@ -72,4 +72,3 @@ Do close and promote at once:
 $ sbt sonatypeRelease
 ```
 This command accesses [Sonatype Nexus REST API](https://oss.sonatype.org/nexus-staging-plugin/default/docs/index.html), then sends close and promote commands.
-```
