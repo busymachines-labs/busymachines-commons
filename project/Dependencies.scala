@@ -2,10 +2,9 @@ import sbt._
 
 object Dependencies {
 
-  lazy val `scala_2.11`: String = "2.11.11"
   lazy val `scala_2.12`: String = "2.12.3"
   lazy val `scala_2.13`: String = "2.13.0-M2"
-  lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.11`, `scala_2.12`)
+  lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`)
 
   //============================================================================================
   //=================================== http://busymachines.com/ ===============================
@@ -14,7 +13,6 @@ object Dependencies {
   lazy val commonsVersion: String = "0.2.0-SNAPSHOT"
 
   lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % commonsVersion withSources()
-
   lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % commonsVersion withSources()
 
   //============================================================================================
@@ -71,7 +69,7 @@ object Dependencies {
   //============================================================================================
   //=========================================  testing =========================================
   //============================================================================================
-  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.3"
+  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.4"
 
   lazy val akkaTestKit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % akkaVersion
   lazy val akkaStreamTestKit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
