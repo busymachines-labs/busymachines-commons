@@ -17,9 +17,9 @@ import scala.util.{Failure, Success, Try}
 @SubjectToChange("0.3.0")
 trait RestAPIAuthentication[AuthenticationResult] {
 
-  protected def optionalAuthenticationHeader: Directive1[Option[AuthenticationResult]]
+  protected def optionalAuthentication: Directive1[Option[AuthenticationResult]]
 
-  protected def authenticationHeader: Directive1[AuthenticationResult]
+  protected def authentication: Directive1[AuthenticationResult]
 
 }
 
@@ -59,7 +59,7 @@ object RestAPIAuthentications {
   @SubjectToChange("0.3.0")
   trait Basic extends RestAPIAuthentication[String] {
 
-    def authenticationHeader: Directive1[String] =
+    def authentication: Directive1[String] =
       optionalHeaderValueByName(AuthorizationS) flatMap {
         case None => reject(MissingBasicCredentials)
         case Some(encodedCredentials) =>
@@ -74,7 +74,7 @@ object RestAPIAuthentications {
           }
       }
 
-    override def optionalAuthenticationHeader: Directive1[Option[String]] = authenticationHeader.map(s => Option[String](s)).recover { rej =>
+    override def optionalAuthentication: Directive1[Option[String]] = authentication.map(s => Option[String](s)).recover { rej =>
       provide(Option.empty[String])
     }
   }
