@@ -16,7 +16,7 @@ class JsonDefaultAutoSemiAutoInteractionTest extends FlatSpec {
   import busymachines.json.syntax._
 
   it should "... auto should use the explicit codec for sub-hierarchies of Melon" in {
-    implicit val explicitImplicitTasteCodec: Codec[Taste] = semiauto.deriveEnumerationCodec[Taste]
+    implicit val explicitImplicitTasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
 
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
     val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)

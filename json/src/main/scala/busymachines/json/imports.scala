@@ -21,4 +21,4 @@ package busymachines.json
   */
 object syntax extends JsonSyntax
 
-object semiauto extends DefaultTypeDiscriminatorConfig with SemiAutoDerivation
+object derive extends DefaultTypeDiscriminatorConfig with SemiAutoDerivation

@@ -34,7 +34,7 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... fail to compile when auto._ is imported together with semiauto._" in {
+  it should "... fail to compile when json._ is imported together with derive._" in {
     /**
       * These two cannot work well together because both of them define a [[busymachines.json.Configuration]]
       * implicit that ensures that sealed trait hierarchies are serialized using the _type discriminator
@@ -43,7 +43,7 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
       """
         |import busymachines.json._
         |import busymachines.json.syntax._
-        |import busymachines.json.semiauto._
+        |import busymachines.json.derive._
         |
         |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
         |val asJson = anarchistMelon.asJson.spaces2
@@ -55,7 +55,7 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... compile when auto._ is imported together with semiauto._, and one of them excludes the defaultConfiguration" in {
+  it should "... compile when json._ is imported together with derive._, and one of them excludes the defaultConfiguration" in {
     /**
       * These two cannot work well together because both of them define a [[busymachines.json.Configuration]]
       * implicit that ensures that sealed trait hierarchies are serialized using the _type discriminator
@@ -64,7 +64,7 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
       """
         |import busymachines.json._
         |import busymachines.json.syntax._
-        |import busymachines.json.semiauto.{defaultDerivationConfiguration => _, _}
+        |import busymachines.json.derive.{defaultDerivationConfiguration => _, _}
         |
         |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
         |val asJson = anarchistMelon.asJson.spaces2

@@ -15,9 +15,9 @@ private[json_test] object melonsDefaultSemiAutoDecoders {
 
   import busymachines.json._
 
-  implicit val tasteDecoder: Decoder[Taste] = semiauto.deriveEnumerationDecoder[Taste]
-  implicit val melonDecoder: Decoder[Melon] = semiauto.deriveDecoder[Melon]
-  implicit val anarchistMelonDecoder: Decoder[AnarchistMelon] = semiauto.deriveDecoder[AnarchistMelon]
+  implicit val tasteDecoder: Decoder[Taste] = derive.enumerationDecoder[Taste]
+  implicit val melonDecoder: Decoder[Melon] = derive.decoder[Melon]
+  implicit val anarchistMelonDecoder: Decoder[AnarchistMelon] = derive.decoder[AnarchistMelon]
 }
 
 /**
@@ -27,9 +27,9 @@ private[json_test] object melonsDefaultSemiAutoEncoders {
 
   import busymachines.json._
 
-  implicit val tasteEncoder: Encoder[Taste] = semiauto.deriveEnumerationEncoder[Taste]
-  implicit val melonEncoder: ObjectEncoder[Melon] = semiauto.deriveEncoder[Melon]
-  implicit val anarchistMelonEncoder: Encoder[AnarchistMelon] = semiauto.deriveEncoder[AnarchistMelon]
+  implicit val tasteEncoder: Encoder[Taste] = derive.enumerationEncoder[Taste]
+  implicit val melonEncoder: ObjectEncoder[Melon] = derive.encoder[Melon]
+  implicit val anarchistMelonEncoder: Encoder[AnarchistMelon] = derive.encoder[AnarchistMelon]
 }
 
 /**
@@ -39,8 +39,8 @@ private[json_test] object melonsDefaultSemiAutoCodecs {
 
   import busymachines.json._
 
-  implicit val tasteEncoder: Codec[Taste] = semiauto.deriveEnumerationCodec[Taste]
-  implicit val melonEncoder: Codec[Melon] = semiauto.deriveCodec[Melon]
-  implicit val anarchistMelonEncoder: Codec[AnarchistMelon] = semiauto.deriveCodec[AnarchistMelon]
+  implicit val tasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
+  implicit val melonCodec: Codec[Melon] = derive.codec[Melon]
+  implicit val anarchistMelonCodec: Codec[AnarchistMelon] = derive.codec[AnarchistMelon]
 
 }

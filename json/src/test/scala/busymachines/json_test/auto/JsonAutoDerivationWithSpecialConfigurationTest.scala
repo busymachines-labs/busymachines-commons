@@ -1,6 +1,6 @@
 package busymachines.json_test.auto
 
-import busymachines.json.{Configuration, Codec, semiauto}
+import busymachines.json.{Configuration, Codec, derive}
 import busymachines.json_test._
 import org.scalatest.FlatSpec
 
@@ -29,7 +29,7 @@ class JsonAutoDerivationWithSpecialConfigurationTest extends FlatSpec {
     /**
       * We explicitly create a codec for the enumeration of case objects, thus, it should not have _melonMania discriminator
       */
-    implicit val explicitImplicitTasteCodec: Codec[Taste] = semiauto.deriveEnumerationCodec[Taste]
+    implicit val explicitImplicitTasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
 
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
     val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)
