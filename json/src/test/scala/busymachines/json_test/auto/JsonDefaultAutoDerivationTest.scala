@@ -15,9 +15,8 @@ import org.scalatest.FlatSpec
   */
 class JsonDefaultAutoDerivationTest extends FlatSpec {
 
-  import busymachines.json.syntax._
-  import busymachines.json.auto._
   import busymachines.json._
+  import busymachines.json.syntax._
 
   //-----------------------------------------------------------------------------------------------
 

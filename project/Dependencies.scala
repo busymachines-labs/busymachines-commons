@@ -2,20 +2,23 @@ import sbt._
 
 object Dependencies {
 
-  lazy val `scala_2.11`: String = "2.11.11"
   lazy val `scala_2.12`: String = "2.12.3"
   lazy val `scala_2.13`: String = "2.13.0-M2"
-  lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.11`, `scala_2.12`)
+  lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`)
 
   //============================================================================================
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
-  lazy val commonsVersion: String = "0.2.0-SNAPSHOT"
+  lazy val bmCommonsVersion: String = "0.2.0-M4"
 
-  lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % commonsVersion withSources()
+  lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % bmCommonsVersion withSources()
+  lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % bmCommonsVersion withSources()
+  lazy val busymachinesCommonsRestCore: ModuleID = "com.busymachines" %% "busymachines-commons-rest-core" % bmCommonsVersion withSources()
+  lazy val busymachinesCommonsRestCoreTestkit: ModuleID = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmCommonsVersion % Test withSources()
+  lazy val busymachinesCommonsRestJson: ModuleID = "com.busymachines" %% "busymachines-commons-rest-json" % bmCommonsVersion withSources()
+  lazy val busymachinesCommonsRestJsonTestkit: ModuleID = "com.busymachines" %% "busymachines-commons-rest-Json-testkit" % bmCommonsVersion % Test withSources()
 
-  lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % commonsVersion withSources()
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================
@@ -71,7 +74,7 @@ object Dependencies {
   //============================================================================================
   //=========================================  testing =========================================
   //============================================================================================
-  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.3"
+  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.4"
 
   lazy val akkaTestKit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % akkaVersion
   lazy val akkaStreamTestKit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion

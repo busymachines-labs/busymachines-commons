@@ -15,7 +15,6 @@ import org.scalatest.FlatSpec
   */
 class JsonDefaultSemiAutoCodecDerivationTest extends FlatSpec {
 
-
   import busymachines.json.syntax._
   import melonsDefaultSemiAutoCodecs._
 

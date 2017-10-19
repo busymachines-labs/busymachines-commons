@@ -25,7 +25,7 @@ class UnionTypeWorkaroundTest extends FlatSpec {
         |
         |}
         |
-        |case class SolutionNotFoundFailure(problem: String, attempts: Seq[String]) extends NotFoundFailure(
+        |case class SolutionNotFoundFailure(problem: String, attempts: List[String]) extends NotFoundFailure(
         |  s"Solution to problem $problem not found."
         |) {
         |  override def id: FailureID = RevolutionaryDomainFailures.CannotBeDone
@@ -39,10 +39,10 @@ class UnionTypeWorkaroundTest extends FlatSpec {
         |object JustSomeScopeWithStuffToSolve {
         |  //...
         |  val solutionToPVSNP: Option[Boolean] = ???
-        |  solutionToPVSNP.getOrElse(throw SolutionNotFoundFailure("P vs. NP", Seq("1", "2", "3")))
+        |  solutionToPVSNP.getOrElse(throw SolutionNotFoundFailure("P vs. NP", List("1", "2", "3")))
         |
         |  val solutionToHaltingProblem: Option[Boolean] = ???
-        |  solutionToHaltingProblem.getOrElse(throw SolutionNotFoundFailure("Halting Problem", Seq("stop", "12")))
+        |  solutionToHaltingProblem.getOrElse(throw SolutionNotFoundFailure("Halting Problem", List("stop", "12")))
         |}
         |
   """.stripMargin

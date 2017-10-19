@@ -14,11 +14,10 @@ import busymachines.json_test._
 private[json_test] object melonsDefaultSemiAutoDecoders {
 
   import busymachines.json._
-  import busymachines.json.semiauto._
 
-  implicit val tasteDecoder: Decoder[Taste] = deriveEnumerationDecoder[Taste]
-  implicit val melonDecoder: Decoder[Melon] = deriveDecoder[Melon]
-  implicit val anarchistMelonDecoder: Decoder[AnarchistMelon] = deriveDecoder[AnarchistMelon]
+  implicit val tasteDecoder: Decoder[Taste] = derive.enumerationDecoder[Taste]
+  implicit val melonDecoder: Decoder[Melon] = derive.decoder[Melon]
+  implicit val anarchistMelonDecoder: Decoder[AnarchistMelon] = derive.decoder[AnarchistMelon]
 }
 
 /**
@@ -27,11 +26,10 @@ private[json_test] object melonsDefaultSemiAutoDecoders {
 private[json_test] object melonsDefaultSemiAutoEncoders {
 
   import busymachines.json._
-  import busymachines.json.semiauto._
 
-  implicit val tasteEncoder: Encoder[Taste] = deriveEnumerationEncoder[Taste]
-  implicit val melonEncoder: ObjectEncoder[Melon] = deriveEncoder[Melon]
-  implicit val anarchistMelonEncoder: Encoder[AnarchistMelon] = deriveEncoder[AnarchistMelon]
+  implicit val tasteEncoder: Encoder[Taste] = derive.enumerationEncoder[Taste]
+  implicit val melonEncoder: ObjectEncoder[Melon] = derive.encoder[Melon]
+  implicit val anarchistMelonEncoder: Encoder[AnarchistMelon] = derive.encoder[AnarchistMelon]
 }
 
 /**
@@ -40,10 +38,9 @@ private[json_test] object melonsDefaultSemiAutoEncoders {
 private[json_test] object melonsDefaultSemiAutoCodecs {
 
   import busymachines.json._
-  import busymachines.json.semiauto._
 
-  implicit val tasteEncoder: Codec[Taste] = deriveEnumerationCodec[Taste]
-  implicit val melonEncoder: Codec[Melon] = deriveCodec[Melon]
-  implicit val anarchistMelonEncoder: Codec[AnarchistMelon] = deriveCodec[AnarchistMelon]
+  implicit val tasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
+  implicit val melonCodec: Codec[Melon] = derive.codec[Melon]
+  implicit val anarchistMelonCodec: Codec[AnarchistMelon] = derive.codec[AnarchistMelon]
 
 }

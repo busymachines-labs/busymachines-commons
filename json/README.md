@@ -1,7 +1,7 @@
 # busymachines-commons-json
 
-Current version is `0.2.0-M1`. SBT module id:
-`"com.busymachines" %% "busymachines-commons-json" % "0.2.0-M1"`
+Current version is `0.2.0-M4`. SBT module id:
+`"com.busymachines" %% "busymachines-commons-json" % "0.2.0-M4"`
 
 ## How it works
 This module is a thin layer over [circe](https://circe.github.io/circe/), additionally, it depends on [shapeless](https://github.com/milessabin/shapeless). The latter being the mechanism through which `auto` and `semiauto` derivation can be made to work.
@@ -9,9 +9,9 @@ This module is a thin layer over [circe](https://circe.github.io/circe/), additi
 You can glean 99% of what's going on here by first understanding `circe`. This module provides just convenience, and a principled way of using it. The only "real" contribution of this is that provides a `Codec` type class, which is lacking from `circe`.
 
 ### Transitive dependencies
-- circe 0.8.0 (with all its modules)
+- circe 0.9.0-M1 (with all its modules)
 - shapeless 2.3.2
-- cats 0.9.0
+- cats 1.0.0-MF
 
 ## Common usage
 
@@ -19,14 +19,15 @@ Most likely the best way to make use of the library is to have the following imp
 ```scala
 import busymachines.json._
 import busymachines.json.syntax._
-import busymachines.json.auto._
 ```
 
-`json._` brings in common type definitions. `syntax._` handy syntactic ops to parse strings to `Json` and/or to decode them to a specified type—these are just syntactically convenient ways of doing what the objects in `utilsJson.scala` can do. By importing `auto._`, the compiler will try to automatically generate an `Encoder` or `Decoder` whenever one is required. So, when a method like `def decodeAs[A](json: String)(implicit decoder: Decoder[A])` is called the compiler will attempt to derive a `Decoder` for a type `A`.
+`json._` brings in common type definitions, `auto` derivation of `Encoder`/`Decoder`, and an object `derive` which is the rough equivalent of circe's `semiauto`. When importing `json._`, the compiler will try to automatically generate the aforementioned type-classes whenever one is required. So, when a method like `def decodeAs[A](json: String)(implicit decoder: Decoder[A])` is called the compiler will attempt to derive a `Decoder` for a type `A`.  
+
+`syntax._` brings in handy syntactic ops to parse strings to `Json` and/or to decode them to a specified type—these are just syntactically convenient ways of doing what the objects in `utilsJson.scala` can do.
 
 ## Decoding/encoding simple case class
 
-### semiauto derivation
+### semiauto derivation (`derive`)
 ```scala
 case class AnarchistMelon(
   noGods: Boolean,
@@ -36,14 +37,13 @@ case class AnarchistMelon(
 object CommonsJson extends App {
 
   import busymachines.json._
-  import busymachines.json.semiauto._
   import busymachines.json.syntax._
 
   val anarchistMelon = AnarchistMelon(true, true, true)
 
   //we need an encoder, so using the functions from semiauto we can explicitly create it
-  implicit val encoder: Encoder[AnarchistMelon] = deriveEncoder[AnarchistMelon]
-  implicit val decoder: Decoder[AnarchistMelon] = deriveDecoder[AnarchistMelon]
+  implicit val encoder: Encoder[AnarchistMelon] = derive.encoder[AnarchistMelon]
+  implicit val decoder: Decoder[AnarchistMelon] = derive.decoder[AnarchistMelon]
 
   val jsonString: String = anarchistMelon.asJson.spaces2
   println(jsonString)
@@ -62,12 +62,13 @@ Will print:
 AnarchistMelon(true,true,true)
 ```
 
-### auto derivation
-It's more or less the same, but with less boilerplate:
+### auto derivation (default)
+It's more or less the same, but with less boilerplate. But one should be wary of using this
+except in fairly trivial cases because it takes considerably longer to compile your code.
 ```scala
 object CommonsJson extends App {
 
-  import busymachines.json.auto._
+  import busymachines.json._
   import busymachines.json.syntax._
 
   val anarchistMelon = AnarchistMelon(true, true, true)
@@ -79,7 +80,7 @@ object CommonsJson extends App {
 ```
 
 ### Codec
-If you know you need both an `Encoder` and `Decoder` then you can just use `Codec` which is both of those things. So in the semiauto case we can simplify the code more by deriving only:
+If you know you need both an `Encoder` and `Decoder` then you can just use `Codec` which is both of those things. So in the `derive` case we can simplify the code more by deriving only:
 ```scala
 implicit val codec: Codec[AnarchistMelon] = deriveCodec[AnarchistMelon]
 ```
@@ -109,14 +110,13 @@ Now, as per good practice we'll put the Codecs separately from our application c
 ### semiauto derivation of hierarchies
 
 ```scala
-object melonsDefaultSemiAutoCodecs {
+object MelonsDefaultJsonCodecs {
   import busymachines.json._
-  import busymachines.json.semiauto._
 
   //this is a special method that encodes/decodes sealed trait hierarchies
   //composed of case objects only as plain strings, as opposed to the derivedCodec
-  implicit val tasteEncoder: Codec[Taste] = deriveEnumerationCodec[Taste]
-  implicit val melonEncoder: Codec[Melon] = deriveCodec[Melon]
+  implicit val tasteEncoder: Codec[Taste] = derive.enumerationCodec[Taste]
+  implicit val melonEncoder: Codec[Melon] = derive.codec[Melon]
 }
 ```
 
@@ -124,7 +124,7 @@ Variants of an abstract datatype are distinguished by inserting a field in the j
 ```scala
 object CommonsJson extends App {
   import busymachines.json.syntax._
-  import melonsDefaultSemiAutoCodecs._
+  import MelonsDefaultJsonCodecs._
 
   val winterMelon = WinterMelon(fuzzy = true, weight = 45)
   val waterMelon = WaterMelon(seeds = true, weight = 90)
@@ -137,7 +137,7 @@ object CommonsJson extends App {
   rawJson.unsafeDecodeAs[List[Melon]]
 }
 ```
-The printout. Notice that the tastes array contains simple strings, but the `SmallMelon`, even though it was a case object is still represented as a json object.
+Notice that the tastes array contains simple strings, but the `SmallMelon`, even though it was a case object is still represented as a json object.
 ```json
 [
   {
@@ -166,7 +166,7 @@ The printout. Notice that the tastes array contains simple strings, but the `Sma
 
 ### auto derivation of hierarchies
 
-It should be clear by now what we have to do. Essentially nothing, but if we want to maintain the same behavior when converting `Taste` case objects, then we do have to explicitely create a codec for it. Otherwise it would represent this enumeration as json objects with only the `_type` field in them.
+It should be clear by now what we have to do. Essentially nothing, but if we want to maintain the same behavior when converting `Taste` case objects, then we do have to explicitly create a codec for it. Otherwise it would represent this enumeration as json objects with only the `_type` field in them.
 
 So, our code in this case looks like the following—and the result is the same:
 ```scala
@@ -174,11 +174,10 @@ object CommonsJson extends App {
 
   import busymachines.json._
   import busymachines.json.syntax._
-  import busymachines.json.auto._
 
-  //note that we did not import everything from the semiauto package, and there's a
+  //note that we did not import everything from ``derive``, and there's a
   //good reason why, check out the next section.
-  implicit val tasteEncoder: Codec[Taste] = semiauto.deriveEnumerationCodec[Taste]
+  implicit val tasteEncoder: Codec[Taste] = derive.enumerationCodec[Taste]
 
   val winterMelon = WinterMelon(fuzzy = true, weight = 45)
   val waterMelon = WaterMelon(seeds = true, weight = 90)
@@ -192,9 +191,9 @@ object CommonsJson extends App {
 }
 ```
 
-### combining auto, and semiauto derivation
+### combining auto (default), and semiauto derivation
 
-Unfortunately there is a small caveat when combining these two methods of deriving json codecs. And we have to delve a bit into the internals of this library. The reason is that an implicit `Configuration` is required to derive all sealed traits, and we use the non-default way of adding in `_type` discriminator. This configuration can be found in `busymachines.json.DefaultTypeDiscriminatorConfig` and is mixed into both `auto` and `semiauto`.
+Unfortunately there is a small caveat when combining these two methods of deriving json codecs. And we have to delve a bit into the internals of this library. The reason is that an implicit `Configuration` is required to derive all sealed traits, and we use the non-default way of adding in `_type` discriminator. This configuration can be found in `busymachines.json.DefaultTypeDiscriminatorConfig` and is mixed into both the root `json` package object and the `derive` object.
 ```scala
 trait DefaultTypeDiscriminatorConfig {
 
@@ -206,7 +205,7 @@ trait DefaultTypeDiscriminatorConfig {
 
 }
 ```
-Therefore, if you do a wildcard import of both, you have two conflicting implicits—that are needed to derive _other_ implicits, that's why your compilation fails with `"Could not find implicit Encoder[A]"` instead of `"Conflicting Configuration implicit.`. Therefore, the recommended pattern of combining the two modes is to wildcard import `auto._`, and refer to `semiauto` by name—the latter having explicit methods like in the example in the previous section: `auto derivation of hierarchies`.
+Therefore, if you do a wildcard import of both, you have two conflicting implicits—that are needed to derive _other_ implicits, that's why your compilation fails with `"Could not find implicit Encoder[A]"` instead of `"Conflicting Configuration implicit.`. Therefore, the recommended pattern of combining the two modes is to wildcard import `json._`, and refer to `derive` by name—the latter having explicit methods like in the example in the previous section: `auto derivation of hierarchies`.
 
 ## provided decoders
 
@@ -215,3 +214,7 @@ The object/trait `busymachines.json.FailureMessageJsonCodec` contains all encode
 ## tests
 
 Check out all the tests for runnable usage examples.
+
+## if everything else goes wrong
+
+In case you do not like the default automatic derivation you import from package `jsonbare` in which case you simply have to add the additional import `import busymachines.jsonbare.auto._` to make automatic derivation work. `jsonbare` contains its own `syntax` and `derive` imports, so you never have to depend on `busymachines.json`.

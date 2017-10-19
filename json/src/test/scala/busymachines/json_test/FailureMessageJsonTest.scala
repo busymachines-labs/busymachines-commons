@@ -22,7 +22,7 @@ class FailureMessageJsonTest extends FlatSpec {
       "test message",
       FailureMessage.Parameters(
         "one" -> "one",
-        "two" -> Seq("one", "two")
+        "two" -> List("one", "two")
       )
     )
 
@@ -52,7 +52,7 @@ class FailureMessageJsonTest extends FlatSpec {
       "test message",
       FailureMessage.Parameters(
         "one" -> "one",
-        "two" -> Seq("one", "two")
+        "two" -> List("one", "two")
       )
     )
 
@@ -82,7 +82,7 @@ class FailureMessageJsonTest extends FlatSpec {
       "test message",
       FailureMessage.Parameters(
         "one" -> "one",
-        "two" -> Seq("one", "two")
+        "two" -> List("one", "two")
       )
     )
 
@@ -112,7 +112,7 @@ class FailureMessageJsonTest extends FlatSpec {
       "test message",
       FailureMessage.Parameters(
         "one" -> "one",
-        "two" -> Seq("one", "two")
+        "two" -> List("one", "two")
       )
     )
 
@@ -142,7 +142,7 @@ class FailureMessageJsonTest extends FlatSpec {
       "test message",
       FailureMessage.Parameters(
         "one" -> "one",
-        "two" -> Seq("one", "two")
+        "two" -> List("one", "two")
       )
     )
 
@@ -172,7 +172,7 @@ class FailureMessageJsonTest extends FlatSpec {
       "test message",
       FailureMessage.Parameters(
         "one" -> "one",
-        "two" -> Seq("one", "two")
+        "two" -> List("one", "two")
       )
     )
 
@@ -207,14 +207,14 @@ class FailureMessageJsonTest extends FlatSpec {
         "one",
         FailureMessage.Parameters(
           "3" -> "1",
-          "4" -> Seq("1", "2")
+          "4" -> List("1", "2")
         )
       ),
       NotFoundFailure(
         "two",
         FailureMessage.Parameters(
           "5" -> "6",
-          "6" -> Seq("6", "7")
+          "6" -> List("6", "7")
         )
       )
     )

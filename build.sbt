@@ -35,8 +35,10 @@ lazy val root = Project(
   .aggregate(
     core,
     json,
-    rest,
-    `rest-testkit`
+    `rest-core`,
+    `rest-core-testkit`,
+    `rest-json`,
+    `rest-json-testkit`
   )
 
 lazy val core = project
@@ -63,15 +65,12 @@ lazy val json = project
   .dependsOn(
     core
   )
-  .aggregate(
-    core
-  )
 
-lazy val rest = project
+lazy val `rest-core` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
-    name in ThisProject := "busymachines-commons-rest",
+    name in ThisProject := "busymachines-commons-rest-core",
     libraryDependencies ++= Seq(
       Dependencies.akkaHttp withSources(),
       Dependencies.akkaActor withSources(),
@@ -82,36 +81,57 @@ lazy val rest = project
         * Only when running against Akka 2.5 explicitly depend on akka-streams in same version as akka-actor
         * }}}
         */
-      Dependencies.akkaStream withSources(),
+      Dependencies.akkaStream withSources()
+    )
+  )
+  .dependsOn(
+    core
+  )
+
+lazy val `rest-core-testkit` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-rest-core-testkit",
+    libraryDependencies ++= Seq(
+      Dependencies.akkaHttpTestKit withSources(),
+      Dependencies.scalaTest withSources(),
+      Dependencies.scalaTest % Test withSources()
+    )
+  )
+  .dependsOn(
+    core,
+    `rest-core`
+  )
+
+lazy val `rest-json` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-rest-json",
+    libraryDependencies ++= Seq(
       Dependencies.akkaHttpCirceIntegration withSources()
     )
   )
   .dependsOn(
     core,
-    json
-  )
-  .aggregate(
-    core,
-    json
+    json,
+    `rest-core`,
   )
 
-lazy val `rest-testkit` = project
+lazy val `rest-json-testkit` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
-    name in ThisProject := "busymachines-commons-rest-testkit",
+    name in ThisProject := "busymachines-commons-rest-json-testkit",
     libraryDependencies ++= Seq(
-      Dependencies.akkaHttpTestKit withSources(),
-      Dependencies.scalaTest withSources()
+      Dependencies.scalaTest % Test withSources()
     )
   )
   .dependsOn(
     core,
     json,
-    rest
-  )
-  .aggregate(
-    core,
-    json,
-    rest
+    `rest-core`,
+    `rest-json`,
+    `rest-core-testkit`,
   )
