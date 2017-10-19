@@ -1,5 +1,6 @@
 package busymachines.rest
 
+import akka.http.scaladsl.marshalling.ToEntityMarshaller
 import akka.http.scaladsl.model.HttpEntity
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.server.RouteResult
@@ -7,8 +8,6 @@ import akka.http.scaladsl.server.RouteResult.{Complete, Rejected}
 import akka.http.scaladsl.server.directives.LoggingMagnet
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.stream.{ActorMaterializer, Materializer}
-import busymachines.json._
-import busymachines.rest.JsonSupport._
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -45,29 +44,20 @@ private[rest] trait RestAPIRequestBuildingSugar {
     requestRunner.runRequest(g)(thunk)
   }
 
-  /**
-    * @param encoder
-    * I chose to use [[Encoder]] instead of
-    * [[akka.http.scaladsl.marshalling.ToRequestMarshaller]] because
-    * then the compilation burden on the client side is much smaller.
-    * Since derivation has to be resolved only for the [[Encoder]] and
-    * not—also—for converting said encoder to the marshaller.
-    *
-    */
   protected def post[BodyType, R](uri: String, body: BodyType)(thunk: => R)
-    (implicit cc: CallerContext, encoder: Encoder[BodyType]): R = {
+    (implicit cc: CallerContext, encoder: ToEntityMarshaller[BodyType]): R = {
     val g = Post(uri, body)
     requestRunner.runRequest(g)(thunk)
   }
 
   protected def patch[BodyType, R](uri: String, body: BodyType)(thunk: => R)
-    (implicit cc: CallerContext, encoder: Encoder[BodyType]): R = {
+    (implicit cc: CallerContext, encoder: ToEntityMarshaller[BodyType]): R = {
     val g = Patch(uri, body)
     requestRunner.runRequest(g)(thunk)
   }
 
   protected def put[BodyType, R](uri: String, body: BodyType)(thunk: => R)
-    (implicit cc: CallerContext, encoder: Encoder[BodyType]): R = {
+    (implicit cc: CallerContext, encoder: ToEntityMarshaller[BodyType]): R = {
     val g = Put(uri, body)
     requestRunner.runRequest(g)(thunk)
   }
@@ -86,28 +76,28 @@ private[rest] trait RestAPIRequestBuildingSugar {
 private[rest] object RequestDebugging {
   private val delimiter: String = "==================================================="
 
-  private[rest] def requestLogFun(printingTimeoutDuration: FiniteDuration)(implicit materializer: Materializer, ec: ExecutionContext): HttpRequest => Unit = { req =>
-    printRequest(req, printingTimeoutDuration)
+  private[rest] def requestLogFun(printingTimeoutDuration: FiniteDuration)(transformEntity: String => String)(implicit materializer: Materializer, ec: ExecutionContext): HttpRequest => Unit = { req =>
+    printRequest(req, printingTimeoutDuration)(transformEntity)
   }
 
-  private[rest] def resultLogFun(printingTimeoutDuration: FiniteDuration)(implicit materializer: Materializer, ec: ExecutionContext): RouteResult => Unit = { rez =>
-    printResult(rez, printingTimeoutDuration)
+  private[rest] def resultLogFun(printingTimeoutDuration: FiniteDuration)(transformEntity: String => String)(implicit materializer: Materializer, ec: ExecutionContext): RouteResult => Unit = { rez =>
+    printResult(rez, printingTimeoutDuration)(transformEntity)
   }
 
-  private[rest] def logResultPrintln(printingTimeoutDuration: FiniteDuration)(implicit materializer: Materializer, ec: ExecutionContext) = {
-    Directives.logResult(LoggingMagnet(_ => resultLogFun(printingTimeoutDuration)))
+  private[rest] def logResultPrintln(printingTimeoutDuration: FiniteDuration)(transformEntity: String => String)(implicit materializer: Materializer, ec: ExecutionContext) = {
+    Directives.logResult(LoggingMagnet(_ => resultLogFun(printingTimeoutDuration)(transformEntity)))
   }
 
-  private def printResult(rr: RouteResult, printingTimeoutDuration: FiniteDuration)(implicit mat: Materializer, ec: ExecutionContext): Unit = {
-    print(s"\n${responseToString(rr, printingTimeoutDuration)}")
+  private def printResult(rr: RouteResult, printingTimeoutDuration: FiniteDuration)(transformEntity: String => String)(implicit mat: Materializer, ec: ExecutionContext): Unit = {
+    print(s"\n${responseToString(rr, printingTimeoutDuration)(transformEntity)}")
   }
 
-  private[rest] def responseToString(rr: RouteResult, printingTimeoutDuration: FiniteDuration)(implicit mat: Materializer, ec: ExecutionContext): String = {
+  private[rest] def responseToString(rr: RouteResult, printingTimeoutDuration: FiniteDuration)(transformEntity: String => String)(implicit mat: Materializer, ec: ExecutionContext): String = {
     rr match {
       case Complete(response) =>
         val responseCode = response.status.intValue().toString
         val headers = response.headers.map(h => s"${h.name()}: ${h.value()}").mkString("\n").trim
-        val entity = entityToString(response.entity, printingTimeoutDuration).trim
+        val entity = entityToString(response.entity, printingTimeoutDuration)(transformEntity).trim
         val sb = StringBuilder.newBuilder
         sb.append(s"----> Response <----")
         sb.append("\n")
@@ -130,14 +120,14 @@ private[rest] object RequestDebugging {
     }
   }
 
-  private def printRequest(request: HttpRequest, printingTimeoutDuration: FiniteDuration)(implicit mat: Materializer, ec: ExecutionContext): Unit = {
-    print(s"\n${requestToString(request, printingTimeoutDuration)}")
+  private def printRequest(request: HttpRequest, printingTimeoutDuration: FiniteDuration)(transformEntity: String => String)(implicit mat: Materializer, ec: ExecutionContext): Unit = {
+    print(s"\n${requestToString(request, printingTimeoutDuration)(transformEntity)}")
   }
 
-  private[rest] def requestToString(request: HttpRequest, printingTimeoutDuration: FiniteDuration)(implicit mat: Materializer, ec: ExecutionContext): String = {
+  private[rest] def requestToString(request: HttpRequest, printingTimeoutDuration: FiniteDuration)(transformEntity: String => String)(implicit mat: Materializer, ec: ExecutionContext): String = {
     val methodUri = s"${request.method.value} ${request.uri}"
     val headers = request.headers.map(h => s"${h.name()}: ${h.value()}").mkString("\n").trim
-    val entity = entityToString(request.entity, printingTimeoutDuration).trim
+    val entity = entityToString(request.entity, printingTimeoutDuration)(transformEntity).trim
     val sb = StringBuilder.newBuilder
     sb.append(methodUri)
     if (headers.nonEmpty) {
@@ -149,17 +139,14 @@ private[rest] object RequestDebugging {
     sb.mkString
   }
 
-  private def entityToString(entity: HttpEntity, printingTimeoutDuration: FiniteDuration)(implicit mat: Materializer, ec: ExecutionContext): String = {
+  private def entityToString(entity: HttpEntity, printingTimeoutDuration: FiniteDuration)(transformEntity: String => String)(implicit mat: Materializer, ec: ExecutionContext): String = {
     if (entity.isKnownEmpty()) {
       ""
     }
     else {
       val x = entity.toStrict(printingTimeoutDuration).map(_.data.decodeString("UTF-8"))
       val entityString = scala.concurrent.Await.result(x, printingTimeoutDuration)
-      JsonParsing.parseString(entityString) match {
-        case Left(_) => entityString
-        case Right(value) => PrettyJson.spaces2NoNulls.pretty(value)
-      }
+      transformEntity(entityString)
     }
 
   }
@@ -167,6 +154,14 @@ private[rest] object RequestDebugging {
 
 private[rest] trait DefaultRequestRunners {
   this: ScalatestRouteTest =>
+
+  /**
+    * Used to do transformations on the entity in the body of the content in
+    * case it is printed. Function is never used outside the [[RequestRunners.printing]] context
+    *
+    * Examples of usage: pretty printing the content.
+    */
+  protected def transformEntityString(entity: String): String = entity
 
   private[rest] object RequestRunners {
 
@@ -182,8 +177,8 @@ private[rest] trait DefaultRequestRunners {
 
     object printing extends RequestRunner {
       override def runRequest[T](request: HttpRequest)(thunk: => T)(implicit route: Route, mat: Materializer, cc: CallerContext): T = {
-        val loggedRoute = RequestDebugging.logResultPrintln(printingTimeoutDuration)(mat, executor)(route)
-        cc(request) ~> logRequest(RequestDebugging.requestLogFun(printingTimeoutDuration)) ~> loggedRoute ~> check {
+        val loggedRoute = RequestDebugging.logResultPrintln(printingTimeoutDuration)(transformEntityString)(mat, executor)(route)
+        cc(request) ~> logRequest(RequestDebugging.requestLogFun(printingTimeoutDuration)(transformEntityString)) ~> loggedRoute ~> check {
           response
           thunk
         }

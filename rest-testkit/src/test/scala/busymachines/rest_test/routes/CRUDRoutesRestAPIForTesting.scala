@@ -31,7 +31,7 @@ import scala.concurrent.Future
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class CRUDRoutesRestAPIForTesting extends RestAPI with Directives with SomeTestDTOJsonCodec {
+private[rest_test] class CRUDRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
 
   //  Alternantively, if you remove SomeTestDTOJsonCodec mixing
   //  import busymachines.rest.JsonSupport._

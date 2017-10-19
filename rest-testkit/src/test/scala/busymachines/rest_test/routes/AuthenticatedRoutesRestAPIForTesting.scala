@@ -31,7 +31,7 @@ import scala.concurrent.Future
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class AuthenticatedRoutesRestAPIForTesting extends RestAPI with Directives with SomeTestDTOJsonCodec
+private[rest_test] class AuthenticatedRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec
   with RestAPIAuthentications.Basic {
 
   //  Alternantively, if you remove SomeTestDTOJsonCodec mixing

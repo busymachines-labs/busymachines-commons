@@ -14,7 +14,7 @@ import busymachines.rest.JsonSupport
   */
 private[rest_test] object SomeTestDTOJsonCodec extends SomeTestDTOJsonCodec
 
-private[rest_test] trait SomeTestDTOJsonCodec extends JsonSupport {
+private[rest_test] trait SomeTestDTOJsonCodec {
 
   import busymachines.json._
 

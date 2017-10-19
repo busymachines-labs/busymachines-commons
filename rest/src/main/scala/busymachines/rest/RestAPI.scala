@@ -1,6 +1,7 @@
 package busymachines.rest
 
 import Directives._
+import akka.http.scaladsl.marshalling.ToEntityMarshaller
 import busymachines.core.exceptions._
 
 /**
@@ -10,19 +11,23 @@ import busymachines.core.exceptions._
   *
   */
 trait RestAPI {
+  protected def failureMessageMarshaller: ToEntityMarshaller[FailureMessage]
+
+  protected def failureMessagesMarshaller: ToEntityMarshaller[FailureMessages]
+
   def route: Route =
-    handleExceptions(exceptionHandler)(routeDefinition)
+    handleExceptions(defaultExceptionHandler)(routeDefinition)
 
   protected def routeDefinition: Route
 
-  def exceptionHandler: ExceptionHandler =
-    ExceptionHandler.apply(RestAPI.defaultExceptionHandler)
+  protected def defaultExceptionHandler: ExceptionHandler =
+    ExceptionHandler.apply(RestAPI.defaultExceptionHandler(failureMessageMarshaller, failureMessagesMarshaller))
 }
 
 /**
   * Since [[FailureMessages]] extends [[FailureMessage]]
   * the marshaller for the superclass is being used,
-  * thus we no longer have the ``messages`` field in the resulting JSON.
+  * thus we no longer have the ``messages`` field in the resulting output.
   *
   * thats why we segrated the scopes of the imports with the [[RestAPI.failure]]
   * and [[RestAPI.failures]] objects
@@ -33,34 +38,38 @@ object RestAPI {
 
   object failure {
 
-    import busymachines.json.FailureMessageJsonCodec._
-    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+    //    import busymachines.json.FailureMessageJsonCodec._
+    //    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
-    private implicit val failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
-      marshaller[FailureMessage]
+    //    private implicit val failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
+    //      marshaller[FailureMessage]
 
     def apply(statusCode: StatusCode): Route = {
       complete(statusCode)
     }
 
-    def apply(statusCode: StatusCode, f: FailureMessage): Route = {
+    def apply(statusCode: StatusCode, f: FailureMessage)(implicit fsm: ToEntityMarshaller[FailureMessage]): Route = {
       complete(statusCode, f)
     }
   }
 
   object failures {
 
-    import busymachines.json.FailureMessageJsonCodec._
-    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+    //    import busymachines.json.FailureMessageJsonCodec._
+    //    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
-    private implicit val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] =
-      marshaller[FailureMessages]
+    //    private implicit val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] =
+    //      marshaller[FailureMessages]
 
-    def apply(statusCode: StatusCode, fs: FailureMessages): Route =
+    def apply(statusCode: StatusCode, fs: FailureMessages)(implicit fsm: ToEntityMarshaller[FailureMessages]): Route =
       complete(statusCode, fs)
   }
 
-  private class ReifiedRestAPI(private val r: Route) extends RestAPI {
+  private class ReifiedRestAPI(
+    private val r: Route,
+    override protected val failureMessageMarshaller: ToEntityMarshaller[FailureMessage],
+    override protected val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages]
+  ) extends RestAPI {
     override protected def routeDefinition: Route = r
 
     //no point in "handling exceptions again"
@@ -107,7 +116,7 @@ object RestAPI {
   ): RestAPI = {
     val r = combine(api, apis: _ *)
     val sealedRoute = Route.seal(r.route)
-    new ReifiedRestAPI(sealedRoute)
+    new ReifiedRestAPI(sealedRoute, api.failureMessageMarshaller, api.failureMessageMarshaller)
   }
 
   /**
@@ -123,10 +132,10 @@ object RestAPI {
         }
       }
 
-    new ReifiedRestAPI(newRoute)
+    new ReifiedRestAPI(newRoute, api.failureMessageMarshaller, api.failureMessageMarshaller)
   }
 
-  private val semanticallyMeaningfulHandler: ExceptionHandler = ExceptionHandler {
+  private def semanticallyMeaningfulHandler(implicit fm: ToEntityMarshaller[FailureMessage], fsm: ToEntityMarshaller[FailureMessages]): ExceptionHandler = ExceptionHandler {
     case _: NotFoundFailure =>
       failure(StatusCodes.NotFound)
 
@@ -160,7 +169,7 @@ object RestAPI {
     * a future fails with what is marked as an "Error". Unfortunately
     * this applies to NotImplementedErrors, which is really annoying :/
     */
-  private val boxedErrorHandler: ExceptionHandler = ExceptionHandler {
+  private def boxedErrorHandler(implicit fm: ToEntityMarshaller[FailureMessage], fsm: ToEntityMarshaller[FailureMessages]): ExceptionHandler = ExceptionHandler {
     case e: NotImplementedError =>
       failure(StatusCodes.NotImplemented, Error(e))
 
@@ -168,10 +177,10 @@ object RestAPI {
       failure(StatusCodes.InternalServerError, Error(e))
   }
 
-  val defaultExceptionHandler: ExceptionHandler =
+  def defaultExceptionHandler(implicit fm: ToEntityMarshaller[FailureMessage], fsm: ToEntityMarshaller[FailureMessages]): ExceptionHandler =
     semanticallyMeaningfulHandler orElse ExceptionHandler {
       case e: java.util.concurrent.ExecutionException =>
-        boxedErrorHandler(e.getCause)
+        boxedErrorHandler.apply(e.getCause)
 
       case e: Throwable =>
         failure(StatusCodes.InternalServerError, Error(e))

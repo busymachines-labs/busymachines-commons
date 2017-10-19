@@ -1,6 +1,6 @@
 package busymachines.rest_test
 
-import busymachines.rest.{JsonSupport, RestAPI, RestAPITest, Route}
+import busymachines.rest._
 import org.scalatest._
 
 /**
@@ -9,13 +9,13 @@ import org.scalatest._
   * @since 11 Sep 2017
   *
   */
-abstract class ExampleRestAPITestBaseClass extends FlatSpec with RestAPITest with JsonSupport
+abstract class ExampleRestAPITestBaseClass extends FlatSpec with JsonRestAPITest
 
 /**
   * This can serve as an example of how to set the implicit [[testedRoute]] parameter even
   * if it is instantiated in the [[fixture.FlatSpec#withFixture]] method
   */
-abstract class ExampleRestAPITestBaseClassWithFixture extends fixture.FlatSpec with RestAPITest with JsonSupport with OneInstancePerTest {
+abstract class ExampleRestAPITestBaseClassWithFixture extends fixture.FlatSpec with JsonRestAPITest with OneInstancePerTest {
   protected[this] var _testedRoute: Route = _
 
   override implicit protected def testedRoute: Route = _testedRoute

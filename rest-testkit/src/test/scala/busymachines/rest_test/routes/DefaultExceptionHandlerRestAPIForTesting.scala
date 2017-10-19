@@ -13,13 +13,12 @@ import scala.util.Try
   * 1:
   * {{{
   *   busymachines.json._
-  *   class AuthenticatedRoutesRestAPIForTesting ... with JsonSupport
   * }}}
   *
   * ==========================
   * 2:
   * {{{
-  *   import SomeTestDTOJsonCodec._ //this already extends JsonSupport
+  *   import SomeTestDTOJsonCodec._
   * }}}
   * ==========================
   * 3:
@@ -33,10 +32,9 @@ import scala.util.Try
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class DefaultExceptionHandlerRestAPIForTesting extends RestAPI with Directives with SomeTestDTOJsonCodec {
+private[rest_test] class DefaultExceptionHandlerRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
 
   //  Alternantively, if you remove SomeTestDTOJsonCodec mixing
-  //  import busymachines.rest.JsonSupport._
   //  import busymachines.json._
 
   //Alternatively, if none of the above:
