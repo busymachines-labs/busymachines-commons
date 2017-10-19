@@ -49,14 +49,21 @@ Outlined here on the [sbt-sonatype](https://github.com/xerial/sbt-sonatype/blob/
 ### Then Run the commands outlined on the [sbt-sonatype](https://github.com/xerial/sbt-sonatype#publishing-your-artifact) page. Copy pasted from there for our convenience:
 
 The general steps for publishing your artifact to the Central Repository are as follows:
+1. `publishSigned`
+2. `sonatypeRelease`
 
- * `sonatypeOpen` "com.busymachines" — this lives until you do `sonatypeClose`. Look out for the terminal output of `[info] Created successfully: combusymachines-1009`. The last part is the ID of the staging repository where a subsequent `publishSigned` will push your libraries. You can see this repository online at [https://oss.sonatype.org/#stagingRepositories](https://oss.sonatype.org/#stagingRepositories). You can login using the sonatype jira credentials you had to gain in previous steps.
- * `publishSigned` to deploy your artifact to staging repository at Sonatype.
- * `sonatypeRelease` do `sonatypeClose` and `sonatypePromote` in one step.
-   * `sonatypeClose` closes your staging repository at Sonatype. This step verifies Maven central sync requirement, GPG-signature, javadoc
+#### `publishSigned`  
+
+To deploy your artifact to staging repository at Sonatype. Implicitely creates a staging repository which you can view online at [https://oss.sonatype.org/#stagingRepositories](https://oss.sonatype.org/#stagingRepositories). You can login using the sonatype jira credentials you had to gain in previous steps.
+
+####`sonatypeRelease`  
+
+To do `sonatypeClose` and `sonatypePromote` in one step:
+  * `sonatypeClose` closes your staging repository at Sonatype. This step verifies Maven central sync requirement, GPG-signature, javadoc
    and source code presence, pom.xml settings, etc.
-   * `sonatypePromote` command verifies the closed repository so that it can be synchronized with Maven central.
+  * `sonatypePromote` command verifies the closed repository so that it can be synchronized with Maven central.
 
+#### [other commands](https://github.com/xerial/sbt-sonatype#available-commands)
 
 Note: If your project version has "SNAPSHOT" suffix, your project will be published to the [snapshot repository](http://oss.sonatype.org/content/repositories/snapshots) of Sonatype, and you cannot use `sonatypeRelease` command.
 
