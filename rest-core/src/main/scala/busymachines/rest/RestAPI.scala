@@ -123,25 +123,76 @@ object RestAPI {
     new ReifiedRestAPI(newRoute, api.failureMessageMarshaller, api.failureMessageMarshaller)
   }
 
+  /**
+    * Check the scaladoc for each of these failures in case something is not clear,
+    * but for convenience that scaladoc has been copied here as well.
+    */
   private def semanticallyMeaningfulHandler(implicit fm: ToEntityMarshaller[FailureMessage], fsm: ToEntityMarshaller[FailureMessages]): ExceptionHandler = ExceptionHandler {
+    /**
+      * Meaning:
+      *
+      * "you cannot find something; it may or may not exist, and I'm not going
+      * to tell you anything else"
+      */
     case _: NotFoundFailure =>
       failure(StatusCodes.NotFound)
 
+    /**
+      * Meaning:
+      *
+      * "it exists, but you're not even allowed to know about that;
+      * so for short, you can't find it".
+      */
     case _: ForbiddenFailure =>
       failure(StatusCodes.NotFound)
 
+    /**
+      * Meaning:
+      *
+      * "something is wrong in the way you authorized, you can try again slightly
+      * differently"
+      */
     case e: UnauthorizedFailure =>
       failure(StatusCodes.Unauthorized, e)
 
     case e: DeniedFailure =>
       failure(StatusCodes.Forbidden, e)
 
+
+    /**
+      * Obviously, whenever some input data is wrong.
+      *
+      * This one is probably your best friend, and the one you
+      * have to specialize the most for any given problem domain.
+      * Otherwise you just wind up with a bunch of nonsense, obtuse
+      * errors like:
+      * - "the input was wrong"
+      * - "gee, thanks, more details, please?"
+      * - sometimes you might be tempted to use NotFound, but this
+      * might be better suited. For instance, when you are dealing
+      * with a "foreign key" situation, and the foreign key is
+      * the input of the client. You'd want to be able to tell
+      * the user that their input was wrong because something was
+      * not found, not simply that it was not found.
+      *
+      * Therefore, specialize frantically.
+      */
     case e: InvalidInputFailure =>
       failure(StatusCodes.BadRequest, e)
 
+    /**
+      * Special type of invalid input.
+      *
+      * E.g. when you're duplicating something that ought to be unique,
+      * like ids, emails.
+      */
     case e: ConflictFailure =>
       failure(StatusCodes.Conflict, e)
 
+    /**
+      * This might be a stretch of an assumption, but usually there's no
+      * reason to accumulate messages, except in cases of input validation
+      */
     case es: FailureMessages =>
       failures(StatusCodes.BadRequest, es)
 
