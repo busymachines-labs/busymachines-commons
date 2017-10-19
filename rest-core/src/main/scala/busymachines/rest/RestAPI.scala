@@ -38,12 +38,6 @@ object RestAPI {
 
   object failure {
 
-    //    import busymachines.json.FailureMessageJsonCodec._
-    //    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-
-    //    private implicit val failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
-    //      marshaller[FailureMessage]
-
     def apply(statusCode: StatusCode): Route = {
       complete(statusCode)
     }
@@ -54,12 +48,6 @@ object RestAPI {
   }
 
   object failures {
-
-    //    import busymachines.json.FailureMessageJsonCodec._
-    //    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-
-    //    private implicit val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] =
-    //      marshaller[FailureMessages]
 
     def apply(statusCode: StatusCode, fs: FailureMessages)(implicit fsm: ToEntityMarshaller[FailureMessages]): Route =
       complete(statusCode, fs)

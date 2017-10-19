@@ -1,9 +1,7 @@
 package busymachines.rest
 
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import busymachines.json.Encoder
 import org.scalatest.{Assertions, Suite}
-import busymachines.rest.JsonSupport._
 
 import scala.concurrent.duration._
 import scala.language.postfixOps

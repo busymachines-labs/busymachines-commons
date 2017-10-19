@@ -39,12 +39,4 @@ package object rest {
 
   type RoutingSettings = settings.RoutingSettings
   val RoutingSettings: settings.RoutingSettings.type = settings.RoutingSettings
-
-  import de.heikoseeberger.akkahttpcirce
-
-  type JsonSupport = akkahttpcirce.FailFastCirceSupport
-  val JsonSupport: akkahttpcirce.FailFastCirceSupport.type = akkahttpcirce.FailFastCirceSupport
-
-  type ErrorAccumulatingJsonSupport = akkahttpcirce.ErrorAccumulatingCirceSupport
-  val ErrorAccumulatingJsonSupport: akkahttpcirce.ErrorAccumulatingCirceSupport.type = akkahttpcirce.ErrorAccumulatingCirceSupport
 }

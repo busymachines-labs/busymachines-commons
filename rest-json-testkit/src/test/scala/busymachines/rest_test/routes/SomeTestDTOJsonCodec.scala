@@ -1,7 +1,5 @@
 package busymachines.rest_test.routes
 
-import busymachines.rest.JsonSupport
-
 /**
   *
   * Defining JSON encoders like this greatly increases compilation speed, and you only

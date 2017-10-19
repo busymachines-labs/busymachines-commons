@@ -9,7 +9,7 @@ import busymachines.core.exceptions.{FailureMessage, FailureMessages}
   * @since 19 Oct 2017
   *
   */
-trait JsonRestAPI extends RestAPI with JsonSupport {
+trait JsonRestAPI extends RestAPI with jsonrest.JsonSupport {
 
   import JsonRestAPI._
 

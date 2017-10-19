@@ -9,7 +9,7 @@ import org.scalatest.{Assertions, Suite}
   * @since 19 Oct 2017
   *
   */
-trait JsonRestAPITest extends RestAPITest with JsonRequestRunners with JsonSupport {
+trait JsonRestAPITest extends RestAPITest with JsonRequestRunners with jsonrest.JsonSupport {
   this: Suite with Assertions =>
 
 }
