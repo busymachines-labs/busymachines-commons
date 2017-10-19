@@ -1,5 +1,7 @@
 package busymachines.core.exceptions
 
+import scala.collection.immutable
+
 /**
   * ``THERE'S NOTHING WRONG WITH FAILURE!``
   *
@@ -107,7 +109,7 @@ object FailureMessage {
   object Value {
     def apply(s: String) = StringWrapper(s)
 
-    def apply(ses: Seq[String]) = SeqStringWrapper(ses)
+    def apply(ses: immutable.Seq[String]) = SeqStringWrapper(ses)
   }
 
   /**
@@ -119,7 +121,7 @@ object FailureMessage {
 
   case class StringWrapper private(s: String) extends StringOrSeqString
 
-  case class SeqStringWrapper private(ses: Seq[String]) extends StringOrSeqString
+  case class SeqStringWrapper private(ses: immutable.Seq[String]) extends StringOrSeqString
 
   type Parameters = Map[String, StringOrSeqString]
 
@@ -161,9 +163,9 @@ trait FailureMessage {
 trait FailureMessages extends FailureMessage {
   def firstMessage: FailureMessage
 
-  def restOfMessages: Seq[FailureMessage]
+  def restOfMessages: immutable.Seq[FailureMessage]
 
-  final def messages: Seq[FailureMessage] =
+  final def messages: immutable.Seq[FailureMessage] =
     firstMessage +: restOfMessages
 
   final def hasNotFound: Boolean =
@@ -191,11 +193,11 @@ object FailureMessages {
     override val id: FailureID,
     override val message: String,
     override val firstMessage: FailureMessage,
-    override val restOfMessages: Seq[FailureMessage],
+    override val restOfMessages: immutable.Seq[FailureMessage],
   ) extends FailureMessages
 
   def apply(id: FailureID, message: String, msg: FailureMessage, msgs: FailureMessage*): FailureMessages = {
-    GenericFailureMessages(id, message, msg, msgs)
+    GenericFailureMessages(id, message, msg, msgs.toList)
   }
 }
 
@@ -239,7 +241,7 @@ abstract class Failures(
   override val id: FailureID,
   override val message: String,
   override val firstMessage: FailureMessage,
-  override val restOfMessages: Seq[FailureMessage],
+  override val restOfMessages: immutable.Seq[FailureMessage],
 ) extends Exception(message) with FailureMessages
 
 object Failures {
@@ -248,11 +250,11 @@ object Failures {
     id: FailureID,
     message: String,
     firstMessage: FailureMessage,
-    restOfMessages: Seq[FailureMessage],
+    restOfMessages: immutable.Seq[FailureMessage],
   ) extends Failures(id, message, firstMessage, restOfMessages)
 
   def apply(id: FailureID, message: String, fmsg: FailureMessage, fmsgs: FailureMessage*): Failures =
-    new ReifiedFailures(id, message, fmsg, fmsgs)
+    new ReifiedFailures(id, message, fmsg, fmsgs.toList)
 }
 
 /**

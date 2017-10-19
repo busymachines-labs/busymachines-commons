@@ -36,7 +36,7 @@ trait FailureMessageJsonCodec {
       if (sa.isRight) {
         sa.right.map(FailureMessage.Value.apply)
       } else {
-        c.as[Seq[String]].right.map(FailureMessage.Value.apply)
+        c.as[List[String]].right.map(FailureMessage.Value.apply)
       }
     }
   }

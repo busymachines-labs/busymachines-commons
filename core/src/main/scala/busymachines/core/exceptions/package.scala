@@ -2,6 +2,7 @@ package busymachines.core
 
 import busymachines.core.exceptions.FailureMessage.StringOrSeqString
 
+import scala.collection.immutable
 import scala.language.implicitConversions
 
 /**
@@ -15,6 +16,6 @@ package object exceptions {
   implicit def stringToStringOrSeqStringWrapper(s: String): StringOrSeqString =
     FailureMessage.StringWrapper(s)
 
-  implicit def seqOfStringToStringOrSeqStringWrapper(ses: Seq[String]): StringOrSeqString =
+  implicit def seqOfStringToStringOrSeqStringWrapper(ses: immutable.Seq[String]): StringOrSeqString =
     FailureMessage.SeqStringWrapper(ses)
 }
