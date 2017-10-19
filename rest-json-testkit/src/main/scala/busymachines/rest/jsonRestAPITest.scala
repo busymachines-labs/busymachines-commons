@@ -14,8 +14,9 @@ trait JsonRestAPITest extends RestAPITest with JsonRequestRunners with jsonrest.
   debug()
 }
 
-private[rest] trait JsonRequestRunners extends DefaultRequestRunners{
+private[rest] trait JsonRequestRunners extends DefaultRequestRunners {
   this: ScalatestRouteTest =>
+
   import busymachines.json._
 
   override protected def transformEntityString(entityString: String): String = {

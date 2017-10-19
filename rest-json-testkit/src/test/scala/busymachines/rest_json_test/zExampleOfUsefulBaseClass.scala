@@ -14,6 +14,9 @@ abstract class ExampleRestAPITestBaseClass extends FlatSpec with JsonRestAPITest
 /**
   * This can serve as an example of how to set the implicit [[testedRoute]] parameter even
   * if it is instantiated in the [[fixture.FlatSpec#withFixture]] method
+  *
+  * It's very important to use [[OneInstancePerTest]] in this case because we have mutable
+  * state
   */
 abstract class ExampleRestAPITestBaseClassWithFixture extends fixture.FlatSpec with JsonRestAPITest with OneInstancePerTest {
   protected[this] var _testedRoute: Route = _

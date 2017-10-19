@@ -25,8 +25,8 @@ private[rest_json_test] class AuthenticatedRoutesTest extends ExampleRestAPITest
   }
 
   import busymachines.json._
-  //this also works, and gets us faster compilation times:
-  //import SomeTestDTOJsonCodec._
+  //  this also works, and gets us faster compilation times:
+  //  import SomeTestDTOJsonCodec._
 
   //===========================================================================
 
@@ -34,7 +34,7 @@ private[rest_json_test] class AuthenticatedRoutesTest extends ExampleRestAPITest
 
   //===========================================================================
 
-  it should "... return 401 Unauthorized when trying to access route without authe" in { _ =>
+  it should "... return 401 Unauthorized when trying to access route without authentication" in { _ =>
     context(Contexts.none) { implicit cc =>
       get("/authentication") {
         expectStatus(StatusCodes.Unauthorized)
