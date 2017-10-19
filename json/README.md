@@ -214,3 +214,7 @@ The object/trait `busymachines.json.FailureMessageJsonCodec` contains all encode
 ## tests
 
 Check out all the tests for runnable usage examples.
+
+## if everything else goes wrong
+
+In case you do not like the default automatic derivation you import from package `jsonbare` in which case you simply have to add the additional import `import busymachines.jsonbare.auto._` to make automatic derivation work. `jsonbare` contains its own `syntax` and `derive` imports, so you never have to depend on `busymachines.json`.

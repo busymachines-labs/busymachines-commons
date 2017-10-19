@@ -4,6 +4,9 @@ import busymachines.core.exceptions.Failure
 
 /**
   *
+  * Use when you don't want to import the automatic derivation of encoders/decoders
+  * of the [[json]] package. Everything else pretty much stays the same.
+  *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
   * @since 19 Oct 2017
   *

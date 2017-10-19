@@ -6,4 +6,4 @@ object syntax extends JsonSyntax
 
 object auto extends DefaultTypeDiscriminatorConfig with io.circe.generic.extras.AutoDerivation
 
-object semiauto extends DefaultTypeDiscriminatorConfig with SemiAutoDerivation
+object derive extends DefaultTypeDiscriminatorConfig with SemiAutoDerivation
