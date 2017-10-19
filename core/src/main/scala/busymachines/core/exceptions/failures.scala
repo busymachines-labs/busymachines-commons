@@ -327,6 +327,12 @@ object SemanticFailures {
     * errors like:
     * - "the input was wrong"
     * - "gee, thanks, more details, please?"
+    * - sometimes you might be tempted to use NotFound, but this
+    * might be better suited. For instance, when you are dealing
+    * with a "foreign key" situation, and the foreign key is
+    * the input of the client. You'd want to be able to tell
+    * the user that their input was wrong because something was
+    * not found, not simply that it was not found.
     *
     * Therefore, specialize frantically.
     */
@@ -339,7 +345,7 @@ object SemanticFailures {
   private[exceptions] val `Invalid Input` = "Invalid input"
 
   /**
-    * Special type of wrong data.
+    * Special type of invalid input
     *
     * E.g. when you're duplicating something that ought to be unique,
     * like ids, emails.
