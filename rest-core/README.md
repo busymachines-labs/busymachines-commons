@@ -18,6 +18,12 @@ rest APIs routes via the single exposed trait `RestAPI`. It is still an abstract
 you will probably be using one of its concrete variants `JsonRestAPI` from the [`busymachines-commons-rest-json`](../rest-json) module. This module only serves as the common core for the
 implementation of these modules.
 
+This is what you roughly get:
+ - a semantically meaningful exception handler that maps the exceptions from `core` to HTTP status codes—at the same time providing a consistent way of reporting the information contained in these rich exceptions
+ - a simple way of starting to define endpoints in the akka scala dsl
+ - out of the box implementations for authentication directives. See the traits in `busymachines.rest.RestAPIAuthentications`
+ - potential integration with `JSON` via the `busymachines-commons-rest-json` module
+
 ## Examples
 
 Examples of usage are rather verbose so you'll have to check the tests in the [`busymachines-commons-rest-json-testkit`](`./rest-json-testkit`) module.
