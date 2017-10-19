@@ -10,10 +10,15 @@ object Dependencies {
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
-  lazy val commonsVersion: String = "0.2.0-SNAPSHOT"
+  lazy val bmCommonsVersion: String = "0.2.0-M4"
 
-  lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % commonsVersion withSources()
-  lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % commonsVersion withSources()
+  lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % bmCommonsVersion withSources()
+  lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % bmCommonsVersion withSources()
+  lazy val busymachinesCommonsRestCore: ModuleID = "com.busymachines" %% "busymachines-commons-rest-core" % bmCommonsVersion withSources()
+  lazy val busymachinesCommonsRestCoreTestkit: ModuleID = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmCommonsVersion % Test withSources()
+  lazy val busymachinesCommonsRestJson: ModuleID = "com.busymachines" %% "busymachines-commons-rest-json" % bmCommonsVersion withSources()
+  lazy val busymachinesCommonsRestJsonTestkit: ModuleID = "com.busymachines" %% "busymachines-commons-rest-Json-testkit" % bmCommonsVersion % Test withSources()
+
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================

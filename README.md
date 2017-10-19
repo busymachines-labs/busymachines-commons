@@ -11,11 +11,25 @@ Light-weight, modular, libraries for varying technology stacks, built _primarily
 
 These modules are are cross-compiled for Scala versions: `2.12.3`. We try our best to keep them up to date.
 
-Modules:
+#### Modules:
 * `"com.busymachines" %% "busymachines-commons-core" % "0.1.0"` or `"0.2.0-M4"` [README.md](/core)
 * `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-M4"` [README.md](/json)
-* `"com.busymachines" %% "busymachines-commons-rest" % "0.2.0-M4"` [README.md](/rest)
-* `"com.busymachines" %% "busymachines-commons-rest-testkit" % "0.2.0-M4" % Test` [README.md](/rest-testkit)
+* `"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0-M4"` [README.md](/rest-core)
+* `"com.busymachines" %% "busymachines-commons-rest-core-testkit" % "0.2.0-M4" % Test` [README.md](/rest-core-testkit)
+* `"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0-M4"` [README.md](/rest-json)
+* `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-M4" % Test` [README.md](/rest-json-testkit)
+
+For easy copy-pasting:
+```scala
+lazy val bmCommonsVersion: String = "0.2.0-M4"
+
+lazy val busymachinesCommonsCore = "com.busymachines" %% "busymachines-commons-core" % bmCommonsVersion withSources()
+lazy val busymachinesCommonsJson = "com.busymachines" %% "busymachines-commons-json" % bmCommonsVersion withSources()
+lazy val busymachinesCommonsRestCore = "com.busymachines" %% "busymachines-commons-rest-core" % bmCommonsVersion withSources()
+lazy val busymachinesCommonsRestCoreTestkit = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmCommonsVersion % Test withSources()
+lazy val busymachinesCommonsRestJson = "com.busymachines" %% "busymachines-commons-rest-json" % bmCommonsVersion withSources()
+lazy val busymachinesCommonsRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-Json-testkit" % bmCommonsVersion % Test withSources()
+```
 
 ## Library Structure
 
@@ -26,9 +40,9 @@ Basically, as long as modules reside in the same repository they will be version
 * [core](/core) `0.1.0`
 * [json](/json) `0.2.0-M4`
 * [rest-core](/rest-core) `0.2.0-M4` - this is an abstract implementation that still requires specific serialization/deserialization
-* [rest-core-testkit](/rest-testkit) `0.2.0-M4` - contains helpers that allow testing. Should never wind up in production code.
+* [rest-core-testkit](/rest-core-testkit) `0.2.0-M4` - contains helpers that allow testing. Should never wind up in production code.
 * [rest-json](/rest-core) `0.2.0-M4` - used to implement REST APIs that handle JSON
-* [rest-json-testkit](/rest-testkit) `0.2.0-M4` - helpers for JSON powered REST APIs
+* [rest-json-testkit](/rest-json-testkit) `0.2.0-M4` - helpers for JSON powered REST APIs
 
 Most likely you don't need to depend on the `rest-core*` modules. But rather on one or more of its reifications like `rest-json`. This separation was done because in the future we might need non-json REST APIs, and then we still want to have a common experience of using `commons`.
 
