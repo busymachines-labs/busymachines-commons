@@ -22,7 +22,7 @@ private[rest_test] class RoutesCompositionTest extends ExampleRestAPITestBaseCla
   private implicit val cc: CallerContext = Contexts.none
 
   import busymachines.json.FailureMessageJsonCodec._
-  import busymachines.json.auto._
+  import busymachines.json._
 
   //===========================================================================
 

@@ -14,7 +14,7 @@ private[rest_test] class CRUDRoutesTest extends ExampleRestAPITestBaseClass {
   override implicit val testedRoute: Route = RestAPI.seal(crudAPI).route
   private implicit val cc: CallerContext = Contexts.none
 
-  import busymachines.json.auto._
+  import busymachines.json._
 
   //===========================================================================
 

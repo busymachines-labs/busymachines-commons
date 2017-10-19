@@ -1,15 +1,14 @@
 package busymachines
 
-import busymachines.core.exceptions._
+import busymachines.core.exceptions.Failure
 
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
-  * @since 10 Aug 2017
+  * @since 19 Oct 2017
   *
   */
-package object json extends DefaultTypeDiscriminatorConfig with io.circe.generic.extras.AutoDerivation {
-
+package object jsonbare {
   type Encoder[A] = io.circe.Encoder[A]
   final val Encoder: io.circe.Encoder.type = io.circe.Encoder
   type ObjectEncoder[A] = io.circe.ObjectEncoder[A]

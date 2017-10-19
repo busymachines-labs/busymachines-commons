@@ -23,7 +23,7 @@ private[rest_test] class AuthenticatedRoutesTest extends ExampleRestAPITestBaseC
     test(r)
   }
 
-  import busymachines.json.auto._
+  import busymachines.json._
 
   //===========================================================================
 

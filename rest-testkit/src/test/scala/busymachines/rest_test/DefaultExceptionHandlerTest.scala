@@ -16,7 +16,7 @@ private[rest_test] class DefaultExceptionHandlerTest extends ExampleRestAPITestB
   implicit val context: CallerContext = Contexts.none
 
   import busymachines.json.FailureMessageJsonCodec._
-  import busymachines.json.auto._
+  import busymachines.json._
 
   behavior of "DefaultExceptionHandler"
 

@@ -19,15 +19,6 @@ package busymachines.json
   * @since 19 Oct 2017
   *
   */
-
-/**
-  *
-  * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
-  * @since 10 Aug 2017
-  *
-  */
 object syntax extends JsonSyntax
-
-object auto extends DefaultTypeDiscriminatorConfig with io.circe.generic.extras.AutoDerivation
 
 object semiauto extends DefaultTypeDiscriminatorConfig with SemiAutoDerivation

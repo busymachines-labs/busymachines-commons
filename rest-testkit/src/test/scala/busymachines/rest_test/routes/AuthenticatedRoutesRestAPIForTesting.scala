@@ -13,7 +13,7 @@ import scala.concurrent.Future
 private[rest_test] class AuthenticatedRoutesRestAPIForTesting extends RestAPI with Directives with JsonSupport
   with RestAPIAuthentications.Basic {
 
-  import busymachines.json.auto._
+  import busymachines.json._
 
   override protected def routeDefinition: Route = {
     pathPrefix("authentication") {

@@ -22,7 +22,7 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
     assertCompiles {
       """
         |import busymachines.json.syntax._
-        |import busymachines.json.auto._
+        |import busymachines.json._
         |
         |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
         |val asJson = anarchistMelon.asJson.spaces2
@@ -41,9 +41,8 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
       */
     assertDoesNotCompile {
       """
-        |
+        |import busymachines.json._
         |import busymachines.json.syntax._
-        |import busymachines.json.auto._
         |import busymachines.json.semiauto._
         |
         |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
@@ -63,9 +62,8 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
       */
     assertCompiles {
       """
-        |
+        |import busymachines.json._
         |import busymachines.json.syntax._
-        |import busymachines.json.auto._
         |import busymachines.json.semiauto.{defaultDerivationConfiguration => _, _}
         |
         |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
