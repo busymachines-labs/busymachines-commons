@@ -14,7 +14,7 @@ private[rest_json_test] class RoutesCompositionTest extends ExampleRestAPITestBa
   private lazy val combinedAPI: RestAPI = {
     val eh = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()
-    val au = new AuthenticatedRoutesRestAPIForTesting()
+    val au = new BasicAuthenticatedRoutesRestAPIForTesting()
     RestAPI.seal(eh, crud, au)
   }
 
@@ -71,8 +71,8 @@ private[rest_json_test] class RoutesCompositionTest extends ExampleRestAPITestBa
   //===========================================================================
 
   it should "... return 200 OK when providing proper Basic authentication" in {
-    context(BasicAuthenticationContextForTesting) { implicit cc =>
-      get("/authentication") {
+    context(AuthenticationsForTest.basic) { implicit cc =>
+      get("/basic_authentication") {
         expectStatus(StatusCodes.OK)
 
         assert {

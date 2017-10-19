@@ -17,10 +17,11 @@ import scala.util.{Failure, Success, Try}
 @SubjectToChange("0.3.0")
 trait RestAPIAuthentication[AuthenticationResult] {
 
-  protected def optionalAuthentication: Directive1[Option[AuthenticationResult]]
+  def authentication: Directive1[AuthenticationResult]
 
-  protected def authentication: Directive1[AuthenticationResult]
-
+  lazy val optionalAuthentication: Directive1[Option[AuthenticationResult]] = authentication.map(r => Option[AuthenticationResult](r)).recover { rej =>
+    provide(Option.empty[AuthenticationResult])
+  }
 }
 
 @SubjectToChange("0.3.0")
@@ -38,10 +39,13 @@ object RestAPIAuthentications {
     cause = AuthenticationFailedRejection.CredentialsRejected,
     challenge = HttpChallenges.basic(BasicS))
 
-
   final val MissingBearerCredentials = AuthenticationFailedRejection(
     cause = AuthenticationFailedRejection.CredentialsMissing,
     challenge = HttpChallenges.oAuth2(BearerS))
+
+  final val InvalidBearerCredentials = AuthenticationFailedRejection(
+    cause = AuthenticationFailedRejection.CredentialsRejected,
+    challenge = HttpChallenges.oAuth2(BasicS))
 
 
   /**
@@ -56,10 +60,9 @@ object RestAPIAuthentications {
     * }}}
     *
     */
-  @SubjectToChange("0.3.0")
   trait Basic extends RestAPIAuthentication[String] {
 
-    def authentication: Directive1[String] =
+    override lazy val authentication: Directive1[String] =
       optionalHeaderValueByName(AuthorizationS) flatMap {
         case None => reject(MissingBasicCredentials)
         case Some(encodedCredentials) =>
@@ -73,11 +76,39 @@ object RestAPIAuthentications {
             }
           }
       }
-
-    override def optionalAuthentication: Directive1[Option[String]] = authentication.map(s => Option[String](s)).recover { rej =>
-      provide(Option.empty[String])
-    }
   }
+
+  object Basic extends Basic
+
+  /**
+    *
+    * The OAuth 2.0 Authorization Framework: Bearer Token Usage
+    * See "2.1.  Authorization Request Header Field" from RFC 6750
+    * {{{
+    *   https://tools.ietf.org/html/rfc6750#section-2.1
+    * }}}
+    *
+    * Used to extract the header for Bearer:
+    * {{{
+    *   Authorization: Bearer 123456788912309824987
+    * }}}
+    *
+    */
+  trait TokenBearer extends RestAPIAuthentication[String] {
+    override lazy val authentication: Directive1[String] =
+      optionalHeaderValueByName(AuthorizationS) flatMap {
+        case None => reject(MissingBasicCredentials)
+        case Some(tokenWithBearer) =>
+          if (!tokenWithBearer.contains(BearerS))
+            reject(InvalidBearerCredentials)
+          else {
+            val token = tokenWithBearer.replace(BearerS, "").trim
+            provide(token)
+          }
+      }
+  }
+
+  object TokenBearer extends TokenBearer
 
 
 }

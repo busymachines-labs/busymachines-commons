@@ -31,7 +31,7 @@ import scala.concurrent.Future
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class AuthenticatedRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec
+private[rest_json_test] class BasicAuthenticatedRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec
   with RestAPIAuthentications.Basic {
 
   //  Alternantively, if you remove SomeTestDTOJsonCodec mixing
@@ -41,7 +41,7 @@ private[rest_json_test] class AuthenticatedRoutesRestAPIForTesting extends JsonR
   //  import SomeTestDTOJsonCodec._
 
   override protected def routeDefinition: Route = {
-    pathPrefix("authentication") {
+    pathPrefix("basic_authentication") {
       authentication { basicAuth: String =>
         pathEndOrSingleSlash {
           get {
@@ -52,7 +52,7 @@ private[rest_json_test] class AuthenticatedRoutesRestAPIForTesting extends JsonR
           }
         }
       }
-    } ~ pathPrefix("opt_authentication") {
+    } ~ pathPrefix("basic_opt_authentication") {
       optionalAuthentication { basicAuth: Option[String] =>
         pathEndOrSingleSlash {
           get {

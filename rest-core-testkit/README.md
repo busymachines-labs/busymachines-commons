@@ -80,85 +80,83 @@ This is really helpful when:
 
 The final results looks roughly like:
 ```scala
-private[rest_json_test] object BasicAuthenticationContextForTesting extends CallerContext {
-  override def apply(httpRequest: HttpRequest): HttpRequest = {
-    httpRequest.addHeader(
-      Authorization(
-        BasicHttpCredentials("username", "password")
-      )
-    )
-  }
+private[rest_json_test] object AuthenticationsForTest {
+  private[rest_json_test] lazy val basic = CallerContexts.basic("username", "password")
+  private[rest_json_test] lazy val bearer = CallerContexts.bearer("D2926169E98AAA4C6B40C8C7AF7F4122946DDFA4E499908C")
 }
 
-private[rest_json_test] class AuthenticatedRoutesTest extends RestAPITest  { //... some concrete imports needed here
+private[rest_json_test] class BasicAuthenticatedRoutesTest extends extends FlatSpec with JsonRestAPITest {
 
-  override implicit protected def testedRoute: Route = {
-    val authAPI = new AuthenticatedRoutesRestAPIForTesting()
-    val r: RestAPI = RestAPI.seal(authAPI)
-    r.route
-  }
-
-
-  //===========================================================================
-
-  behavior of "Authentications"
-
-  //===========================================================================
-
-  it should "... return 401 Unauthorized when trying to access route without authentication" in { _ =>
-    context(Contexts.none) { implicit cc =>
-      get("/authentication") {
-        expectStatus(StatusCodes.Unauthorized)
-      }
+    override implicit protected def testedRoute: Route = {
+      val authAPI = new BasicAuthenticatedRoutesRestAPIForTesting()
+      val r: RestAPI = RestAPI.seal(authAPI)
+      r.route
     }
-  }
 
-  //===========================================================================
+    import busymachines.json._
+    //  this also works, and gets us faster compilation times:
+    //  import SomeTestDTOJsonCodec._
 
-  it should "... return 200 OK when providing proper Basic authentication" in { _ =>
-    context(BasicAuthenticationContextForTesting) { implicit cc =>
-      get("/authentication") {
-        expectStatus(StatusCodes.OK)
+    //===========================================================================
 
-        assert {
-          responseAs[SomeTestDTOGet] ==
-            SomeTestDTOGet(int = 42, string = "dXNlcm5hbWU6cGFzc3dvcmQ=", None)
+    behavior of "Basic Authentication"
+
+    //===========================================================================
+
+    it should "... return 401 Unauthorized when trying to access route without authentication" in { _ =>
+      context(Contexts.none) { implicit cc =>
+        get("/basic_authentication") {
+          expectStatus(StatusCodes.Unauthorized)
         }
       }
     }
-  }
 
-  //===========================================================================
+    //===========================================================================
 
-  it should "... return 200 OK when trying to access API with optional auth, while not providing it" in { _ =>
-    context(Contexts.none) { implicit cc =>
-      get("/opt_authentication") {
-        expectStatus(StatusCodes.OK)
+    it should "... return 200 OK when providing proper Basic authentication" in { _ =>
+      context(AuthenticationsForTest.basic) { implicit cc =>
+        get("/basic_authentication") {
+          expectStatus(StatusCodes.OK)
 
-        assert {
-          responseAs[SomeTestDTOGet] ==
-            SomeTestDTOGet(int = 42, string = "it's optional!", None)
+          assert {
+            responseAs[SomeTestDTOGet] ==
+              SomeTestDTOGet(int = 42, string = "dXNlcm5hbWU6cGFzc3dvcmQ=", None)
+          }
         }
       }
     }
-  }
 
-  //===========================================================================
+    //===========================================================================
 
-  it should "... return 200 OK when trying to access API with optional auth, while providing it" in { _ =>
-    context(BasicAuthenticationContextForTesting) { implicit cc =>
-      get("/opt_authentication") {
-        expectStatus(StatusCodes.OK)
+    it should "... return 200 OK when trying to access API with optional auth, while not providing it" in { _ =>
+      context(Contexts.none) { implicit cc =>
+        get("/basic_opt_authentication") {
+          expectStatus(StatusCodes.OK)
 
-        assert {
-          responseAs[SomeTestDTOGet] ==
-            SomeTestDTOGet(int = 42, string = "dXNlcm5hbWU6cGFzc3dvcmQ=", None)
+          assert {
+            responseAs[SomeTestDTOGet] ==
+              SomeTestDTOGet(int = 42, string = "it's optional!", None)
+          }
         }
       }
     }
-  }
 
-  //===========================================================================
-}
+    //===========================================================================
+
+    it should "... return 200 OK when trying to access API with optional auth, while providing it" in { _ =>
+      context(AuthenticationsForTest.basic) { implicit cc =>
+        get("/basic_opt_authentication") {
+          expectStatus(StatusCodes.OK)
+
+          assert {
+            responseAs[SomeTestDTOGet] ==
+              SomeTestDTOGet(int = 42, string = "dXNlcm5hbWU6cGFzc3dvcmQ=", None)
+          }
+        }
+      }
+    }
+
+    //===========================================================================
+  }
 
 ```

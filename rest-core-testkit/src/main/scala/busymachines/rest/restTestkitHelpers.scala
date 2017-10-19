@@ -2,7 +2,7 @@ package busymachines.rest
 
 import akka.http.scaladsl.marshalling.ToEntityMarshaller
 import akka.http.scaladsl.model.HttpEntity
-import akka.http.scaladsl.model.headers.RawHeader
+import akka.http.scaladsl.model.headers._
 import akka.http.scaladsl.server.RouteResult
 import akka.http.scaladsl.server.RouteResult.{Complete, Rejected}
 import akka.http.scaladsl.server.directives.LoggingMagnet
@@ -72,6 +72,10 @@ private[rest] trait RestAPIRequestBuildingSugar {
     f.apply(cc)
   }
 }
+
+//=============================================================================
+//============================= Request Debugging =============================
+//=============================================================================
 
 private[rest] object RequestDebugging {
   private val delimiter: String = "==================================================="
@@ -152,6 +156,14 @@ private[rest] object RequestDebugging {
   }
 }
 
+//=============================================================================
+//============================= Request Runners ===============================
+//=============================================================================
+
+trait RequestRunner {
+  def runRequest[T](request: HttpRequest)(thunk: => T)(implicit route: Route, mat: Materializer, cc: CallerContext): T
+}
+
 private[rest] trait DefaultRequestRunners {
   this: ScalatestRouteTest =>
 
@@ -189,23 +201,47 @@ private[rest] trait DefaultRequestRunners {
 
 }
 
-private[rest] trait DefaultContexts {
+//=============================================================================
+//============================= Caller Contexts ===============================
+//=============================================================================
 
-  protected[this] object Contexts {
+private[rest] trait ProvidedContexts {
 
-    object none extends CallerContext {
-      override def apply(httpRequest: HttpRequest): HttpRequest = httpRequest
-    }
+  protected[this] object Contexts extends CallerContexts
 
-    def withRawHeader(name: String, value: String): CallerContext = (httpRequest: HttpRequest) => httpRequest.addHeader(RawHeader(name, value))
-  }
-
-}
-
-trait RequestRunner {
-  def runRequest[T](request: HttpRequest)(thunk: => T)(implicit route: Route, mat: Materializer, cc: CallerContext): T
 }
 
 trait CallerContext {
   def apply(httpRequest: HttpRequest): HttpRequest
+}
+
+object CallerContexts extends CallerContexts
+
+trait CallerContexts {
+
+  object none extends CallerContext {
+    override def apply(httpRequest: HttpRequest): HttpRequest = httpRequest
+  }
+
+  def withRawHeader(name: String, value: String): CallerContext = (httpRequest: HttpRequest) => httpRequest.addHeader(RawHeader(name, value))
+
+  def basic(username: String, password: String): CallerContext = new CallerContext {
+    override def apply(httpRequest: HttpRequest): HttpRequest = {
+      httpRequest.addHeader(
+        Authorization(
+          BasicHttpCredentials(username, password)
+        )
+      )
+    }
+  }
+
+  def bearer(token: String): CallerContext = new CallerContext {
+    override def apply(httpRequest: HttpRequest): HttpRequest = {
+      httpRequest.addHeader(
+        Authorization(
+          OAuth2BearerToken(token)
+        )
+      )
+    }
+  }
 }

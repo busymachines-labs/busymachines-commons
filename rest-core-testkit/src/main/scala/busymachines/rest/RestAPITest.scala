@@ -29,7 +29,7 @@ import scala.language.postfixOps
 trait RestAPITest extends ScalatestRouteTest
   with RestAPIRequestBuildingSugar
   with DefaultRequestRunners
-  with DefaultContexts {
+  with ProvidedContexts {
   this: Suite with Assertions =>
 
   implicit protected def testRoutingSettings: RoutingSettings =
