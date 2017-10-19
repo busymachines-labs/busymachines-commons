@@ -65,9 +65,6 @@ lazy val json = project
   .dependsOn(
     core
   )
-  .aggregate(
-    core
-  )
 
 lazy val `rest-core` = project
   .settings(Settings.commonSettings)
@@ -90,9 +87,6 @@ lazy val `rest-core` = project
   .dependsOn(
     core
   )
-  .aggregate(
-    core
-  )
 
 lazy val `rest-core-testkit` = project
   .settings(Settings.commonSettings)
@@ -101,14 +95,11 @@ lazy val `rest-core-testkit` = project
     name in ThisProject := "busymachines-commons-rest-core-testkit",
     libraryDependencies ++= Seq(
       Dependencies.akkaHttpTestKit withSources(),
-      Dependencies.scalaTest withSources()
+      Dependencies.scalaTest withSources(),
+      Dependencies.scalaTest % Test withSources()
     )
   )
   .dependsOn(
-    core,
-    `rest-core`
-  )
-  .aggregate(
     core,
     `rest-core`
   )
@@ -127,11 +118,6 @@ lazy val `rest-json` = project
     json,
     `rest-core`,
   )
-  .aggregate(
-    core,
-    json,
-    `rest-core`,
-  )
 
 lazy val `rest-json-testkit` = project
   .settings(Settings.commonSettings)
@@ -139,16 +125,10 @@ lazy val `rest-json-testkit` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-json-testkit",
     libraryDependencies ++= Seq(
+      Dependencies.scalaTest % Test withSources()
     )
   )
   .dependsOn(
-    core,
-    json,
-    `rest-core`,
-    `rest-json`,
-    `rest-core-testkit`,
-  )
-  .aggregate(
     core,
     json,
     `rest-core`,
