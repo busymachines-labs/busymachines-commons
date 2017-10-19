@@ -42,7 +42,7 @@ private[rest_json_test] class AuthenticatedRoutesRestAPIForTesting extends JsonR
 
   override protected def routeDefinition: Route = {
     pathPrefix("authentication") {
-      authentication { basicAuth: String =>
+      authenticationHeader { basicAuth: String =>
         pathEndOrSingleSlash {
           get {
             complete(
@@ -53,7 +53,7 @@ private[rest_json_test] class AuthenticatedRoutesRestAPIForTesting extends JsonR
         }
       }
     } ~ pathPrefix("opt_authentication") {
-      optionalAuthentication { basicAuth: Option[String] =>
+      optionalAuthenticationHeader { basicAuth: Option[String] =>
         pathEndOrSingleSlash {
           get {
             complete(
