@@ -116,7 +116,7 @@ private[rest] object RequestDebugging {
           sb.append(s"\n--\n$headers")
         }
         if (entity.nonEmpty) {
-          sb.append(s"\n==\n$entity\n$delimiter")
+          sb.append(s"\n==\n$entity\n$delimiter\n")
         }
         sb.mkString
 
