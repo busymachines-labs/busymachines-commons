@@ -1,4 +1,4 @@
-package busymachines.rest_test.routes
+package busymachines.rest_json_test.routes_to_test
 
 import busymachines.core.exceptions._
 import busymachines.rest._
@@ -23,7 +23,7 @@ import scala.util.Try
   * ==========================
   * 3:
   * {{{
-  *   class AuthenticatedRoutesRestAPIForTesting ... with SomeTestDTOJsonCodec
+  *   class DefaultExceptionHandlerRestAPIForTesting ... with SomeTestDTOJsonCodec
   * }}}
   * ==========================
   *
@@ -32,13 +32,13 @@ import scala.util.Try
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class DefaultExceptionHandlerRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
+private[rest_json_test] class DefaultExceptionHandlerRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
 
   //  Alternantively, if you remove SomeTestDTOJsonCodec mixing
   //  import busymachines.json._
 
-  //Alternatively, if none of the above:
-  //import SomeTestDTOJsonCodec._
+  //  Alternatively, if none of the above:
+  //  import SomeTestDTOJsonCodec._
 
 
   protected def routeDefinition: Route = {

@@ -43,7 +43,7 @@ trait RestAPITest extends ScalatestRouteTest
 
   protected[this] def requestRunner: RequestRunner = _requestRunner
 
-  protected[this] def debug[T](thunk: => T): T = {
+  protected def debug[T](thunk: => T): T = {
     if (_requestRunner eq RequestRunners.printing) {
       fail("... you should not nest debug statements. Fix it.")
     }

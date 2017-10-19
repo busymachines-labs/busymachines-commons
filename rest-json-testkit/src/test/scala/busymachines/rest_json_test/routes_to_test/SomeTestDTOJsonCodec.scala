@@ -1,4 +1,4 @@
-package busymachines.rest_test.routes
+package busymachines.rest_json_test.routes_to_test
 
 /**
   *
@@ -10,9 +10,9 @@ package busymachines.rest_test.routes
   * @since 19 Oct 2017
   *
   */
-private[rest_test] object SomeTestDTOJsonCodec extends SomeTestDTOJsonCodec
+private[rest_json_test] object SomeTestDTOJsonCodec extends SomeTestDTOJsonCodec
 
-private[rest_test] trait SomeTestDTOJsonCodec {
+private[rest_json_test] trait SomeTestDTOJsonCodec {
 
   import busymachines.json._
 

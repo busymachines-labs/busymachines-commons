@@ -1,8 +1,8 @@
-package busymachines.rest_test
+package busymachines.rest_json_test
 
 import busymachines.core.exceptions._
 import busymachines.rest._
-import busymachines.rest_test.routes._
+import busymachines.rest_json_test.routes_to_test._
 
 /**
   *
@@ -10,7 +10,7 @@ import busymachines.rest_test.routes._
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class RoutesCompositionTest extends ExampleRestAPITestBaseClass {
+private[rest_json_test] class RoutesCompositionTest extends ExampleRestAPITestBaseClass {
   private lazy val combinedAPI: RestAPI = {
     val eh = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()

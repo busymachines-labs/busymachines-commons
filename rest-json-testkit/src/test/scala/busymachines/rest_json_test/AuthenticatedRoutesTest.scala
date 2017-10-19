@@ -1,7 +1,7 @@
-package busymachines.rest_test
+package busymachines.rest_json_test
 
 import busymachines.rest._
-import busymachines.rest_test.routes._
+import busymachines.rest_json_test.routes_to_test._
 import org.scalatest.Outcome
 
 /**
@@ -10,7 +10,7 @@ import org.scalatest.Outcome
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class AuthenticatedRoutesTest extends ExampleRestAPITestBaseClassWithFixture {
+private[rest_json_test] class AuthenticatedRoutesTest extends ExampleRestAPITestBaseClassWithFixture {
 
   /**
     * A fixture would have to be more complicated than this to warrant all the hassle.

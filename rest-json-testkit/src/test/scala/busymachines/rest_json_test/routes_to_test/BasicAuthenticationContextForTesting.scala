@@ -1,4 +1,4 @@
-package busymachines.rest_test.routes
+package busymachines.rest_json_test.routes_to_test
 
 import akka.http.scaladsl.model.headers._
 import busymachines.rest._
@@ -9,7 +9,7 @@ import busymachines.rest._
   * @since 07 Sep 2017
   *
   */
-private[rest_test] object BasicAuthenticationContextForTesting extends CallerContext {
+private[rest_json_test] object BasicAuthenticationContextForTesting extends CallerContext {
   override def apply(httpRequest: HttpRequest): HttpRequest = {
     httpRequest.addHeader(
       Authorization(

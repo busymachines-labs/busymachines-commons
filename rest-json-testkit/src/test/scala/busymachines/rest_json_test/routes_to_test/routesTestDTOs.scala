@@ -1,4 +1,4 @@
-package busymachines.rest_test.routes
+package busymachines.rest_json_test.routes_to_test
 
 /**
   *
@@ -6,22 +6,22 @@ package busymachines.rest_test.routes
   * @since 07 Sep 2017
   *
   */
-private[rest_test] case class SomeTestDTOGet(
+private[rest_json_test] case class SomeTestDTOGet(
   int: Int,
   string: String,
   option: Option[Int]
 )
 
-private[rest_test] case class SomeTestDTOPost(
+private[rest_json_test] case class SomeTestDTOPost(
   string: String,
   option: Option[Int]
 )
 
-private[rest_test] case class SomeTestDTOPut(
+private[rest_json_test] case class SomeTestDTOPut(
   string: String,
   option: Option[Int]
 )
 
-private[rest_test] case class SomeTestDTOPatch(
+private[rest_json_test] case class SomeTestDTOPatch(
   string: String
 )

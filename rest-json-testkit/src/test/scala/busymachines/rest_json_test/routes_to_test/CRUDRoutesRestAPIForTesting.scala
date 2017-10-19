@@ -1,4 +1,4 @@
-package busymachines.rest_test.routes
+package busymachines.rest_json_test.routes_to_test
 
 import busymachines.rest._
 
@@ -22,7 +22,7 @@ import scala.concurrent.Future
   * ==========================
   * 3:
   * {{{
-  *   class AuthenticatedRoutesRestAPIForTesting ... with SomeTestDTOJsonCodec
+  *   class CRUDRoutesRestAPIForTesting ... with SomeTestDTOJsonCodec
   * }}}
   * ==========================
   *
@@ -31,14 +31,13 @@ import scala.concurrent.Future
   * @since 07 Sep 2017
   *
   */
-private[rest_test] class CRUDRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
+private[rest_json_test] class CRUDRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
 
   //  Alternantively, if you remove SomeTestDTOJsonCodec mixing
-  //  import busymachines.rest.JsonSupport._
   //  import busymachines.json._
 
-  //Alternatively, if none of the above:
-  //import SomeTestDTOJsonCodec._
+  //  Alternatively, if none of the above:
+  //  import SomeTestDTOJsonCodec._
 
   override protected def routeDefinition: Route =
     pathPrefix("crud") {

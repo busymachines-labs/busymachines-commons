@@ -11,7 +11,7 @@ import org.scalatest.{Assertions, Suite}
   */
 trait JsonRestAPITest extends RestAPITest with JsonRequestRunners with jsonrest.JsonSupport {
   this: Suite with Assertions =>
-
+  debug()
 }
 
 private[rest] trait JsonRequestRunners extends DefaultRequestRunners{

@@ -1,4 +1,4 @@
-package busymachines.rest_test
+package busymachines.rest_json_test
 
 import busymachines.rest._
 import org.scalatest._
