@@ -17,25 +17,16 @@ object JsonDecoding {
   }
 
   def decodeAs[A](json: String)(implicit decoder: Decoder[A]): JsonDecodingResult[A] = {
-    //FIXME: clean up this mess once we drop scala 2.11 cross-compilation and we can do right biased for
     val je = JsonParsing.parseString(json)
-    je.right.flatMap(json => this.decodeAs(json))
+    je.flatMap(json => this.decodeAs(json))
   }
 
   def unsafeDecodeAs[A](json: Json)(implicit decoder: Decoder[A]): A = {
-    //FIXME: clean up this mess once we drop scala 2.11 cross-compilation and we can do .toTry.get
-    this.decodeAs[A](json)(decoder) match {
-      case Right(j) => j
-      case Left(t) => throw t
-    }
+    this.decodeAs[A](json)(decoder).toTry.get
   }
 
   def unsafeDecodeAs[A](json: String)(implicit decoder: Decoder[A]): A = {
-    //FIXME: clean up this mess once we drop scala 2.11 cross-compilation and we can do .toTry.get
-    JsonDecoding.decodeAs(json) match {
-      case Right(j) => j
-      case Left(t) => throw t
-    }
+    JsonDecoding.decodeAs(json).toTry.get
   }
 }
 
@@ -53,12 +44,8 @@ object JsonParsing {
     parse(input).left.map(pf => JsonParsingFailure(pf.message))
   }
 
-  //FIXME: once we no longer cross-compile to scala 2.11 replace this with .toTry.get
   def unsafeParseString(input: String): Json = {
-    JsonParsing.parseString(input) match {
-      case Right(j) => j
-      case Left(t) => throw t
-    }
+    JsonParsing.parseString(input).toTry.get
   }
 
 }
