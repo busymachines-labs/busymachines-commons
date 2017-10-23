@@ -9,7 +9,7 @@ Light-weight, modular, libraries for varying technology stacks, built _primarily
 - milestone: `0.2.0-RC1`
 - we do not publish snapshot versions
 
-These modules are are cross-compiled for Scala versions: `2.12.3`. We try our best to keep them up to date.
+These modules are are cross-compiled for Scala versions: `2.12.4`. We try our best to keep them up to date.
 
 #### Modules:
 * `"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC1"` [README.md](/core)
