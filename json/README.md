@@ -13,7 +13,34 @@ You can glean 99% of what's going on here by first understanding `circe`. This m
 - shapeless 2.3.2
 - cats 1.0.0-MF
 
-## Common usage
+## Recommended usage
+
+If you are writing a full-fledged web-server with literally hundreds of REST API endpoints, then it is a good idea to minimize the usage of `import busymachines.json.autoderive._` because this can seriously increase your compilation times, and instead use the following pattern:
+
+```scala
+object DomainSpecificJsonCodecs extends DomainSpecificJsonCodecs
+
+trait DomainSpecificJsonCodecs {
+  import busymachines.json._
+
+  implicit val postDTOCodec: Codec[PostDTO] = derive.codec[PostDTO]
+  implicit val getDTOCodec : Codec[GetDTO]  = derive.codec[GetDTO]
+}
+//...
+
+object WhereINeedMyCodecUsuallyInMyEndpointDefinitions extends DomainSpecificJsonCodecs {
+  //....
+}
+//or:
+object OtherPlaceINeedMyJson {
+  import DomainSpecificJsonCodecs._
+
+}
+```
+
+But for small-scale stuff, sure, go crazy with `autoderive._`.
+
+## Description
 
 Most likely the best way to make use of the library is to have the following imports:
 ```scala
@@ -21,13 +48,11 @@ import busymachines.json._
 import busymachines.json.syntax._
 ```
 
-`json._` brings in common type definitions, `auto` derivation of `Encoder`/`Decoder`, and an object `derive` which is the rough equivalent of circe's `semiauto`. When importing `json._`, the compiler will try to automatically generate the aforementioned type-classes whenever one is required. So, when a method like `def decodeAs[A](json: String)(implicit decoder: Decoder[A])` is called the compiler will attempt to derive a `Decoder` for a type `A`.  
+`json._` brings in common type definitions, and an object `derive` which is the rough equivalent of circe's `semiauto`, and an object `autoderive` which is a rough equivalent of circe's `auto`. When importing `autoderive._`, the compiler will try to automatically generate `Encoder[T]`, `Decoder[T]` type-classes whenever one is required. So, when a method like `def decodeAs[A](json: String)(implicit decoder: Decoder[A])` is called the compiler will attempt to derive a `Decoder` for a type `A`.  
 
 `syntax._` brings in handy syntactic ops to parse strings to `Json` and/or to decode them to a specified type—these are just syntactically convenient ways of doing what the objects in `utilsJson.scala` can do.
 
-## Decoding/encoding simple case class
-
-The preferred way of having encoders/decoders in production is by following the patter
+## Decoding/encoding simple case classes
 
 ### semi-auto derivation (`busymachines.json.derive`)
 ```scala
@@ -73,6 +98,7 @@ except in fairly trivial cases because it takes considerably longer to compile y
 object CommonsJson extends App {
 
   import busymachines.json._
+  import busymachines.json.autoderive._
   import busymachines.json.syntax._
 
   val anarchistMelon = AnarchistMelon(true, true, true)
@@ -195,7 +221,7 @@ object CommonsJson extends App {
 }
 ```
 
-### On `_type` discriminator
+### On `_type` discrimination
 
 Here we have to delve a bit into the internals of this library. We depend on the `circe.generic.extras` packages, where derivation requires an implicit an implicit `Configuration` to derive all sealed traits. This configuration can be found in `busymachines.json.DefaultTypeDiscriminatorConfig` and is mixed into both the root `json` package object, so that it can be made available to us in both use cases:
 
