@@ -1,7 +1,6 @@
 package busymachines.rest
 
 import akka.http.scaladsl.marshalling.ToEntityMarshaller
-import akka.http.scaladsl.model.{ContentType, ContentTypes}
 import akka.http.scaladsl.model.headers._
 import akka.http.scaladsl.server.RouteResult
 import akka.http.scaladsl.server.RouteResult.{Complete, Rejected}
