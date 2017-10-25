@@ -22,8 +22,9 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
     assertCompiles {
       """
         |import busymachines.json._
-        |import busymachines.json.syntax._
         |import busymachines.json.autoderive._
+        |
+        |import busymachines.json.syntax._
         |
         |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
         |val asJson = anarchistMelon.asJson.spaces2
@@ -35,39 +36,13 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... fail to compile when autoderive._ is imported together with derive._" in {
-    /**
-      * These two cannot work well together because both of them define a [[busymachines.json.Configuration]]
-      * implicit that ensures that sealed trait hierarchies are serialized using the _type discriminator
-      */
-    assertDoesNotCompile {
+  it should "... compile when importing everything — autoderive._ is imported together with derive._ together with syntax" in {
+    assertCompiles {
       """
         |import busymachines.json._
         |import busymachines.json.autoderive._
         |import busymachines.json.syntax._
         |import busymachines.json.derive._
-        |
-        |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
-        |val asJson = anarchistMelon.asJson.spaces2
-        |val read = asJson.unsafeDecodeAs[AnarchistMelon]
-        |
-      """.stripMargin
-    }
-  }
-
-  //-----------------------------------------------------------------------------------------------
-
-  it should "... compile when autoderive._ is imported together with derive._, and one of them excludes the defaultConfiguration" in {
-    /**
-      * These two cannot work well together because both of them define a [[busymachines.json.Configuration]]
-      * implicit that ensures that sealed trait hierarchies are serialized using the _type discriminator
-      */
-    assertCompiles {
-      """
-        |import busymachines.json._
-        |import busymachines.json.syntax._
-        |import busymachines.json.autoderive._
-        |import busymachines.json.derive.{defaultDerivationConfiguration => _, _}
         |
         |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
         |val asJson = anarchistMelon.asJson.spaces2

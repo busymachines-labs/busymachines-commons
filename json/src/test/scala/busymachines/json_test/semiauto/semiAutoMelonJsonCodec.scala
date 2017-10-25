@@ -14,7 +14,6 @@ import busymachines.json_test._
 private[json_test] object melonsDefaultSemiAutoDecoders {
 
   import busymachines.json._
-  import busymachines.json.derive.defaultDerivationConfiguration
 
   implicit val tasteDecoder: Decoder[Taste] = derive.enumerationDecoder[Taste]
   implicit val melonDecoder: Decoder[Melon] = derive.decoder[Melon]
@@ -27,7 +26,6 @@ private[json_test] object melonsDefaultSemiAutoDecoders {
 private[json_test] object melonsDefaultSemiAutoEncoders {
 
   import busymachines.json._
-  import busymachines.json.derive.defaultDerivationConfiguration
 
   implicit val tasteEncoder: Encoder[Taste] = derive.enumerationEncoder[Taste]
   implicit val melonEncoder: ObjectEncoder[Melon] = derive.encoder[Melon]
@@ -40,7 +38,6 @@ private[json_test] object melonsDefaultSemiAutoEncoders {
 private[json_test] object melonsDefaultSemiAutoCodecs {
 
   import busymachines.json._
-  import busymachines.json.derive.defaultDerivationConfiguration
 
   implicit val tasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
   implicit val melonCodec: Codec[Melon] = derive.codec[Melon]

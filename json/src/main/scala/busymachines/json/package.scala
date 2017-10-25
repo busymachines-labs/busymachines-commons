@@ -11,6 +11,7 @@ import busymachines.core.exceptions._
   * JSON you should really just have to import
   * {{{
   *   import busymachines.json._
+  *   import busymachines.json.autoderive._
   * }}}
   *
   * If you also need explicit parsing/pretty printing, or other operations, then it should be realizeable with
@@ -26,7 +27,7 @@ import busymachines.core.exceptions._
   * @since 10 Aug 2017
   *
   */
-package object json {
+package object json extends DefaultTypeDiscriminatorConfig {
 
   type Encoder[A] = io.circe.Encoder[A]
   final val Encoder: io.circe.Encoder.type = io.circe.Encoder
