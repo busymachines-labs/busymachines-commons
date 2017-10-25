@@ -15,6 +15,7 @@ private[rest_json_test] object SomeTestDTOJsonCodec extends SomeTestDTOJsonCodec
 private[rest_json_test] trait SomeTestDTOJsonCodec {
 
   import busymachines.json._
+  import busymachines.json.derive.defaultDerivationConfiguration
 
   implicit val someTestDTOGetCodec: Codec[SomeTestDTOGet] = derive.codec[SomeTestDTOGet]
   implicit val someTestDTOPostCodec: Codec[SomeTestDTOPost] = derive.codec[SomeTestDTOPost]

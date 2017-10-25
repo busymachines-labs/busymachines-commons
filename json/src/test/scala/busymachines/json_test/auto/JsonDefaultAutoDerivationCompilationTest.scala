@@ -5,7 +5,7 @@ import org.scalatest.FlatSpec
 
 /**
   *
-  * Here we test [[busymachines.json.auto]] derivation at compile time,
+  * Here we test [[busymachines.json.autoderive]] derivation at compile time,
   * mostly to show what imports are required, and which are not.
   *
   * See the [[Melon]] hierarchy
@@ -21,8 +21,9 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
   it should "... compile when having the correct imports" in {
     assertCompiles {
       """
-        |import busymachines.json.syntax._
         |import busymachines.json._
+        |import busymachines.json.syntax._
+        |import busymachines.json.autoderive._
         |
         |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
         |val asJson = anarchistMelon.asJson.spaces2
@@ -34,7 +35,7 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... fail to compile when json._ is imported together with derive._" in {
+  it should "... fail to compile when autoderive._ is imported together with derive._" in {
     /**
       * These two cannot work well together because both of them define a [[busymachines.json.Configuration]]
       * implicit that ensures that sealed trait hierarchies are serialized using the _type discriminator
@@ -42,6 +43,7 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
     assertDoesNotCompile {
       """
         |import busymachines.json._
+        |import busymachines.json.autoderive._
         |import busymachines.json.syntax._
         |import busymachines.json.derive._
         |
@@ -55,7 +57,7 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... compile when json._ is imported together with derive._, and one of them excludes the defaultConfiguration" in {
+  it should "... compile when autoderive._ is imported together with derive._, and one of them excludes the defaultConfiguration" in {
     /**
       * These two cannot work well together because both of them define a [[busymachines.json.Configuration]]
       * implicit that ensures that sealed trait hierarchies are serialized using the _type discriminator
@@ -64,6 +66,7 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
       """
         |import busymachines.json._
         |import busymachines.json.syntax._
+        |import busymachines.json.autoderive._
         |import busymachines.json.derive.{defaultDerivationConfiguration => _, _}
         |
         |val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)

@@ -26,7 +26,7 @@ import busymachines.core.exceptions._
   * @since 10 Aug 2017
   *
   */
-package object json extends DefaultTypeDiscriminatorConfig with io.circe.generic.extras.AutoDerivation {
+package object json {
 
   type Encoder[A] = io.circe.Encoder[A]
   final val Encoder: io.circe.Encoder.type = io.circe.Encoder
