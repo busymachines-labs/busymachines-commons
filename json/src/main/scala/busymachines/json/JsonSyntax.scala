@@ -33,6 +33,12 @@ trait JsonSyntax {
     def decodeAs[A](implicit decoder: Decoder[A]): JsonDecodingResult[A] = {
       JsonDecoding.decodeAs[A](js)
     }
+
+    def noSpacesNoNulls: String = js.pretty(PrettyJson.noSpacesNoNulls)
+
+    def spaces2NoNulls: String = js.pretty(PrettyJson.spaces2NoNulls)
+
+    def spaces4NoNulls: String = js.pretty(PrettyJson.spaces4NoNulls)
   }
 
 }
