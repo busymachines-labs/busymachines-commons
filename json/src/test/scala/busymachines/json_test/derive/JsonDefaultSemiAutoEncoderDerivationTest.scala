@@ -1,11 +1,12 @@
-package busymachines.json_test.semiauto
+package busymachines.json_test.derive
 
 import busymachines.json_test._
 import org.scalatest.FlatSpec
 
 
 /**
-  * Here we test [[busymachines.json.Decoder]] derivation
+  *
+  * Here we test [[busymachines.json.Encoder]] derivation
   *
   * See the [[Melon]] hierarchy
   *
@@ -13,16 +14,18 @@ import org.scalatest.FlatSpec
   * @since 09 Aug 2017
   *
   */
-class JsonDefaultSemiAutoDecoderDerivationTest extends FlatSpec {
+class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
 
   import busymachines.json.syntax._
-  import melonsDefaultSemiAutoDecoders._
+  import melonsDefaultSemiAutoEncoders._
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... be able to deserialize anarchist melon (i.e. not part of any hierarchy)" in {
+  it should "... be able to serialize anarchist melon (i.e. not part of any hierarchy)" in {
     val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
-    val rawJson =
+    val rawJson = anarchistMelon.asJson.spaces2
+
+    assertResult(
       """
         |{
         |  "noGods" : true,
@@ -30,28 +33,28 @@ class JsonDefaultSemiAutoDecoderDerivationTest extends FlatSpec {
         |  "noSuperTypes" : true
         |}
       """.stripMargin.trim
-
-    val read = rawJson.unsafeDecodeAs[AnarchistMelon]
-    assertResult(anarchistMelon)(read)
+    )(rawJson)
   }
 
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... fail to compile when there is no explicitly defined decoder for a type down in the hierarchy" in {
+  it should "... fail to compile when there is no defined encoder for a type down in the hierarchy" in {
     assertDoesNotCompile(
       """
-        |val rawJson = "{}"
-        |rawJson.unsafeDecodeAs[WinterMelon]
+        |val winterMelon: WinterMelon = WinterMelon(fuzzy = true, weight = 45)
+        |winterMelon.asJson
       """.stripMargin
     )
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... be able to deserialize case class from hierarchy when it is referred to as its super-type" in {
+  it should "... be able to serialize case class from hierarchy when it is referred to as its super-type" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val rawJson =
+    val rawJson = winterMelon.asJson.spaces2
+
+    assertResult(
       """
         |{
         |  "fuzzy" : true,
@@ -59,51 +62,50 @@ class JsonDefaultSemiAutoDecoderDerivationTest extends FlatSpec {
         |  "_type" : "WinterMelon"
         |}
       """.stripMargin.trim
-
-    val read = rawJson.unsafeDecodeAs[Melon]
-    assertResult(winterMelon)(read)
+    )(rawJson)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... be able to deserialize case objects of the hierarchy" in {
+  it should "... be able to serialize case objects of the hierarchy" in {
     val smallMelon: Melon = SmallMelon
-    val rawJson =
+    val rawJson = smallMelon.asJson.spaces2
+    assertResult(
       """
         |{
         |  "_type" : "SmallMelon"
         |}
       """.stripMargin.trim
-    val read = rawJson.unsafeDecodeAs[Melon]
-    assertResult(smallMelon)(read)
+    )(rawJson)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... deserialize hierarchies of case objects as enums (i.e. plain strings)" in {
+  it should "... serialize hierarchies of case objects as enums (i.e. plain strings)" in {
     val taste: List[Taste] = List(SweetTaste, SourTaste)
-    val rawJson =
+
+    val rawJson = taste.asJson.spaces2
+    assertResult(
       """
         |[
         |  "SweetTaste",
         |  "SourTaste"
         |]
       """.stripMargin.trim
-
-    val read = rawJson.unsafeDecodeAs[List[Taste]]
-    assertResult(read)(taste)
+    )(rawJson)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... deserialize list of all case classes from the hierarchy" in {
+  it should "... serialize list of all case classes from the hierarchy" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
     val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)
     val smallMelon: Melon = SmallMelon
     val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
     val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
 
-    val rawJson =
+    val rawJson = melons.asJson.spaces2
+    assertResult(
       """
         |
         |[
@@ -130,12 +132,9 @@ class JsonDefaultSemiAutoDecoderDerivationTest extends FlatSpec {
         |  }
         |]
         |
-        """.stripMargin.trim
-
-    val read: List[Melon] = rawJson.unsafeDecodeAs[List[Melon]]
-    assertResult(melons)(read)
+      """.stripMargin.trim
+    )(rawJson)
   }
-
   //-----------------------------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package busymachines.json_test.semiauto
+package busymachines.json_test.derive
 
 import busymachines.json.{JsonDecoding, JsonDecodingFailure, JsonParsing, JsonParsingFailure}
 import busymachines.json_test.AnarchistMelon

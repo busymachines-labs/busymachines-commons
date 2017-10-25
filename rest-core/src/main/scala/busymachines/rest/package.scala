@@ -21,6 +21,9 @@ package object rest {
   type HttpResponse = model.HttpResponse
   val HttpResponse: model.HttpResponse.type = model.HttpResponse
 
+  type HttpEntity = model.HttpEntity
+  val HttpEntity: model.HttpEntity.type = model.HttpEntity
+
   type Route = server.Route
   val Route: server.Route.type = server.Route
 
@@ -37,6 +40,13 @@ package object rest {
   val StatusCode: model.StatusCode.type = model.StatusCode
   val StatusCodes: model.StatusCodes.type = model.StatusCodes
 
+  type ContentType = model.ContentType
+  val ContentType: model.ContentType.type = model.ContentType
+  val ContentTypes: model.ContentTypes.type = model.ContentTypes
+
   type RoutingSettings = settings.RoutingSettings
   val RoutingSettings: settings.RoutingSettings.type = settings.RoutingSettings
+
+  type ParserSettings = akka.http.scaladsl.settings.ParserSettings
+  val ParserSettings: akka.http.scaladsl.settings.ParserSettings.type = akka.http.scaladsl.settings.ParserSettings
 }

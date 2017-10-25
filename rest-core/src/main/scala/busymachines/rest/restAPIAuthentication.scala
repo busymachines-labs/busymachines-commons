@@ -27,23 +27,23 @@ trait RestAPIAuthentication[AuthenticationResult] {
 @SubjectToChange("0.3.0")
 object RestAPIAuthentications {
 
-  val BasicS: String = "Basic"
-  val BearerS: String = "Bearer"
-  val AuthorizationS: String = "Authorization"
+  private val BasicS = "Basic"
+  private val BearerS = "Bearer"
+  private val AuthorizationS = "Authorization"
 
-  final val MissingBasicCredentials = AuthenticationFailedRejection(
+  private val MissingBasicCredentials = AuthenticationFailedRejection(
     cause = AuthenticationFailedRejection.CredentialsMissing,
     challenge = HttpChallenges.basic(BasicS))
 
-  final val InvalidBasicCredentials = AuthenticationFailedRejection(
+  private val InvalidBasicCredentials = AuthenticationFailedRejection(
     cause = AuthenticationFailedRejection.CredentialsRejected,
     challenge = HttpChallenges.basic(BasicS))
 
-  final val MissingBearerCredentials = AuthenticationFailedRejection(
+  private val MissingBearerCredentials = AuthenticationFailedRejection(
     cause = AuthenticationFailedRejection.CredentialsMissing,
     challenge = HttpChallenges.oAuth2(BearerS))
 
-  final val InvalidBearerCredentials = AuthenticationFailedRejection(
+  private val InvalidBearerCredentials = AuthenticationFailedRejection(
     cause = AuthenticationFailedRejection.CredentialsRejected,
     challenge = HttpChallenges.oAuth2(BasicS))
 

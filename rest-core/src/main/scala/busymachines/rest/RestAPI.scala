@@ -100,7 +100,9 @@ object RestAPI {
     */
   def seal(api: RestAPI, apis: RestAPI*)(implicit
     routingSettings: RoutingSettings,
+    parserSettings:   ParserSettings   = null,
     rejectionHandler: RejectionHandler = RejectionHandler.default,
+    exceptionHandler: ExceptionHandler = null
   ): RestAPI = {
     val r = combine(api, apis: _ *)
     val sealedRoute = Route.seal(r.route)
