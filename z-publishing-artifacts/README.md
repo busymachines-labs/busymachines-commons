@@ -40,6 +40,13 @@ You ought to follow the instructions here to create your PGP file:
 
 ## Publishing
 
+The general steps for publishing your artifact to the Central Repository are as follows:
+1. `publishSigned`
+2. `sonatypeRelease`
+If this doesn't work for some reason, then read further to understand the entire process.
+
+### Full-workflow
+
 Full workflow to [publish to sonatype](http://www.scala-sbt.org/release/docs/Using-Sonatype.html#Using+Sonatype) can be found on the sbt website, and you really need to read it all. _DO NOT FORGET_ to distribute your PGP keys to the keyserver pool by running the sbt task from `PGP Tips'n'tricks` section from the aforementione guide.
 
 ### Open staging profile
@@ -48,15 +55,11 @@ Outlined here on the [sbt-sonatype](https://github.com/xerial/sbt-sonatype/blob/
 
 ### Then Run the commands outlined on the [sbt-sonatype](https://github.com/xerial/sbt-sonatype#publishing-your-artifact) page. Copy pasted from there for our convenience:
 
-The general steps for publishing your artifact to the Central Repository are as follows:
-1. `publishSigned`
-2. `sonatypeRelease`
-
 #### `publishSigned`  
 
 To deploy your artifact to staging repository at Sonatype. Implicitely creates a staging repository which you can view online at [https://oss.sonatype.org/#stagingRepositories](https://oss.sonatype.org/#stagingRepositories). You can login using the sonatype jira credentials you had to gain in previous steps.
 
-####`sonatypeRelease`  
+#### `sonatypeRelease`  
 
 To do `sonatypeClose` and `sonatypePromote` in one step:
   * `sonatypeClose` closes your staging repository at Sonatype. This step verifies Maven central sync requirement, GPG-signature, javadoc
