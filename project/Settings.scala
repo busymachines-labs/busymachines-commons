@@ -12,8 +12,13 @@ object Settings {
       homepage := Some(url(bmCommonsHomepage)),
       scalaVersion := Dependencies.`scala_2.12`,
       //      crossScalaVersions := Dependencies.seqOfCrossScalaVersions
-    ) ++
-      scalaCompilerSettings
+    ) ++ scalaCompilerSettings
 
-  def scalaCompilerSettings: Seq[Setting[_]] = Nil
+  def scalaCompilerSettings: Seq[Setting[_]] = Seq(
+    scalacOptions ++= Seq(
+      "-Ywarn-unused-import",
+      "-Ypartial-unification",
+      "-deprecation"
+    )
+  )
 }
