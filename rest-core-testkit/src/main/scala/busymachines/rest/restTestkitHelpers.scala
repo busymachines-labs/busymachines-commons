@@ -1,7 +1,7 @@
 package busymachines.rest
 
 import akka.http.scaladsl.marshalling.ToEntityMarshaller
-import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.model.{ContentType, ContentTypes}
 import akka.http.scaladsl.model.headers._
 import akka.http.scaladsl.server.RouteResult
 import akka.http.scaladsl.server.RouteResult.{Complete, Rejected}
@@ -50,15 +50,33 @@ private[rest] trait RestAPIRequestBuildingSugar {
     requestRunner.runRequest(g)(thunk)
   }
 
+  protected def postRaw[R](uri: String, contentType: ContentType.NonBinary = ContentTypes.`application/json`)(raw: String)(thunk: => R)
+    (implicit cc: CallerContext): R = {
+    val g = Post(uri).withEntity(contentType, raw)
+    requestRunner.runRequest(g)(thunk)
+  }
+
   protected def patch[BodyType, R](uri: String, body: BodyType)(thunk: => R)
     (implicit cc: CallerContext, encoder: ToEntityMarshaller[BodyType]): R = {
     val g = Patch(uri, body)
     requestRunner.runRequest(g)(thunk)
   }
 
+  protected def patchRaw[R](uri: String, contentType: ContentType.NonBinary = ContentTypes.`application/json`)(raw: String)(thunk: => R)
+    (implicit cc: CallerContext): R = {
+    val g = Patch(uri).withEntity(contentType, raw)
+    requestRunner.runRequest(g)(thunk)
+  }
+
   protected def put[BodyType, R](uri: String, body: BodyType)(thunk: => R)
     (implicit cc: CallerContext, encoder: ToEntityMarshaller[BodyType]): R = {
     val g = Put(uri, body)
+    requestRunner.runRequest(g)(thunk)
+  }
+
+  protected def putRaw[R](uri: String, contentType: ContentType.NonBinary = ContentTypes.`application/json`)(raw: String)(thunk: => R)
+    (implicit cc: CallerContext): R = {
+    val g = Put(uri).withEntity(contentType, raw)
     requestRunner.runRequest(g)(thunk)
   }
 
@@ -211,6 +229,10 @@ private[rest] trait ProvidedContexts {
 
 }
 
+object CallerContext {
+  def apply(fun: HttpRequest => HttpRequest): CallerContext = (httpRequest: HttpRequest) => fun.apply(httpRequest)
+}
+
 trait CallerContext {
   def apply(httpRequest: HttpRequest): HttpRequest
 }
@@ -223,25 +245,23 @@ trait CallerContexts {
     override def apply(httpRequest: HttpRequest): HttpRequest = httpRequest
   }
 
-  def withRawHeader(name: String, value: String): CallerContext = (httpRequest: HttpRequest) => httpRequest.addHeader(RawHeader(name, value))
-
-  def basic(username: String, password: String): CallerContext = new CallerContext {
-    override def apply(httpRequest: HttpRequest): HttpRequest = {
-      httpRequest.addHeader(
-        Authorization(
-          BasicHttpCredentials(username, password)
-        )
-      )
-    }
+  def withRawHeader(name: String, value: String): CallerContext = CallerContext { httpRequest =>
+    httpRequest.addHeader(RawHeader(name, value))
   }
 
-  def bearer(token: String): CallerContext = new CallerContext {
-    override def apply(httpRequest: HttpRequest): HttpRequest = {
-      httpRequest.addHeader(
-        Authorization(
-          OAuth2BearerToken(token)
-        )
+  def basic(username: String, password: String): CallerContext = CallerContext { httpRequest =>
+    httpRequest.addHeader(
+      Authorization(
+        BasicHttpCredentials(username, password)
       )
-    }
+    )
+  }
+
+  def bearer(token: String): CallerContext = CallerContext { httpRequest =>
+    httpRequest.addHeader(
+      Authorization(
+        OAuth2BearerToken(token)
+      )
+    )
   }
 }

@@ -63,35 +63,83 @@ private[rest_json_test] class CRUDRoutesTest extends ExampleRestAPITestBaseClass
       "lalala",
       None
     )
-    post("/crud", p) {
-      assert {
-        responseAs[SomeTestDTOGet] ==
-          SomeTestDTOGet(
-            42,
-            "lalala",
-            None
-          )
+
+    withClue("... typed post") {
+      post("/crud", p) {
+        assert {
+          responseAs[SomeTestDTOGet] ==
+            SomeTestDTOGet(
+              42,
+              "lalala",
+              None
+            )
+        }
       }
     }
+
+    withClue("... raw post") {
+      postRaw("/crud")(
+        """
+          |{
+          |  "string" : "lalala"
+          |}
+        """.stripMargin
+      ) {
+        assert {
+          responseAs[SomeTestDTOGet] ==
+            SomeTestDTOGet(
+              42,
+              "lalala",
+              None
+            )
+        }
+      }
+    }
+
   }
 
   //===========================================================================
 
   it should "return 200 OK on PUT" in {
     val p = SomeTestDTOPut(
-      "lalala",
-      Option(42)
+      string = "lalala",
+      option = Option(42)
     )
-    put("/crud/77", p) {
-      expectStatus(StatusCodes.OK)
 
-      assert {
-        responseAs[SomeTestDTOGet] ==
-          SomeTestDTOGet(
-            77,
-            "lalala",
-            Option(42)
-          )
+    withClue("... typed PUT") {
+      put("/crud/77", p) {
+        expectStatus(StatusCodes.OK)
+
+        assert {
+          responseAs[SomeTestDTOGet] ==
+            SomeTestDTOGet(
+              77,
+              "lalala",
+              Option(42)
+            )
+        }
+      }
+    }
+
+    withClue("... raw PUT") {
+      putRaw("/crud/77")(
+        """
+          |{
+          |  "string" : "lalala",
+          |  "option" : "42"
+          |}
+        """.stripMargin
+      ) {
+        expectStatus(StatusCodes.OK)
+
+        assert {
+          responseAs[SomeTestDTOGet] ==
+            SomeTestDTOGet(
+              77,
+              "lalala",
+              Option(42)
+            )
+        }
       }
     }
   }
@@ -102,16 +150,40 @@ private[rest_json_test] class CRUDRoutesTest extends ExampleRestAPITestBaseClass
     val p = SomeTestDTOPatch(
       "lalala"
     )
-    patch("/crud/77", p) {
-      expectStatus(StatusCodes.OK)
 
-      assert {
-        responseAs[SomeTestDTOGet] ==
-          SomeTestDTOGet(
-            77,
-            "lalala",
-            None
-          )
+    withClue("... typed PATCH") {
+      patch("/crud/77", p) {
+        expectStatus(StatusCodes.OK)
+
+        assert {
+          responseAs[SomeTestDTOGet] ==
+            SomeTestDTOGet(
+              77,
+              "lalala",
+              None
+            )
+        }
+      }
+    }
+
+    withClue("... raw PATCH") {
+      patchRaw("/crud/77")(
+        """
+          |{
+          |  "string" : "lalala"
+          |}
+        """.stripMargin
+      ) {
+        expectStatus(StatusCodes.OK)
+
+        assert {
+          responseAs[SomeTestDTOGet] ==
+            SomeTestDTOGet(
+              77,
+              "lalala",
+              None
+            )
+        }
       }
     }
   }

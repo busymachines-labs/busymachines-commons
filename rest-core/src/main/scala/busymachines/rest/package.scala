@@ -21,6 +21,9 @@ package object rest {
   type HttpResponse = model.HttpResponse
   val HttpResponse: model.HttpResponse.type = model.HttpResponse
 
+  type HttpEntity = model.HttpEntity
+  val HttpEntity: model.HttpEntity.type = model.HttpEntity
+
   type Route = server.Route
   val Route: server.Route.type = server.Route
 
