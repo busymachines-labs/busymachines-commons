@@ -70,7 +70,7 @@ import scala.collection.immutable
   *   }
   *
   *   case class SolutionNotFoundFailure(problem: String) extends NotFoundFailure(
-  *     s"Solution to problem $problem not found."
+  *     "Cannot find solution to problem:" + problem
   *   ) {
   *     override def id: FailureID = RevolutionaryDomainFailures.CannotBeDone
   *

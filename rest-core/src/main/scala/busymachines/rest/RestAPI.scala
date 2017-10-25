@@ -25,9 +25,9 @@ trait RestAPI {
 }
 
 /**
-  * Since [[FailureMessages]] extends [[FailureMessage]]
-  * the marshaller for the superclass is being used,
-  * thus we no longer have the ``messages`` field in the resulting output.
+  * Since [[busymachines.core.exceptions.FailureMessages]] extends
+  * [[busymachines.core.exceptions.FailureMessage]] the marshaller for the superclass
+  * is being used, thus we no longer have the ``messages`` field in the resulting output.
   *
   * thats why we segrated the scopes of the imports with the [[RestAPI.failure]]
   * and [[RestAPI.failures]] objects

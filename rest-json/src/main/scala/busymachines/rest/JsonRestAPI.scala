@@ -5,7 +5,7 @@ import busymachines.core.exceptions.{FailureMessage, FailureMessages}
 
 /**
   *
-  * Simply provides a JSON implementation for everything abstract in [[RestAPI]].
+  * Simply provides a JSON implementation for everything abstract in [[busymachines.rest.RestAPI]].
   * It is ready to use as is
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
