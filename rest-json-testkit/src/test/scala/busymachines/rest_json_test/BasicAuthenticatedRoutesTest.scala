@@ -25,6 +25,7 @@ private[rest_json_test] class BasicAuthenticatedRoutesTest extends ExampleRestAP
   }
 
   import busymachines.json._
+  import busymachines.json.autoderive._
   //  this also works, and gets us faster compilation times:
   //  import SomeTestDTOJsonCodec._
 

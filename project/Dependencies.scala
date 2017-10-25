@@ -2,6 +2,7 @@ import sbt._
 
 object Dependencies {
 
+  //FIXME: need to wait for sbt 1.0.3 to have a bug fixed before we can use 2.12.4 and IntelliJ
   lazy val `scala_2.12`: String = "2.12.3"
   lazy val `scala_2.13`: String = "2.13.0-M2"
   lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`)
@@ -10,7 +11,7 @@ object Dependencies {
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
-  lazy val bmCommonsVersion: String = "0.2.0-RC1"
+  lazy val bmCommonsVersion: String = "0.2.0-RC2"
 
   lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % bmCommonsVersion withSources()
   lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % bmCommonsVersion withSources()

@@ -81,11 +81,10 @@ trait FailureMessageJsonCodec {
 
   final implicit val failureMessageCodec: Codec[FailureMessage] = new Codec[FailureMessage] {
     override def apply(c: HCursor): io.circe.Decoder.Result[FailureMessage] = {
-      //FIXME: once we drop cross-compilation support for scala 2.11, remove the calls to .right
       for {
-        id <- c.get[FailureID](CoreJsonConstants.id).right
-        msg <- c.get[String](CoreJsonConstants.message).right
-        params <- c.getOrElse[FailureMessage.Parameters](CoreJsonConstants.parameters)(FailureMessage.Parameters.empty).right
+        id <- c.get[FailureID](CoreJsonConstants.id)
+        msg <- c.get[String](CoreJsonConstants.message)
+        params <- c.getOrElse[FailureMessage.Parameters](CoreJsonConstants.parameters)(FailureMessage.Parameters.empty)
       } yield FailureMessage(id, msg, params)
     }
 

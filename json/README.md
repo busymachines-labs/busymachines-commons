@@ -1,10 +1,10 @@
 # busymachines-commons-json
 
-Current version is `0.2.0-RC1`. SBT module id:
-`"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC1"`
+Current version is `0.2.0-RC2`. SBT module id:
+`"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC2"`
 
 ## How it works
-This module is a thin layer over [circe](https://circe.github.io/circe/), additionally, it depends on [shapeless](https://github.com/milessabin/shapeless). The latter being the mechanism through which `auto` and `semiauto` derivation can be made to work.
+This module is a thin layer over [circe](https://circe.github.io/circe/), additionally, it depends on [shapeless](https://github.com/milessabin/shapeless). The latter being the mechanism through which `autoderive` and `derive` derivation can be made to work.
 
 You can glean 99% of what's going on here by first understanding `circe`. This module provides just convenience, and a principled way of using it. The only "real" contribution of this is that provides a `Codec` type class, which is lacking from `circe`.
 
@@ -13,7 +13,34 @@ You can glean 99% of what's going on here by first understanding `circe`. This m
 - shapeless 2.3.2
 - cats 1.0.0-MF
 
-## Common usage
+## Recommended usage
+
+If you are writing a full-fledged web-server with literally hundreds of REST API endpoints, then it is a good idea to minimize the usage of `import busymachines.json.autoderive._` because this can seriously increase your compilation times, and instead use the following pattern:
+
+```scala
+object DomainSpecificJsonCodecs extends DomainSpecificJsonCodecs
+
+trait DomainSpecificJsonCodecs {
+  import busymachines.json._
+
+  implicit val postDTOCodec: Codec[PostDTO] = derive.codec[PostDTO]
+  implicit val getDTOCodec : Codec[GetDTO]  = derive.codec[GetDTO]
+}
+//...
+
+object WhereINeedMyCodecUsuallyInMyEndpointDefinitions extends DomainSpecificJsonCodecs {
+  //....
+}
+//or:
+object OtherPlaceINeedMyJson {
+  import DomainSpecificJsonCodecs._
+
+}
+```
+
+But for small-scale stuff, sure, go crazy with `autoderive._`.
+
+## Description
 
 Most likely the best way to make use of the library is to have the following imports:
 ```scala
@@ -21,13 +48,13 @@ import busymachines.json._
 import busymachines.json.syntax._
 ```
 
-`json._` brings in common type definitions, `auto` derivation of `Encoder`/`Decoder`, and an object `derive` which is the rough equivalent of circe's `semiauto`. When importing `json._`, the compiler will try to automatically generate the aforementioned type-classes whenever one is required. So, when a method like `def decodeAs[A](json: String)(implicit decoder: Decoder[A])` is called the compiler will attempt to derive a `Decoder` for a type `A`.  
+`json._` brings in common type definitions, and an object `derive` which is the rough equivalent of circe's `semiauto`, and an object `autoderive` which is a rough equivalent of circe's `auto`. When importing `autoderive._`, the compiler will try to automatically generate `Encoder[T]`, `Decoder[T]` type-classes whenever one is required. So, when a method like `def decodeAs[A](json: String)(implicit decoder: Decoder[A])` is called the compiler will attempt to derive a `Decoder` for a type `A`.  
 
 `syntax._` brings in handy syntactic ops to parse strings to `Json` and/or to decode them to a specified type—these are just syntactically convenient ways of doing what the objects in `utilsJson.scala` can do.
 
-## Decoding/encoding simple case class
+## Decoding/encoding simple case classes
 
-### semiauto derivation (`derive`)
+### semi-auto derivation (`busymachines.json.derive`)
 ```scala
 case class AnarchistMelon(
   noGods: Boolean,
@@ -41,9 +68,11 @@ object CommonsJson extends App {
 
   val anarchistMelon = AnarchistMelon(true, true, true)
 
-  //we need an encoder, so using the functions from semiauto we can explicitly create it
+  //we need an encoder, so using the functions from derive we can explicitly create it
   implicit val encoder: Encoder[AnarchistMelon] = derive.encoder[AnarchistMelon]
   implicit val decoder: Decoder[AnarchistMelon] = derive.decoder[AnarchistMelon]
+  //Alternatively, if we always need both encoders/decoders then we just:
+  //implicit val decoder: Codec[AnarchistMelon] = derive.codec[AnarchistMelon]
 
   val jsonString: String = anarchistMelon.asJson.spaces2
   println(jsonString)
@@ -62,13 +91,14 @@ Will print:
 AnarchistMelon(true,true,true)
 ```
 
-### auto derivation (default)
+### automatic derivation (`busymachines.json.autoderive`)
 It's more or less the same, but with less boilerplate. But one should be wary of using this
 except in fairly trivial cases because it takes considerably longer to compile your code.
 ```scala
 object CommonsJson extends App {
 
   import busymachines.json._
+  import busymachines.json.autoderive._
   import busymachines.json.syntax._
 
   val anarchistMelon = AnarchistMelon(true, true, true)
@@ -107,7 +137,7 @@ case class SquareMelon(weight: Int, tastes: Seq[Taste]) extends TastyMelon
 As you can see we have two parallel hierarchies. `Melon`, and `Taste` (this one being a vanilla way of doing "enumerations"). And a sub-hierarchy `TastyMelon`.
 Now, as per good practice we'll put the Codecs separately from our application code.
 
-### semiauto derivation of hierarchies
+### semi-auto derivation of hierarchies
 
 ```scala
 object MelonsDefaultJsonCodecs {
@@ -173,10 +203,10 @@ So, our code in this case looks like the following—and the result is the same:
 object CommonsJson extends App {
 
   import busymachines.json._
+  import busymachines.json.autoderive._
   import busymachines.json.syntax._
 
-  //note that we did not import everything from ``derive``, and there's a
-  //good reason why, check out the next section.
+  //The explicitly defined enumeration codec
   implicit val tasteEncoder: Codec[Taste] = derive.enumerationCodec[Taste]
 
   val winterMelon = WinterMelon(fuzzy = true, weight = 45)
@@ -191,9 +221,40 @@ object CommonsJson extends App {
 }
 ```
 
-### combining auto (default), and semiauto derivation
+### On `_type` discrimination
 
-Unfortunately there is a small caveat when combining these two methods of deriving json codecs. And we have to delve a bit into the internals of this library. The reason is that an implicit `Configuration` is required to derive all sealed traits, and we use the non-default way of adding in `_type` discriminator. This configuration can be found in `busymachines.json.DefaultTypeDiscriminatorConfig` and is mixed into both the root `json` package object and the `derive` object.
+Here we have to delve a bit into the internals of this library. We depend on the `circe.generic.extras` packages, where derivation requires an implicit an implicit `Configuration` to derive all sealed traits. This configuration can be found in `busymachines.json.DefaultTypeDiscriminatorConfig` and is mixed into both the root `json` package object, so that it can be made available to us in both use cases:
+
+semi-auto:
+```scala
+import busymachines.json._
+implicit val e = derive.encoder[T]
+```
+auto:
+```scala
+import busymachines.json._
+import busymachines.json.autoderive._
+val m: Melon = ???
+m.asJson
+```
+In either case if you remove the `busymachines.json._` import, it will fail to compile. But importing:
+`import busymachines.json.defaultDerivationConfiguration` is also enough. You can also define your own rules — just look at the implementation of this default config. But, you have to be very careful not to import both, or have both in scope. If you do that then have two conflicting implicits—that are needed to derive _other_ implicits, that's why your compilation fails with `"Could not find implicit Encoder[A]"` instead of `"Conflicting Configuration implicit.`. Therefore, it is recommended that you do the following:
+
+```scala
+/**
+  * unfortunately this exclusion is absolutely necessary if you want to use the non-default _type
+  * discriminator for sealed hierarchies of classes AND auto-derivation at the same time
+  */
+import busymachines.json.{defaultDerivationConfiguration => _, _}
+import busymachines.json.autoderive._
+
+final implicit val _melonManiaDiscriminatorConfig: Configuration =
+  Configuration.default.withDiscriminator("_melonMania")
+```
+
+As illustrated in the `JsonAutoDerivationWithSpecialConfigurationTest` test.
+
+The definition of the magic configuration trait:
 ```scala
 trait DefaultTypeDiscriminatorConfig {
 
@@ -205,7 +266,6 @@ trait DefaultTypeDiscriminatorConfig {
 
 }
 ```
-Therefore, if you do a wildcard import of both, you have two conflicting implicits—that are needed to derive _other_ implicits, that's why your compilation fails with `"Could not find implicit Encoder[A]"` instead of `"Conflicting Configuration implicit.`. Therefore, the recommended pattern of combining the two modes is to wildcard import `json._`, and refer to `derive` by name—the latter having explicit methods like in the example in the previous section: `auto derivation of hierarchies`.
 
 ## provided decoders
 
@@ -214,7 +274,3 @@ The object/trait `busymachines.json.FailureMessageJsonCodec` contains all encode
 ## tests
 
 Check out all the tests for runnable usage examples.
-
-## if everything else goes wrong
-
-In case you do not like the default automatic derivation you import from package `jsonbare` in which case you simply have to add the additional import `import busymachines.jsonbare.auto._` to make automatic derivation work. `jsonbare` contains its own `syntax` and `derive` imports, so you never have to depend on `busymachines.json`.

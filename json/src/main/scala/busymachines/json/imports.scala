@@ -21,4 +21,8 @@ package busymachines.json
   */
 object syntax extends JsonSyntax
 
-object derive extends DefaultTypeDiscriminatorConfig with SemiAutoDerivation
+object derive extends SemiAutoDerivation
+
+object autoderive extends io.circe.generic.extras.AutoDerivation
+
+

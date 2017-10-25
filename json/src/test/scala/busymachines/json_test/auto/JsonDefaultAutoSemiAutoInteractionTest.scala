@@ -13,6 +13,7 @@ import org.scalatest.FlatSpec
 class JsonDefaultAutoSemiAutoInteractionTest extends FlatSpec {
 
   import busymachines.json._
+  import busymachines.json.autoderive._
   import busymachines.json.syntax._
 
   it should "... auto should use the explicit codec for sub-hierarchies of Melon" in {

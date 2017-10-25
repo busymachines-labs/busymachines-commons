@@ -5,7 +5,7 @@ import org.scalatest.FlatSpec
 
 /**
   *
-  * Here we test [[busymachines.json.auto]] derivation
+  * Here we test [[busymachines.json.autoderive]] derivation
   *
   * See the [[Melon]] hierarchy
   *
@@ -16,6 +16,7 @@ import org.scalatest.FlatSpec
 class JsonDefaultAutoDerivationTest extends FlatSpec {
 
   import busymachines.json._
+  import busymachines.json.autoderive._
   import busymachines.json.syntax._
 
   //-----------------------------------------------------------------------------------------------

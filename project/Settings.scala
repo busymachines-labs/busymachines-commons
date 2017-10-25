@@ -11,7 +11,7 @@ object Settings {
       organization in ThisBuild := organizationName,
       homepage := Some(url(bmCommonsHomepage)),
       scalaVersion := Dependencies.`scala_2.12`,
-      crossScalaVersions := Dependencies.seqOfCrossScalaVersions
+      //      crossScalaVersions := Dependencies.seqOfCrossScalaVersions
     ) ++
       scalaCompilerSettings
 
