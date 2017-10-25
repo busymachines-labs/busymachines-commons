@@ -1,4 +1,4 @@
-package busymachines.json_test.auto
+package busymachines.json_test.autoderive
 
 import busymachines.json_test._
 
