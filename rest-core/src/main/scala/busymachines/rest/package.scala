@@ -39,4 +39,7 @@ package object rest {
 
   type RoutingSettings = settings.RoutingSettings
   val RoutingSettings: settings.RoutingSettings.type = settings.RoutingSettings
+
+  type ParserSettings = akka.http.scaladsl.settings.ParserSettings
+  val ParserSettings: akka.http.scaladsl.settings.ParserSettings.type = akka.http.scaladsl.settings.ParserSettings
 }
