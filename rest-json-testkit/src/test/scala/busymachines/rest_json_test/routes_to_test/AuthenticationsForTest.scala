@@ -1,6 +1,5 @@
 package busymachines.rest_json_test.routes_to_test
 
-import akka.http.scaladsl.model.headers._
 import busymachines.rest._
 
 /**
