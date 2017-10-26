@@ -6,14 +6,21 @@ Light-weight, modular, libraries for varying technology stacks, built _primarily
 
 ### HELP!
 
-Known issues:
+Compiler problems one usually bumps into.
+
+#### obtuse implicit resolution compilation bugs
+Probably due to an missing implicit — probably automatic derivation of some type class. You should just add explicit implicit for one type at a time (`implicit val x: SomeTypeClass[T] = ???`) until you localize the problem — then good luck fixing it.
+
+#### compiler/sbt bugs
 * compiler crashes with `java.util.NoSuchElementException: key not found: value inst$macro$2`
   * no idea what exactly causes it, but moving code where json codec derivation is done, in a separate file from where the case class definitions are done should do the trick. If not, good luck, lol.
 * compilation error `package cats contains object and package with same name: implicits`
   * ow, ffs, not this again :( — I thought I solved this one
+* `[error] assertion failed: Modified names for busymachines.rest.JsonRestAPITest is empty`
+  * or any other file name, just add a statement, or some declaration in the class/trait/object body. Or do a complete purge of your `target` folders and build from scratch. [SBT zinc bug 292](https://github.com/sbt/zinc/issues/292)
 
 #### versions
-* stable: `0.1.0`
+* stable: `0.1.0` — but almost useless
 * latest: `0.2.0-RC4`
 
 These modules are are cross-compiled for Scala versions: `2.12.3`. We try our best to keep them up to date.
