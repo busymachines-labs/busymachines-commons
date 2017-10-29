@@ -13,13 +13,14 @@ import busymachines.json_test._
 private[json_test] object MelonsJsonCodec extends BusymachinesDefaultJsonCodec {
 
   implicit val tasteCodec: ValueCodec[Taste] = derive.enumerationCodec[Taste](
-    SweetTaste,
-    SourTaste,
+    SweetTaste.asConstant("SweetTaste"),
+    SourTaste.asConstant("SourTaste")
   )
 
   implicit val melonCodec: Codec[Melon] = derive.adt[Melon](
     derive.jsonFormat2(WinterMelon).embedTypeField("WinterMelon"),
     derive.jsonFormat2(WaterMelon).embedTypeField("WaterMelon"),
+    derive.jsonFormat2(SquareMelon).embedTypeField("SquareMelon"),
     derive.jsonObject(SmallMelon).embedTypeField("SmallMelon")
   )
 

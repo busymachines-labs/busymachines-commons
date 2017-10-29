@@ -1,6 +1,6 @@
 package busymachines.json
 
-import spray.json.{JsString, deserializationError}
+import spray.json.{JsString, deserializationError, serializationError}
 
 import scala.reflect.runtime.universe._
 
@@ -40,6 +40,23 @@ trait BusymachinesDefaultJsonCodec extends
     }
   }
 
+  implicit class ADTEnumCaseObjectVariantType[CaseObjectVariantType: TypeTag](co: CaseObjectVariantType) {
+    def asConstant[EnumType >: CaseObjectVariantType](str: String): BusymachinesDefaultJsonCodec.ADTEnumVariantCodec[EnumType] = {
+      new BusymachinesDefaultJsonCodec.ADTEnumVariantCodec[EnumType] {
+        override private[json] type ConcreteType = CaseObjectVariantType
+
+        override private[json] val tt: TypeTag[CaseObjectVariantType] = implicitly[TypeTag[CaseObjectVariantType]]
+
+        override private[json] val stringRepr: String = str
+
+        override private[json] val jsonRepr: Json = JsString(stringRepr)
+
+        override private[json] val constValue: ConcreteType = co
+      }
+
+    }
+  }
+
   val derive: BusymachinesDefaultJsonCodec.derive.type =
     BusymachinesDefaultJsonCodec.derive
 }
@@ -51,6 +68,19 @@ private[json] object BusymachinesDefaultJsonCodec {
     * will pass it a case object, no static guarantees whatsoever towards
     * that end.
     */
+  private[json] trait ADTEnumVariantCodec[HierarchyType] {
+    private[json] type ConcreteType <: HierarchyType
+
+    private[json] def tt: TypeTag[ConcreteType]
+
+    private[json] def stringRepr: String
+
+    private[json] def jsonRepr: Json
+
+    private[json] def constValue: ConcreteType
+  }
+
+  @scala.deprecated("implement something better", "0.2.0-RC4")
   private class EnumValueCodec[T](obj: T) extends ValueCodec[T] {
     val reprString: String = obj.getClass.getSimpleName
     val capturedRef: T = obj
@@ -94,34 +124,46 @@ private[json] object BusymachinesDefaultJsonCodec {
 
   private[BusymachinesDefaultJsonCodec] trait DeriveImpl {
 
-    def enumerationCodec[T](children: T*): ValueCodec[T] = {
-      if (children.distinct.size != children.size) {
-        throw busymachines.core.exceptions.Error("you passed a duplicate value when instantiating an enumCodec. This kills everything.")
-      }
-      new ValueCodec[T] {
-        private val objToCodec: Map[T, EnumValueCodec[T]] = children.map(o => (o, new EnumValueCodec[T](o))).toMap
-        private val strToCodec: Map[String, EnumValueCodec[T]] = objToCodec.map { kv =>
-          (kv._2.reprString, kv._2)
-        }
+    def enumerationCodec[H](head: ADTEnumVariantCodec[H], tail: ADTEnumVariantCodec[H]*): ValueCodec[H] = {
+      val codecs: List[ADTEnumVariantCodec[H]] = head :: tail.toList
 
-        override def read(json: Json): T = json match {
+      val constantValueToCodec: Map[H, ADTEnumVariantCodec[H]] = codecs.map(c => (c.constValue, c)).toMap
+
+      val stringReprToCodec: Map[String, ADTEnumVariantCodec[H]] = codecs.map(c => (c.stringRepr, c)).toMap
+      if (constantValueToCodec.keySet.size != codecs.size) {
+        throw busymachines.core.exceptions.Error("you passed a duplicate constant case object value when instantiating an enumCodec. This kills everything.")
+      }
+
+      if (stringReprToCodec.keySet.size != codecs.size) {
+        throw busymachines.core.exceptions.Error("you passed a duplicate string representation in the [[asConstant]] value of a case object when instantiating an enumCodec. This kills everything.")
+      }
+
+      new ValueCodec[H] {
+        private val caseObjectToCodec: Map[H, ADTEnumVariantCodec[H]] = constantValueToCodec
+        private val stringValueToCodec: Map[String, ADTEnumVariantCodec[H]] = stringReprToCodec
+
+        override def read(json: Json): H = json match {
           case JsString(s) =>
-            strToCodec.applyOrElse(
+            val c = stringValueToCodec.getOrElse(
               s,
               deserializationError(s"Unknown enum value: $s")
-            ).read(json)
+            )
+            c.constValue
 
           case x => deserializationError("Enums have to be encoded as JsStrings, but got: " + x)
         }
 
-        override def write(obj: T): Json = {
-          objToCodec.applyOrElse(
+        override def write(obj: H): Json = {
+          val c = caseObjectToCodec.getOrElse(
             obj,
-            deserializationError(s"Unknown case object: ${obj.getClass.getSimpleName}")
-          ).write(obj)
+            serializationError(s"Unknown case obj: ${obj.getClass.getSimpleName}. Cannot serialize")
+          )
+
+          c.jsonRepr
         }
       }
     }
+
 
     def jsonObject[T](v: T): Codec[T] = new Codec[T] {
       override def read(json: Json): T = json match {
