@@ -206,34 +206,34 @@ object FailureMessages {
   *
   * Most likely you need to extend one of the other cases.
   */
-abstract class Failure(
+abstract class FailureBase(
   override val message: String,
   val cause: Option[Throwable] = None,
   override val parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends Exception(message, cause.orNull) with FailureMessage
 
-object Failure {
+object FailureBase {
 
   private final class ReifiedFailure(
     override val id: FailureID,
     override val message: String,
     override val parameters: FailureMessage.Parameters,
     cause: Option[Throwable] = None
-  ) extends Failure(
+  ) extends FailureBase(
     message = message, cause = cause, parameters = parameters
   )
 
-  def apply(fm: FailureMessage): Failure = {
+  def apply(fm: FailureMessage): FailureBase = {
     new ReifiedFailure(fm.id, fm.message, fm.parameters, None)
   }
 
-  def apply(fm: FailureMessage, cause: Throwable): Failure = {
+  def apply(fm: FailureMessage, cause: Throwable): FailureBase = {
     new ReifiedFailure(fm.id, fm.message, fm.parameters, Option(cause))
   }
 }
 
 /**
-  * Similar to [[Failure]] but encapsulate multiple causes.
+  * Similar to [[FailureBase]] but encapsulate multiple causes.
   *
   * Primarily used as containers for validation failures.
   */
@@ -258,7 +258,7 @@ object Failures {
 }
 
 /**
-  * Marker traits, so that both the [[Failure]] and [[Failures]]
+  * Marker traits, so that both the [[FailureBase]] and [[Failures]]
   * can be marked with the same semantic meaning
   */
 object SemanticFailures {
@@ -373,7 +373,7 @@ abstract class NotFoundFailure(
   message: String,
   cause: Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
-) extends Failure(message, cause, parameters) with SemanticFailures.NotFound
+) extends FailureBase(message, cause, parameters) with SemanticFailures.NotFound
 
 object NotFoundFailure extends NotFoundFailure(SemanticFailures.`Not found`, None, FailureMessage.Parameters.empty) {
 
@@ -419,7 +419,7 @@ abstract class UnauthorizedFailure(
   message: String,
   cause: Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
-) extends Failure(message, cause, parameters) with SemanticFailures.Unauthorized
+) extends FailureBase(message, cause, parameters) with SemanticFailures.Unauthorized
 
 object UnauthorizedFailure extends UnauthorizedFailure(SemanticFailures.`Unauthorized`, None, FailureMessage.Parameters.empty) {
 
@@ -466,7 +466,7 @@ abstract class ForbiddenFailure(
   message: String,
   cause: Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
-) extends Failure(message, cause, parameters) with SemanticFailures.Forbidden
+) extends FailureBase(message, cause, parameters) with SemanticFailures.Forbidden
 
 object ForbiddenFailure extends ForbiddenFailure(SemanticFailures.`Forbidden`, None, FailureMessage.Parameters.empty) {
 
@@ -513,7 +513,7 @@ abstract class DeniedFailure(
   message: String,
   cause: Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
-) extends Failure(message, cause, parameters) with SemanticFailures.Denied
+) extends FailureBase(message, cause, parameters) with SemanticFailures.Denied
 
 object DeniedFailure extends DeniedFailure(SemanticFailures.`Denied`, None, FailureMessage.Parameters.empty) {
 
@@ -560,7 +560,7 @@ abstract class InvalidInputFailure(
   message: String,
   cause: Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
-) extends Failure(message, cause, parameters) with SemanticFailures.InvalidInput
+) extends FailureBase(message, cause, parameters) with SemanticFailures.InvalidInput
 
 object InvalidInputFailure extends InvalidInputFailure(SemanticFailures.`Invalid Input`, None, FailureMessage.Parameters.empty) {
 
@@ -607,7 +607,7 @@ abstract class ConflictFailure(
   message: String,
   cause: Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
-) extends Failure(message, cause, parameters) with SemanticFailures.Conflict
+) extends FailureBase(message, cause, parameters) with SemanticFailures.Conflict
 
 object ConflictFailure extends ConflictFailure(SemanticFailures.`Conflict`, None, FailureMessage.Parameters.empty) {
 
