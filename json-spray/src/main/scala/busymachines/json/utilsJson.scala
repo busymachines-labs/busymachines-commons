@@ -3,6 +3,9 @@ package busymachines.json
 import busymachines.core.exceptions._
 import spray.json.{CompactPrinter, JsonPrinter, PrettyPrinter}
 
+import scala.util.Try
+import scala.util.control.NonFatal
+
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
@@ -10,12 +13,19 @@ import spray.json.{CompactPrinter, JsonPrinter, PrettyPrinter}
   *
   */
 object JsonDecoding {
+  private def unsafeRecover[A](a: => A): A = {
+    Try(a).recoverWith {
+      case e: JsonParsingFailure => scala.util.Failure(e)
+      case NonFatal(e) => scala.util.Failure(JsonDecodingFailure(e.getMessage))
+    }.get
+  }
+
   def unsafeDecodeAs[A](json: Json)(implicit decoder: Decoder[A]): A = {
-    decoder.read(json)
+    unsafeRecover(decoder.read(json))
   }
 
   def unsafeDecodeAs[A](json: String)(implicit decoder: Decoder[A]): A = {
-    decoder.read(JsonParsing.unsafeParseString(json))
+    unsafeRecover(decoder.read(JsonParsing.unsafeParseString(json)))
   }
 }
 
@@ -31,7 +41,10 @@ final case class JsonDecodingFailure(msg: String) extends InvalidInputFailure(ms
 object JsonParsing {
 
   def unsafeParseString(input: String): Json = {
-    spray.json.pimpString(input).parseJson
+    Try[Json](spray.json.pimpString(input).parseJson).recoverWith {
+      case NonFatal(e) =>
+        scala.util.Failure(busymachines.json.JsonParsingFailure(e.getMessage))
+    }.get
   }
 
 }

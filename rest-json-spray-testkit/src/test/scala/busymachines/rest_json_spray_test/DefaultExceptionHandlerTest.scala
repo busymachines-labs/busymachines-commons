@@ -1,8 +1,8 @@
-package busymachines.rest_json_test
+package busymachines.rest_json_spray_test
 
 import busymachines.core.exceptions._
 import busymachines.rest._
-import busymachines.rest_json_test.routes_to_test._
+import busymachines.rest_json_spray_test.routes_to_test._
 import org.scalatest.FlatSpec
 
 /**
@@ -11,13 +11,10 @@ import org.scalatest.FlatSpec
   * @since 06 Sep 2017
   *
   */
-private[rest_json_test] class DefaultExceptionHandlerTest extends FlatSpec with JsonRestAPITest {
+private[rest_json_spray_test] class DefaultExceptionHandlerTest extends FlatSpec with JsonRestAPITest with SomeTestDTOJsonCodec {
   private lazy val defApi = new DefaultExceptionHandlerRestAPIForTesting()
   override implicit val testedRoute: Route = RestAPI.seal(defApi).route
   implicit val context: CallerContext = Contexts.none
-
-  import SomeTestDTOJsonCodec._
-  import busymachines.json.FailureMessageJsonCodec._
 
   behavior of "DefaultExceptionHandler"
 

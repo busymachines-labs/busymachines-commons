@@ -9,6 +9,8 @@ package busymachines.rest
 object jsonrest {
 
   type JsonSupport = akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+  val JsonSupport: akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.type =
+    akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 
   type DefaultJsonProtocol = spray.json.DefaultJsonProtocol
   val DefaultJsonProtocol: spray.json.DefaultJsonProtocol.type = spray.json.DefaultJsonProtocol

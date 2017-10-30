@@ -1,8 +1,8 @@
 package busymachines.rest
 
-import akka.http.scaladsl.marshalling.{ToEntityMarshaller, ToResponseMarshallable, ToResponseMarshaller}
-import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.marshalling.ToEntityMarshaller
 import busymachines.core.exceptions.{FailureMessage, FailureMessages}
+import busymachines.json.FailureMessageJsonCodec
 import busymachines.rest.jsonrest.JsonSupport
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,14 +33,14 @@ trait JsonRestAPI extends RestAPI with JsonSupport {
 
 }
 
-private[rest] object JsonRestAPI {
+private[rest] object JsonRestAPI extends JsonSupport {
 
   private val emptyResponseFun: Any => HttpEntity.Strict = { _ => HttpEntity.Empty }
 
   private object failure {
 
     implicit val failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
-      ???
+      JsonSupport.sprayJsonMarshaller(FailureMessageJsonCodec.failureMessageCodec)
 
   }
 
@@ -48,7 +48,7 @@ private[rest] object JsonRestAPI {
 
 
     implicit val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] =
-      ???
+      JsonSupport.sprayJsonMarshaller(FailureMessageJsonCodec.failureMessagesCodec)
   }
 
 }

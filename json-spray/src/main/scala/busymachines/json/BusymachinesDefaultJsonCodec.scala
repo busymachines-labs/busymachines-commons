@@ -15,7 +15,8 @@ import scala.reflect.runtime.universe._
   * @since 26 Oct 2017
   *
   */
-trait BusymachinesDefaultJsonCodec extends
+trait BusymachinesDefaultJsonCodec extends AnyRef with
+  FailureMessageJsonCodec with
   spray.json.BasicFormats with
   spray.json.AdditionalFormats with
   spray.json.StandardFormats with
@@ -64,41 +65,6 @@ trait BusymachinesDefaultJsonCodec extends
 private[json] object BusymachinesDefaultJsonCodec {
 
   /**
-    * Basically, it makes a complete un-type-safe assumption that you
-    * will pass it a case object, no static guarantees whatsoever towards
-    * that end.
-    */
-  private[json] trait ADTEnumVariantCodec[HierarchyType] {
-    private[json] type ConcreteType <: HierarchyType
-
-    private[json] def tt: TypeTag[ConcreteType]
-
-    private[json] def stringRepr: String
-
-    private[json] def jsonRepr: Json
-
-    private[json] def constValue: ConcreteType
-  }
-
-  @scala.deprecated("implement something better", "0.2.0-RC4")
-  private class EnumValueCodec[T](obj: T) extends ValueCodec[T] {
-    val reprString: String = obj.getClass.getSimpleName
-    val capturedRef: T = obj
-    val jsString: Json = JsString(reprString)
-
-    override def read(json: Json): T = {
-      val str = spray.json.DefaultJsonProtocol.StringJsonFormat.read(json)
-      if (str.trim != reprString) {
-        deserializationError(s"expected '$reprString', got: '$str' enum value")
-      } else {
-        capturedRef
-      }
-    }
-
-    override def write(obj: T): Json = jsString
-  }
-
-  /**
     * You should access the ``jsonFormatX`` values from this object,
     * and not import them via DefaultJsonProtocol crap
     */
@@ -110,7 +76,7 @@ private[json] object BusymachinesDefaultJsonCodec {
 
   val TypeFieldDiscriminator: String = "_type"
 
-  private[json] trait ADTVariantCodec[HierarchyType] {
+  trait ADTVariantCodec[HierarchyType] {
     private[json] type ConcreteType <: HierarchyType
 
     private[json] def tt: TypeTag[ConcreteType]
@@ -120,6 +86,23 @@ private[json] object BusymachinesDefaultJsonCodec {
     private[json] def fieldName: String
 
     private[json] def fieldValue: String
+  }
+
+  /**
+    * Basically, it makes a complete un-type-safe assumption that you
+    * will pass it a case object, no static guarantees whatsoever towards
+    * that end.
+    */
+  trait ADTEnumVariantCodec[HierarchyType] {
+    private[json] type ConcreteType <: HierarchyType
+
+    private[json] def tt: TypeTag[ConcreteType]
+
+    private[json] def stringRepr: String
+
+    private[json] def jsonRepr: Json
+
+    private[json] def constValue: ConcreteType
   }
 
   private[BusymachinesDefaultJsonCodec] trait DeriveImpl {

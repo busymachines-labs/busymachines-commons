@@ -1,6 +1,6 @@
-package busymachines.json_test.derive_test
+package busymachines.json_spray_test.derive_spray_test
 
-import busymachines.json_test._
+import busymachines.json_spray_test._
 import org.scalatest.FlatSpec
 
 /**
@@ -15,8 +15,8 @@ import org.scalatest.FlatSpec
   */
 class JsonDefaultSemiAutoCodecDerivationTest extends FlatSpec {
 
-  import busymachines.json.syntax._
   import MelonsJsonCodec._
+  import busymachines.json.syntax._
 
   //-----------------------------------------------------------------------------------------------
 

@@ -1,8 +1,7 @@
-package busymachines.json_test
+package busymachines.json_spray_test
 
 import busymachines.core.exceptions._
 import org.scalatest.{FlatSpec, Matchers}
-import spray.json.DeserializationException
 
 /**
   *
@@ -244,6 +243,6 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
         |}
         |""".stripMargin.trim
 
-    the[DeserializationException] thrownBy rawJson.unsafeDecodeAs[FailureMessages]
+    the[JsonDecodingFailure] thrownBy rawJson.unsafeDecodeAs[FailureMessages]
   }
 }

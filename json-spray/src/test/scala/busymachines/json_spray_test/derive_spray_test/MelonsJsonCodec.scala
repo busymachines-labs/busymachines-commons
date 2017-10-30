@@ -1,7 +1,8 @@
-package busymachines.json_test.derive_test
+package busymachines.json_spray_test.derive_spray_test
 
 import busymachines.json._
-import busymachines.json_test._
+
+import busymachines.json_spray_test._
 
 /**
   *
@@ -10,7 +11,7 @@ import busymachines.json_test._
   *
   */
 
-private[json_test] object MelonsJsonCodec extends BusymachinesDefaultJsonCodec {
+private[json_spray_test] object MelonsJsonCodec extends BusymachinesDefaultJsonCodec {
 
   implicit val tasteCodec: ValueCodec[Taste] = derive.enumerationCodec[Taste](
     SweetTaste.asConstant("SweetTaste"),

@@ -1,7 +1,7 @@
-package busymachines.json_test.derive_test
+package busymachines.json_spray_test.derive_spray_test
 
 import busymachines.json.{JsonDecoding, JsonDecodingFailure, JsonParsing, JsonParsingFailure}
-import busymachines.json_test.AnarchistMelon
+import busymachines.json_spray_test._
 import org.scalatest.{EitherValues, FlatSpec, Matchers}
 
 /**
@@ -85,7 +85,7 @@ class JsonUtilsTest extends FlatSpec with EitherValues with Matchers {
 
   //-----------------------------------------------------------------------------------------------
 
-  behavior of "JsonDecoding.safe"
+  behavior of "JsonDecoding.unsafe"
 
   //-----------------------------------------------------------------------------------------------
 

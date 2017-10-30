@@ -1,4 +1,4 @@
-package busymachines.rest_json_test.routes_to_test
+package busymachines.rest_json_spray_test.routes_to_test
 
 import busymachines.core.exceptions._
 import busymachines.rest._
@@ -32,7 +32,7 @@ import scala.util.Try
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class DefaultExceptionHandlerRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
+private[rest_json_spray_test] class DefaultExceptionHandlerRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
 
   protected def routeDefinition: Route = {
     pathPrefix("not_found") {

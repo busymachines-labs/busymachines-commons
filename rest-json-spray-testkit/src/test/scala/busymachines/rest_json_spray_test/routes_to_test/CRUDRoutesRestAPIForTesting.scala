@@ -1,4 +1,4 @@
-package busymachines.rest_json_test.routes_to_test
+package busymachines.rest_json_spray_test.routes_to_test
 
 import busymachines.rest._
 
@@ -31,7 +31,7 @@ import scala.concurrent.Future
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class CRUDRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
+private[rest_json_spray_test] class CRUDRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
   import scala.concurrent.ExecutionContext.Implicits.global
 
   override protected def routeDefinition: Route =

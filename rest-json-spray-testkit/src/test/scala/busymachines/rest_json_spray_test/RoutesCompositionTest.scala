@@ -1,8 +1,8 @@
-package busymachines.rest_json_test
+package busymachines.rest_json_spray_test
 
 import busymachines.core.exceptions._
 import busymachines.rest._
-import busymachines.rest_json_test.routes_to_test._
+import busymachines.rest_json_spray_test.routes_to_test._
 import org.scalatest.FlatSpec
 
 /**
@@ -11,7 +11,7 @@ import org.scalatest.FlatSpec
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class RoutesCompositionTest extends FlatSpec with JsonRestAPITest {
+private[rest_json_spray_test] class RoutesCompositionTest extends FlatSpec with JsonRestAPITest with SomeTestDTOJsonCodec {
   private lazy val combinedAPI: RestAPI = {
     val eh = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()
@@ -20,9 +20,6 @@ private[rest_json_test] class RoutesCompositionTest extends FlatSpec with JsonRe
 
   override implicit protected val testedRoute: Route = combinedAPI.route
   private implicit val cc: CallerContext = Contexts.none
-
-  import SomeTestDTOJsonCodec._
-  import busymachines.json.FailureMessageJsonCodec._
 
   //===========================================================================
 
