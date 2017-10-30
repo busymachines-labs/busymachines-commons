@@ -10,7 +10,7 @@ object Settings {
     Seq(
       organization in ThisBuild := organizationName,
       homepage := Some(url(bmCommonsHomepage)),
-      scalaVersion := Dependencies.`scala_2.12`,
+      scalaVersion := Dependencies.mainScalaVersion,
       //      crossScalaVersions := Dependencies.seqOfCrossScalaVersions
     ) ++ scalaCompilerSettings
 

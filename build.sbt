@@ -74,9 +74,8 @@ lazy val `json-spray` = project
     name in ThisProject := "busymachines-commons-json-spray",
     libraryDependencies ++=
       Seq(
-        Dependencies.sprayJson,
-        Dependencies.shapeless withSources(),
-        "org.scala-lang" % "scala-reflect" % "2.12.3" withSources(),
+        Dependencies.sprayJson withSources(),
+        Dependencies.scalaReflect withSources(),
 
         Dependencies.scalaTest % Test withSources()
       )

@@ -2,10 +2,16 @@ import sbt._
 
 object Dependencies {
 
-  //FIXME: need to wait for sbt 1.0.3 to have a bug fixed before we can use 2.12.4 and IntelliJ
-  lazy val `scala_2.12`: String = "2.12.3"
+  lazy val `scala_2.12`: String = "2.12.4"
   lazy val `scala_2.13`: String = "2.13.0-M2"
+  lazy val mainScalaVersion: String = `scala_2.12`
   lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`)
+
+  //============================================================================================
+  //====================================== Scala things ========================================
+  //============================================================================================
+
+  lazy val scalaReflect: ModuleID = "org.scala-lang" % "scala-reflect" % mainScalaVersion
 
   //============================================================================================
   //=================================== http://busymachines.com/ ===============================

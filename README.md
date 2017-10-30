@@ -23,7 +23,7 @@ Probably due to an missing implicit — probably automatic derivation of some ty
 * stable: `0.1.0` — but almost useless
 * latest: `0.2.0-RC4`
 
-These modules are are cross-compiled for Scala versions: `2.12.3`. We try our best to keep them up to date.
+These modules are are cross-compiled for Scala versions: `2.12.4`. We try our best to keep them up to date.
 
 #### Modules:
 * `"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC4"` [README.md](/core)
