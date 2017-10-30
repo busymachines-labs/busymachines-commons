@@ -20,11 +20,11 @@ object JsonDecoding {
     }.get
   }
 
-  def unsafeDecodeAs[A](json: Json)(implicit decoder: Decoder[A]): A = {
+  def unsafeDecodeAs[A](json: Json)(implicit decoder: ValueDecoder[A]): A = {
     unsafeRecover(decoder.read(json))
   }
 
-  def unsafeDecodeAs[A](json: String)(implicit decoder: Decoder[A]): A = {
+  def unsafeDecodeAs[A](json: String)(implicit decoder: ValueDecoder[A]): A = {
     unsafeRecover(decoder.read(JsonParsing.unsafeParseString(json)))
   }
 }

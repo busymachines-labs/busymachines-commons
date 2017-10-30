@@ -12,14 +12,21 @@ package busymachines
   */
 package object json {
 
-  type Encoder[A] = spray.json.JsonWriter[A]
-  final val Encoder: spray.json.JsonWriter.type = spray.json.JsonWriter
-  type ObjectEncoder[A] = spray.json.RootJsonWriter[A]
+  type ValueEncoder[A] = spray.json.JsonWriter[A]
+  final val ValueEncoder: spray.json.JsonWriter.type = spray.json.JsonWriter
+  type Encoder[A] = spray.json.RootJsonWriter[A]
 
-  type Decoder[A] = spray.json.JsonReader[A]
-  final val Decoder: spray.json.JsonReader.type = spray.json.JsonReader
-  type ObjectDecoder[A] = spray.json.RootJsonReader[A]
+  type ValueDecoder[A] = spray.json.JsonReader[A]
+  final val ValueDecoder: spray.json.JsonReader.type = spray.json.JsonReader
+  type Decoder[A] = spray.json.RootJsonReader[A]
 
+  /**
+    * Since [[Codec]] is the desired type signature when using
+    * derivation if we want to keep it syntactically consistent
+    * with the other json module, then we have no choice but to
+    * sacrifice a bit of semantic sense (for this particular case)
+    * for the greater good.
+    */
   type Codec[A] = spray.json.RootJsonFormat[A]
   type ValueCodec[A] = spray.json.JsonFormat[A]
 
