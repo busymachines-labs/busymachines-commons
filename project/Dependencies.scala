@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  lazy val `scala_2.12`: String = "2.12.4"
+  lazy val `scala_2.12`: String = "2.12.3"
   lazy val `scala_2.13`: String = "2.13.0-M2"
   lazy val mainScalaVersion: String = `scala_2.12`
   lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`)
@@ -40,6 +40,8 @@ object Dependencies {
   lazy val catsKernel: ModuleID = "org.typelevel" %% "cats-kernel" % catsVersion
   lazy val catsLaws: ModuleID = "org.typelevel" %% "cats-laws" % catsVersion
   lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
+
+  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.4"
 
   lazy val circeVersion: String = "0.9.0-M1"
   lazy val circeCore: ModuleID = "io.circe" %% "circe-core" % circeVersion

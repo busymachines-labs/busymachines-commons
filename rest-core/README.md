@@ -10,6 +10,8 @@ Current version is `0.2.0-RC4`. SBT module id:
 - akka-http 10.0.10
 - akka-actor 2.5.4
 - akka-stream 2.5.4
+- cats-effects 0.4.0
+- cats-core 1.0.0-MF
 
 ## Description
 
@@ -27,6 +29,71 @@ This is what you roughly get:
 ## Examples
 
 Examples of usage are rather verbose so you'll have to check the tests in the [`busymachines-commons-rest-json-testkit`](`./rest-json-testkit`) module.
+
+### `WebServerIO`
+
+A convenient and pure way—based on `cats.effects.IO`—of binding your server to the network interface. Read the code to trivially spot how to tailor it better to your needs. Fully functioning example:
+
+```scala
+
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import busymachines.rest._
+
+import scala.concurrent.ExecutionContext
+
+object MainRestPlaygroundApp extends App {
+
+  implicit val as: ActorSystem = ActorSystem("commons-system")
+  implicit val am: ActorMaterializer = ActorMaterializer()
+  implicit val ec: ExecutionContext = as.dispatcher
+
+  val restAPI = new HelloWorld()
+
+  val httpServer = WebServerIO.`bind->handleRequests->wait to stop->unbind->close actor system`(
+    restAPI, MinimalWebServerConfig.default
+  )
+
+  httpServer.unsafeRunSync()
+
+}
+
+class HelloWorld extends RestAPI with Directives {
+  import busymachines.core.exceptions._
+  import akka.http.scaladsl.marshalling.{Marshaller, ToEntityMarshaller}
+
+  override protected def failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
+    Marshaller.apply { ec =>
+      //intentionally not implemented, because we don't need it. Not an issue if you use `rest-json` module
+      ???
+    }
+
+  override protected def failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] =
+    Marshaller.apply { ec =>
+       //intentionally not implemented, because we don't need it. Not an issue if you use `rest-json` module
+       ???
+    }
+
+  override protected def routeDefinition: Route = {
+    path("hello") {
+      get {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Hello commons!</h1>"))
+      }
+    }
+  }
+}
+
+```
+
+Output:
+```
+— server online @ http://localhost:9999
+— press RETURN to stop...
+   #### after you press return: ####
+— stopping...
+— unbinding address @ localhost:9999
+— closing actor system: my-system
+```
 
 ## Integration with `core`
 

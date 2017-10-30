@@ -92,14 +92,16 @@ lazy val `rest-core` = project
     libraryDependencies ++= Seq(
       Dependencies.akkaHttp withSources(),
       Dependencies.akkaActor withSources(),
-
       /**
         * http://doc.akka.io/docs/akka-http/current/scala/http/introduction.html#using-akka-http
         * {{{
         * Only when running against Akka 2.5 explicitly depend on akka-streams in same version as akka-actor
         * }}}
         */
-      Dependencies.akkaStream withSources()
+      Dependencies.akkaStream withSources(),
+
+      //used for building the WebServerIO helpers
+      Dependencies.catsEffects withSources(),
     )
   )
   .dependsOn(
