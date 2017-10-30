@@ -33,16 +33,30 @@ These modules are are cross-compiled for Scala versions: `2.12.4`. We try our be
 * `"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0-RC4"` [README.md](/rest-json)
 * `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-RC4" % Test` [README.md](/rest-json-testkit)
 
+##### deprecated:
+This is a parallel module hierarchy whose json serialization is handled by `spray-json`. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the `rest` packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the `json` package differs the most.
+
+* `"com.busymachines" %% "busymachines-commons-json-spray" % "0.2.0-RC4"` [README.md](/json-spray)
+* `"com.busymachines" %% "busymachines-commons-rest-json-spray" % "0.2.0-RC4"` [README.md](/rest-json-spray)
+* `"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0-RC4" % Test` [README.md](/rest-json-spray-testkit)
+
 For easy copy-pasting:
 ```scala
-lazy val bmCommonsVersion: String = "0.2.0-RC4"
+lazy val bmcVersion: String = "0.2.0-RC4"
 
-lazy val bmCommonsCore = "com.busymachines" %% "busymachines-commons-core" % bmCommonsVersion
-lazy val bmCommonsJson = "com.busymachines" %% "busymachines-commons-json" % bmCommonsVersion
-lazy val bmCommonsRestCore = "com.busymachines" %% "busymachines-commons-rest-core" % bmCommonsVersion
-lazy val bmCommonsRestCoreTestkit = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmCommonsVersion % Test
-lazy val bmCommonsRestJson = "com.busymachines" %% "busymachines-commons-rest-json" % bmCommonsVersion
-lazy val bmCommonsRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-json-testkit" % bmCommonsVersion % Test
+lazy val bmcCore = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
+lazy val bmcJson = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
+lazy val bmcRestCore = "com.busymachines" %% "busymachines-commons-rest-core" % bmcVersion
+lazy val bmcRestCoreTestkit = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmcVersion % Test
+lazy val bmcRestJson = "com.busymachines" %% "busymachines-commons-rest-json" % bmcVersion
+lazy val bmcRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-json-testkit" % bmcVersion % Test
+
+@scala.deprecated("use json module instead", "0.2.0")
+lazy val bmJsonSpray = "com.busymachines" %% "busymachines-commons-json-spray" % bmcVersion
+@scala.deprecated("use rest-json module instead", "0.2.0")
+lazy val bmRestJsonSpray = "com.busymachines" %% "busymachines-commons-rest-json-spray" % bmcVersion
+@scala.deprecated("use rest-json-testkit module instead", "0.2.0")
+lazy val bmRestJsonSprayTestkit = "com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % bmcVersion % Test
 ```
 
 ## Library Structure
@@ -57,6 +71,7 @@ Basically, as long as modules reside in the same repository they will be version
 * [rest-core-testkit](/rest-core-testkit) `0.2.0-RC4` - contains helpers that allow testing. Should never wind up in production code.
 * [rest-json](/rest-core) `0.2.0-RC4` - used to implement REST APIs that handle JSON
 * [rest-json-testkit](/rest-json-testkit) `0.2.0-RC4` - helpers for JSON powered REST APIs
+
 
 Most likely you don't need to depend on the `rest-core*` modules. But rather on one or more of its reifications like `rest-json`. This separation was done because in the future we might need non-json REST APIs, and then we still want to have a common experience of using `commons`.
 
