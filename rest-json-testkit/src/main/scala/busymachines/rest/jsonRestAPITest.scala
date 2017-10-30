@@ -18,7 +18,6 @@ trait JsonRestAPITest extends
   JsonRestAPIRequestBuildingSugar with
   jsonrest.JsonSupport {
   this: Suite with Assertions =>
-  debug()
 }
 
 private[rest] trait JsonRequestRunners extends DefaultRequestRunners {
@@ -34,7 +33,7 @@ private[rest] trait JsonRequestRunners extends DefaultRequestRunners {
   }
 }
 
-private[rest] trait JsonRestAPIRequestBuildingSugar extends RestAPIRequestBuildingSugar{
+private[rest] trait JsonRestAPIRequestBuildingSugar extends RestAPIRequestBuildingSugar {
   this: ScalatestRouteTest =>
 
   protected def postJson[R](uri: String)(raw: Json)(thunk: => R)

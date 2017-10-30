@@ -1,0 +1,121 @@
+package busymachines.json
+
+import busymachines.core.exceptions.FailureMessage.Parameters
+import busymachines.core.exceptions._
+import spray.json._
+
+import scala.collection.immutable
+import scala.util.control.NonFatal
+import scala.util._
+
+/**
+  *
+  * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
+  * @since 10 Aug 2017
+  *
+  */
+object FailureMessageJsonCodec extends FailureMessageJsonCodec
+
+trait FailureMessageJsonCodec {
+
+  import DefaultJsonProtocol._
+
+  private implicit final val FailureIDCodec: ValueCodec[FailureID] = new ValueCodec[FailureID] {
+    override def read(json: Json): FailureID = FailureID(json.convertTo[String])
+
+    override def write(obj: FailureID): Json = JsString(obj.name)
+  }
+
+  private implicit final val StringOrSeqCodec: Codec[FailureMessage.Value] = new Codec[FailureMessage.Value] {
+    override def write(a: FailureMessage.Value): Json = {
+      a match {
+        case FailureMessage.StringWrapper(s) => JsString(s)
+        case FailureMessage.SeqStringWrapper(ses) => JsArray(ses.map(s => implicitly[JsonFormat[String]].write(s)).toVector)
+      }
+    }
+
+    override def read(c: Json): FailureMessage.Value = {
+      Try(c.convertTo[immutable.Seq[String]]).map((s: immutable.Seq[String]) => FailureMessage.Value(s)).recoverWith {
+        case NonFatal(e) => Try(c.convertTo[String]).map(FailureMessage.Value.apply)
+      }.get
+    }
+  }
+
+  //not needed because of the implicit formatting of maps
+  //  private implicit final val FailureMessageParamsCodec: Codec[FailureMessage.Parameters] = new Codec[FailureMessage.Parameters] {
+  //    override def read(c: Json): FailureMessage.Parameters = {
+  //      val x: Map[String, FailureMessage.Value] = c.asJsObject.fields.map { k =>
+  //        (k._1, k._2.convertTo[FailureMessage.Value])
+  //      }
+  //      x
+  //    }
+  //
+  //    override def write(a: FailureMessage.Parameters): Json = {
+  //      JsObject(
+  //        a.map { k =>
+  //          (k._1, k._2.toJson)
+  //        }
+  //      )
+  //    }
+  //  }
+
+  final implicit val failureMessageCodec: Codec[FailureMessage] = new Codec[FailureMessage] {
+    private val jsonCodec = jsonFormat3(FailureMessageRepr)
+
+    override def read(c: Json): FailureMessage = {
+      val rpr = jsonCodec.read(c)
+      FailureMessage(rpr.id, rpr.message, rpr.parameters.getOrElse(Parameters.empty))
+    }
+
+    override def write(a: FailureMessage): Json = {
+      JsonObject(
+        CoreJsonConstants.id -> a.id.toJson,
+        CoreJsonConstants.message -> a.message.toJson,
+        CoreJsonConstants.parameters -> a.parameters.toJson
+      )
+    }
+  }
+
+  final implicit val failureMessagesCodec: Codec[FailureMessages] = new Codec[FailureMessages] {
+    private val jsonCodec: Codec[FailureMessagesRepr] = jsonFormat3(FailureMessagesRepr)
+
+    override def write(a: FailureMessages): Json = {
+      JsonObject(
+        CoreJsonConstants.id -> a.id.toJson,
+        CoreJsonConstants.message -> a.message.toJson,
+        CoreJsonConstants.messages -> a.messages.toJson
+      )
+    }
+
+    override def read(c: Json): FailureMessages = {
+      val repr = jsonCodec.read(c)
+      FailureMessages(
+        id = repr.id,
+        message = repr.message,
+        msg = repr.messages.headOption.getOrElse(deserializationError("Needs to have at least on messages")),
+        repr.messages.tail: _*
+      )
+    }
+  }
+}
+
+private[json] object CoreJsonConstants {
+  private[json] val id: String = "id"
+  private[json] val message: String = "message"
+  private[json] val messages: String = "messages"
+  private[json] val parameters: String = "parameters"
+}
+
+private[json] case class FailureMessageRepr(
+  id: FailureID,
+  message: String,
+  parameters: Option[Parameters]
+)
+
+private[json] case class FailureMessagesRepr(
+  id: FailureID,
+  message: String,
+  messages: immutable.Seq[FailureMessage]
+)
+
+

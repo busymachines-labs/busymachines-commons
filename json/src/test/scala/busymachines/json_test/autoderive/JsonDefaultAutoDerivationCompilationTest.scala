@@ -48,6 +48,9 @@ class JsonDefaultAutoDerivationCompilationTest extends FlatSpec {
         |val asJson = anarchistMelon.asJson.spaces2
         |val read = asJson.unsafeDecodeAs[AnarchistMelon]
         |
+        |//I really put this line here so that the -unused-imports compiler flag doesn't complain for this test
+        |val leaveMeAloneUnusedImports = encoder[AnarchistMelon]
+        |
       """.stripMargin
     }
   }

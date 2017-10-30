@@ -66,6 +66,24 @@ lazy val json = project
     core
   )
 
+@scala.deprecated("better use `json` module. This one is not part of the future roadmap of the library", "0.2.0-RC4")
+lazy val `json-spray` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-json-spray",
+    libraryDependencies ++=
+      Seq(
+        Dependencies.sprayJson withSources(),
+        Dependencies.scalaReflect withSources(),
+
+        Dependencies.scalaTest % Test withSources()
+      )
+  )
+  .dependsOn(
+    core
+  )
+
 lazy val `rest-core` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
@@ -74,14 +92,16 @@ lazy val `rest-core` = project
     libraryDependencies ++= Seq(
       Dependencies.akkaHttp withSources(),
       Dependencies.akkaActor withSources(),
-
       /**
         * http://doc.akka.io/docs/akka-http/current/scala/http/introduction.html#using-akka-http
         * {{{
         * Only when running against Akka 2.5 explicitly depend on akka-streams in same version as akka-actor
         * }}}
         */
-      Dependencies.akkaStream withSources()
+      Dependencies.akkaStream withSources(),
+
+      //used for building the WebServerIO helpers
+      Dependencies.catsEffects withSources(),
     )
   )
   .dependsOn(
@@ -119,6 +139,22 @@ lazy val `rest-json` = project
     `rest-core`,
   )
 
+@scala.deprecated("better use `rest-json` module. This one is not part of the future roadmap of the library", "0.2.0-RC4")
+lazy val `rest-json-spray` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-rest-json-spray",
+    libraryDependencies ++= Seq(
+      Dependencies.akkaHttpSprayJson withSources()
+    )
+  )
+  .dependsOn(
+    core,
+    `json-spray`,
+    `rest-core`,
+  )
+
 lazy val `rest-json-testkit` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
@@ -135,3 +171,21 @@ lazy val `rest-json-testkit` = project
     `rest-json`,
     `rest-core-testkit`,
   )
+
+lazy val `rest-json-spray-testkit` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-rest-json-spray-testkit",
+    libraryDependencies ++= Seq(
+      Dependencies.scalaTest % Test withSources()
+    )
+  )
+  .dependsOn(
+    core,
+    `json-spray`,
+    `rest-core`,
+    `rest-json-spray`,
+    `rest-core-testkit`,
+  )
+

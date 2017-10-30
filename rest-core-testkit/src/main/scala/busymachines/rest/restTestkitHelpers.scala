@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.RouteResult
 import akka.http.scaladsl.server.RouteResult.{Complete, Rejected}
 import akka.http.scaladsl.server.directives.LoggingMagnet
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import akka.stream.{ActorMaterializer, Materializer}
+import akka.stream.Materializer
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -18,7 +18,7 @@ import scala.language.postfixOps
   * the amount of implicit resolution that has to be done in the actual
   * test code.
   *
-  * Therefore [[Route]], and [[ActorMaterializer]] are resolved now
+  * Therefore [[Route]], and [[akka.stream.ActorMaterializer]] are resolved now
   * at the method definition. And what is actually unique to the call-site
   * is left to be resolved there.
   *

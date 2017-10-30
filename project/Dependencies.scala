@@ -2,16 +2,22 @@ import sbt._
 
 object Dependencies {
 
-  //FIXME: need to wait for sbt 1.0.3 to have a bug fixed before we can use 2.12.4 and IntelliJ
   lazy val `scala_2.12`: String = "2.12.3"
   lazy val `scala_2.13`: String = "2.13.0-M2"
+  lazy val mainScalaVersion: String = `scala_2.12`
   lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`)
+
+  //============================================================================================
+  //====================================== Scala things ========================================
+  //============================================================================================
+
+  lazy val scalaReflect: ModuleID = "org.scala-lang" % "scala-reflect" % mainScalaVersion
 
   //============================================================================================
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
-  lazy val bmCommonsVersion: String = "0.2.0-RC3"
+  lazy val bmCommonsVersion: String = "0.2.0-RC4"
 
   lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % bmCommonsVersion withSources()
   lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % bmCommonsVersion withSources()
@@ -34,6 +40,8 @@ object Dependencies {
   lazy val catsKernel: ModuleID = "org.typelevel" %% "cats-kernel" % catsVersion
   lazy val catsLaws: ModuleID = "org.typelevel" %% "cats-laws" % catsVersion
   lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
+
+  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.4"
 
   lazy val circeVersion: String = "0.9.0-M1"
   lazy val circeCore: ModuleID = "io.circe" %% "circe-core" % circeVersion
@@ -71,6 +79,12 @@ object Dependencies {
   //required only while circe is at version 0.9.0-M1
   lazy val akkaCirceIntegrationResolver: MavenRepository = Resolver.bintrayRepo("hseeberger", "maven")
 
+
+  lazy val sprayJsonVersion = "1.3.3"
+  @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC4")
+  lazy val sprayJson: ModuleID = "io.spray" %% "spray-json" % sprayJsonVersion
+  @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC4")
+  lazy val akkaHttpSprayJson: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
 
   //============================================================================================
   //=========================================  testing =========================================
