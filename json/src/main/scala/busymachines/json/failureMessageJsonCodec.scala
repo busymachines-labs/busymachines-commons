@@ -23,20 +23,20 @@ trait FailureMessageJsonCodec {
     override def apply(a: FailureID): Json = Json.fromString(a.name)
   }
 
-  private implicit final val StringOrSeqCodec: Codec[FailureMessage.Value] = new Codec[FailureMessage.Value] {
-    override def apply(a: FailureMessage.Value): Json = {
+  private implicit final val StringOrSeqCodec: Codec[FailureMessage.ParamValue] = new Codec[FailureMessage.ParamValue] {
+    override def apply(a: FailureMessage.ParamValue): Json = {
       a match {
         case FailureMessage.StringWrapper(s) => Json.fromString(s)
         case FailureMessage.SeqStringWrapper(ses) => Json.fromValues(ses.map(Json.fromString))
       }
     }
 
-    override def apply(c: HCursor): io.circe.Decoder.Result[FailureMessage.Value] = {
+    override def apply(c: HCursor): io.circe.Decoder.Result[FailureMessage.ParamValue] = {
       val sa: Result[String] = c.as[String]
       if (sa.isRight) {
-        sa.right.map(FailureMessage.Value.apply)
+        sa.right.map(FailureMessage.ParamValue.apply)
       } else {
-        c.as[List[String]].right.map(FailureMessage.Value.apply)
+        c.as[List[String]].right.map(FailureMessage.ParamValue.apply)
       }
     }
   }
@@ -47,13 +47,13 @@ trait FailureMessageJsonCodec {
       val m = jsonObj.right.map(_.toMap)
       val m2: Either[DecodingFailure, Either[DecodingFailure, FailureMessage.Parameters]] = m.right.map { (e: Map[String, Json]) =>
         val potentialFailures = e.map { p =>
-          p._2.as[FailureMessage.Value].right.map(s => (p._1, s))
+          p._2.as[FailureMessage.ParamValue].right.map(s => (p._1, s))
         }.toList
 
         if (potentialFailures.nonEmpty) {
-          val first: Either[DecodingFailure, List[(String, FailureMessage.Value)]] = potentialFailures.head.right.map(e => List(e))
+          val first: Either[DecodingFailure, List[(String, FailureMessage.ParamValue)]] = potentialFailures.head.right.map(e => List(e))
           val rest = potentialFailures.tail
-          val r: Either[DecodingFailure, List[(String, FailureMessage.Value)]] = rest.foldRight(first) { (v, acc) =>
+          val r: Either[DecodingFailure, List[(String, FailureMessage.ParamValue)]] = rest.foldRight(first) { (v, acc) =>
             for {
               prevAcc <- acc.right
               newVal <- v.right

@@ -1,7 +1,5 @@
 package busymachines.core
 
-import busymachines.core.exceptions.FailureMessage.StringOrSeqString
-
 import scala.collection.immutable
 import scala.language.implicitConversions
 
@@ -13,9 +11,9 @@ import scala.language.implicitConversions
   */
 package object exceptions {
 
-  implicit def stringToStringOrSeqStringWrapper(s: String): StringOrSeqString =
+  implicit final def failureMessageParamValueStringWrapper(s: String): FailureMessage.ParamValue =
     FailureMessage.StringWrapper(s)
 
-  implicit def seqOfStringToStringOrSeqStringWrapper(ses: immutable.Seq[String]): StringOrSeqString =
+  implicit final def failureMessageParamValueSeqOfStringWrapper(ses: immutable.Seq[String]): FailureMessage.ParamValue =
     FailureMessage.SeqStringWrapper(ses)
 }
