@@ -17,7 +17,7 @@ object Dependencies {
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
-  lazy val bmCommonsVersion: String = "0.2.0-RC4"
+  lazy val bmCommonsVersion: String = "0.2.0-RC5"
 
   lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % bmCommonsVersion withSources()
   lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % bmCommonsVersion withSources()
@@ -34,16 +34,16 @@ object Dependencies {
 
   lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
 
-  lazy val catsVersion: String = "1.0.0-MF"
+  lazy val catsVersion: String = "1.0.0-RC1"
   lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % catsVersion
   lazy val catsMacros: ModuleID = "org.typelevel" %% "cats-macros" % catsVersion
   lazy val catsKernel: ModuleID = "org.typelevel" %% "cats-kernel" % catsVersion
   lazy val catsLaws: ModuleID = "org.typelevel" %% "cats-laws" % catsVersion
   lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
 
-  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.4"
+  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.5"
 
-  lazy val circeVersion: String = "0.9.0-M1"
+  lazy val circeVersion: String = "0.9.0-M2"
   lazy val circeCore: ModuleID = "io.circe" %% "circe-core" % circeVersion
   lazy val circeGeneric: ModuleID = "io.circe" %% "circe-generic" % circeVersion
   lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeVersion
@@ -75,8 +75,8 @@ object Dependencies {
   /**
     * https://github.com/hseeberger/akka-http-json
     */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.19.0-M1"
-  //required only while circe is at version 0.9.0-M1
+  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.19.0-M2"
+  //required only while circe is at version 0.9.0-M2
   lazy val akkaCirceIntegrationResolver: MavenRepository = Resolver.bintrayRepo("hseeberger", "maven")
 
 

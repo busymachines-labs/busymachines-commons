@@ -15,7 +15,7 @@ trait ErrorMessage extends FailureMessage
 abstract class Error(
   override val message: String,
   val cause: Option[Throwable] = None
-) extends Exception(message, cause.orNull) with FailureMessage
+) extends Exception(message, cause.orNull) with FailureMessage with ErrorMessage
 
 
 object Error extends Error(SemanticErrors.Error, None) {
