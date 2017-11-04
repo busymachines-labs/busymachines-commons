@@ -100,7 +100,7 @@ object RestAPI {
     */
   def seal(api: RestAPI, apis: RestAPI*)(implicit
     routingSettings: RoutingSettings,
-    parserSettings:   ParserSettings   = null,
+    parserSettings: ParserSettings = null,
     rejectionHandler: RejectionHandler = RejectionHandler.default,
     exceptionHandler: ExceptionHandler = null
   ): RestAPI = {
@@ -136,7 +136,7 @@ object RestAPI {
       * "you cannot find something; it may or may not exist, and I'm not going
       * to tell you anything else"
       */
-    case _: NotFoundFailure =>
+    case _: SemanticFailures.NotFound =>
       failure(StatusCodes.NotFound)
 
     /**
@@ -145,7 +145,7 @@ object RestAPI {
       * "it exists, but you're not even allowed to know about that;
       * so for short, you can't find it".
       */
-    case _: ForbiddenFailure =>
+    case _: SemanticFailures.Forbidden =>
       failure(StatusCodes.NotFound)
 
     /**
@@ -154,7 +154,7 @@ object RestAPI {
       * "something is wrong in the way you authorized, you can try again slightly
       * differently"
       */
-    case e: UnauthorizedFailure =>
+    case e: FailureMessage with SemanticFailures.Unauthorized =>
       failure(StatusCodes.Unauthorized, e)
 
     case e: DeniedFailure =>
@@ -179,7 +179,7 @@ object RestAPI {
       *
       * Therefore, specialize frantically.
       */
-    case e: InvalidInputFailure =>
+    case e: FailureMessage with SemanticFailures.InvalidInput =>
       failure(StatusCodes.BadRequest, e)
 
     /**
@@ -188,7 +188,7 @@ object RestAPI {
       * E.g. when you're duplicating something that ought to be unique,
       * like ids, emails.
       */
-    case e: ConflictFailure =>
+    case e: FailureMessage with SemanticFailures.Conflict =>
       failure(StatusCodes.Conflict, e)
 
     /**
@@ -198,7 +198,7 @@ object RestAPI {
     case es: FailureMessages =>
       failures(StatusCodes.BadRequest, es)
 
-    case e: Error =>
+    case e: ErrorMessage =>
       failure(StatusCodes.InternalServerError, e)
 
     case e: NotImplementedError =>

@@ -1,5 +1,8 @@
 # busymachines-commons
 
+[![Maven Central](https://img.shields.io/maven-central/v/de.heikoseeberger/akka-http-circe_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/de.heikoseeberger/akka-http-circe_2.12)
+
+
 Light-weight, modular, libraries for varying technology stacks, built _primarily_ on top of the [typelevel.scala](https://github.com/typelevel) ecosystem.
 
 ## Quickstart
@@ -21,28 +24,28 @@ Probably due to an missing implicit — probably automatic derivation of some ty
 
 #### versions
 * stable: `0.1.0` — but almost useless
-* latest: `0.2.0-RC4`
+* latest: `0.2.0-RC5`
 
 These modules are are cross-compiled for Scala versions: `2.12.4`. We try our best to keep them up to date.
 
 #### Modules:
-* `"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC4"` [README.md](/core)
-* `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC4"` [README.md](/json)
-* `"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0-RC4"` [README.md](/rest-core)
-* `"com.busymachines" %% "busymachines-commons-rest-core-testkit" % "0.2.0-RC4" % Test` [README.md](/rest-core-testkit)
-* `"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0-RC4"` [README.md](/rest-json)
-* `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-RC4" % Test` [README.md](/rest-json-testkit)
+* `"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC5"` [README.md](/core)
+* `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC5"` [README.md](/json)
+* `"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0-RC5"` [README.md](/rest-core)
+* `"com.busymachines" %% "busymachines-commons-rest-core-testkit" % "0.2.0-RC5" % Test` [README.md](/rest-core-testkit)
+* `"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0-RC5"` [README.md](/rest-json)
+* `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-RC5" % Test` [README.md](/rest-json-testkit)
 
 ##### deprecated:
 This is a parallel module hierarchy whose json serialization is handled by `spray-json`. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the `rest` packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the `json` package differs the most.
 
-* `"com.busymachines" %% "busymachines-commons-json-spray" % "0.2.0-RC4"` [README.md](/json-spray)
-* `"com.busymachines" %% "busymachines-commons-rest-json-spray" % "0.2.0-RC4"` [README.md](/rest-json-spray)
-* `"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0-RC4" % Test` [README.md](/rest-json-spray-testkit)
+* `"com.busymachines" %% "busymachines-commons-json-spray" % "0.2.0-RC5"` [README.md](/json-spray)
+* `"com.busymachines" %% "busymachines-commons-rest-json-spray" % "0.2.0-RC5"` [README.md](/rest-json-spray)
+* `"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0-RC5" % Test` [README.md](/rest-json-spray-testkit)
 
 For easy copy-pasting:
 ```scala
-lazy val bmcVersion: String = "0.2.0-RC4"
+lazy val bmcVersion: String = "0.2.0-RC5"
 
 lazy val bmcCore = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
 lazy val bmcJson = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
@@ -66,11 +69,11 @@ The idea behind these sets of libraries is to help jumpstart backend RESTful api
 Basically, as long as modules reside in the same repository they will be versioned with the same number, and released at the same time to avoid confusion. The moment we realize that a module has to take a life of its own, it will be moved to a separate module and versioned independently.
 
 * [core](/core) `0.1.0`
-* [json](/json) `0.2.0-RC4`
-* [rest-core](/rest-core) `0.2.0-RC4` - this is an abstract implementation that still requires specific serialization/deserialization
-* [rest-core-testkit](/rest-core-testkit) `0.2.0-RC4` - contains helpers that allow testing. Should never wind up in production code.
-* [rest-json](/rest-core) `0.2.0-RC4` - used to implement REST APIs that handle JSON
-* [rest-json-testkit](/rest-json-testkit) `0.2.0-RC4` - helpers for JSON powered REST APIs
+* [json](/json) `0.2.0-RC5`
+* [rest-core](/rest-core) `0.2.0-RC5` - this is an abstract implementation that still requires specific serialization/deserialization
+* [rest-core-testkit](/rest-core-testkit) `0.2.0-RC5` - contains helpers that allow testing. Should never wind up in production code.
+* [rest-json](/rest-core) `0.2.0-RC5` - used to implement REST APIs that handle JSON
+* [rest-json-testkit](/rest-json-testkit) `0.2.0-RC5` - helpers for JSON powered REST APIs
 
 
 Most likely you don't need to depend on the `rest-core*` modules. But rather on one or more of its reifications like `rest-json`. This separation was done because in the future we might need non-json REST APIs, and then we still want to have a common experience of using `commons`.

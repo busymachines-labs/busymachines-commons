@@ -26,17 +26,17 @@ trait FailureMessageJsonCodec {
     override def write(obj: FailureID): Json = JsString(obj.name)
   }
 
-  private implicit final val StringOrSeqCodec: Codec[FailureMessage.Value] = new Codec[FailureMessage.Value] {
-    override def write(a: FailureMessage.Value): Json = {
+  private implicit final val StringOrSeqCodec: Codec[FailureMessage.ParamValue] = new Codec[FailureMessage.ParamValue] {
+    override def write(a: FailureMessage.ParamValue): Json = {
       a match {
         case FailureMessage.StringWrapper(s) => JsString(s)
         case FailureMessage.SeqStringWrapper(ses) => JsArray(ses.map(s => implicitly[JsonFormat[String]].write(s)).toVector)
       }
     }
 
-    override def read(c: Json): FailureMessage.Value = {
-      Try(c.convertTo[immutable.Seq[String]]).map((s: immutable.Seq[String]) => FailureMessage.Value(s)).recoverWith {
-        case NonFatal(e) => Try(c.convertTo[String]).map(FailureMessage.Value.apply)
+    override def read(c: Json): FailureMessage.ParamValue = {
+      Try(c.convertTo[immutable.Seq[String]]).map((s: immutable.Seq[String]) => FailureMessage.ParamValue(s)).recoverWith {
+        case NonFatal(e) => Try(c.convertTo[String]).map(FailureMessage.ParamValue.apply)
       }.get
     }
   }

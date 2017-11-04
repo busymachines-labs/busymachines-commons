@@ -5,7 +5,7 @@
 This module is vanilla scala _*only*_, cross-compiled against versions: `2.12.4`.
 
 The full module id is:
-`"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC4"`
+`"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC5"`
 
 ## Description
 

@@ -38,7 +38,10 @@ lazy val root = Project(
     `rest-core`,
     `rest-core-testkit`,
     `rest-json`,
-    `rest-json-testkit`
+    `rest-json-testkit`,
+    `json-spray`,
+    `rest-json-spray`,
+    `rest-json-spray-testkit`,
   )
 
 lazy val core = project
@@ -66,7 +69,7 @@ lazy val json = project
     core
   )
 
-@scala.deprecated("better use `json` module. This one is not part of the future roadmap of the library", "0.2.0-RC4")
+@scala.deprecated("better use `json` module. This one is not part of the future roadmap of the library", "0.2.0-RC5")
 lazy val `json-spray` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
@@ -139,7 +142,7 @@ lazy val `rest-json` = project
     `rest-core`,
   )
 
-@scala.deprecated("better use `rest-json` module. This one is not part of the future roadmap of the library", "0.2.0-RC4")
+@scala.deprecated("better use `rest-json` module. This one is not part of the future roadmap of the library", "0.2.0-RC5")
 lazy val `rest-json-spray` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)

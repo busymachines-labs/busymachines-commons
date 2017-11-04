@@ -104,9 +104,9 @@ object FailureID {
 
 object FailureMessage {
 
-  type Value = StringOrSeqString
+  type ParamValue = StringOrSeqString
 
-  object Value {
+  object ParamValue {
     def apply(s: String) = StringWrapper(s)
 
     def apply(ses: immutable.Seq[String]) = SeqStringWrapper(ses)
@@ -119,19 +119,19 @@ object FailureMessage {
     */
   sealed trait StringOrSeqString
 
-  case class StringWrapper private(s: String) extends StringOrSeqString
+  final case class StringWrapper private(s: String) extends ParamValue
 
-  case class SeqStringWrapper private(ses: immutable.Seq[String]) extends StringOrSeqString
+  final case class SeqStringWrapper private(ses: immutable.Seq[String]) extends ParamValue
 
-  type Parameters = Map[String, StringOrSeqString]
+  type Parameters = Map[String, ParamValue]
 
   object Parameters {
-    def apply(ps: (String, StringOrSeqString)*): Parameters = Map.apply(ps: _*)
+    def apply(ps: (String, ParamValue)*): Parameters = Map.apply(ps: _*)
 
-    def empty: Parameters = Map.empty[String, StringOrSeqString]
+    def empty: Parameters = Map.empty[String, ParamValue]
   }
 
-  private case class GenericFailureMessage(
+  private final case class GenericFailureMessage(
     override val id: FailureID,
     override val message: String,
     override val parameters: Parameters
@@ -189,7 +189,7 @@ trait FailureMessages extends FailureMessage {
 
 object FailureMessages {
 
-  private case class GenericFailureMessages(
+  private final case class GenericFailureMessages(
     override val id: FailureID,
     override val message: String,
     override val firstMessage: FailureMessage,
