@@ -38,7 +38,10 @@ lazy val root = Project(
     `rest-core`,
     `rest-core-testkit`,
     `rest-json`,
-    `rest-json-testkit`
+    `rest-json-testkit`,
+    `json-spray`,
+    `rest-json-spray`,
+    `rest-json-spray-testkit`,
   )
 
 lazy val core = project

@@ -75,7 +75,7 @@ object Dependencies {
   /**
     * https://github.com/hseeberger/akka-http-json
     */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.19.0-M2"
+  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.19.0-M3"
   //required only while circe is at version 0.9.0-M2
   lazy val akkaCirceIntegrationResolver: MavenRepository = Resolver.bintrayRepo("hseeberger", "maven")
 
