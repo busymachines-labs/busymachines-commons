@@ -1,5 +1,7 @@
 # busymachines-commons-rest-core
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core_2.12)
+
 ## artifacts
 
 Current version is `0.2.0-RC5`. SBT module id:

@@ -1,5 +1,7 @@
 # busymachines-commons-core
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
+
 ## artifacts
 
 This module is vanilla scala _*only*_, cross-compiled against versions: `2.12.4`.

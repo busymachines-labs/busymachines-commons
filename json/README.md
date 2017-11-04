@@ -1,5 +1,7 @@
 # busymachines-commons-json
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json_2.12)
+
 Current version is `0.2.0-RC5`. SBT module id:
 `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC5"`
 

@@ -1,5 +1,7 @@
 # busymachines-commons-json-spray
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json-spray_2.12)
+
 _*DO NOT DEPEND ON BOTH THIS MODULE AND `json`. They share the same packages. It will end badly, chose one or the other. THIS MODULE WILL RECEIVE WAY LESS ATTENTION THAN THE OTHERS, AND HAS A HIGH CHANCE OF BEING DROPPED*_
 
 Current version is `0.2.0-RC5`. SBT module id:
