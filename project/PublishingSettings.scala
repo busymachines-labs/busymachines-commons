@@ -41,17 +41,16 @@ object PublishingSettings {
 
     pomIncludeRepository := { _ => false },
 
-    publishTo := {
-      val nexus = "https://oss.sonatype.org/"
+    publishTo := Option {
       if (isSnapshot.value)
-        Some("snapshots" at nexus + "content/repositories/snapshots")
+        Opts.resolver.sonatypeSnapshots
       else
-        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+        Opts.resolver.sonatypeStaging
     },
 
     licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
 
-    scmInfo := Some(
+    scmInfo := Option(
       ScmInfo(
         url("https://github.com/busymachines/busymachines-commons"),
         "scm:git@github.com:busymachines/busymachines-commons.git"
@@ -60,6 +59,12 @@ object PublishingSettings {
     developers := List(
       Developer(id = "lorandbm", name = "Lorand Szakacs", email = "lorand.szakacs@busymachines.com", url = url("https://github.com/lorandszakacs"))
     )
+  )
+
+  def noPublishSettings = Seq(
+    skip in publishLocal := true,
+    skip in publish := true,
+    publishArtifact := false
   )
 
 }

@@ -28,10 +28,8 @@ resolvers in ThisBuild += Dependencies.akkaCirceIntegrationResolver
 lazy val root = Project(
   id = "busymachines-commons",
   base = file("."))
+  .settings(PublishingSettings.noPublishSettings)
   .settings(Settings.commonSettings)
-  .settings(
-    publishArtifact := false
-  )
   .aggregate(
     core,
     json,
@@ -95,6 +93,7 @@ lazy val `rest-core` = project
     libraryDependencies ++= Seq(
       Dependencies.akkaHttp withSources(),
       Dependencies.akkaActor withSources(),
+
       /**
         * http://doc.akka.io/docs/akka-http/current/scala/http/introduction.html#using-akka-http
         * {{{
