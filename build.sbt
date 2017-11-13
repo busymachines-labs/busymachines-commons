@@ -70,7 +70,7 @@ lazy val json = project
     core
   )
 
-@scala.deprecated("better use `json` module. This one is not part of the future roadmap of the library", "0.2.0-RC5")
+@scala.deprecated("better use `json` module. This one is not part of the future roadmap of the library", "0.2.0-RC6")
 lazy val `json-spray` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
@@ -144,7 +144,7 @@ lazy val `rest-json` = project
     `rest-core`,
   )
 
-@scala.deprecated("better use `rest-json` module. This one is not part of the future roadmap of the library", "0.2.0-RC5")
+@scala.deprecated("better use `rest-json` module. This one is not part of the future roadmap of the library", "0.2.0-RC6")
 lazy val `rest-json-spray` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)

@@ -17,7 +17,7 @@ object Dependencies {
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
-  lazy val bmCommonsVersion: String = "0.2.0-RC5"
+  lazy val bmCommonsVersion: String = "0.2.0-RC6"
 
   lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % bmCommonsVersion withSources()
   lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % bmCommonsVersion withSources()
@@ -83,9 +83,9 @@ object Dependencies {
 
 
   lazy val sprayJsonVersion = "1.3.3"
-  @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC5")
+  @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC6")
   lazy val sprayJson: ModuleID = "io.spray" %% "spray-json" % sprayJsonVersion
-  @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC5")
+  @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC6")
   lazy val akkaHttpSprayJson: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
 
   //============================================================================================
