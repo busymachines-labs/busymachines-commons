@@ -23,51 +23,59 @@ Probably due to an missing implicit — probably automatic derivation of some ty
 
 #### versions
 * stable: `0.1.0` — but almost useless
-* latest: `0.2.0-RC5`
+* latest: `0.2.0-RC6`
 
 These modules are are cross-compiled for Scala versions: `2.12.3`. We try our best to keep them up to date.
 
 #### Modules:
-* `"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC5"`
+* `"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC6"`
   * [README.md](/core) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
-* `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC5"`
+* `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC6"`
   * [README.md](/json) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0-RC5"`
+* `"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0-RC6"`
   * [README.md](/rest-core) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-core-testkit" % "0.2.0-RC5" % Test`
+* `"com.busymachines" %% "busymachines-commons-rest-core-testkit" % "0.2.0-RC6" % Test`
   * [README.md](/rest-core-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core-testkit_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0-RC5"`
+* `"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0-RC6"`
   * [README.md](/rest-json) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-RC5" % Test`
+* `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-RC6" % Test`
   * [README.md](/rest-json-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-testkit_2.12)
+* `"com.busymachines" %% "busymachines-commons-semver" % "0.2.0-RC6"`
+  * [README.md](/semver) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver_2.12)  
+* `"com.busymachines" %% "busymachines-commons-semver-parsers" % "0.2.0-RC6"`  
+  * [README.md](/semver-parsers) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver-parsers_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver-parsers_2.12)
 
 ##### deprecated:
 This is a parallel module hierarchy whose json serialization is handled by `spray-json`. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the `rest` packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the `json` package differs the most.
 
-* `"com.busymachines" %% "busymachines-commons-json-spray" % "0.2.0-RC5"`
+* `"com.busymachines" %% "busymachines-commons-json-spray" % "0.2.0-RC6"`
   * [README.md](/json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json-spray_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json-spray" % "0.2.0-RC5"`
-  * [README.md](/rest-json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0-RC5" % Test`
+* `"com.busymachines" %% "busymachines-commons-rest-json-spray" % "0.2.0-RC6"`
+  * [README.md](/rest-json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)  
+* `"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0-RC6" % Test`
   * [README.md](/rest-json-spray-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12)
 
 For easy copy-pasting:
 ```scala
-lazy val bmcVersion: String = "0.2.0-RC5"
+val bmcVersion: String = "0.2.0-RC6"
 
-lazy val bmcCore = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
-lazy val bmcJson = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
-lazy val bmcRestCore = "com.busymachines" %% "busymachines-commons-rest-core" % bmcVersion
-lazy val bmcRestCoreTestkit = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmcVersion % Test
-lazy val bmcRestJson = "com.busymachines" %% "busymachines-commons-rest-json" % bmcVersion
-lazy val bmcRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-json-testkit" % bmcVersion % Test
+val bmcCore            = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
+val bmcJson            = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
+val bmcRestCore        = "com.busymachines" %% "busymachines-commons-rest-core" % bmcVersion
+val bmcRestCoreTestkit = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmcVersion % Test
+val bmcRestJson        = "com.busymachines" %% "busymachines-commons-rest-json" % bmcVersion
+val bmcRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-json-testkit" % bmcVersion % Test
+
+val bmcSemVer         = "com.busymachines" %% "busymachines-commons-semver" % bmcVersion
+val bmcSemVerParsers  = "com.busymachines" %% "busymachines-commons-semver-parsers" % bmcVersion
 
 @scala.deprecated("use json module instead", "0.2.0")
-lazy val bmJsonSpray = "com.busymachines" %% "busymachines-commons-json-spray" % bmcVersion
+val bmcJsonSpray = "com.busymachines" %% "busymachines-commons-json-spray" % bmcVersion
 @scala.deprecated("use rest-json module instead", "0.2.0")
-lazy val bmRestJsonSpray = "com.busymachines" %% "busymachines-commons-rest-json-spray" % bmcVersion
+val bmcRestJsonSpray = "com.busymachines" %% "busymachines-commons-rest-json-spray" % bmcVersion
 @scala.deprecated("use rest-json-testkit module instead", "0.2.0")
-lazy val bmRestJsonSprayTestkit = "com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % bmcVersion % Test
+val bmcRestJsonSprayTestkit = "com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % bmcVersion % Test
+
 ```
 
 ## Library Structure
@@ -77,14 +85,17 @@ The idea behind these sets of libraries is to help jumpstart backend RESTful api
 Basically, as long as modules reside in the same repository they will be versioned with the same number, and released at the same time to avoid confusion. The moment we realize that a module has to take a life of its own, it will be moved to a separate module and versioned independently.
 
 * [core](/core) `0.1.0`
-* [json](/json) `0.2.0-RC5`
-* [rest-core](/rest-core) `0.2.0-RC5` - this is an abstract implementation that still requires specific serialization/deserialization
-* [rest-core-testkit](/rest-core-testkit) `0.2.0-RC5` - contains helpers that allow testing. Should never wind up in production code.
-* [rest-json](/rest-core) `0.2.0-RC5` - used to implement REST APIs that handle JSON
-* [rest-json-testkit](/rest-json-testkit) `0.2.0-RC5` - helpers for JSON powered REST APIs
-
+* [json](/json) `0.2.0-RC6`
+* [rest-core](/rest-core) `0.2.0-RC6` - this is an abstract implementation that still requires specific serialization/deserialization
+* [rest-core-testkit](/rest-core-testkit) `0.2.0-RC6` - contains helpers that allow testing. Should never wind up in production code.
+* [rest-json](/rest-core) `0.2.0-RC6` - used to implement REST APIs that handle JSON
+* [rest-json-testkit](/rest-json-testkit) `0.2.0-RC6` - helpers for JSON powered REST APIs
 
 Most likely you don't need to depend on the `rest-core*` modules. But rather on one or more of its reifications like `rest-json`. This separation was done because in the future we might need non-json REST APIs, and then we still want to have a common experience of using `commons`.
+
+Other modules:
+* [semver](/semver) `0.2.0-RC6` - definition of a `SemanticVersion` datatype and its natural ordering according to the [Semantic Version 2.0.0](http://semver.org/) spec. Useful only if you have to manipulate semantic versions in your code. No other modules here depend on it.
+* [semver](/semver-parsers) `0.2.0-RC6` - parsers from plain string to the above `SemanticVersion`.
 
 ### Current version
 

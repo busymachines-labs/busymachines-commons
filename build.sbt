@@ -40,6 +40,9 @@ lazy val root = Project(
     `json-spray`,
     `rest-json-spray`,
     `rest-json-spray-testkit`,
+
+    `semver`,
+    `semver-parsers`,
   )
 
 lazy val core = project
@@ -67,7 +70,7 @@ lazy val json = project
     core
   )
 
-@scala.deprecated("better use `json` module. This one is not part of the future roadmap of the library", "0.2.0-RC5")
+@scala.deprecated("better use `json` module. This one is not part of the future roadmap of the library", "0.2.0-RC6")
 lazy val `json-spray` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
@@ -141,7 +144,7 @@ lazy val `rest-json` = project
     `rest-core`,
   )
 
-@scala.deprecated("better use `rest-json` module. This one is not part of the future roadmap of the library", "0.2.0-RC5")
+@scala.deprecated("better use `rest-json` module. This one is not part of the future roadmap of the library", "0.2.0-RC6")
 lazy val `rest-json-spray` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
@@ -163,7 +166,7 @@ lazy val `rest-json-testkit` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-json-testkit",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources()
+      Dependencies.scalaTest % Test withSources(),
     )
   )
   .dependsOn(
@@ -180,7 +183,7 @@ lazy val `rest-json-spray-testkit` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-json-spray-testkit",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources()
+      Dependencies.scalaTest % Test withSources(),
     )
   )
   .dependsOn(
@@ -191,3 +194,30 @@ lazy val `rest-json-spray-testkit` = project
     `rest-core-testkit`,
   )
 
+lazy val `semver` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-semver",
+    libraryDependencies ++= Seq(
+      Dependencies.scalaTest % Test withSources(),
+    )
+  )
+  .dependsOn()
+
+lazy val `semver-parsers` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-semver-parsers",
+    libraryDependencies ++= Seq(
+      Dependencies.attoParser withSources(),
+
+      Dependencies.scalaTest % Test withSources(),
+      Dependencies.scalaCheck % Test withSources(),
+    )
+  )
+  .dependsOn(
+    core,
+    `semver`
+  )

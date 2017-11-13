@@ -4,8 +4,8 @@
 
 ## artifacts
 
-Current version is `0.2.0-RC5`. SBT module id:
-`"com.busymachines" %% "busymachines-commons-rest-core-testkit" % "0.2.0-RC5" % test`
+Current version is `0.2.0-RC6`. SBT module id:
+`"com.busymachines" %% "busymachines-commons-rest-core-testkit" % "0.2.0-RC6" % test`
 
 N.B. that this is a testing library, and you should only depend on it in test. Because otherwise you wind up with scalatest and akka http testing libraries on your runtime classpath.
 
