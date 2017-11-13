@@ -16,7 +16,7 @@ None.
 
 A simple library containing one type, `SemanticVersion` with a defined natural ordering as defined by the [semantic versioning specification 2.0.0](http://semver.org/spec/v2.0.0.html#spec-item-11).
 
-Currently, the type does not support arbitrary naming of your pre-release labels, but rather constrains you to 4 types: `alpha` < `beta` < `M` (milestone) < `RC` (Release Candidate). In future version an arbitrary label will be added.
+Currently, the type does not support arbitrary naming of your pre-release labels, but rather constrains you to 4 types: `alpha` < `beta` < `M` (milestone) < `RC` (Release Candidate). In future version an arbitrary label will be added — track [issue 46](https://github.com/busymachines/busymachines-commons/issues/46) for a progress update.
 
 ## String representations
 
