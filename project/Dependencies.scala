@@ -56,6 +56,8 @@ object Dependencies {
     circeParser
   )
 
+  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.1-M7"
+
   //============================================================================================
   //================================= http://akka.io/docs/ =====================================
   //======================================== akka ==============================================
@@ -89,7 +91,10 @@ object Dependencies {
   //============================================================================================
   //=========================================  testing =========================================
   //============================================================================================
+
   lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.4"
+  lazy val scalaCheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.4"
+
 
   lazy val akkaTestKit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % akkaVersion
   lazy val akkaStreamTestKit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion

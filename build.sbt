@@ -42,6 +42,7 @@ lazy val root = Project(
     `rest-json-spray-testkit`,
 
     `semver`,
+    `semver-parsers`,
   )
 
 lazy val core = project
@@ -165,7 +166,7 @@ lazy val `rest-json-testkit` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-json-testkit",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources()
+      Dependencies.scalaTest % Test withSources(),
     )
   )
   .dependsOn(
@@ -182,7 +183,7 @@ lazy val `rest-json-spray-testkit` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-json-spray-testkit",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources()
+      Dependencies.scalaTest % Test withSources(),
     )
   )
   .dependsOn(
@@ -199,7 +200,24 @@ lazy val `semver` = project
   .settings(
     name in ThisProject := "busymachines-commons-semver",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources()
+      Dependencies.scalaTest % Test withSources(),
     )
   )
   .dependsOn()
+
+lazy val `semver-parsers` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-semver-parsers",
+    libraryDependencies ++= Seq(
+      Dependencies.attoParser withSources(),
+
+      Dependencies.scalaTest % Test withSources(),
+      Dependencies.scalaCheck % Test withSources(),
+    )
+  )
+  .dependsOn(
+    core,
+    `semver`
+  )
