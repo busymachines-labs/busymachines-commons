@@ -202,6 +202,4 @@ lazy val `semver` = project
       Dependencies.scalaTest % Test withSources()
     )
   )
-  .dependsOn(
-    core
-  )
+  .dependsOn()

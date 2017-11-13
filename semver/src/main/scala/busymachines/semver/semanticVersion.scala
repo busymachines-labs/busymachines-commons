@@ -10,7 +10,7 @@ package busymachines.semver
   * denotes various meta-information, that is included at the end of the version, after the "+" sign.
   * Examples: git sha version:
   * {{{
-  *      4.1.0-SNAPSHOT+11223aaff
+  *            4.1.0-SNAPSHOT+11223aaff
   * }}}
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
   * @since 10 Nov 2017
@@ -23,10 +23,76 @@ final case class SemanticVersion(
   label: Option[Label] = Option.empty[Label],
   meta: Option[String] = Option.empty[String]
 ) extends SemanticVersionOrdering with Ordered[SemanticVersion] {
-  override lazy val toString: String = s"$major.$minor.$patch" + label.map(l => s"-$l").getOrElse("") + meta.map(m => s"+$m")
+  /**
+    * eg:
+    * {{{
+    *   3.1.2-rc4+1234
+    * }}}
+    */
+  def lowercase: String = SemanticVersionShows.lowercase.noSeparator.show(this)
+
+  /**
+    * eg:
+    * {{{
+    *   3.1.2-rc.4+1234
+    * }}}
+    */
+  def lowercaseWithDots: String = SemanticVersionShows.lowercase.withDotSeparator.show(this)
+
+  /**
+    * eg:
+    * {{{
+    *   3.1.2-RC4+1234
+    * }}}
+    */
+  def uppercase: String = SemanticVersionShows.uppercase.noSeparator.show(this)
+
+  /**
+    * eg:
+    * {{{
+    *   3.1.2-RC.4+1234
+    * }}}
+    */
+  def uppercaseWithDots: String = SemanticVersionShows.uppercase.withDotSeparator.show(this)
+
+  override lazy val toString: String = uppercase
 }
 
-sealed trait Label extends Ordered[Label] with LabelOrdering
+sealed trait Label extends Ordered[Label] with LabelOrdering {
+  /**
+    * eg:
+    * {{{
+    *   rc4
+    * }}}
+    */
+  final def lowercase: String = SemanticVersionShows.lowercase.noSeparator.show(this)
+
+  /**
+    * eg:
+    * {{{
+    *   rc.4
+    * }}}
+    */
+  final def lowercaseWithDots: String = SemanticVersionShows.lowercase.withDotSeparator.show(this)
+
+  /**
+    * eg:
+    * {{{
+    *   RC4
+    * }}}
+    */
+  final def uppercase: String = SemanticVersionShows.uppercase.noSeparator.show(this)
+
+  /**
+    * eg:
+    * {{{
+    *   RC.4
+    * }}}
+    */
+  final def uppercaseWithDots: String = SemanticVersionShows.uppercase.withDotSeparator.show(this)
+
+  override def toString: String = uppercase
+}
 
 object Labels {
   def snapshot: Label = Snapshot
@@ -57,21 +123,4 @@ object Labels {
 
   private[semver] case class Milestone(m: Int) extends Label with MilestoneOrdering
 
-}
-
-private[semver] object SemanticVersion {
-  val Snapshot = "snapshot"
-  val SNAPSHOT = "SNAPSHOT"
-
-  val ReleaseCandidate = "rc"
-  val REALEASE_CANDIDATE = "RC"
-
-  val Milestone = "m"
-  val MILESTONE = "M"
-
-  val Alpha = "alpha"
-  val ALPHA = "ALPHA"
-
-  val Beta = "beta"
-  val BETA = "BETA"
 }
