@@ -40,6 +40,10 @@ These modules are are cross-compiled for Scala versions: `2.12.3`. We try our be
   * [README.md](/rest-json) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json_2.12)
 * `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-RC6" % Test`
   * [README.md](/rest-json-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-testkit_2.12)
+* `"com.busymachines" %% "busymachines-commons-semver" % "0.2.0-RC6"`
+  * [README.md](/semver) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver_2.12)  
+* `"com.busymachines" %% "busymachines-commons-semver-parsers" % "0.2.0-RC6"`
+  [README.md](/semver-parsers) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver-parsers_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver-parsers_2.12)
 
 ##### deprecated:
 This is a parallel module hierarchy whose json serialization is handled by `spray-json`. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the `rest` packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the `json` package differs the most.
@@ -83,8 +87,11 @@ Basically, as long as modules reside in the same repository they will be version
 * [rest-json](/rest-core) `0.2.0-RC6` - used to implement REST APIs that handle JSON
 * [rest-json-testkit](/rest-json-testkit) `0.2.0-RC6` - helpers for JSON powered REST APIs
 
-
 Most likely you don't need to depend on the `rest-core*` modules. But rather on one or more of its reifications like `rest-json`. This separation was done because in the future we might need non-json REST APIs, and then we still want to have a common experience of using `commons`.
+
+Other modules:
+* [semver](/semver) `0.2.0-RC6` - definition of a `SemanticVersion` datatype and its natural ordering according to the [Semantic Version 2.0.0](http://semver.org/) spec. Useful only if you have to manipulate semantic versions in your code. No other modules here depend on it.
+* [semver](/semver-parsers) `0.2.0-RC6` - parsers from plain string to the above `SemanticVersion`.
 
 ### Current version
 

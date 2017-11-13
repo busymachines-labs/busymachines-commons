@@ -35,7 +35,7 @@ import busymachines.semver._
 import busymachines.semver.syntax._
 
 val version        = SemanticVersion(1,0,0, Labels.rc(4))
-val stringRep      = version.lowercase // "1.0.0-rc4"
+val stringRepr     = version.lowercase // "1.0.0-rc4"
 val parsedVersion  = SemanticVersion.unsafeFromString(stringRepr)
 // version == parsedVersion
 ```
