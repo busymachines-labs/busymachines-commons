@@ -12,8 +12,8 @@ The full module id is:
 ### Transitive dependencies
 
 * [`core`](../core/README.md)
-* `atto` — parsing library
- * `cats`
+* [`atto`](https://github.com/tpolecat/atto) — parsing library
+  * [`cats`](https://github.com/typelevel/cats)
 
 ## Description
 
