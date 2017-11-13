@@ -42,8 +42,8 @@ These modules are are cross-compiled for Scala versions: `2.12.3`. We try our be
   * [README.md](/rest-json-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-testkit_2.12)
 * `"com.busymachines" %% "busymachines-commons-semver" % "0.2.0-RC6"`
   * [README.md](/semver) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver_2.12)  
-* `"com.busymachines" %% "busymachines-commons-semver-parsers" % "0.2.0-RC6"`
-  [README.md](/semver-parsers) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver-parsers_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver-parsers_2.12)
+* `"com.busymachines" %% "busymachines-commons-semver-parsers" % "0.2.0-RC6"`  
+  * [README.md](/semver-parsers) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver-parsers_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver-parsers_2.12)
 
 ##### deprecated:
 This is a parallel module hierarchy whose json serialization is handled by `spray-json`. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the `rest` packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the `json` package differs the most.
@@ -51,27 +51,31 @@ This is a parallel module hierarchy whose json serialization is handled by `spra
 * `"com.busymachines" %% "busymachines-commons-json-spray" % "0.2.0-RC6"`
   * [README.md](/json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json-spray_2.12)
 * `"com.busymachines" %% "busymachines-commons-rest-json-spray" % "0.2.0-RC6"`
-  * [README.md](/rest-json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)
+  * [README.md](/rest-json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)  
 * `"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0-RC6" % Test`
   * [README.md](/rest-json-spray-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12)
 
 For easy copy-pasting:
 ```scala
-lazy val bmcVersion: String = "0.2.0-RC6"
+val bmcVersion: String = "0.2.0-RC6"
 
-lazy val bmcCore = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
-lazy val bmcJson = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
-lazy val bmcRestCore = "com.busymachines" %% "busymachines-commons-rest-core" % bmcVersion
-lazy val bmcRestCoreTestkit = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmcVersion % Test
-lazy val bmcRestJson = "com.busymachines" %% "busymachines-commons-rest-json" % bmcVersion
-lazy val bmcRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-json-testkit" % bmcVersion % Test
+val bmcCore            = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
+val bmcJson            = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
+val bmcRestCore        = "com.busymachines" %% "busymachines-commons-rest-core" % bmcVersion
+val bmcRestCoreTestkit = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmcVersion % Test
+val bmcRestJson        = "com.busymachines" %% "busymachines-commons-rest-json" % bmcVersion
+val bmcRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-json-testkit" % bmcVersion % Test
+
+val bmcSemVer         = "com.busymachines" %% "busymachines-commons-semver" % bmcVersion
+val bmcSemVerParsers  = "com.busymachines" %% "busymachines-commons-semver-parsers" % bmcVersion
 
 @scala.deprecated("use json module instead", "0.2.0")
-lazy val bmJsonSpray = "com.busymachines" %% "busymachines-commons-json-spray" % bmcVersion
+val bmcJsonSpray = "com.busymachines" %% "busymachines-commons-json-spray" % bmcVersion
 @scala.deprecated("use rest-json module instead", "0.2.0")
-lazy val bmRestJsonSpray = "com.busymachines" %% "busymachines-commons-rest-json-spray" % bmcVersion
+val bmcRestJsonSpray = "com.busymachines" %% "busymachines-commons-rest-json-spray" % bmcVersion
 @scala.deprecated("use rest-json-testkit module instead", "0.2.0")
-lazy val bmRestJsonSprayTestkit = "com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % bmcVersion % Test
+val bmcRestJsonSprayTestkit = "com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % bmcVersion % Test
+
 ```
 
 ## Library Structure

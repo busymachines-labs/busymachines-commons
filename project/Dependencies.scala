@@ -17,15 +17,17 @@ object Dependencies {
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
-  lazy val bmCommonsVersion: String = "0.2.0-RC6"
+  lazy val bmcVersion: String = "0.2.0-RC6"
 
-  lazy val busymachinesCommonsCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % bmCommonsVersion withSources()
-  lazy val busymachinesCommonsJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % bmCommonsVersion withSources()
-  lazy val busymachinesCommonsRestCore: ModuleID = "com.busymachines" %% "busymachines-commons-rest-core" % bmCommonsVersion withSources()
-  lazy val busymachinesCommonsRestCoreTestkit: ModuleID = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmCommonsVersion % Test withSources()
-  lazy val busymachinesCommonsRestJson: ModuleID = "com.busymachines" %% "busymachines-commons-rest-json" % bmCommonsVersion withSources()
-  lazy val busymachinesCommonsRestJsonTestkit: ModuleID = "com.busymachines" %% "busymachines-commons-rest-Json-testkit" % bmCommonsVersion % Test withSources()
+  lazy val bmcCore: ModuleID = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
+  lazy val bmcJson: ModuleID = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
+  lazy val bmcRestCore: ModuleID = "com.busymachines" %% "busymachines-commons-rest-core" % bmcVersion
+  lazy val bmcRestCoreTestkit: ModuleID = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmcVersion % Test
+  lazy val bmcRestJson: ModuleID = "com.busymachines" %% "busymachines-commons-rest-json" % bmcVersion withSources()
+  lazy val bmcRestJsonTestkit: ModuleID = "com.busymachines" %% "busymachines-commons-rest-json-testkit" % bmcVersion % Test
 
+  lazy val bmcSemVer: ModuleID = "com.busymachines" %% "busymachines-commons-semver" % bmcVersion
+  lazy val bmcSemVerParsers: ModuleID = "com.busymachines" %% "busymachines-commons-semver-parsers" % bmcVersion
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================
