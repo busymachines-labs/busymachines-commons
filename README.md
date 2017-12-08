@@ -110,6 +110,42 @@ Have throw-away code? Just create a package `playground` anywhere, it is already
 ### build structure
 The build is fairly straightforward. The root folder contains a phantom build from which all modules are configured, and an essentially empty project "busymachines-commons" that is never published, but one that is extremely useful for importing into your IDEs. Most top level folders `X` correspond to the specific `busymachines-commons-X` library. All dependencies are spelled out in the `./build.sbt` file
 
+### scalafmt
+
+This codebase is formatted using [scalafmt](http://scalameta.org/scalafmt/). A simple `sbt scalafmt` formats your entire code. There are plenty of ways of using it with your favorite editor, as well. There's an [IntelliJ plugin](https://plugins.jetbrains.com/plugin/8236-scalafmt).
+
+#### scalafmt IntelliJ gotchas
+
+When using IntelliJ, for some unknown reason, the `.scalafmt.conf` file in the root folder is not picked up in any of the subfolders. This is especially weird since in other multiproject builds this has worked out well. Therefore, I duplicated the `.scalafmt.conf` file in all subfolders, for now. Yey, code duplication!
+
+In `sbt` it works just as expected.
+
+#### scalafmt dangling closing parenthesis ')'
+
+As is pointed out in the fmt config file, not putting a closing brace on a newline when defining/using method params or case class properties one gets this ultimate abomination:
+
+```scala
+final case class SemanticVersion(major: Int,
+                                 minor: Int,
+                                 patch: Int,
+                                 label: Option[Label] = Option.empty[Label],
+                                 meta:  Option[String] = Option.empty[String])
+    extends SemanticVersionOrdering with Ordered[SemanticVersion]
+```
+
+Instead of the reasonable formatting of:
+
+```scala
+final case class SemanticVersion(
+  major: Int,
+  minor: Int,
+  patch: Int,
+  label: Option[Label] = Option.empty[Label],
+  meta:  Option[String] = Option.empty[String]
+) extends SemanticVersionOrdering with Ordered[SemanticVersion]
+```
+
+
 ## Contributing
 
 Currently, if you want to contribute use the `fork+pull request` model, and Busy Machines team members will have a look at your PR asap. Currently, the active maintainers of this library are:
