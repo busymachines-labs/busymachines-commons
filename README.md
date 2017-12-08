@@ -122,7 +122,7 @@ In `sbt` it works just as expected.
 
 #### scalafmt dangling closing parenthesis ')'
 
-As is pointed out in the fmt config file, not putting a closing brace on a newline when defining/using method params or case class properties one gets this ultimate abomination:
+As is pointed out in the fmt config file, not putting a closing parenthesis on a newline when defining/using method params or case class properties one gets this perfect abomination:
 
 ```scala
 final case class SemanticVersion(major: Int,
