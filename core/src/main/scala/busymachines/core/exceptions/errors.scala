@@ -9,14 +9,12 @@ package busymachines.core.exceptions
   * Since the types here are a minority, the design here emulates the one
   * from the other more commonly used file.
   */
-
 trait ErrorMessage extends FailureMessage
 
 abstract class Error(
   override val message: String,
-  val cause: Option[Throwable] = None
+  val cause:            Option[Throwable] = None
 ) extends Exception(message, cause.orNull) with FailureMessage with ErrorMessage
-
 
 object Error extends Error(SemanticErrors.Error, None) {
 
@@ -24,7 +22,7 @@ object Error extends Error(SemanticErrors.Error, None) {
 
   private final class ReifiedError(
     message: String,
-    cause: Option[Throwable] = None
+    cause:   Option[Throwable] = None
   ) extends Error(message, cause) {
     override def id: FailureID = SemanticErrors.GenericErrorID
   }
@@ -42,7 +40,6 @@ object Error extends Error(SemanticErrors.Error, None) {
 //=============================================================================
 //=============================================================================
 //=============================================================================
-
 
 object SemanticErrors {
 
@@ -67,7 +64,7 @@ object SemanticErrors {
   */
 abstract class InconsistentStateError(
   message: String,
-  cause: Option[Throwable] = None
+  cause:   Option[Throwable] = None
 ) extends Error(message, cause) with SemanticErrors.InconsistentState
 
 object InconsistentStateError extends InconsistentStateError(SemanticErrors.`Inconsistent state`, None) {
@@ -76,7 +73,7 @@ object InconsistentStateError extends InconsistentStateError(SemanticErrors.`Inc
 
   private final class ReifiedInconsistentStateError(
     message: String,
-    cause: Option[Throwable] = None
+    cause:   Option[Throwable] = None
   ) extends InconsistentStateError(message, cause) {
     override def id: FailureID = SemanticErrors.InconsistentStateID
   }

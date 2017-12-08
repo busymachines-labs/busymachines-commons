@@ -10,4 +10,3 @@ package busymachines.core
   *
   */
 case class SubjectToChange(until: String) extends scala.annotation.StaticAnnotation
-

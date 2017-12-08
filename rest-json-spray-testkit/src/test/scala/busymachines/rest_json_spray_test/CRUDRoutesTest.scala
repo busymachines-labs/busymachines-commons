@@ -12,8 +12,8 @@ import org.scalatest.FlatSpec
   */
 private[rest_json_spray_test] class CRUDRoutesTest extends FlatSpec with JsonRestAPITest with SomeTestDTOJsonCodec {
   private lazy val crudAPI = new CRUDRoutesRestAPIForTesting()
-  override implicit val testedRoute: Route = RestAPI.seal(crudAPI).route
-  private implicit val cc: CallerContext = Contexts.none
+  override implicit val testedRoute: Route         = RestAPI.seal(crudAPI).route
+  private implicit val cc:           CallerContext = Contexts.none
 
   //===========================================================================
 
@@ -28,12 +28,12 @@ private[rest_json_spray_test] class CRUDRoutesTest extends FlatSpec with JsonRes
       assert {
         responseAs[Seq[SomeTestDTOGet]] == Seq(
           SomeTestDTOGet(
-            int = 1,
+            int    = 1,
             string = "one",
             option = None
           ),
           SomeTestDTOGet(
-            int = 2,
+            int    = 2,
             string = "two",
             option = None
           )

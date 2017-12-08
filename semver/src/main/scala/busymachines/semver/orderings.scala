@@ -20,14 +20,13 @@ private[semver] trait SnapshotOrdering extends Ordered[Label] {
 
   import OrderingUtils._
 
-
   override def compare(that: Label): Int = that match {
-    case Snapshot => EQ
+    case Snapshot       => EQ
     case AlphaSingleton => LT
     case _: Alpha => LT
     case BetaSingleton => LT
-    case _: Beta => LT
-    case _: Milestone => LT
+    case _: Beta             => LT
+    case _: Milestone        => LT
     case _: ReleaseCandidate => LT
   }
 }
@@ -38,12 +37,12 @@ private[semver] trait AlphaSingletonOrdering extends Ordered[Label] {
   import OrderingUtils._
 
   override def compare(that: Label): Int = that match {
-    case Snapshot => GT
+    case Snapshot       => GT
     case AlphaSingleton => EQ
     case _: Alpha => LT
     case BetaSingleton => LT
-    case _: Beta => LT
-    case _: Milestone => LT
+    case _: Beta             => LT
+    case _: Milestone        => LT
     case _: ReleaseCandidate => LT
   }
 }
@@ -54,12 +53,12 @@ private[semver] trait AlphaOrdering extends Ordered[Label] {
   import OrderingUtils._
 
   override def compare(that: Label): Int = that match {
-    case Snapshot => GT
-    case AlphaSingleton => GT
+    case Snapshot         => GT
+    case AlphaSingleton   => GT
     case Alpha(thatAlpha) => this.alpha.compareTo(thatAlpha)
-    case BetaSingleton => LT
-    case _: Beta => LT
-    case _: Milestone => LT
+    case BetaSingleton    => LT
+    case _: Beta             => LT
+    case _: Milestone        => LT
     case _: ReleaseCandidate => LT
   }
 }
@@ -70,12 +69,12 @@ private[semver] trait BetaSingletonOrdering extends Ordered[Label] {
   import OrderingUtils._
 
   override def compare(that: Label): Int = that match {
-    case Snapshot => GT
+    case Snapshot       => GT
     case AlphaSingleton => GT
     case _: Alpha => GT
     case BetaSingleton => EQ
-    case _: Beta => LT
-    case _: Milestone => LT
+    case _: Beta             => LT
+    case _: Milestone        => LT
     case _: ReleaseCandidate => LT
   }
 }
@@ -86,12 +85,12 @@ private[semver] trait BetaOrdering extends Ordered[Label] {
   import OrderingUtils._
 
   override def compare(that: Label): Int = that match {
-    case Snapshot => GT
+    case Snapshot       => GT
     case AlphaSingleton => GT
     case _: Alpha => GT
-    case BetaSingleton => GT
+    case BetaSingleton  => GT
     case Beta(thatBeta) => this.beta.compareTo(thatBeta)
-    case _: Milestone => LT
+    case _: Milestone        => LT
     case _: ReleaseCandidate => LT
   }
 }
@@ -102,7 +101,7 @@ private[semver] trait MilestoneOrdering extends Ordered[Label] {
   import OrderingUtils._
 
   override def compare(that: Label): Int = that match {
-    case Snapshot => GT
+    case Snapshot       => GT
     case AlphaSingleton => GT
     case _: Alpha => GT
     case BetaSingleton => GT
@@ -118,19 +117,19 @@ private[semver] trait ReleaseCandidateOrdering extends Ordered[Label] {
   import OrderingUtils._
 
   override def compare(that: Label): Int = that match {
-    case Snapshot => GT
+    case Snapshot       => GT
     case AlphaSingleton => GT
     case _: Alpha => GT
     case BetaSingleton => GT
-    case _: Beta => GT
+    case _: Beta      => GT
     case _: Milestone => GT
     case ReleaseCandidate(thatRC) => this.rc.compareTo(thatRC)
   }
 }
 
-
 private[semver] trait SemanticVersionOrdering extends Ordered[SemanticVersion] {
   this: SemanticVersion =>
+
   /**
     * See ordering rules:
     * In the sem-ver spec:
@@ -143,14 +142,15 @@ private[semver] trait SemanticVersionOrdering extends Ordered[SemanticVersion] {
     import OrderingUtils._
     if (this == that) {
       EQ
-    } else {
+    }
+    else {
       val majorComp = this.major.compareTo(that.major)
       val minorComp = this.minor.compareTo(that.minor)
       val patchComp = this.patch.compareTo(that.patch)
       val labelComp = (this.label, that.label) match {
         case (None, None) => EQ
         case (Some(_), None) => LT //basically 1.0.0-RC1 < 1.0.0, regardless of the value of the label
-        case (None, Some(_)) => GT //same thing as above
+        case (None,            Some(_)) => GT //same thing as above
         case (Some(thisLabel), Some(thatLabel)) =>
           thisLabel.compareTo(thatLabel)
       }
@@ -162,16 +162,20 @@ private[semver] trait SemanticVersionOrdering extends Ordered[SemanticVersion] {
           if (patchComp == EQ) {
             if (labelComp == EQ) {
               EQ //technically already handled in that first comparison
-            } else {
+            }
+            else {
               labelComp
             }
-          } else {
+          }
+          else {
             patchComp
           }
-        } else {
+        }
+        else {
           minorComp
         }
-      } else {
+      }
+      else {
         majorComp
       }
     }

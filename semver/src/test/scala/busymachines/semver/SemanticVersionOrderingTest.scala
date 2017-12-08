@@ -12,6 +12,7 @@ class SemanticVersionOrderingTest extends FlatSpec with Matchers {
 
   //technically I could have used >, ==, < operators as well
   private implicit class SemVerTestOps(sv: SemanticVersion) {
+
     def assertGT(that: SemanticVersion): Unit = {
       assert(sv.compareTo(that) > 0, s"$sv should be greater than $that")
     }
@@ -92,10 +93,10 @@ class SemanticVersionOrderingTest extends FlatSpec with Matchers {
 
   it should "properly compare when label dominates — snapshot < alpha < beta < RC < M" in {
     val snapshot = SemanticVersion(1, 0, 0, Labels.snapshot)
-    val alpha = SemanticVersion(1, 0, 0, Labels.alpha(4))
-    val beta = SemanticVersion(1, 0, 0, Labels.beta(3))
-    val m = SemanticVersion(1, 0, 0, Labels.m(2))
-    val rc = SemanticVersion(1, 0, 0, Labels.rc(1))
+    val alpha    = SemanticVersion(1, 0, 0, Labels.alpha(4))
+    val beta     = SemanticVersion(1, 0, 0, Labels.beta(3))
+    val m        = SemanticVersion(1, 0, 0, Labels.m(2))
+    val rc       = SemanticVersion(1, 0, 0, Labels.rc(1))
 
     withClue("snapshot") {
       snapshot assertEQ snapshot

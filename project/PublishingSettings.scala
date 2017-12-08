@@ -29,27 +29,19 @@ import xerial.sbt.Sonatype.SonatypeKeys._
 object PublishingSettings {
 
   def sonatypeSettings: Seq[Setting[_]] = Seq(
-    useGpg := true,
-
-    sonatypeProfileName := Settings.organizationName,
-
+    useGpg                     := true,
+    sonatypeProfileName        := Settings.organizationName,
     publishArtifact in Compile := true,
-
-    publishArtifact in Test := false,
-
-    publishMavenStyle := true,
-
-    pomIncludeRepository := { _ => false },
-
+    publishArtifact in Test    := false,
+    publishMavenStyle          := true,
+    pomIncludeRepository       := (_ => false),
     publishTo := Option {
       if (isSnapshot.value)
         Opts.resolver.sonatypeSnapshots
       else
         Opts.resolver.sonatypeStaging
     },
-
     licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-
     scmInfo := Option(
       ScmInfo(
         url("https://github.com/busymachines/busymachines-commons"),
@@ -57,14 +49,19 @@ object PublishingSettings {
       )
     ),
     developers := List(
-      Developer(id = "lorandbm", name = "Lorand Szakacs", email = "lorand.szakacs@busymachines.com", url = url("https://github.com/lorandszakacs"))
+      Developer(
+        id    = "lorandbm",
+        name  = "Lorand Szakacs",
+        email = "lorand.szakacs@busymachines.com",
+        url   = url("https://github.com/lorandszakacs")
+      )
     )
   )
 
   def noPublishSettings = Seq(
     skip in publishLocal := true,
-    skip in publish := true,
-    publishArtifact := false
+    skip in publish      := true,
+    publishArtifact      := false
   )
 
 }

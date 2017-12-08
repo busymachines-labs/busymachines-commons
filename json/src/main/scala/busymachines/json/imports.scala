@@ -24,5 +24,3 @@ object syntax extends JsonSyntax
 object derive extends SemiAutoDerivation
 
 object autoderive extends io.circe.generic.extras.AutoDerivation
-
-

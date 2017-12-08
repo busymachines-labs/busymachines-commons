@@ -34,34 +34,34 @@ object WebServerIO {
   import cats._
   import implicits._
 
-
   /**
     * Straight forward method that returns an [[IO]] that will create
     * all the side-effects described once executed
     */
   def `bind->handleRequests->wait for stop->unbind`(
-    route: Route,
-    config: MinimalWebServerConfig
+    route:       Route,
+    config:      MinimalWebServerConfig
   )(implicit as: ActorSystem, ec: ExecutionContext, am: ActorMaterializer): IO[Unit] = {
     defaultBindAndHandleIO(route, config).attempt.flatMap {
 
       //in case it fails, then we don't really need to do any cleanup, just print things better
-      case Left(e: java.net.BindException) => IO {
-        println("\n")
-        System.err.println(
-          s"— failed to bind port @ ${config.show} — port already used, or host unreacheable — reason: ${e.getMessage}"
-        )
-      }
+      case Left(e: java.net.BindException) =>
+        IO {
+          println("\n")
+          System.err.println(
+            s"— failed to bind port @ ${config.show} — port already used, or host unreacheable — reason: ${e.getMessage}"
+          )
+        }
 
-      case Left(NonFatal(e)) => IO {
-        println("\n")
-        System.err.println(
-          s"— failed to bind port @ ${config.show} — unknown reason: ${e.getMessage}"
-        )
-        e.printStackTrace()
-        println("\n")
-      }
-
+      case Left(NonFatal(e)) =>
+        IO {
+          println("\n")
+          System.err.println(
+            s"— failed to bind port @ ${config.show} — unknown reason: ${e.getMessage}"
+          )
+          e.printStackTrace()
+          println("\n")
+        }
 
       //if binding succeeds, then we need to move on to the next steps
       case Right(sb) =>
@@ -74,8 +74,8 @@ object WebServerIO {
   }
 
   def `bind->handleRequests->wait for stop->unbind`(
-    restAPI: RestAPI,
-    config: MinimalWebServerConfig
+    restAPI:     RestAPI,
+    config:      MinimalWebServerConfig
   )(implicit as: ActorSystem, ec: ExecutionContext, am: ActorMaterializer): IO[Unit] = {
     this.`bind->handleRequests->wait for stop->unbind`(restAPI.route, config)
   }
@@ -85,16 +85,17 @@ object WebServerIO {
     * then also shuts down your [[ActorSystem]]
     */
   def `bind->handleRequests->wait to stop->unbind->close actor system`(
-    route: Route,
-    config: MinimalWebServerConfig
-  )(implicit as: ActorSystem, ec: ExecutionContext, am: ActorMaterializer): IO[Unit] = for {
-    _ <- `bind->handleRequests->wait for stop->unbind`(route, config)
-    _ <- defaultTerminateActorSystemIO
-  } yield ()
+    route:       Route,
+    config:      MinimalWebServerConfig
+  )(implicit as: ActorSystem, ec: ExecutionContext, am: ActorMaterializer): IO[Unit] =
+    for {
+      _ <- `bind->handleRequests->wait for stop->unbind`(route, config)
+      _ <- defaultTerminateActorSystemIO
+    } yield ()
 
   def `bind->handleRequests->wait to stop->unbind->close actor system`(
-    restAPI: RestAPI,
-    config: MinimalWebServerConfig
+    restAPI:     RestAPI,
+    config:      MinimalWebServerConfig
   )(implicit as: ActorSystem, ec: ExecutionContext, am: ActorMaterializer): IO[Unit] = {
     this.`bind->handleRequests->wait to stop->unbind->close actor system`(restAPI.route, config)
   }
@@ -104,21 +105,23 @@ object WebServerIO {
   //===========================================================================
 
   def defaultBindAndHandleIO(
-    route: Route,
-    config: MinimalWebServerConfig
+    route:       Route,
+    config:      MinimalWebServerConfig
   )(implicit as: ActorSystem, ec: ExecutionContext, am: ActorMaterializer): IO[ServerBinding] = {
     for {
-      serverBinding <- IO.fromFuture {
-        Eval.later(
-          Http().bindAndHandle(
-            handler = route,
-            interface = config.host,
-            port = config.port
+      serverBinding <- {
+        IO.fromFuture {
+          Eval.later(
+            Http().bindAndHandle(
+              handler   = route,
+              interface = config.host,
+              port      = config.port
+            )
           )
-        )
-      }.adaptError {
-        //the reason we do this is because akka wrap sany exception that might occur, and it obscured the type
-        case NonFatal(e) => if (e != null) e.getCause else e
+        }.adaptError {
+          //the reason we do this is because akka wrap sany exception that might occur, and it obscured the type
+          case NonFatal(e) => if (e != null) e.getCause else e
+        }
       }
       _ <- IO(println(s"\n— server online @ http://${config.show}"))
     } yield serverBinding
@@ -134,7 +137,11 @@ object WebServerIO {
 
   def defaultUnbindIO(serverBinding: ServerBinding)(implicit ec: ExecutionContext): IO[Unit] = {
     for {
-      _ <- IO(println(s"— unbinding address @ ${serverBinding.localAddress.getHostName}:${serverBinding.localAddress.getPort}"))
+      _ <- IO(
+            println(
+              s"— unbinding address @ ${serverBinding.localAddress.getHostName}:${serverBinding.localAddress.getPort}"
+            )
+          )
       _ <- IO.fromFuture(Eval.later(serverBinding.unbind()))
     } yield ()
   }
@@ -148,5 +155,3 @@ object WebServerIO {
   }
 
 }
-
-

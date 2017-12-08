@@ -50,5 +50,5 @@ package object json extends DefaultTypeDiscriminatorConfig {
   val HCursor: io.circe.HCursor.type = io.circe.HCursor
 
   type JsonDecodingResult[A] = Either[FailureBase, A]
-  type JsonParsingResult = Either[FailureBase, Json]
+  type JsonParsingResult     = Either[FailureBase, Json]
 }

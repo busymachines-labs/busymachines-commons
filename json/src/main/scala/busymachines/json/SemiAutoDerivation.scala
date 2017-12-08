@@ -1,6 +1,5 @@
 package busymachines.json
 
-
 import io.circe.generic.extras.decoding
 import io.circe.generic.extras.encoding
 import io.circe.generic.extras.{semiauto => circeSemiAuto}
@@ -22,9 +21,11 @@ trait SemiAutoDerivation {
   final def encoder[A](implicit encode: Lazy[encoding.ConfiguredObjectEncoder[A]]): ObjectEncoder[A] =
     circeSemiAuto.deriveEncoder[A](encode)
 
-  final def codec[A](implicit
+  final def codec[A](
+    implicit
     encode: Lazy[encoding.ConfiguredObjectEncoder[A]],
-    decode: Lazy[decoding.ConfiguredDecoder[A]]): Codec[A] = {
+    decode: Lazy[decoding.ConfiguredDecoder[A]]
+  ): Codec[A] = {
     Codec[A](encode.value, decode.value)
   }
 
@@ -37,8 +38,10 @@ trait SemiAutoDerivation {
   def enumerationEncoder[A](implicit encode: Lazy[encoding.EnumerationEncoder[A]]): Encoder[A] =
     circeSemiAuto.deriveEnumerationEncoder[A]
 
-  final def enumerationCodec[A](implicit
+  final def enumerationCodec[A](
+    implicit
     encode: Lazy[encoding.EnumerationEncoder[A]],
     decode: Lazy[decoding.EnumerationDecoder[A]]
-  ): Codec[A] = Codec[A](encode.value, decode.value)
+  ): Codec[A] =
+    Codec[A](encode.value, decode.value)
 }

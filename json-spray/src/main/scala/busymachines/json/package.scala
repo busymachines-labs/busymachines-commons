@@ -27,12 +27,11 @@ package object json {
     * sacrifice a bit of semantic sense (for this particular case)
     * for the greater good.
     */
-  type Codec[A] = spray.json.RootJsonFormat[A]
+  type Codec[A]      = spray.json.RootJsonFormat[A]
   type ValueCodec[A] = spray.json.JsonFormat[A]
 
-  type Json = spray.json.JsValue
+  type Json       = spray.json.JsValue
   type JsonObject = spray.json.JsObject
   val JsonObject: spray.json.JsObject.type = spray.json.JsObject
-
 
 }

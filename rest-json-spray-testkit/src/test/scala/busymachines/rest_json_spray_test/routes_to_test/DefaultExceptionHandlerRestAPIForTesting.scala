@@ -32,7 +32,8 @@ import scala.util.Try
   * @since 07 Sep 2017
   *
   */
-private[rest_json_spray_test] class DefaultExceptionHandlerRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
+private[rest_json_spray_test] class DefaultExceptionHandlerRestAPIForTesting
+    extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
 
   protected def routeDefinition: Route = {
     pathPrefix("not_found") {
@@ -152,12 +153,12 @@ private[rest_json_spray_test] class DefaultExceptionHandlerRestAPIForTesting ext
       Failures(
         FailureID("1234"),
         "a lot of failures",
-        NotFoundFailure("notFound", FailureMessage.Parameters("one" -> "1")),
-        UnauthorizedFailure("unauth", FailureMessage.Parameters("two" -> "2")),
-        ForbiddenFailure("no_access", FailureMessage.Parameters("three" -> "3")),
-        DeniedFailure("denied", FailureMessage.Parameters("four" -> "4")),
-        InvalidInputFailure("invalid", FailureMessage.Parameters("five" -> "5")),
-        ConflictFailure("conflict", FailureMessage.Parameters("six" -> "6")),
+        NotFoundFailure("notFound",    FailureMessage.Parameters("one"   -> "1")),
+        UnauthorizedFailure("unauth",  FailureMessage.Parameters("two"   -> "2")),
+        ForbiddenFailure("no_access",  FailureMessage.Parameters("three" -> "3")),
+        DeniedFailure("denied",        FailureMessage.Parameters("four"  -> "4")),
+        InvalidInputFailure("invalid", FailureMessage.Parameters("five"  -> "5")),
+        ConflictFailure("conflict",    FailureMessage.Parameters("six"   -> "6")),
       )
     }
   }

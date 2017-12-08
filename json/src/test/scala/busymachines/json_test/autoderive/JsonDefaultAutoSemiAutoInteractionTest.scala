@@ -20,8 +20,8 @@ class JsonDefaultAutoSemiAutoInteractionTest extends FlatSpec {
     implicit val explicitImplicitTasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
 
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)
-    val smallMelon: Melon = SmallMelon
+    val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
+    val smallMelon:  Melon = SmallMelon
     val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
     val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
 

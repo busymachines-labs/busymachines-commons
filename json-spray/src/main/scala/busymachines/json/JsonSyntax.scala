@@ -12,7 +12,11 @@ trait JsonSyntax {
     def asJson(implicit encoder: ValueEncoder[A]): Json = encoder.write(wrappedEncodeable)
 
     def asJsonObject(implicit encoder: Encoder[A]): JsonObject =
-      encoder.write(wrappedEncodeable).asJsObject("... well, this sucks, this is why this module is deprecated. You tried to convert an array to a JsObject")
+      encoder
+        .write(wrappedEncodeable)
+        .asJsObject(
+          "... well, this sucks, this is why this module is deprecated. You tried to convert an array to a JsObject"
+        )
   }
 
   implicit final class DecoderOpsString(val rawJson: String) {
@@ -24,6 +28,7 @@ trait JsonSyntax {
   }
 
   implicit final class DecoderOpsJson(val js: Json) {
+
     def unsafeDecodeAs[A](implicit decoder: ValueDecoder[A]): A =
       JsonDecoding.unsafeDecodeAs[A](js)
 

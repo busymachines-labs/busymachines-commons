@@ -11,15 +11,16 @@ import org.scalatest.FlatSpec
   * @since 07 Sep 2017
   *
   */
-private[rest_json_spray_test] class RoutesCompositionTest extends FlatSpec with JsonRestAPITest with SomeTestDTOJsonCodec {
+private[rest_json_spray_test] class RoutesCompositionTest
+    extends FlatSpec with JsonRestAPITest with SomeTestDTOJsonCodec {
   private lazy val combinedAPI: RestAPI = {
-    val eh = new DefaultExceptionHandlerRestAPIForTesting()
+    val eh   = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()
     RestAPI.seal(eh, crud)
   }
 
-  override implicit protected val testedRoute: Route = combinedAPI.route
-  private implicit val cc: CallerContext = Contexts.none
+  override implicit protected val testedRoute: Route         = combinedAPI.route
+  private implicit val cc:                     CallerContext = Contexts.none
 
   //===========================================================================
 
@@ -46,18 +47,20 @@ private[rest_json_spray_test] class RoutesCompositionTest extends FlatSpec with 
       expectStatus(StatusCodes.OK)
 
       val r = responseAs[Seq[SomeTestDTOGet]]
-      assert(r == Seq(
-        SomeTestDTOGet(
-          int = 1,
-          string = "one",
-          option = None
-        ),
-        SomeTestDTOGet(
-          int = 2,
-          string = "two",
-          option = None
+      assert(
+        r == Seq(
+          SomeTestDTOGet(
+            int    = 1,
+            string = "one",
+            option = None
+          ),
+          SomeTestDTOGet(
+            int    = 2,
+            string = "two",
+            option = None
+          )
         )
-      ))
+      )
     }
   }
 

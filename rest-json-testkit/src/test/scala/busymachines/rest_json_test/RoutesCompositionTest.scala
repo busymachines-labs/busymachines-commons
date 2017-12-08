@@ -12,14 +12,14 @@ import busymachines.rest_json_test.routes_to_test._
   */
 private[rest_json_test] class RoutesCompositionTest extends ExampleRestAPITestBaseClass {
   private lazy val combinedAPI: RestAPI = {
-    val eh = new DefaultExceptionHandlerRestAPIForTesting()
+    val eh   = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()
-    val au = new BasicAuthenticatedRoutesRestAPIForTesting()
+    val au   = new BasicAuthenticatedRoutesRestAPIForTesting()
     RestAPI.seal(eh, crud, au)
   }
 
-  override implicit protected val testedRoute: Route = combinedAPI.route
-  private implicit val cc: CallerContext = Contexts.none
+  override implicit protected val testedRoute: Route         = combinedAPI.route
+  private implicit val cc:                     CallerContext = Contexts.none
 
   import SomeTestDTOJsonCodec._
   import busymachines.json.FailureMessageJsonCodec._
@@ -49,18 +49,20 @@ private[rest_json_test] class RoutesCompositionTest extends ExampleRestAPITestBa
       expectStatus(StatusCodes.OK)
 
       val r = responseAs[Seq[SomeTestDTOGet]]
-      assert(r == Seq(
-        SomeTestDTOGet(
-          int = 1,
-          string = "one",
-          option = None
-        ),
-        SomeTestDTOGet(
-          int = 2,
-          string = "two",
-          option = None
+      assert(
+        r == Seq(
+          SomeTestDTOGet(
+            int    = 1,
+            string = "one",
+            option = None
+          ),
+          SomeTestDTOGet(
+            int    = 2,
+            string = "two",
+            option = None
+          )
         )
-      ))
+      )
     }
   }
 

@@ -9,8 +9,8 @@ object Settings {
   def commonSettings: Seq[Setting[_]] =
     Seq(
       organization in ThisBuild := organizationName,
-      homepage := Some(url(bmCommonsHomepage)),
-      scalaVersion := Dependencies.mainScalaVersion,
+      homepage                  := Some(url(bmCommonsHomepage)),
+      scalaVersion              := Dependencies.mainScalaVersion,
       //      crossScalaVersions := Dependencies.seqOfCrossScalaVersions,
 
       /**

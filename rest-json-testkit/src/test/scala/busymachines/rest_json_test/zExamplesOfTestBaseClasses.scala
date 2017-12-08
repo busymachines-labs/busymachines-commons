@@ -18,7 +18,8 @@ abstract class ExampleRestAPITestBaseClass extends FlatSpec with JsonRestAPITest
   * It's very important to use [[OneInstancePerTest]] in this case because we have mutable
   * state
   */
-abstract class ExampleRestAPITestBaseClassWithFixture extends fixture.FlatSpec with JsonRestAPITest with OneInstancePerTest {
+abstract class ExampleRestAPITestBaseClassWithFixture
+    extends fixture.FlatSpec with JsonRestAPITest with OneInstancePerTest {
   protected[this] var _testedRoute: Route = _
 
   override implicit protected def testedRoute: Route = _testedRoute

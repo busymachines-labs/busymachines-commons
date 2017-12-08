@@ -14,5 +14,7 @@ object jsonrest {
   val JsonSupport: akkahttpcirce.FailFastCirceSupport.type = akkahttpcirce.FailFastCirceSupport
 
   type ErrorAccumulatingJsonSupport = akkahttpcirce.ErrorAccumulatingCirceSupport
-  val ErrorAccumulatingJsonSupport: akkahttpcirce.ErrorAccumulatingCirceSupport.type = akkahttpcirce.ErrorAccumulatingCirceSupport
+
+  val ErrorAccumulatingJsonSupport: akkahttpcirce.ErrorAccumulatingCirceSupport.type =
+    akkahttpcirce.ErrorAccumulatingCirceSupport
 }

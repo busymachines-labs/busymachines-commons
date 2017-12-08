@@ -10,7 +10,6 @@ import busymachines.json_spray_test._
   * @since 10 Aug 2017
   *
   */
-
 private[json_spray_test] object MelonsJsonCodec extends BusymachinesDefaultJsonCodec {
 
   implicit val tasteCodec: ValueCodec[Taste] = derive.enumerationCodec[Taste](
@@ -26,6 +25,5 @@ private[json_spray_test] object MelonsJsonCodec extends BusymachinesDefaultJsonC
   )
 
   implicit val anarchistMelonCodec: Codec[AnarchistMelon] = derive.jsonFormat3(AnarchistMelon)
-
 
 }

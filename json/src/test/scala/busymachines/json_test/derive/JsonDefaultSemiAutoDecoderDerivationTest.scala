@@ -3,7 +3,6 @@ package busymachines.json_test.derive
 import busymachines.json_test._
 import org.scalatest.FlatSpec
 
-
 /**
   * Here we test [[busymachines.json.Decoder]] derivation
   *
@@ -34,7 +33,6 @@ class JsonDefaultSemiAutoDecoderDerivationTest extends FlatSpec {
     val read = rawJson.unsafeDecodeAs[AnarchistMelon]
     assertResult(anarchistMelon)(read)
   }
-
 
   //-----------------------------------------------------------------------------------------------
 
@@ -98,8 +96,8 @@ class JsonDefaultSemiAutoDecoderDerivationTest extends FlatSpec {
 
   it should "... deserialize list of all case classes from the hierarchy" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)
-    val smallMelon: Melon = SmallMelon
+    val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
+    val smallMelon:  Melon = SmallMelon
     val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
     val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
 
@@ -146,7 +144,3 @@ class JsonDefaultSemiAutoDecoderDerivationTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 }
-
-
-
-

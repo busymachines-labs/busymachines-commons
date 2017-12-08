@@ -31,7 +31,8 @@ import scala.concurrent.Future
   * @since 07 Sep 2017
   *
   */
-private[rest_json_spray_test] class CRUDRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
+private[rest_json_spray_test] class CRUDRoutesRestAPIForTesting
+    extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
   import scala.concurrent.ExecutionContext.Implicits.global
 
   override protected def routeDefinition: Route =
@@ -40,21 +41,21 @@ private[rest_json_spray_test] class CRUDRoutesRestAPIForTesting extends JsonRest
         post {
           entity(as[SomeTestDTOPost]) { p =>
             val response = SomeTestDTOGet(
-              int = 42,
+              int    = 42,
               string = p.string,
               option = p.option
             )
-            complete(StatusCodes.Created, Future.successful(response))
+            complete((StatusCodes.Created, Future.successful(response)))
           }
         } ~ get {
           val response = Seq(
             SomeTestDTOGet(
-              int = 1,
+              int    = 1,
               string = "one",
               option = None
             ),
             SomeTestDTOGet(
-              int = 2,
+              int    = 2,
               string = "two",
               option = None
             )
@@ -65,7 +66,7 @@ private[rest_json_spray_test] class CRUDRoutesRestAPIForTesting extends JsonRest
       } ~ path(IntNumber) { id =>
         get {
           val response = SomeTestDTOGet(
-            int = id,
+            int    = id,
             string = "wabbalubbadubdub",
             option = Option(42)
           )
@@ -73,7 +74,7 @@ private[rest_json_spray_test] class CRUDRoutesRestAPIForTesting extends JsonRest
         } ~ put {
           entity(as[SomeTestDTOPut]) { p =>
             val response = SomeTestDTOGet(
-              int = id,
+              int    = id,
               string = p.string,
               option = p.option
             )
@@ -82,7 +83,7 @@ private[rest_json_spray_test] class CRUDRoutesRestAPIForTesting extends JsonRest
         } ~ patch {
           entity(as[SomeTestDTOPatch]) { p =>
             val response = SomeTestDTOGet(
-              int = id,
+              int    = id,
               string = p.string,
               option = None
             )

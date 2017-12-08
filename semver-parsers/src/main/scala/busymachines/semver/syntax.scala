@@ -11,6 +11,7 @@ import busymachines.semver.SemanticVersionParsers.SemVerParsingResult
 object syntax {
 
   implicit class SemanticVersionCompanionOps(doNotCare: SemanticVersion.type) {
+
     def fromString(semVer: String): SemVerParsingResult[SemanticVersion] =
       SemanticVersionParsers.parseSemanticVersion(semVer)
 
@@ -19,6 +20,7 @@ object syntax {
   }
 
   implicit class SemanticVersionLabelCompanionOps(doNotCare: Labels.type) {
+
     def fromString(semVer: String): SemVerParsingResult[Label] =
       SemanticVersionParsers.parseLabel(semVer)
 

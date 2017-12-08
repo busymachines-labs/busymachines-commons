@@ -11,24 +11,26 @@ import busymachines.core.exceptions._
   */
 sealed abstract class InvalidSemanticVersionParsingFailure(m: String) extends InvalidInputFailure(m)
 
-final case class InvalidSemanticVersionFailure(input: String, parseError: String) extends InvalidSemanticVersionParsingFailure(
-  s"Failed to parse semantic version '$input' because: $parseError"
-) {
+final case class InvalidSemanticVersionFailure(input: String, parseError: String)
+    extends InvalidSemanticVersionParsingFailure(
+      s"Failed to parse semantic version '$input' because: $parseError"
+    ) {
   override def id: FailureID = ParsingFailureIDs.InvalidSemanticVersion
 
   override val parameters: Parameters = Parameters(
-    "input" -> input,
+    "input"      -> input,
     "parseError" -> parseError
   )
 }
 
-final case class InvalidSemanticVersionLabelFailure(input: String, parseError: String) extends InvalidSemanticVersionParsingFailure(
-  s"Failed to parse label of semantic version '$input' because: $parseError"
-) {
+final case class InvalidSemanticVersionLabelFailure(input: String, parseError: String)
+    extends InvalidSemanticVersionParsingFailure(
+      s"Failed to parse label of semantic version '$input' because: $parseError"
+    ) {
   override def id: FailureID = ParsingFailureIDs.InvalidSemanticVersionLabel
 
   override val parameters: Parameters = Parameters(
-    "input" -> input,
+    "input"      -> input,
     "parseError" -> parseError
   )
 }

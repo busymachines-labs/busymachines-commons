@@ -15,14 +15,14 @@ import busymachines.semver.Labels._
 private[semver] object SemanticVersionShows {
 
   private val EmptyString = ""
-  private val Dot = "."
+  private val Dot         = "."
 
   object lowercase {
     private val snapshot: String = "snapshot"
-    private val alpha: String = "alpha"
-    private val beta: String = "beta"
-    private val m: String = "m"
-    private val rc: String = "rc"
+    private val alpha:    String = "alpha"
+    private val beta:     String = "beta"
+    private val m:        String = "m"
+    private val rc:       String = "rc"
 
     object withDotSeparator {
       def show(sv: SemanticVersion): String = genericSVLowercaseShow(sv, Dot)
@@ -38,29 +38,29 @@ private[semver] object SemanticVersionShows {
 
     private[lowercase] def genericSVLowercaseShow(sv: SemanticVersion, separator: String): String = {
       val majorMinorPatch = s"${sv.major}.${sv.minor}.${sv.patch}"
-      val preReleaseLabel = if (sv.label.isEmpty) EmptyString else s"-${genericLowercaseLabelShow(sv.label.get, separator)}"
+      val preReleaseLabel =
+        if (sv.label.isEmpty) EmptyString else s"-${genericLowercaseLabelShow(sv.label.get, separator)}"
       val metaLabel = if (sv.meta.isEmpty) EmptyString else s"+${sv.meta.get.trim}"
       s"$majorMinorPatch$preReleaseLabel$metaLabel"
     }
 
     private[lowercase] def genericLowercaseLabelShow(l: Label, separator: String): String = l match {
-      case Snapshot => snapshot
-      case AlphaSingleton => alpha
-      case Alpha(alphaVer) => s"$alpha$separator$alphaVer"
-      case BetaSingleton => beta
-      case Beta(betaVer) => s"$beta$separator$betaVer"
-      case Milestone(mVer) => s"$m$separator$mVer"
+      case Snapshot                => snapshot
+      case AlphaSingleton          => alpha
+      case Alpha(alphaVer)         => s"$alpha$separator$alphaVer"
+      case BetaSingleton           => beta
+      case Beta(betaVer)           => s"$beta$separator$betaVer"
+      case Milestone(mVer)         => s"$m$separator$mVer"
       case ReleaseCandidate(rcVer) => s"$rc$separator$rcVer"
     }
   }
 
   object uppercase {
     private val SNAPSHOT: String = "SNAPSHOT"
-    private val ALPHA: String = "ALPHA"
-    private val BETA: String = "BETA"
-    private val M: String = "M"
-    private val RC: String = "RC"
-
+    private val ALPHA:    String = "ALPHA"
+    private val BETA:     String = "BETA"
+    private val M:        String = "M"
+    private val RC:       String = "RC"
 
     object withDotSeparator {
       def show(sv: SemanticVersion): String = genericSVUppercaseShow(sv, Dot)
@@ -76,18 +76,19 @@ private[semver] object SemanticVersionShows {
 
     private[uppercase] def genericSVUppercaseShow(sv: SemanticVersion, separator: String): String = {
       val majorMinorPatch = s"${sv.major}.${sv.minor}.${sv.patch}"
-      val preReleaseLabel = if (sv.label.isEmpty) EmptyString else s"-${genericUppercaseLabelShow(sv.label.get, separator)}"
+      val preReleaseLabel =
+        if (sv.label.isEmpty) EmptyString else s"-${genericUppercaseLabelShow(sv.label.get, separator)}"
       val metaLabel = if (sv.meta.isEmpty) EmptyString else s"+${sv.meta.get.trim}"
       s"$majorMinorPatch$preReleaseLabel$metaLabel"
     }
 
     private[uppercase] def genericUppercaseLabelShow(l: Label, separator: String): String = l match {
-      case Snapshot => SNAPSHOT
-      case AlphaSingleton => ALPHA
-      case Alpha(alphaVer) => s"$ALPHA$separator$alphaVer"
-      case BetaSingleton => BETA
-      case Beta(betaVer) => s"$BETA$separator$betaVer"
-      case Milestone(mVer) => s"$M$separator$mVer"
+      case Snapshot                => SNAPSHOT
+      case AlphaSingleton          => ALPHA
+      case Alpha(alphaVer)         => s"$ALPHA$separator$alphaVer"
+      case BetaSingleton           => BETA
+      case Beta(betaVer)           => s"$BETA$separator$betaVer"
+      case Milestone(mVer)         => s"$M$separator$mVer"
       case ReleaseCandidate(rcVer) => s"$RC$separator$rcVer"
     }
   }

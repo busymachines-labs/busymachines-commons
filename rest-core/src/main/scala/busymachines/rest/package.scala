@@ -37,11 +37,11 @@ package object rest {
   val RejectionHandler: server.RejectionHandler.type = server.RejectionHandler
 
   type StatusCode = model.StatusCode
-  val StatusCode: model.StatusCode.type = model.StatusCode
+  val StatusCode:  model.StatusCode.type  = model.StatusCode
   val StatusCodes: model.StatusCodes.type = model.StatusCodes
 
   type ContentType = model.ContentType
-  val ContentType: model.ContentType.type = model.ContentType
+  val ContentType:  model.ContentType.type  = model.ContentType
   val ContentTypes: model.ContentTypes.type = model.ContentTypes
 
   type RoutingSettings = settings.RoutingSettings

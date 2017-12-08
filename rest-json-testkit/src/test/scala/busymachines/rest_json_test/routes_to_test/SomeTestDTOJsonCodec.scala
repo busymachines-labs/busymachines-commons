@@ -16,9 +16,9 @@ private[rest_json_test] trait SomeTestDTOJsonCodec {
 
   import busymachines.json._
 
-  implicit val someTestDTOGetCodec: Codec[SomeTestDTOGet] = derive.codec[SomeTestDTOGet]
-  implicit val someTestDTOPostCodec: Codec[SomeTestDTOPost] = derive.codec[SomeTestDTOPost]
-  implicit val someTestDTOPutCodec: Codec[SomeTestDTOPut] = derive.codec[SomeTestDTOPut]
+  implicit val someTestDTOGetCodec:   Codec[SomeTestDTOGet]   = derive.codec[SomeTestDTOGet]
+  implicit val someTestDTOPostCodec:  Codec[SomeTestDTOPost]  = derive.codec[SomeTestDTOPost]
+  implicit val someTestDTOPutCodec:   Codec[SomeTestDTOPut]   = derive.codec[SomeTestDTOPut]
   implicit val someTestDTOPatchCodec: Codec[SomeTestDTOPatch] = derive.codec[SomeTestDTOPatch]
 
 }

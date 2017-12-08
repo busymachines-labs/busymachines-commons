@@ -20,5 +20,3 @@ package busymachines.json
   *
   */
 object syntax extends JsonSyntax
-
-

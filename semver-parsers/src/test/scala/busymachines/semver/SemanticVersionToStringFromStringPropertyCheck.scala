@@ -9,7 +9,8 @@ import org.scalatest.prop.PropertyChecks
   * @since 13 Nov 2017
   *
   */
-class SemanticVersionToStringFromStringPropertyCheck extends FunSpec with PropertyChecks with SemanticVersionGenerators {
+class SemanticVersionToStringFromStringPropertyCheck
+    extends FunSpec with PropertyChecks with SemanticVersionGenerators {
 
   describe("Label parser") {
     it("should be able to parse all lowercase representations of Label") {
