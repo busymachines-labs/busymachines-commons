@@ -54,8 +54,8 @@ object RestAPI {
   }
 
   private class ReifiedRestAPI(
-    private val r: Route,
-    override protected val failureMessageMarshaller: ToEntityMarshaller[FailureMessage],
+    private val r:                                    Route,
+    override protected val failureMessageMarshaller:  ToEntityMarshaller[FailureMessage],
     override protected val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages]
   ) extends RestAPI {
     override protected def routeDefinition: Route = r
@@ -98,13 +98,12 @@ object RestAPI {
     * and working with the given [[RejectionHandler]].
     *
     */
-  def seal(api: RestAPI, apis: RestAPI*)(implicit
-    routingSettings: RoutingSettings,
-    parserSettings: ParserSettings = null,
-    rejectionHandler: RejectionHandler = RejectionHandler.default,
-    exceptionHandler: ExceptionHandler = null
-  ): RestAPI = {
-    val r = combine(api, apis: _ *)
+  def seal(api:                                            RestAPI, apis: RestAPI*)(implicit
+                                         routingSettings:  RoutingSettings,
+                                         parserSettings:   ParserSettings = null,
+                                         rejectionHandler: RejectionHandler = RejectionHandler.default,
+                                         exceptionHandler: ExceptionHandler = null): RestAPI = {
+    val r           = combine(api, apis: _*)
     val sealedRoute = Route.seal(r.route)
     new ReifiedRestAPI(sealedRoute, api.failureMessageMarshaller, api.failureMessageMarshaller)
   }
@@ -129,88 +128,91 @@ object RestAPI {
     * Check the scaladoc for each of these failures in case something is not clear,
     * but for convenience that scaladoc has been copied here as well.
     */
-  private def semanticallyMeaningfulHandler(implicit fm: ToEntityMarshaller[FailureMessage], fsm: ToEntityMarshaller[FailureMessages]): ExceptionHandler = ExceptionHandler {
-    /**
-      * Meaning:
-      *
-      * "you cannot find something; it may or may not exist, and I'm not going
-      * to tell you anything else"
-      */
-    case _: SemanticFailures.NotFound =>
-      failure(StatusCodes.NotFound)
+  private def semanticallyMeaningfulHandler(implicit fm: ToEntityMarshaller[FailureMessage],
+                                            fsm:         ToEntityMarshaller[FailureMessages]): ExceptionHandler =
+    ExceptionHandler {
 
-    /**
-      * Meaning:
-      *
-      * "it exists, but you're not even allowed to know about that;
-      * so for short, you can't find it".
-      */
-    case _: SemanticFailures.Forbidden =>
-      failure(StatusCodes.NotFound)
+      /**
+        * Meaning:
+        *
+        * "you cannot find something; it may or may not exist, and I'm not going
+        * to tell you anything else"
+        */
+      case _: SemanticFailures.NotFound =>
+        failure(StatusCodes.NotFound)
 
-    /**
-      * Meaning:
-      *
-      * "something is wrong in the way you authorized, you can try again slightly
-      * differently"
-      */
-    case e: FailureMessage with SemanticFailures.Unauthorized =>
-      failure(StatusCodes.Unauthorized, e)
+      /**
+        * Meaning:
+        *
+        * "it exists, but you're not even allowed to know about that;
+        * so for short, you can't find it".
+        */
+      case _: SemanticFailures.Forbidden =>
+        failure(StatusCodes.NotFound)
 
-    case e: DeniedFailure =>
-      failure(StatusCodes.Forbidden, e)
+      /**
+        * Meaning:
+        *
+        * "something is wrong in the way you authorized, you can try again slightly
+        * differently"
+        */
+      case e: FailureMessage with SemanticFailures.Unauthorized =>
+        failure(StatusCodes.Unauthorized, e)
 
+      case e: DeniedFailure =>
+        failure(StatusCodes.Forbidden, e)
 
-    /**
-      * Obviously, whenever some input data is wrong.
-      *
-      * This one is probably your best friend, and the one you
-      * have to specialize the most for any given problem domain.
-      * Otherwise you just wind up with a bunch of nonsense, obtuse
-      * errors like:
-      * - "the input was wrong"
-      * - "gee, thanks, more details, please?"
-      * - sometimes you might be tempted to use NotFound, but this
-      * might be better suited. For instance, when you are dealing
-      * with a "foreign key" situation, and the foreign key is
-      * the input of the client. You'd want to be able to tell
-      * the user that their input was wrong because something was
-      * not found, not simply that it was not found.
-      *
-      * Therefore, specialize frantically.
-      */
-    case e: FailureMessage with SemanticFailures.InvalidInput =>
-      failure(StatusCodes.BadRequest, e)
+      /**
+        * Obviously, whenever some input data is wrong.
+        *
+        * This one is probably your best friend, and the one you
+        * have to specialize the most for any given problem domain.
+        * Otherwise you just wind up with a bunch of nonsense, obtuse
+        * errors like:
+        * - "the input was wrong"
+        * - "gee, thanks, more details, please?"
+        * - sometimes you might be tempted to use NotFound, but this
+        * might be better suited. For instance, when you are dealing
+        * with a "foreign key" situation, and the foreign key is
+        * the input of the client. You'd want to be able to tell
+        * the user that their input was wrong because something was
+        * not found, not simply that it was not found.
+        *
+        * Therefore, specialize frantically.
+        */
+      case e: FailureMessage with SemanticFailures.InvalidInput =>
+        failure(StatusCodes.BadRequest, e)
 
-    /**
-      * Special type of invalid input.
-      *
-      * E.g. when you're duplicating something that ought to be unique,
-      * like ids, emails.
-      */
-    case e: FailureMessage with SemanticFailures.Conflict =>
-      failure(StatusCodes.Conflict, e)
+      /**
+        * Special type of invalid input.
+        *
+        * E.g. when you're duplicating something that ought to be unique,
+        * like ids, emails.
+        */
+      case e: FailureMessage with SemanticFailures.Conflict =>
+        failure(StatusCodes.Conflict, e)
 
-    /**
-      * This might be a stretch of an assumption, but usually there's no
-      * reason to accumulate messages, except in cases of input validation
-      */
-    case es: FailureMessages =>
-      failures(StatusCodes.BadRequest, es)
+      /**
+        * This might be a stretch of an assumption, but usually there's no
+        * reason to accumulate messages, except in cases of input validation
+        */
+      case es: FailureMessages =>
+        failures(StatusCodes.BadRequest, es)
 
-    case e: ErrorMessage =>
-      failure(StatusCodes.InternalServerError, e)
+      case e: ErrorMessage =>
+        failure(StatusCodes.InternalServerError, e)
 
-    case e: NotImplementedError =>
-      failure(StatusCodes.NotImplemented, Error(e))
-  }
+      case e: NotImplementedError =>
+        failure(StatusCodes.NotImplemented, Error(e))
+    }
 
   /**
     * This is a handler for the fabled "Boxed Error" that you get when
     * a future fails with what is marked as an "Error". Unfortunately
     * this applies to NotImplementedErrors, which is really annoying :/
     */
-  private def boxedErrorHandler(implicit fm: ToEntityMarshaller[FailureMessage], fsm: ToEntityMarshaller[FailureMessages]): ExceptionHandler = ExceptionHandler {
+  private def boxedErrorHandler(implicit fm: ToEntityMarshaller[FailureMessage],
+                                fsm:         ToEntityMarshaller[FailureMessages]): ExceptionHandler = ExceptionHandler {
     case e: NotImplementedError =>
       failure(StatusCodes.NotImplemented, Error(e))
 
@@ -218,7 +220,8 @@ object RestAPI {
       failure(StatusCodes.InternalServerError, Error(e))
   }
 
-  def defaultExceptionHandler(implicit fm: ToEntityMarshaller[FailureMessage], fsm: ToEntityMarshaller[FailureMessages]): ExceptionHandler =
+  def defaultExceptionHandler(implicit fm: ToEntityMarshaller[FailureMessage],
+                              fsm:         ToEntityMarshaller[FailureMessages]): ExceptionHandler =
     semanticallyMeaningfulHandler orElse ExceptionHandler {
       case e: java.util.concurrent.ExecutionException =>
         boxedErrorHandler.apply(e.getCause)

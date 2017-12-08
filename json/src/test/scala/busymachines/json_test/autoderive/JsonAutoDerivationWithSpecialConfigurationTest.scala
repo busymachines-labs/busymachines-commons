@@ -23,16 +23,16 @@ class JsonAutoDerivationWithSpecialConfigurationTest extends FlatSpec {
   final implicit val _melonManiaDiscriminatorConfig: Configuration =
     Configuration.default.withDiscriminator("_melonMania")
 
-
   it should "... type discriminator should be _melonMania, and case object hierarchy codec should be string only" in {
+
     /**
       * We explicitly create a codec for the enumeration of case objects, thus, it should not have _melonMania discriminator
       */
     implicit val explicitImplicitTasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
 
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)
-    val smallMelon: Melon = SmallMelon
+    val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
+    val smallMelon:  Melon = SmallMelon
     val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
     val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
 
@@ -73,8 +73,8 @@ class JsonAutoDerivationWithSpecialConfigurationTest extends FlatSpec {
 
   it should "... type discriminator should be _melonMania, and case object hierarchy serialization should also be affected by this new configuration" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)
-    val smallMelon: Melon = SmallMelon
+    val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
+    val smallMelon:  Melon = SmallMelon
     val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
     val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
 

@@ -51,10 +51,10 @@ object JsonParsing {
 
 object PrettyJson {
   val noSpacesNoNulls: JsonPrinter = CompactPrinter
-  val spaces2NoNulls: JsonPrinter = PrettyPrinter
+  val spaces2NoNulls:  JsonPrinter = PrettyPrinter
 
   val noSpaces: JsonPrinter = noSpacesNoNulls
-  val spaces2: JsonPrinter = spaces2NoNulls
+  val spaces2:  JsonPrinter = spaces2NoNulls
 
 }
 

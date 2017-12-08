@@ -10,29 +10,29 @@ import org.scalatest.{FlatSpec, Matchers}
   */
 class SemanticVersionShowsTest extends FlatSpec with Matchers {
 
-  val snapshot = SemanticVersion(1, 0, 0, Labels.snapshot)
+  val snapshot    = SemanticVersion(1, 0, 0, Labels.snapshot)
   val alphaSingle = SemanticVersion(1, 0, 0, Labels.alpha)
-  val alpha1 = SemanticVersion(1, 0, 0, Labels.alpha(1))
-  val betaSingle = SemanticVersion(1, 0, 0, Labels.beta)
-  val beta1 = SemanticVersion(1, 0, 0, Labels.beta(1))
-  val m1 = SemanticVersion(1, 0, 0, Labels.m(1))
-  val rc1 = SemanticVersion(1, 0, 0, Labels.rc(1))
+  val alpha1      = SemanticVersion(1, 0, 0, Labels.alpha(1))
+  val betaSingle  = SemanticVersion(1, 0, 0, Labels.beta)
+  val beta1       = SemanticVersion(1, 0, 0, Labels.beta(1))
+  val m1          = SemanticVersion(1, 0, 0, Labels.m(1))
+  val rc1         = SemanticVersion(1, 0, 0, Labels.rc(1))
 
-  val snapshotWMeta = SemanticVersion(1, 0, 0, Labels.snapshot, Option("1111"))
-  val alphaSingleWMeta = SemanticVersion(1, 0, 0, Labels.alpha, Option("2222"))
-  val alpha1WMeta = SemanticVersion(1, 0, 0, Labels.alpha(1), Option("3333"))
-  val betaSingleWMeta = SemanticVersion(1, 0, 0, Labels.beta, Option("4444"))
-  val beta1WMeta = SemanticVersion(1, 0, 0, Labels.beta(1), Option("5555"))
-  val m1WMeta = SemanticVersion(1, 0, 0, Labels.m(1), Option("6666"))
-  val rc1WMeta = SemanticVersion(1, 0, 0, Labels.rc(1), Option("7777"))
+  val snapshotWMeta    = SemanticVersion(1, 0, 0, Labels.snapshot, Option("1111"))
+  val alphaSingleWMeta = SemanticVersion(1, 0, 0, Labels.alpha,    Option("2222"))
+  val alpha1WMeta      = SemanticVersion(1, 0, 0, Labels.alpha(1), Option("3333"))
+  val betaSingleWMeta  = SemanticVersion(1, 0, 0, Labels.beta,     Option("4444"))
+  val beta1WMeta       = SemanticVersion(1, 0, 0, Labels.beta(1),  Option("5555"))
+  val m1WMeta          = SemanticVersion(1, 0, 0, Labels.m(1),     Option("6666"))
+  val rc1WMeta         = SemanticVersion(1, 0, 0, Labels.rc(1),    Option("7777"))
 
-  val snapshotWOLabelWMeta = SemanticVersion(1, 0, 0, None, Option("1111"))
+  val snapshotWOLabelWMeta    = SemanticVersion(1, 0, 0, None, Option("1111"))
   val alphaSingleWOLabelWMeta = SemanticVersion(1, 0, 0, None, Option("2222"))
-  val alpha1WOLabelWMeta = SemanticVersion(1, 0, 0, None, Option("3333"))
-  val betaSingleWOLabelWMeta = SemanticVersion(1, 0, 0, None, Option("4444"))
-  val beta1WOLabelWMeta = SemanticVersion(1, 0, 0, None, Option("5555"))
-  val m1WOLabelWMeta = SemanticVersion(1, 0, 0, None, Option("6666"))
-  val rc1WOLabelWMeta = SemanticVersion(1, 0, 0, None, Option("7777"))
+  val alpha1WOLabelWMeta      = SemanticVersion(1, 0, 0, None, Option("3333"))
+  val betaSingleWOLabelWMeta  = SemanticVersion(1, 0, 0, None, Option("4444"))
+  val beta1WOLabelWMeta       = SemanticVersion(1, 0, 0, None, Option("5555"))
+  val m1WOLabelWMeta          = SemanticVersion(1, 0, 0, None, Option("6666"))
+  val rc1WOLabelWMeta         = SemanticVersion(1, 0, 0, None, Option("7777"))
 
   behavior of "lowercase, no separator show"
 

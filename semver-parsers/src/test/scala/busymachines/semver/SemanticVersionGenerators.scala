@@ -10,13 +10,13 @@ import org.scalacheck.Gen
   */
 trait SemanticVersionGenerators {
 
-  private val snapshotLabelGen: Gen[Label] = Gen.const(Labels.snapshot)
+  private val snapshotLabelGen:  Gen[Label] = Gen.const(Labels.snapshot)
   private val alphaSingletonGen: Gen[Label] = Gen.const(Labels.alpha)
-  private val alphaGen: Gen[Label] = Gen.posNum[Int].map(i => Labels.alpha(i))
-  private val betaSingletonGen: Gen[Label] = Gen.const(Labels.beta)
-  private val betaGen: Gen[Label] = Gen.posNum[Int].map(i => Labels.beta(i))
-  private val rcGen: Gen[Label] = Gen.posNum[Int].map(i => Labels.rc(i))
-  private val mGen: Gen[Label] = Gen.posNum[Int].map(i => Labels.m(i))
+  private val alphaGen:          Gen[Label] = Gen.posNum[Int].map(i => Labels.alpha(i))
+  private val betaSingletonGen:  Gen[Label] = Gen.const(Labels.beta)
+  private val betaGen:           Gen[Label] = Gen.posNum[Int].map(i => Labels.beta(i))
+  private val rcGen:             Gen[Label] = Gen.posNum[Int].map(i => Labels.rc(i))
+  private val mGen:              Gen[Label] = Gen.posNum[Int].map(i => Labels.m(i))
 
   implicit val labelGenerator: Gen[Label] = {
     Gen.oneOf(
@@ -37,15 +37,15 @@ trait SemanticVersionGenerators {
       patch <- Gen.posNum[Int]
       optLabel <- Gen.option(labelGenerator)
       optMeta <- Gen.option(Gen.alphaStr)
-    } yield SemanticVersion(
-      major = major,
-      minor = minor,
-      patch = patch,
-      label = optLabel,
-      meta = optMeta
-    )
+    } yield
+      SemanticVersion(
+        major = major,
+        minor = minor,
+        patch = patch,
+        label = optLabel,
+        meta  = optMeta
+      )
 
   }
-
 
 }

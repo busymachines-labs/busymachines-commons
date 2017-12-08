@@ -31,7 +31,8 @@ import scala.concurrent.Future
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class BearerAuthenticatedRoutesRestAPIForTesting extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
+private[rest_json_test] class BearerAuthenticatedRoutesRestAPIForTesting
+    extends JsonRestAPI with Directives with SomeTestDTOJsonCodec {
 
   //  Alternantively, if you remove SomeTestDTOJsonCodec mixing
   //  import busymachines.json._
@@ -44,9 +45,7 @@ private[rest_json_test] class BearerAuthenticatedRoutesRestAPIForTesting extends
       RestAPIAuthentications.TokenBearer.authentication { basicAuth: String =>
         pathEndOrSingleSlash {
           get {
-            complete(
-              StatusCodes.OK,
-              Future.successful(SomeTestDTOGet(int = 42, string = basicAuth, None)))
+            complete(StatusCodes.OK, Future.successful(SomeTestDTOGet(int = 42, string = basicAuth, None)))
 
           }
         }
@@ -55,9 +54,8 @@ private[rest_json_test] class BearerAuthenticatedRoutesRestAPIForTesting extends
       RestAPIAuthentications.TokenBearer.optionalAuthentication { basicAuth: Option[String] =>
         pathEndOrSingleSlash {
           get {
-            complete(
-              StatusCodes.OK,
-              Future.successful(SomeTestDTOGet(int = 42, string = basicAuth.getOrElse("it's optional!"), None)))
+            complete(StatusCodes.OK,
+                     Future.successful(SomeTestDTOGet(int = 42, string = basicAuth.getOrElse("it's optional!"), None)))
           }
         }
       }

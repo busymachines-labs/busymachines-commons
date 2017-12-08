@@ -3,7 +3,6 @@ package busymachines.json_test.derive
 import busymachines.json_test._
 import org.scalatest.FlatSpec
 
-
 /**
   *
   * Here we test [[busymachines.json.Encoder]] derivation
@@ -23,7 +22,7 @@ class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
 
   it should "... be able to serialize anarchist melon (i.e. not part of any hierarchy)" in {
     val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
-    val rawJson = anarchistMelon.asJson.spaces2
+    val rawJson        = anarchistMelon.asJson.spaces2
 
     assertResult(
       """
@@ -35,7 +34,6 @@ class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
       """.stripMargin.trim
     )(rawJson)
   }
-
 
   //-----------------------------------------------------------------------------------------------
 
@@ -99,8 +97,8 @@ class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
 
   it should "... serialize list of all case classes from the hierarchy" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)
-    val smallMelon: Melon = SmallMelon
+    val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
+    val smallMelon:  Melon = SmallMelon
     val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
     val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
 
@@ -145,7 +143,3 @@ class JsonDefaultSemiAutoEncoderDerivationTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 }
-
-
-
-

@@ -9,6 +9,7 @@ package busymachines.json
 trait Codec[A] extends Encoder[A] with Decoder[A]
 
 object Codec {
+
   def apply[A](implicit e: Encoder[A], d: Decoder[A]): Codec[A] = {
     new Codec[A] {
       override def apply(a: A): Json = e.apply(a)

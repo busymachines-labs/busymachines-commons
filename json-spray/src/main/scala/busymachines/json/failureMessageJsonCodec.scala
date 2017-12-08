@@ -30,14 +30,18 @@ trait FailureMessageJsonCodec {
     override def write(a: FailureMessage.ParamValue): Json = {
       a match {
         case FailureMessage.StringWrapper(s) => JsString(s)
-        case FailureMessage.SeqStringWrapper(ses) => JsArray(ses.map(s => implicitly[JsonFormat[String]].write(s)).toVector)
+        case FailureMessage.SeqStringWrapper(ses) =>
+          JsArray(ses.map(s => implicitly[JsonFormat[String]].write(s)).toVector)
       }
     }
 
     override def read(c: Json): FailureMessage.ParamValue = {
-      Try(c.convertTo[immutable.Seq[String]]).map((s: immutable.Seq[String]) => FailureMessage.ParamValue(s)).recoverWith {
-        case NonFatal(e) => Try(c.convertTo[String]).map(FailureMessage.ParamValue.apply)
-      }.get
+      Try(c.convertTo[immutable.Seq[String]])
+        .map((s: immutable.Seq[String]) => FailureMessage.ParamValue(s))
+        .recoverWith {
+          case NonFatal(e) => Try(c.convertTo[String]).map(FailureMessage.ParamValue.apply)
+        }
+        .get
     }
   }
 
@@ -69,8 +73,8 @@ trait FailureMessageJsonCodec {
 
     override def write(a: FailureMessage): Json = {
       JsonObject(
-        CoreJsonConstants.id -> a.id.toJson,
-        CoreJsonConstants.message -> a.message.toJson,
+        CoreJsonConstants.id         -> a.id.toJson,
+        CoreJsonConstants.message    -> a.message.toJson,
         CoreJsonConstants.parameters -> a.parameters.toJson
       )
     }
@@ -81,8 +85,8 @@ trait FailureMessageJsonCodec {
 
     override def write(a: FailureMessages): Json = {
       JsonObject(
-        CoreJsonConstants.id -> a.id.toJson,
-        CoreJsonConstants.message -> a.message.toJson,
+        CoreJsonConstants.id       -> a.id.toJson,
+        CoreJsonConstants.message  -> a.message.toJson,
         CoreJsonConstants.messages -> a.messages.toJson
       )
     }
@@ -90,9 +94,9 @@ trait FailureMessageJsonCodec {
     override def read(c: Json): FailureMessages = {
       val repr = jsonCodec.read(c)
       FailureMessages(
-        id = repr.id,
+        id      = repr.id,
         message = repr.message,
-        msg = repr.messages.headOption.getOrElse(deserializationError("Needs to have at least on messages")),
+        msg     = repr.messages.headOption.getOrElse(deserializationError("Needs to have at least on messages")),
         repr.messages.tail: _*
       )
     }
@@ -100,22 +104,20 @@ trait FailureMessageJsonCodec {
 }
 
 private[json] object CoreJsonConstants {
-  private[json] val id: String = "id"
-  private[json] val message: String = "message"
-  private[json] val messages: String = "messages"
+  private[json] val id:         String = "id"
+  private[json] val message:    String = "message"
+  private[json] val messages:   String = "messages"
   private[json] val parameters: String = "parameters"
 }
 
 private[json] case class FailureMessageRepr(
-  id: FailureID,
-  message: String,
+  id:         FailureID,
+  message:    String,
   parameters: Option[Parameters]
 )
 
 private[json] case class FailureMessagesRepr(
-  id: FailureID,
-  message: String,
+  id:       FailureID,
+  message:  String,
   messages: immutable.Seq[FailureMessage]
 )
-
-

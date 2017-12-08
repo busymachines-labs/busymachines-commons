@@ -27,23 +27,25 @@ class FailureMessageJsonTest extends FlatSpec {
     )
 
     val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """{
-        |  "id" : "0",
-        |  "message" : "test message",
-        |  "parameters" : {
-        |    "one" : "one",
-        |    "two" : [
-        |      "one",
-        |      "two"
-        |    ]
-        |  }
-        |}
-        |""".stripMargin.trim)
+    assert(
+      rawJson ==
+        """{
+          |  "id" : "0",
+          |  "message" : "test message",
+          |  "parameters" : {
+          |    "one" : "one",
+          |    "two" : [
+          |      "one",
+          |      "two"
+          |    ]
+          |  }
+          |}
+          |""".stripMargin.trim
+    )
 
     val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
+    assert(read.id.name == failure.id.name,       "id")
+    assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -57,23 +59,25 @@ class FailureMessageJsonTest extends FlatSpec {
     )
 
     val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """{
-        |  "id" : "1",
-        |  "message" : "test message",
-        |  "parameters" : {
-        |    "one" : "one",
-        |    "two" : [
-        |      "one",
-        |      "two"
-        |    ]
-        |  }
-        |}
-        |""".stripMargin.trim)
+    assert(
+      rawJson ==
+        """{
+          |  "id" : "1",
+          |  "message" : "test message",
+          |  "parameters" : {
+          |    "one" : "one",
+          |    "two" : [
+          |      "one",
+          |      "two"
+          |    ]
+          |  }
+          |}
+          |""".stripMargin.trim
+    )
 
     val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
+    assert(read.id.name == failure.id.name,       "id")
+    assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -87,23 +91,25 @@ class FailureMessageJsonTest extends FlatSpec {
     )
 
     val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """{
-        |  "id" : "2",
-        |  "message" : "test message",
-        |  "parameters" : {
-        |    "one" : "one",
-        |    "two" : [
-        |      "one",
-        |      "two"
-        |    ]
-        |  }
-        |}
-        |""".stripMargin.trim)
+    assert(
+      rawJson ==
+        """{
+          |  "id" : "2",
+          |  "message" : "test message",
+          |  "parameters" : {
+          |    "one" : "one",
+          |    "two" : [
+          |      "one",
+          |      "two"
+          |    ]
+          |  }
+          |}
+          |""".stripMargin.trim
+    )
 
     val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
+    assert(read.id.name == failure.id.name,       "id")
+    assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -117,23 +123,25 @@ class FailureMessageJsonTest extends FlatSpec {
     )
 
     val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """{
-        |  "id" : "3",
-        |  "message" : "test message",
-        |  "parameters" : {
-        |    "one" : "one",
-        |    "two" : [
-        |      "one",
-        |      "two"
-        |    ]
-        |  }
-        |}
-        |""".stripMargin.trim)
+    assert(
+      rawJson ==
+        """{
+          |  "id" : "3",
+          |  "message" : "test message",
+          |  "parameters" : {
+          |    "one" : "one",
+          |    "two" : [
+          |      "one",
+          |      "two"
+          |    ]
+          |  }
+          |}
+          |""".stripMargin.trim
+    )
 
     val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
+    assert(read.id.name == failure.id.name,       "id")
+    assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -147,23 +155,25 @@ class FailureMessageJsonTest extends FlatSpec {
     )
 
     val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """{
-        |  "id" : "4",
-        |  "message" : "test message",
-        |  "parameters" : {
-        |    "one" : "one",
-        |    "two" : [
-        |      "one",
-        |      "two"
-        |    ]
-        |  }
-        |}
-        |""".stripMargin.trim)
+    assert(
+      rawJson ==
+        """{
+          |  "id" : "4",
+          |  "message" : "test message",
+          |  "parameters" : {
+          |    "one" : "one",
+          |    "two" : [
+          |      "one",
+          |      "two"
+          |    ]
+          |  }
+          |}
+          |""".stripMargin.trim
+    )
 
     val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
+    assert(read.id.name == failure.id.name,       "id")
+    assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -177,23 +187,25 @@ class FailureMessageJsonTest extends FlatSpec {
     )
 
     val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """{
-        |  "id" : "5",
-        |  "message" : "test message",
-        |  "parameters" : {
-        |    "one" : "one",
-        |    "two" : [
-        |      "one",
-        |      "two"
-        |    ]
-        |  }
-        |}
-        |""".stripMargin.trim)
+    assert(
+      rawJson ==
+        """{
+          |  "id" : "5",
+          |  "message" : "test message",
+          |  "parameters" : {
+          |    "one" : "one",
+          |    "two" : [
+          |      "one",
+          |      "two"
+          |    ]
+          |  }
+          |}
+          |""".stripMargin.trim
+    )
 
     val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
+    assert(read.id.name == failure.id.name,       "id")
+    assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -219,41 +231,43 @@ class FailureMessageJsonTest extends FlatSpec {
       )
     )
     val rawJson = failure.asJson.spaces2
-    assert(rawJson ==
-      """
-        |{
-        |  "id" : "test",
-        |  "message" : "test message",
-        |  "messages" : [
-        |    {
-        |      "id" : "0",
-        |      "message" : "one",
-        |      "parameters" : {
-        |        "3" : "1",
-        |        "4" : [
-        |          "1",
-        |          "2"
-        |        ]
-        |      }
-        |    },
-        |    {
-        |      "id" : "0",
-        |      "message" : "two",
-        |      "parameters" : {
-        |        "5" : "6",
-        |        "6" : [
-        |          "6",
-        |          "7"
-        |        ]
-        |      }
-        |    }
-        |  ]
-        |}
-        |""".stripMargin.trim)
+    assert(
+      rawJson ==
+        """
+          |{
+          |  "id" : "test",
+          |  "message" : "test message",
+          |  "messages" : [
+          |    {
+          |      "id" : "0",
+          |      "message" : "one",
+          |      "parameters" : {
+          |        "3" : "1",
+          |        "4" : [
+          |          "1",
+          |          "2"
+          |        ]
+          |      }
+          |    },
+          |    {
+          |      "id" : "0",
+          |      "message" : "two",
+          |      "parameters" : {
+          |        "5" : "6",
+          |        "6" : [
+          |          "6",
+          |          "7"
+          |        ]
+          |      }
+          |    }
+          |  ]
+          |}
+          |""".stripMargin.trim
+    )
 
     val read = rawJson.unsafeDecodeAs[FailureMessage]
-    assert(read.id.name == failure.id.name, "id")
-    assert(read.message == failure.message, "message")
+    assert(read.id.name == failure.id.name,       "id")
+    assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 

@@ -11,9 +11,9 @@ import busymachines.rest_json_test.routes_to_test._
   *
   */
 private[rest_json_test] class DefaultExceptionHandlerTest extends ExampleRestAPITestBaseClass {
-  private lazy val defApi = new DefaultExceptionHandlerRestAPIForTesting()
-  override implicit val testedRoute: Route = RestAPI.seal(defApi).route
-  implicit val context: CallerContext = Contexts.none
+  override implicit val testedRoute: Route                                    = RestAPI.seal(defApi).route
+  implicit lazy val context:         CallerContext                            = Contexts.none
+  private lazy val defApi:           DefaultExceptionHandlerRestAPIForTesting = new DefaultExceptionHandlerRestAPIForTesting()
 
   import SomeTestDTOJsonCodec._
   import busymachines.json.FailureMessageJsonCodec._

@@ -11,8 +11,8 @@ import busymachines.rest_json_test.routes_to_test._
   */
 private[rest_json_test] class CRUDRoutesTest extends ExampleRestAPITestBaseClass {
   private lazy val crudAPI = new CRUDRoutesRestAPIForTesting()
-  override implicit val testedRoute: Route = RestAPI.seal(crudAPI).route
-  private implicit val cc: CallerContext = Contexts.none
+  override implicit val testedRoute: Route         = RestAPI.seal(crudAPI).route
+  private implicit val cc:           CallerContext = Contexts.none
 
   import SomeTestDTOJsonCodec._
 
@@ -29,12 +29,12 @@ private[rest_json_test] class CRUDRoutesTest extends ExampleRestAPITestBaseClass
       assert {
         responseAs[Seq[SomeTestDTOGet]] == Seq(
           SomeTestDTOGet(
-            int = 1,
+            int    = 1,
             string = "one",
             option = None
           ),
           SomeTestDTOGet(
-            int = 2,
+            int    = 2,
             string = "two",
             option = None
           )

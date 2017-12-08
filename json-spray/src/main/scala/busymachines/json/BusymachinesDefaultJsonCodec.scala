@@ -1,9 +1,8 @@
 package busymachines.json
 
-import spray.json.{JsString, deserializationError, serializationError}
+import spray.json.{deserializationError, serializationError, JsString}
 
 import scala.reflect.runtime.universe._
-
 
 /**
   *
@@ -15,34 +14,38 @@ import scala.reflect.runtime.universe._
   * @since 26 Oct 2017
   *
   */
-trait BusymachinesDefaultJsonCodec extends AnyRef with
-  FailureMessageJsonCodec with
-  spray.json.BasicFormats with
-  spray.json.AdditionalFormats with
-  spray.json.StandardFormats with
-  spray.json.CollectionFormats {
+trait BusymachinesDefaultJsonCodec
+    extends AnyRef with FailureMessageJsonCodec with spray.json.BasicFormats with spray.json.AdditionalFormats
+    with spray.json.StandardFormats with spray.json.CollectionFormats {
 
   implicit class ADTVariantOps[VariantType: TypeTag](c: Codec[VariantType]) {
-    def embedField[ADTType >: VariantType]
-    (name: String, value: String): BusymachinesDefaultJsonCodec.ADTVariantCodec[ADTType] = {
+
+    def embedField[ADTType >: VariantType](
+      name:  String,
+      value: String
+    ): BusymachinesDefaultJsonCodec.ADTVariantCodec[ADTType] = {
       new BusymachinesDefaultJsonCodec.ADTVariantCodec[ADTType] {
         private[json] override type ConcreteType = VariantType
-        private[json] override val codec: Codec[ConcreteType] = c
-        private[json] override val fieldName: String = name
-        private[json] override val fieldValue: String = value
+        private[json] override val codec:      Codec[ConcreteType] = c
+        private[json] override val fieldName:  String              = name
+        private[json] override val fieldValue: String              = value
 
         private[json] override val tt: TypeTag[VariantType] = implicitly[TypeTag[VariantType]]
       }
     }
 
-    def embedTypeField[HierarchyType >: VariantType]
-    (typeValue: String): BusymachinesDefaultJsonCodec.ADTVariantCodec[HierarchyType] = {
+    def embedTypeField[HierarchyType >: VariantType](
+      typeValue: String
+    ): BusymachinesDefaultJsonCodec.ADTVariantCodec[HierarchyType] = {
       embedField(BusymachinesDefaultJsonCodec.TypeFieldDiscriminator, typeValue)
     }
   }
 
   implicit class ADTEnumCaseObjectVariantType[CaseObjectVariantType: TypeTag](co: CaseObjectVariantType) {
-    def asConstant[EnumType >: CaseObjectVariantType](str: String): BusymachinesDefaultJsonCodec.ADTEnumVariantCodec[EnumType] = {
+
+    def asConstant[EnumType >: CaseObjectVariantType](
+      str: String
+    ): BusymachinesDefaultJsonCodec.ADTEnumVariantCodec[EnumType] = {
       new BusymachinesDefaultJsonCodec.ADTEnumVariantCodec[EnumType] {
         override private[json] type ConcreteType = CaseObjectVariantType
 
@@ -68,11 +71,9 @@ private[json] object BusymachinesDefaultJsonCodec {
     * You should access the ``jsonFormatX`` values from this object,
     * and not import them via DefaultJsonProtocol crap
     */
-  object derive extends
-    DeriveImpl with
-    spray.json.AdditionalFormats with
-    spray.json.StandardFormats with
-    spray.json.ProductFormats
+  object derive
+      extends DeriveImpl with spray.json.AdditionalFormats with spray.json.StandardFormats
+      with spray.json.ProductFormats
 
   val TypeFieldDiscriminator: String = "_type"
 
@@ -114,15 +115,19 @@ private[json] object BusymachinesDefaultJsonCodec {
 
       val stringReprToCodec: Map[String, ADTEnumVariantCodec[H]] = codecs.map(c => (c.stringRepr, c)).toMap
       if (constantValueToCodec.keySet.size != codecs.size) {
-        throw busymachines.core.exceptions.Error("you passed a duplicate constant case object value when instantiating an enumCodec. This kills everything.")
+        throw busymachines.core.exceptions.Error(
+          "you passed a duplicate constant case object value when instantiating an enumCodec. This kills everything."
+        )
       }
 
       if (stringReprToCodec.keySet.size != codecs.size) {
-        throw busymachines.core.exceptions.Error("you passed a duplicate string representation in the [[asConstant]] value of a case object when instantiating an enumCodec. This kills everything.")
+        throw busymachines.core.exceptions.Error(
+          "you passed a duplicate string representation in the [[asConstant]] value of a case object when instantiating an enumCodec. This kills everything."
+        )
       }
 
       new ValueCodec[H] {
-        private val caseObjectToCodec: Map[H, ADTEnumVariantCodec[H]] = constantValueToCodec
+        private val caseObjectToCodec:  Map[H,      ADTEnumVariantCodec[H]] = constantValueToCodec
         private val stringValueToCodec: Map[String, ADTEnumVariantCodec[H]] = stringReprToCodec
 
         override def read(json: Json): H = json match {
@@ -146,7 +151,6 @@ private[json] object BusymachinesDefaultJsonCodec {
         }
       }
     }
-
 
     def jsonObject[T](v: T): Codec[T] = new Codec[T] {
       override def read(json: Json): T = json match {
@@ -177,7 +181,7 @@ private[json] object BusymachinesDefaultJsonCodec {
       }
 
       new Codec[H] {
-        private val fieldName: String = fieldNameSet.head
+        private val fieldName:              String = fieldNameSet.head
         private val discriminatorsToCodecs: Map[String, ADTVariantCodec[H]] = fieldValuesToCodec
         private val runtimeClassNamesToCodecs: Map[String, ADTVariantCodec[H]] = codecs.map { c =>
           (c.tt.mirror.runtimeClass(c.tt.tpe).getCanonicalName.trim, c)
@@ -185,10 +189,13 @@ private[json] object BusymachinesDefaultJsonCodec {
 
         override def read(json: Json): H = {
           val discriminator = {
-            json.asJsObject("ADTVariant has to be a JsonObject").fields.getOrElse(
-              fieldName,
-              deserializationError("ADTVariant needs to have field with name:" + fieldName)
-            )
+            json
+              .asJsObject("ADTVariant has to be a JsonObject")
+              .fields
+              .getOrElse(
+                fieldName,
+                deserializationError("ADTVariant needs to have field with name:" + fieldName)
+              )
           }
 
           discriminator match {

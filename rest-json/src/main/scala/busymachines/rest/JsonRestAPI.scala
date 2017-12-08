@@ -27,7 +27,6 @@ trait JsonRestAPI extends RestAPI with jsonrest.JsonSupport {
 
 private[rest] object JsonRestAPI {
 
-
   private object failure {
 
     import busymachines.json.FailureMessageJsonCodec._

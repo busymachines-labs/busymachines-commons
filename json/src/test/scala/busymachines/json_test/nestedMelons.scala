@@ -20,7 +20,7 @@ private[json_test] object OutdoorMelons {
 
   case class WildMelon(
     weight: Int,
-    color: Color
+    color:  Color
   ) extends OutdoorMelon
 
 }

@@ -18,9 +18,9 @@ private[rest_json_spray_test] trait SomeTestDTOJsonCodec extends BusymachinesDef
 
   import busymachines.json._
 
-  implicit val someTestDTOGetCodec: Codec[SomeTestDTOGet] = derive.jsonFormat3(SomeTestDTOGet)
-  implicit val someTestDTOPostCodec: Codec[SomeTestDTOPost] = derive.jsonFormat2(SomeTestDTOPost)
-  implicit val someTestDTOPutCodec: Codec[SomeTestDTOPut] = derive.jsonFormat2(SomeTestDTOPut)
+  implicit val someTestDTOGetCodec:   Codec[SomeTestDTOGet]   = derive.jsonFormat3(SomeTestDTOGet)
+  implicit val someTestDTOPostCodec:  Codec[SomeTestDTOPost]  = derive.jsonFormat2(SomeTestDTOPost)
+  implicit val someTestDTOPutCodec:   Codec[SomeTestDTOPut]   = derive.jsonFormat2(SomeTestDTOPut)
   implicit val someTestDTOPatchCodec: Codec[SomeTestDTOPatch] = derive.jsonFormat1(SomeTestDTOPatch)
 
 }

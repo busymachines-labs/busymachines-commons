@@ -1,6 +1,5 @@
 package busymachines.semver
 
-
 /**
   *
   * A type denoting semantic versions, eg:
@@ -21,8 +20,9 @@ final case class SemanticVersion(
   minor: Int,
   patch: Int,
   label: Option[Label] = Option.empty[Label],
-  meta: Option[String] = Option.empty[String]
+  meta:  Option[String] = Option.empty[String]
 ) extends SemanticVersionOrdering with Ordered[SemanticVersion] {
+
   /**
     * eg:
     * {{{
@@ -59,6 +59,7 @@ final case class SemanticVersion(
 }
 
 sealed trait Label extends Ordered[Label] with LabelOrdering {
+
   /**
     * eg:
     * {{{

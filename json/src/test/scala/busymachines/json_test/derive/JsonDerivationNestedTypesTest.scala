@@ -16,14 +16,14 @@ class JsonDerivationNestedTypesTest extends FlatSpec {
 
   val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
     weight = 42,
-    color = OutdoorMelons.Colors.Green
+    color  = OutdoorMelons.Colors.Green
   )
 
   //-----------------------------------------------------------------------------------------------
 
   it should "... derive for case classes defined within objects — normal codecs" in {
-    implicit val color: Codec[OutdoorMelons.Color] = derive.codec[OutdoorMelons.Color]
-    implicit val outdoorMelonCodec: Codec[OutdoorMelon] = derive.codec[OutdoorMelon]
+    implicit val color:             Codec[OutdoorMelons.Color] = derive.codec[OutdoorMelons.Color]
+    implicit val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
 
     val stringyJson =
       """
@@ -38,15 +38,15 @@ class JsonDerivationNestedTypesTest extends FlatSpec {
 
     val json = outdoorMelon.asJson
 
-    assert(stringyJson == json.spaces2NoNulls, "encoder")
+    assert(stringyJson == json.spaces2NoNulls,                       "encoder")
     assert(outdoorMelon == stringyJson.unsafeDecodeAs[OutdoorMelon], "decoder")
   }
 
   //-----------------------------------------------------------------------------------------------
 
   it should "... derive for case classes defined within objects — enumerationCodec" in {
-    implicit val color: Codec[OutdoorMelons.Color] = derive.enumerationCodec[OutdoorMelons.Color]
-    implicit val outdoorMelonCodec: Codec[OutdoorMelon] = derive.codec[OutdoorMelon]
+    implicit val color:             Codec[OutdoorMelons.Color] = derive.enumerationCodec[OutdoorMelons.Color]
+    implicit val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
 
     val stringyJson =
       """
@@ -59,7 +59,7 @@ class JsonDerivationNestedTypesTest extends FlatSpec {
 
     val json = outdoorMelon.asJson
 
-    assert(stringyJson == json.spaces2NoNulls, "encoder")
+    assert(stringyJson == json.spaces2NoNulls,                       "encoder")
     assert(outdoorMelon == stringyJson.unsafeDecodeAs[OutdoorMelon], "decoder")
   }
 

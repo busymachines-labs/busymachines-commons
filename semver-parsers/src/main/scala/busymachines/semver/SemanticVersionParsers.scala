@@ -21,7 +21,7 @@ object SemanticVersionParsers {
   import atto.syntax.all._
 
   def parseSemanticVersion(semver: String): SemVerParsingResult[SemanticVersion] = {
-    Parser.parseOnly(semanticVersionEOI, semver).either.left.map { parseError =>
+    Parser.parseOnly(semanticVersionEOI,    semver).either.left.map { parseError =>
       InvalidSemanticVersionFailure(semver, parseError)
     }
   }
@@ -31,7 +31,7 @@ object SemanticVersionParsers {
   }
 
   def parseLabel(label: String): SemVerParsingResult[Label] = {
-    Parser.parseOnly(labelParserEOI, label).either.left.map { parseError =>
+    Parser.parseOnly(labelParserEOI,            label).either.left.map { parseError =>
       InvalidSemanticVersionLabelFailure(label, parseError)
     }
   }
@@ -40,15 +40,15 @@ object SemanticVersionParsers {
     this.parseLabel(label).toTry.get
   }
 
-  private val dotParser: Parser[Char] = char('.')
+  private val dotParser:  Parser[Char] = char('.')
   private val dashParser: Parser[Char] = char('-')
   private val plusParser: Parser[Char] = char('+')
 
   private val SNAPSHOT: String = "SNAPSHOT"
-  private val ALPHA: String = "ALPHA"
-  private val BETA: String = "BETA"
-  private val M: String = "M"
-  private val RC: String = "RC"
+  private val ALPHA:    String = "ALPHA"
+  private val BETA:     String = "BETA"
+  private val M:        String = "M"
+  private val RC:       String = "RC"
 
   private val snapshotParser: Parser[Label] = stringCI(SNAPSHOT).map(_ => Labels.snapshot)
 
@@ -158,7 +158,7 @@ object SemanticVersionParsers {
         minor = minor,
         patch = patch,
         label = optLabel,
-        meta = optMeta
+        meta  = optMeta
       )
   }
 

@@ -7,7 +7,7 @@ package busymachines.rest_json_test.routes_to_test
   *
   */
 private[rest_json_test] case class SomeTestDTOGet(
-  int: Int,
+  int:    Int,
   string: String,
   option: Option[Int]
 )

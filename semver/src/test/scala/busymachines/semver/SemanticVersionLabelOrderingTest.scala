@@ -12,6 +12,7 @@ class SemanticVersionLabelOrderingTest extends FlatSpec with Matchers {
 
   //technically I could have used >, ==, < operators as well
   private implicit class LabelTestOps(label: Label) {
+
     def assertGT(that: Label): Unit = {
       assert(label.compareTo(that) > 0, s"$label should be greater than $that")
     }
@@ -34,7 +35,6 @@ class SemanticVersionLabelOrderingTest extends FlatSpec with Matchers {
     l1 assertEQ l2
     l2 assertEQ l1
   }
-
 
   behavior of "semver label alpha"
 
@@ -96,7 +96,6 @@ class SemanticVersionLabelOrderingTest extends FlatSpec with Matchers {
     }
   }
 
-
   behavior of "semver label beta"
 
   it should "be the same as Int natural ordering when comparing with other betas" in {
@@ -116,7 +115,6 @@ class SemanticVersionLabelOrderingTest extends FlatSpec with Matchers {
       l2 assertGT l1
     }
   }
-
 
   it should "be the same as Int natural ordering when comparing with other Ms" in {
     withClue("EQ") {
@@ -158,12 +156,12 @@ class SemanticVersionLabelOrderingTest extends FlatSpec with Matchers {
 
   it should "work wrt to all possible combinations of types, and EQ/LT/GT operators" in {
     val snapshotLabel = Labels.snapshot
-    val alphaSingle = Labels.alpha
-    val alphaLabel = Labels.alpha(1)
-    val betaSingle = Labels.beta
-    val betaLabel = Labels.beta(1)
-    val mLabel = Labels.m(1)
-    val rcLabel = Labels.rc(1)
+    val alphaSingle   = Labels.alpha
+    val alphaLabel    = Labels.alpha(1)
+    val betaSingle    = Labels.beta
+    val betaLabel     = Labels.beta(1)
+    val mLabel        = Labels.m(1)
+    val rcLabel       = Labels.rc(1)
 
     withClue("snapshot") {
       snapshotLabel assertEQ snapshotLabel

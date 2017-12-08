@@ -35,7 +35,9 @@ trait JsonRestAPI extends RestAPI with JsonSupport {
 
 private[rest] object JsonRestAPI extends JsonSupport {
 
-  private val emptyResponseFun: Any => HttpEntity.Strict = { _ => HttpEntity.Empty }
+  private val emptyResponseFun: Any => HttpEntity.Strict = { _ =>
+    HttpEntity.Empty
+  }
 
   private object failure {
 
@@ -45,7 +47,6 @@ private[rest] object JsonRestAPI extends JsonSupport {
   }
 
   private object failures {
-
 
     implicit val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] =
       JsonSupport.sprayJsonMarshaller(FailureMessageJsonCodec.failureMessagesCodec)

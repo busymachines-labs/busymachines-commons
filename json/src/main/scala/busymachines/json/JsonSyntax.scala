@@ -27,6 +27,7 @@ trait JsonSyntax {
   }
 
   implicit final class DecoderOpsJson(val js: Json) {
+
     def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
       JsonDecoding.unsafeDecodeAs[A](js)
 

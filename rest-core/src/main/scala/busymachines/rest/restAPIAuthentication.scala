@@ -6,7 +6,6 @@ package busymachines.rest
   * @since 07 Sep 2017
   *
   */
-
 import Directives._
 import akka.http.scaladsl.model.headers._
 import akka.http.scaladsl.server._
@@ -19,34 +18,38 @@ trait RestAPIAuthentication[AuthenticationResult] {
 
   def authentication: Directive1[AuthenticationResult]
 
-  lazy val optionalAuthentication: Directive1[Option[AuthenticationResult]] = authentication.map(r => Option[AuthenticationResult](r)).recover { rej =>
-    provide(Option.empty[AuthenticationResult])
-  }
+  lazy val optionalAuthentication: Directive1[Option[AuthenticationResult]] =
+    authentication.map(r => Option[AuthenticationResult](r)).recover { rej =>
+      provide(Option.empty[AuthenticationResult])
+    }
 }
 
 @SubjectToChange("0.3.0")
 object RestAPIAuthentications {
 
-  private val BasicS = "Basic"
-  private val BearerS = "Bearer"
+  private val BasicS         = "Basic"
+  private val BearerS        = "Bearer"
   private val AuthorizationS = "Authorization"
 
   private val MissingBasicCredentials = AuthenticationFailedRejection(
-    cause = AuthenticationFailedRejection.CredentialsMissing,
-    challenge = HttpChallenges.basic(BasicS))
+    cause     = AuthenticationFailedRejection.CredentialsMissing,
+    challenge = HttpChallenges.basic(BasicS)
+  )
 
   private val InvalidBasicCredentials = AuthenticationFailedRejection(
-    cause = AuthenticationFailedRejection.CredentialsRejected,
-    challenge = HttpChallenges.basic(BasicS))
+    cause     = AuthenticationFailedRejection.CredentialsRejected,
+    challenge = HttpChallenges.basic(BasicS)
+  )
 
   private val MissingBearerCredentials = AuthenticationFailedRejection(
-    cause = AuthenticationFailedRejection.CredentialsMissing,
-    challenge = HttpChallenges.oAuth2(BearerS))
+    cause     = AuthenticationFailedRejection.CredentialsMissing,
+    challenge = HttpChallenges.oAuth2(BearerS)
+  )
 
   private val InvalidBearerCredentials = AuthenticationFailedRejection(
-    cause = AuthenticationFailedRejection.CredentialsRejected,
-    challenge = HttpChallenges.oAuth2(BasicS))
-
+    cause     = AuthenticationFailedRejection.CredentialsRejected,
+    challenge = HttpChallenges.oAuth2(BasicS)
+  )
 
   /**
     * See "11.1  Basic Authentication Scheme" from RFC 1945
@@ -109,6 +112,5 @@ object RestAPIAuthentications {
   }
 
   object TokenBearer extends TokenBearer
-
 
 }

@@ -6,10 +6,9 @@ package busymachines.json_spray_test
   * @since 09 Aug 2017
   *
   */
-
 private[json_spray_test] case class AnarchistMelon(
-  noGods: Boolean,
-  noMasters: Boolean,
+  noGods:       Boolean,
+  noMasters:    Boolean,
   noSuperTypes: Boolean
 )
 
@@ -18,12 +17,12 @@ private[json_spray_test] sealed trait Melon {
 }
 
 private[json_spray_test] case class WinterMelon(
-  fuzzy: Boolean,
+  fuzzy:  Boolean,
   weight: Int
 ) extends Melon
 
 private[json_spray_test] case class WaterMelon(
-  seeds: Boolean,
+  seeds:  Boolean,
   weight: Int
 ) extends Melon
 
@@ -46,5 +45,3 @@ private[json_spray_test] case class SquareMelon(
   weight: Int,
   tastes: Seq[Taste]
 ) extends TastyMelon
-
-

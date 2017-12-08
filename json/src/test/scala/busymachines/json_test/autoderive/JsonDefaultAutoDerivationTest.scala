@@ -23,11 +23,10 @@ class JsonDefaultAutoDerivationTest extends FlatSpec {
 
   it should "... be able to serialize/deserialize anarchist melon (i.e. not part of any hierarchy)" in {
     val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
-    val asJson = anarchistMelon.asJson.spaces2
-    val read = asJson.unsafeDecodeAs[AnarchistMelon]
+    val asJson         = anarchistMelon.asJson.spaces2
+    val read           = asJson.unsafeDecodeAs[AnarchistMelon]
     assertResult(anarchistMelon)(read)
   }
-
 
   //-----------------------------------------------------------------------------------------------
 
@@ -57,7 +56,7 @@ class JsonDefaultAutoDerivationTest extends FlatSpec {
   it should "... be able to serialize/deserialize a case class from hierarchy when it is referred to as its super-type" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
     val rawJson = winterMelon.asJson.spaces2
-    val read = rawJson.unsafeDecodeAs[Melon]
+    val read    = rawJson.unsafeDecodeAs[Melon]
     assertResult(winterMelon)(read)
   }
 
@@ -66,7 +65,7 @@ class JsonDefaultAutoDerivationTest extends FlatSpec {
   it should "... be able to deserialize case objects of the hierarchy" in {
     val smallMelon: Melon = SmallMelon
     val rawJson = smallMelon.asJson.spaces2
-    val read = rawJson.unsafeDecodeAs[Melon]
+    val read    = rawJson.unsafeDecodeAs[Melon]
     assertResult(smallMelon)(read)
   }
 
@@ -84,8 +83,8 @@ class JsonDefaultAutoDerivationTest extends FlatSpec {
 
   it should "... deserialize list of all case classes from the hierarchy" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val waterMelon: Melon = WaterMelon(seeds = true, weight = 90)
-    val smallMelon: Melon = SmallMelon
+    val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
+    val smallMelon:  Melon = SmallMelon
     val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
     val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
 

@@ -11,6 +11,7 @@ import io.circe.Printer
   *
   */
 object JsonDecoding {
+
   def decodeAs[A](json: Json)(implicit decoder: Decoder[A]): JsonDecodingResult[A] = {
     val r: io.circe.Decoder.Result[A] = decoder.decodeJson(json)
     r.left.map(df => JsonDecodingFailure(df.getMessage))
@@ -40,6 +41,7 @@ final case class JsonDecodingFailure(msg: String) extends InvalidInputFailure(ms
   * @since 10 Aug 2017
   */
 object JsonParsing {
+
   def parseString(input: String): JsonParsingResult = {
     parse(input).left.map(pf => JsonParsingFailure(pf.message))
   }
@@ -52,12 +54,12 @@ object JsonParsing {
 
 object PrettyJson {
   val noSpacesNoNulls: Printer = Printer.noSpaces.copy(dropNullValues = true)
-  val spaces2NoNulls: Printer = Printer.spaces2.copy(dropNullValues = true)
-  val spaces4NoNulls: Printer = Printer.spaces4.copy(dropNullValues = true)
+  val spaces2NoNulls:  Printer = Printer.spaces2.copy(dropNullValues  = true)
+  val spaces4NoNulls:  Printer = Printer.spaces4.copy(dropNullValues  = true)
 
   val noSpaces: Printer = Printer.noSpaces
-  val spaces2: Printer = Printer.spaces2
-  val spaces4: Printer = Printer.spaces4
+  val spaces2:  Printer = Printer.spaces2
+  val spaces4:  Printer = Printer.spaces4
 
 }
 
