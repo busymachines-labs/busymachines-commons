@@ -60,7 +60,7 @@ trait FailureMessageJsonCodec {
                 (v, acc) =>
                   for {
                     prevAcc <- acc.right
-                    newVal <- v.right
+                    newVal  <- v.right
                   } yield prevAcc :+ newVal
               }
               r.right.map(l => FailureMessage.Parameters.apply(l: _*))
@@ -88,8 +88,8 @@ trait FailureMessageJsonCodec {
   final implicit val failureMessageCodec: Codec[FailureMessage] = new Codec[FailureMessage] {
     override def apply(c: HCursor): io.circe.Decoder.Result[FailureMessage] = {
       for {
-        id <- c.get[FailureID](CoreJsonConstants.id)
-        msg <- c.get[String](CoreJsonConstants.message)
+        id     <- c.get[FailureID](CoreJsonConstants.id)
+        msg    <- c.get[String](CoreJsonConstants.message)
         params <- c.getOrElse[FailureMessage.Parameters](CoreJsonConstants.parameters)(FailureMessage.Parameters.empty)
       } yield FailureMessage(id, msg, params)
     }
@@ -124,7 +124,7 @@ trait FailureMessageJsonCodec {
 
     override def apply(c: HCursor): Result[FailureMessages] = {
       for {
-        fm <- c.as[FailureMessage].right
+        fm   <- c.as[FailureMessage].right
         msgs <- c.get[Seq[FailureMessage]](CoreJsonConstants.messages).right
         _ <- (if (msgs.isEmpty)
                 Left(DecodingFailure("FailureMessages.message needs to be non empty array", c.history))

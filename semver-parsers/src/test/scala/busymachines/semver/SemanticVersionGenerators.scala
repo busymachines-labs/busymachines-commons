@@ -32,11 +32,11 @@ trait SemanticVersionGenerators {
 
   implicit val semanticVersionGenerator: Gen[SemanticVersion] = {
     for {
-      major <- Gen.posNum[Int]
-      minor <- Gen.posNum[Int]
-      patch <- Gen.posNum[Int]
+      major    <- Gen.posNum[Int]
+      minor    <- Gen.posNum[Int]
+      patch    <- Gen.posNum[Int]
       optLabel <- Gen.option(labelGenerator)
-      optMeta <- Gen.option(Gen.alphaStr)
+      optMeta  <- Gen.option(Gen.alphaStr)
     } yield
       SemanticVersion(
         major = major,

@@ -111,13 +111,13 @@ object SemanticVersionParsers {
     val singleton: Parser[String] = stringCI(RC)
 
     val completeWithDot: Parser[Label] = for {
-      _ <- singleton
-      _ <- dotParser
+      _  <- singleton
+      _  <- dotParser
       rc <- int
     } yield Labels.rc(rc)
 
     val completeNoDot: Parser[Label] = for {
-      _ <- singleton
+      _  <- singleton
       rc <- int
     } yield Labels.rc(rc)
 
@@ -135,23 +135,23 @@ object SemanticVersionParsers {
 
   private val semanticVersionParser: Parser[SemanticVersion] = {
     val dashWithLabel = for {
-      _ <- dashParser
+      _     <- dashParser
       label <- labelParser
     } yield label
 
     val plusWithMeta = for {
-      _ <- plusParser
+      _    <- plusParser
       meta <- metaParser
     } yield meta
 
     for {
-      major <- int
-      _ <- dotParser
-      minor <- int
-      _ <- dotParser
-      patch <- int
+      major    <- int
+      _        <- dotParser
+      minor    <- int
+      _        <- dotParser
+      patch    <- int
       optLabel <- opt(dashWithLabel)
-      optMeta <- opt(plusWithMeta)
+      optMeta  <- opt(plusWithMeta)
     } yield
       SemanticVersion(
         major = major,
