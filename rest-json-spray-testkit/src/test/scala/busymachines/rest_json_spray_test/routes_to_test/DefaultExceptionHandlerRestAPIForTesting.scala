@@ -171,11 +171,11 @@ private[rest_json_spray_test] class DefaultExceptionHandlerRestAPIForTesting
   }
 
   def notImplementedBoxed(s: String): Future[String] = {
-    Future.fromTry(Try(throw new NotImplementedError("boxed")))
+    Future.fromTry(Try(throw new NotImplementedError(s)))
   }
 
   def notImplemented(s: String): Future[String] = {
-    throw new NotImplementedError("not boxed")
+    throw new NotImplementedError(s)
   }
 
 }

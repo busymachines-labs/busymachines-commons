@@ -2,6 +2,7 @@ package busymachines.rest_json_test
 
 import busymachines.rest._
 import busymachines.rest_json_test.routes_to_test._
+import org.scalatest.FlatSpec
 
 /**
   *
@@ -9,10 +10,10 @@ import busymachines.rest_json_test.routes_to_test._
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class CRUDRoutesTest extends ExampleRestAPITestBaseClass {
-  private lazy val crudAPI = new CRUDRoutesRestAPIForTesting()
-  override implicit val testedRoute: Route         = RestAPI.seal(crudAPI).route
-  private implicit val cc:           CallerContext = Contexts.none
+private[rest_json_test] class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
+  private lazy val crudAPI:          CRUDRoutesRestAPIForTesting = new CRUDRoutesRestAPIForTesting()
+  override implicit val testedRoute: Route                       = RestAPI.seal(crudAPI).route
+  private implicit val cc:           CallerContext               = Contexts.none
 
   import SomeTestDTOJsonCodec._
 
