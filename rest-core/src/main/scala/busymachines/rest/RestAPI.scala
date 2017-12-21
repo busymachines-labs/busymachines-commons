@@ -43,14 +43,14 @@ object RestAPI {
     }
 
     def apply(statusCode: StatusCode, f: FailureMessage)(implicit fsm: ToEntityMarshaller[FailureMessage]): Route = {
-      complete(statusCode, f)
+      complete((statusCode, f))
     }
   }
 
   object failures {
 
     def apply(statusCode: StatusCode, fs: FailureMessages)(implicit fsm: ToEntityMarshaller[FailureMessages]): Route =
-      complete(statusCode, fs)
+      complete((statusCode, fs))
   }
 
   private class ReifiedRestAPI(
@@ -98,11 +98,14 @@ object RestAPI {
     * and working with the given [[RejectionHandler]].
     *
     */
-  def seal(api:                                            RestAPI, apis: RestAPI*)(implicit
-                                         routingSettings:  RoutingSettings,
-                                         parserSettings:   ParserSettings = null,
-                                         rejectionHandler: RejectionHandler = RejectionHandler.default,
-                                         exceptionHandler: ExceptionHandler = null): RestAPI = {
+  def seal(
+    api:  RestAPI,
+    apis: RestAPI*
+  )(implicit
+    routingSettings:  RoutingSettings,
+    parserSettings:   ParserSettings = null,
+    rejectionHandler: RejectionHandler = RejectionHandler.default,
+    exceptionHandler: ExceptionHandler = null): RestAPI = {
     val r           = combine(api, apis: _*)
     val sealedRoute = Route.seal(r.route)
     new ReifiedRestAPI(sealedRoute, api.failureMessageMarshaller, api.failureMessageMarshaller)
@@ -128,8 +131,10 @@ object RestAPI {
     * Check the scaladoc for each of these failures in case something is not clear,
     * but for convenience that scaladoc has been copied here as well.
     */
-  private def semanticallyMeaningfulHandler(implicit fm: ToEntityMarshaller[FailureMessage],
-                                            fsm:         ToEntityMarshaller[FailureMessages]): ExceptionHandler =
+  private def semanticallyMeaningfulHandler(
+    implicit fm: ToEntityMarshaller[FailureMessage],
+    fsm:         ToEntityMarshaller[FailureMessages]
+  ): ExceptionHandler =
     ExceptionHandler {
 
       /**
@@ -197,7 +202,7 @@ object RestAPI {
         * reason to accumulate messages, except in cases of input validation
         */
       case es: FailureMessages =>
-        failures(StatusCodes.BadRequest, es)
+        failures(StatusCodes.BadRequest, es)(fsm)
 
       case e: ErrorMessage =>
         failure(StatusCodes.InternalServerError, e)
@@ -211,8 +216,9 @@ object RestAPI {
     * a future fails with what is marked as an "Error". Unfortunately
     * this applies to NotImplementedErrors, which is really annoying :/
     */
-  private def boxedErrorHandler(implicit fm: ToEntityMarshaller[FailureMessage],
-                                fsm:         ToEntityMarshaller[FailureMessages]): ExceptionHandler = ExceptionHandler {
+  private def boxedErrorHandler(
+    implicit fm: ToEntityMarshaller[FailureMessage]
+  ): ExceptionHandler = ExceptionHandler {
     case e: NotImplementedError =>
       failure(StatusCodes.NotImplemented, Error(e))
 
@@ -220,9 +226,11 @@ object RestAPI {
       failure(StatusCodes.InternalServerError, Error(e))
   }
 
-  def defaultExceptionHandler(implicit fm: ToEntityMarshaller[FailureMessage],
-                              fsm:         ToEntityMarshaller[FailureMessages]): ExceptionHandler =
-    semanticallyMeaningfulHandler orElse ExceptionHandler {
+  def defaultExceptionHandler(
+    implicit fm: ToEntityMarshaller[FailureMessage],
+    fsm:         ToEntityMarshaller[FailureMessages]
+  ): ExceptionHandler =
+    semanticallyMeaningfulHandler(fm, fsm) orElse ExceptionHandler {
       case e: java.util.concurrent.ExecutionException =>
         boxedErrorHandler.apply(e.getCause)
 

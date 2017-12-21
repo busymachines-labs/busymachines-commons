@@ -110,14 +110,13 @@ private[rest_json_spray_test] class DefaultExceptionHandlerRestAPIForTesting
       pathEndOrSingleSlash {
         get {
           complete(
-            StatusCodes.OK,
-            Future.successful {
+            (StatusCodes.OK, Future.successful {
               SomeTestDTOGet(
                 42,
                 "fortyTwo",
                 None
               )
-            }
+            })
           )
         }
       }

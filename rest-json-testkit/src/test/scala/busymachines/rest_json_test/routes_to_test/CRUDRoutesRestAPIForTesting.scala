@@ -50,7 +50,7 @@ private[rest_json_test] class CRUDRoutesRestAPIForTesting
               string = p.string,
               option = p.option
             )
-            complete(StatusCodes.Created, Future.successful(response))
+            complete((StatusCodes.Created, Future.successful(response)))
           }
         } ~ get {
           val response = Seq(
@@ -95,7 +95,7 @@ private[rest_json_test] class CRUDRoutesRestAPIForTesting
             complete(Future.successful(response))
           }
         } ~ delete {
-          complete(StatusCodes.NoContent, Future.successful(()))
+          complete((StatusCodes.NoContent, Future.successful(())))
         }
       }
     }

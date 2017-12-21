@@ -45,7 +45,7 @@ private[rest_json_test] class BasicAuthenticatedRoutesRestAPIForTesting
       authentication { basicAuth: String =>
         pathEndOrSingleSlash {
           get {
-            complete(StatusCodes.OK, Future.successful(SomeTestDTOGet(int = 42, string = basicAuth, None)))
+            complete((StatusCodes.OK, Future.successful(SomeTestDTOGet(int = 42, string = basicAuth, None))))
 
           }
         }
@@ -54,8 +54,10 @@ private[rest_json_test] class BasicAuthenticatedRoutesRestAPIForTesting
       optionalAuthentication { basicAuth: Option[String] =>
         pathEndOrSingleSlash {
           get {
-            complete(StatusCodes.OK,
-                     Future.successful(SomeTestDTOGet(int = 42, string = basicAuth.getOrElse("it's optional!"), None)))
+            complete(
+              (StatusCodes.OK,
+               Future.successful(SomeTestDTOGet(int = 42, string = basicAuth.getOrElse("it's optional!"), None)))
+            )
           }
         }
       }

@@ -92,6 +92,17 @@ private[rest_json_test] class DefaultExceptionHandlerTest extends ExampleRestAPI
 
   //===========================================================================
 
+  it should "return 400 for InvalidInput — multiple failures" in {
+    get("/multiple_failures") {
+      expectStatus(StatusCodes.BadRequest)
+      val fm = responseAs[FailureMessages]
+      assert(fm.id == FailureID("1234"))
+      assert(fm.messages.size == 6)
+    }
+  }
+
+  //===========================================================================
+
   it should "return 409 for Conflict" in {
     get("/conflict") {
       expectStatus(StatusCodes.Conflict)

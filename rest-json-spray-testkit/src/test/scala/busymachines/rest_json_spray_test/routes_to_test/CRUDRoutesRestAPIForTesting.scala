@@ -90,7 +90,7 @@ private[rest_json_spray_test] class CRUDRoutesRestAPIForTesting
             complete(Future.successful(response))
           }
         } ~ delete {
-          complete(StatusCodes.NoContent, Future.unit.asEmptyResponse)
+          complete((StatusCodes.NoContent, Future.unit.asEmptyResponse))
         }
       }
     }

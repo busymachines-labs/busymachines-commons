@@ -1,6 +1,6 @@
 package busymachines.semver
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{Assertion, FlatSpec, Matchers}
 
 /**
   *
@@ -13,15 +13,15 @@ class SemanticVersionOrderingTest extends FlatSpec with Matchers {
   //technically I could have used >, ==, < operators as well
   private implicit class SemVerTestOps(sv: SemanticVersion) {
 
-    def assertGT(that: SemanticVersion): Unit = {
+    def assertGT(that: SemanticVersion): Assertion = {
       assert(sv.compareTo(that) > 0, s"$sv should be greater than $that")
     }
 
-    def assertEQ(that: SemanticVersion): Unit = {
+    def assertEQ(that: SemanticVersion): Assertion = {
       assert(sv.compareTo(that) == 0, s"$sv should be equal to $that")
     }
 
-    def assertLT(that: SemanticVersion): Unit = {
+    def assertLT(that: SemanticVersion): Assertion = {
       assert(sv.compareTo(that) < 0, s"$sv should be less than $that")
     }
   }
