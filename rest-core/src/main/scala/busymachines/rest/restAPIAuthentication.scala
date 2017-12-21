@@ -14,13 +14,13 @@ import busymachines.core.SubjectToChange
 import scala.util.{Failure, Success, Try}
 
 @SubjectToChange("0.3.0")
-trait RestAPIAuthentication[AuthenticationResult] {
+trait RestAPIAuthentication[AuthResult] {
 
-  def authentication: Directive1[AuthenticationResult]
+  def authentication: Directive1[AuthResult]
 
-  lazy val optionalAuthentication: Directive1[Option[AuthenticationResult]] =
-    authentication.map(r => Option[AuthenticationResult](r)).recover { rej =>
-      provide(Option.empty[AuthenticationResult])
+  lazy val optionalAuthentication: Directive1[Option[AuthResult]] =
+    authentication.map(r => Option[AuthResult](r)).recover { rej =>
+      provide(Option.empty[AuthResult])
     }
 }
 
@@ -39,11 +39,6 @@ object RestAPIAuthentications {
   private val InvalidBasicCredentials = AuthenticationFailedRejection(
     cause     = AuthenticationFailedRejection.CredentialsRejected,
     challenge = HttpChallenges.basic(BasicS)
-  )
-
-  private val MissingBearerCredentials = AuthenticationFailedRejection(
-    cause     = AuthenticationFailedRejection.CredentialsMissing,
-    challenge = HttpChallenges.oAuth2(BearerS)
   )
 
   private val InvalidBearerCredentials = AuthenticationFailedRejection(

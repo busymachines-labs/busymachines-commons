@@ -1,7 +1,7 @@
 package busymachines.rest
 
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import org.scalatest.{Assertions, Suite}
+import org.scalatest.{Assertion, Assertions, Suite}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -51,7 +51,7 @@ trait RestAPITest
     r
   }
 
-  protected def expectStatus(sc: StatusCode): Unit = {
+  protected def expectStatus(sc: StatusCode): Assertion = {
     assertResult(sc)(response.status)
   }
 }
