@@ -213,9 +213,6 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
       )
     )
     val rawJson = failure.asJson.spaces2
-    println {
-      rawJson
-    }
     assert(
       rawJson ==
         """
