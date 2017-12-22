@@ -13,10 +13,10 @@ Current version is `0.2.0-RC6`. SBT module id:
 - akka-http 10.0.10
 - akka-actor 2.5.4
 - akka-stream 2.5.4
-- cats-effects 0.4.0
-- cats-core 1.0.0-MF
-- circe 0.9.0-M1
-- akka-http-circe 1.19.0-M1
+- cats-effects 0.6.0
+- cats-core 1.0.0-RC2
+- circe 0.9.0-M3
+- akka-http-circe 1.19.0-M3
 
 ## Description
 

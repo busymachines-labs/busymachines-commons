@@ -59,7 +59,6 @@ object HttpServer {
   }
 
   /**
-    *
     * @param logNormalIO
     * Provides back to you the same loggingFunction the enclosing [[HttpServer]] was
     * instantiated with
