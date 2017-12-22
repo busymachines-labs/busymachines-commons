@@ -29,59 +29,66 @@ import scala.util.control.NonFatal
   *
   */
 object HttpServer {
-  type ReportIO = String => IO[Unit]
+  type LogIO = String => IO[Unit]
 
-  private val printlnConsoleOutput: ReportIO = msg => IO(println(msg))
-  private val sysErrConsoleOutput:  ReportIO = msg => IO(System.err.println(msg))
+  private val printlnConsoleOutput: LogIO = msg => IO(println(msg))
+  private val sysErrConsoleOutput:  LogIO = msg => IO(System.err.println(msg))
 
   def apply(
-    name:      String,
-    route:     Route,
-    config:    MinimalWebServerConfig,
-    logNormal: ReportIO = printlnConsoleOutput,
-    logError:  ReportIO = sysErrConsoleOutput,
+    name:        String,
+    route:       Route,
+    config:      MinimalWebServerConfig,
+    logNormalIO: LogIO = printlnConsoleOutput,
+    logErrorIO:  LogIO = sysErrConsoleOutput,
   )(implicit
     as: ActorSystem,
     ec: ExecutionContext,
     am: ActorMaterializer,
   ): HttpServer = {
     new HttpServer(
-      name      = name,
-      route     = route,
-      config    = config,
-      logNormal = reportWithPrependedServerName(name, logNormal),
-      logError  = reportWithPrependedServerName(name, logError)
+      name        = name,
+      route       = route,
+      config      = config,
+      logNormalIO = reportWithPrependedServerName(name, logNormalIO),
+      logErrorIO  = reportWithPrependedServerName(name, logErrorIO)
     )
   }
 
-  private def reportWithPrependedServerName(name: String, reportIO: ReportIO): ReportIO = { originalMsg =>
+  private def reportWithPrependedServerName(name: String, reportIO: LogIO): LogIO = { originalMsg =>
     reportIO(s"$name — $originalMsg")
   }
 
   /**
     *
-    * @param logNormal
+    * @param logNormalIO
     * Provides back to you the same loggingFunction the enclosing [[HttpServer]] was
     * instantiated with
-    * @param logError
+    *
+    * @param logErrorIO
     * idem logNormal
+    *
+    * @param waitForServerShutdownIO
+    * provides an IO which waits for an external SIGKILL of the JVM. It is blocking,
+    * when evaluated
+    *
     * @param terminateActorSystemIO
     * provides an IO whose effect is closing the ActorSystem with which the enclosing
     * [[HttpServer]] was created
     */
-  final case class CleanUpContext(
-    logNormal:              ReportIO,
-    logError:               ReportIO,
-    terminateActorSystemIO: IO[Unit]
+  final case class Context private[HttpServer] (
+    logNormalIO:             LogIO,
+    logErrorIO:              LogIO,
+    waitForServerShutdownIO: IO[Unit],
+    terminateActorSystemIO:  IO[Unit],
   )
 }
 
 final class HttpServer private (
-  private val name:      String,
-  private val route:     Route,
-  private val config:    MinimalWebServerConfig,
-  private val logNormal: HttpServer.ReportIO,
-  private val logError:  HttpServer.ReportIO,
+  private val name:        String,
+  private val route:       Route,
+  private val config:      MinimalWebServerConfig,
+  private val logNormalIO: HttpServer.LogIO,
+  private val logErrorIO:  HttpServer.LogIO,
 )(implicit
   private val actorSystem:       ActorSystem,
   private val execContext:       ExecutionContext,
@@ -89,55 +96,68 @@ final class HttpServer private (
 ) {
 
   /**
-    * idem to [[startThenDoCustomCleanup]], except that the only cleanup
-    * done is terminating the [[actorSystem]]
+    * idem to [[startThenWaitUntilShutdownDoCustomCleanup]],
+    * except that there are default values for the above's parameters:
+    *
+    * ``waitForShutdownIO``:
+    *   - blocks until the JVM received and external shutdown signal.
+    *
+    * ``cleanupIO``:
+    *   - terminates the [[actorSystem]]
     */
   def startThenCleanUpActorSystem: IO[Unit] = {
-    startThenDoCustomCleanup(ctx => ctx.terminateActorSystemIO)
+    startThenWaitUntilShutdownDoCustomCleanup(
+      waitForShutdownIO = _.waitForServerShutdownIO,
+      cleanupIO         = _.terminateActorSystemIO
+    )
   }
 
   /**
-    * Starts the server and blocks the current thread until the JVM receives
-    * the SIGKILL signal.
+    * Starts the server and blocks the current thread as specified by the
+    * ``waitForShutdownIO`` parameter, a default IO that waits for SIGKILL is
+    * available in the [[HttpServer.Context.waitForServerShutdownIO]] value.
     *
-    * Therefore be careful how you use this if this is not your usual use-case,
-    * most of the time it is, so there is little reason to support other use-cases.
-    *
-    * After receiving the SIGKILL, the server will gracefully:
+    * After this shutdownIO is run, the server will gracefully:
     *  - unbind the port
     *  - then do whatever cleanup is specified by the ``cleanup`` function
     *
-    * @param cleanup
-    *   specify your custom cleanup. N.B. you can just as well your custom
-    *   clean-up logic after server has unbinded the port. by composing a new
-    *   IO.
-    *   the [[HttpServer.CleanUpContext]] parameter offers convenient access to
-    *   the log functions you passed to the server, and to an IO whose effect
-    *   is to terminate the [[actorSystem]] if you wish do terminate it.
+    * @param cleanupIO
+    * specify your custom cleanup. N.B. you can just as well your custom
+    * clean-up logic after server has unbinded the port. by composing a new
+    * IO.
+    * the [[HttpServer.Context]] parameter offers convenient access to
+    * the log functions you passed to the server, and to an IO whose effect
+    * is to terminate the [[actorSystem]] if you wish do terminate it.
+    *
+    * @param waitForShutdownIO
+    * The IO specifying what exactly the waiting for cleanup
+    *
     */
-  def startThenDoCustomCleanup(
-    cleanup: HttpServer.CleanUpContext => IO[Unit] = ctx => IO.unit
+  def startThenWaitUntilShutdownDoCustomCleanup(
+    waitForShutdownIO: HttpServer.Context => IO[Unit],
+    cleanupIO:         HttpServer.Context => IO[Unit]
   ): IO[Unit] = {
-    val ctx = HttpServer.CleanUpContext(
-      logNormal              = logNormal,
-      logError               = logError,
-      terminateActorSystemIO = terminateActorSystemIO
+    val ctx = HttpServer.Context(
+      logNormalIO             = logNormalIO,
+      logErrorIO              = logErrorIO,
+      terminateActorSystemIO  = terminateActorSystemIO,
+      waitForServerShutdownIO = waitForExternalSIGKILLSignal,
     )
     for {
       bindAttempt <- step1_bindPortAndHandle.attempt
       result <- bindAttempt match {
                  case Right(binding) =>
                    for {
-                     _ <- step2_waitForShutdownSignal
+                     _ <- waitForShutdownIO(ctx)
                      _ <- step3_unbind(binding: ServerBinding)
-                     _ <- cleanup(ctx)
+                     _ <- cleanupIO(ctx)
                    } yield ()
 
                  case Left(t) =>
                    for {
                      _ <- step1_1_bindErrorRecovery(t)
-                     _ <- step2_waitForShutdownSignal
-                     _ <- cleanup(ctx)
+                     _ <- waitForShutdownIO(ctx)
+                     _ <- cleanupIO(ctx)
                    } yield ()
                }
     } yield result
@@ -159,42 +179,40 @@ final class HttpServer private (
           case NonFatal(e) => if (e != null) e.getCause else e
         }
       }
-      _ <- logNormal(show"port bound @ $config")
-      _ <- logNormal("will shut down only on shutdown signal of JVM")
+      _ <- logNormalIO(show"port bound @ $config")
     } yield serverBinding
   }
 
   private def step1_1_bindErrorRecovery: PartialFunction[Throwable, IO[Unit]] = PartialFunction[Throwable, IO[Unit]] {
     case e: java.net.BindException =>
-      for {
-        _ <- logError(show"failed to bind port @ $config — reason: ${e.getLocalizedMessage}")
-        _ <- logError(s"waiting for shutdown signal of JVM — please kill me")
-      } yield ()
+      logErrorIO(show"failed to bind port @ $config — reason: ${e.getLocalizedMessage}") >>
+        logErrorIO(s"waiting for shutdown signal of JVM — please kill me")
 
     case NonFatal(e) =>
-      for {
-        _ <- logError(s"failed to get HTTP up and running for unknown reason: ${e.getMessage}")
-        _ <- logError(s"waiting for shutdown signal of JVM — please kill me")
-      } yield ()
+      logErrorIO(s"failed to get HTTP up and running for unknown reason: ${e.getMessage}") >>
+        logErrorIO(s"waiting for shutdown signal of JVM — please kill me")
 
   }
 
-  private def step2_waitForShutdownSignal: IO[Unit] = {
-    IO {
+  private def step3_unbind(binding: ServerBinding): IO[Unit] = {
+    logNormalIO(show"unbinding @ $config") >>
+      IO.fromFuture(IO(binding.unbind()))
+  }
+
+  private def waitForExternalSIGKILLSignal: IO[Unit] = {
+    logNormalIO("will shut down only on shutdown signal of JVM") >> IO {
       val mainThread = Thread.currentThread()
-      val shutdownThread = new Thread(() => {
+      val shutdownThread = new Thread(
+        () => {
+          val io = logNormalIO(
+            s"shutdown hook started — waiting at most '${config.waitAtMostForCleanup}' for main thread to finish its work"
+          ) >>
+            IO(mainThread.join(config.waitAtMostForCleanup.toMillis)) >>
+            logNormalIO("main thread finished — shutdown hook ended — shutting down JVM")
 
-        val io = for {
-          _ <- logNormal(
-                s"shutdown hook started — waiting at most '${config.waitAtMostForCleanup}' for main thread to finish its work"
-              )
-          //Thread.join does not throw exception when timeout is over
-          _ <- IO(mainThread.join(config.waitAtMostForCleanup.toMillis))
-          _ <- logNormal("main thread finished — shutdown hook ended — shutting down JVM")
-        } yield ()
-
-        io.unsafeRunSync()
-      })
+          io.unsafeRunSync()
+        }
+      )
 
       Runtime.getRuntime.addShutdownHook(shutdownThread)
       //this thread becomes alive only when the JVM received a shutdown signal
@@ -205,19 +223,8 @@ final class HttpServer private (
     }
   }
 
-  private def step3_unbind(binding: ServerBinding): IO[Unit] = {
-    for {
-      _ <- logNormal(
-            show"unbinding @ $config"
-          )
-      _ <- IO.fromFuture(IO(binding.unbind()))
-    } yield ()
-  }
-
   private def terminateActorSystemIO: IO[Unit] = {
-    for {
-      _ <- logNormal(s"closing actor system: ${actorSystem.name}")
-      _ <- IO.fromFuture(IO(actorSystem.terminate()))
-    } yield ()
-  }
+    logNormalIO(s"closing actor system: ${actorSystem.name}") >>
+      IO.fromFuture(IO(actorSystem.terminate()))
+  } map (_ => ())
 }
