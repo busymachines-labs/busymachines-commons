@@ -28,32 +28,25 @@ Probably due to an missing implicit — probably automatic derivation of some ty
 These modules are are cross-compiled for Scala versions: `2.12.3`. We try our best to keep them up to date.
 
 #### Modules:
-* `"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC7"`
-  * [README.md](/core) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
-* `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC7"`
-  * [README.md](/json) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0-RC7"`
-  * [README.md](/rest-core) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-core-testkit" % "0.2.0-RC7" % Test`
-  * [README.md](/rest-core-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core-testkit_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0-RC7"`
-  * [README.md](/rest-json) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-RC7" % Test`
-  * [README.md](/rest-json-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-testkit_2.12)
-* `"com.busymachines" %% "busymachines-commons-semver" % "0.2.0-RC7"`
-  * [README.md](/semver) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver_2.12)  
-* `"com.busymachines" %% "busymachines-commons-semver-parsers" % "0.2.0-RC7"`
-  * [README.md](/semver-parsers) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver-parsers_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver-parsers_2.12)
+Module | Description | Version
+-- | --- | ----
+[core](/core) | semantically relevant exceptions | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
+[json](/json) | all your json needs! | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
+[rest-core](/rest-core) | straightforward use of akka-http | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core_2.12)
+[`rest-core-testkit`](/rest-core-testkit) | concise DSL for writing REST level tests | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core-testkit_2.12)
+[rest-json](/rest-json) | json implementation of `rest-core` | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json_2.12)
+[rest-json-testkit](/rest-json-testkit) | REST endpoint testing DSL specialized for JSON input/output | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-testkit_2.12)
+[semver](/semver) | semantic version data-type with natural ordering | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver_2.12)
+[semver-parsers](/semver-parsers) | text parser for above semantic version | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver-parsers_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver-parsers_2.12)
 
 ##### deprecated:
 This is a parallel module hierarchy whose json serialization is handled by `spray-json`. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the `rest` packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the `json` package differs the most.
 
-* `"com.busymachines" %% "busymachines-commons-json-spray" % "0.2.0-RC7"`
-  * [README.md](/json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json-spray_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json-spray" % "0.2.0-RC7"`
-  * [README.md](/rest-json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)  
-* `"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0-RC7" % Test`
-  * [README.md](/rest-json-spray-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12)
+Module | Description | Version
+--- | --- | ---
+[json-spray](/json-spray) | `spray` analog of the the `json` module.  | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json-spray_2.12)
+[rest-json-spray](/rest-json-spray) | `spray` analog of `rest-json` module | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)
+[json-spray-testkit](/rest-json-spray-testkit) | `spray` analog of the `rest-json-testkit` module | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12)
 
 For easy copy-pasting:
 ```scala
