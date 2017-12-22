@@ -3,7 +3,6 @@ package busymachines.rest
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
-import cats._
 import cats.implicits._
 import cats.effect._
 
@@ -148,7 +147,7 @@ final class HttpServer private (
     for {
       serverBinding <- {
         IO.fromFuture {
-          Eval.later(
+          IO(
             Http().bindAndHandle(
               handler   = route,
               interface = config.host,
@@ -211,14 +210,14 @@ final class HttpServer private (
       _ <- logNormal(
             show"unbinding @ $config"
           )
-      _ <- IO.fromFuture(Eval.later(binding.unbind()))
+      _ <- IO.fromFuture(IO(binding.unbind()))
     } yield ()
   }
 
   private def terminateActorSystemIO: IO[Unit] = {
     for {
       _ <- logNormal(s"closing actor system: ${actorSystem.name}")
-      _ <- IO.fromFuture(Eval.later(actorSystem.terminate()))
+      _ <- IO.fromFuture(IO(actorSystem.terminate()))
     } yield ()
   }
 }
