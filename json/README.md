@@ -2,8 +2,8 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json_2.12)
 
-Current version is `0.2.0-RC6`. SBT module id:
-`"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC6"`
+Current version is `0.2.0-RC7`. SBT module id:
+`"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC7"`
 
 ## How it works
 This module is a thin layer over [circe](https://circe.github.io/circe/), additionally, it depends on [shapeless](https://github.com/milessabin/shapeless). The latter being the mechanism through which `autoderive` and `derive` derivation can be made to work.
