@@ -4,16 +4,16 @@
 
 ## artifacts
 
-Current version is `0.2.0-RC6`. SBT module id:
-`"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0-RC6"`
+Current version is `0.2.0-RC7`. SBT module id:
+`"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0-RC7"`
 
 ### Transitive dependencies
 - busymachines-commons-core
 - akka-http 10.0.10
 - akka-actor 2.5.4
 - akka-stream 2.5.4
-- cats-effects 0.4.0
-- cats-core 1.0.0-MF
+- cats-effects 0.6.0
+- cats-core 1.0.0-RC2
 
 ## Description
 
@@ -46,17 +46,20 @@ import scala.concurrent.ExecutionContext
 
 object MainRestPlaygroundApp extends App {
 
-  implicit val as: ActorSystem = ActorSystem("commons-system")
-  implicit val am: ActorMaterializer = ActorMaterializer()
-  implicit val ec: ExecutionContext = as.dispatcher
+    implicit val as: ActorSystem       = ActorSystem("http-server-test")
+    implicit val am: ActorMaterializer = ActorMaterializer()
+    implicit val ec: ExecutionContext  = as.dispatcher
 
-  val restAPI = new HelloWorld()
+    val httpServer = HttpServer(
+      name  = "HttpServerTest",
+      route = restAPI.route,
+      config = MinimalWebServerConfig(
+        host = "0.0.0.0",
+        port = 9999
+      ) // or.default
+    ).startThenCleanUpActorSystem
 
-  val httpServer = WebServerIO.`bind->handleRequests->wait to stop->unbind->close actor system`(
-    restAPI, MinimalWebServerConfig.default
-  )
-
-  httpServer.unsafeRunSync()
+    httpServer.unsafeRunSync()
 
 }
 
@@ -89,13 +92,48 @@ class HelloWorld extends RestAPI with Directives {
 
 Output:
 ```
-— server online @ http://localhost:9999
-— press RETURN to stop...
-   #### after you press return: ####
-— stopping...
-— unbinding address @ localhost:9999
-— closing actor system: my-system
+HttpServerTest — port bound @ /0.0.0.0:9999
+HttpServerTest — will shut down only on shutdown signal of JVM
+#### after you kill the JVM ####
+HttpServerTest — shutdown hook started — waiting at most '60 seconds' for main thread to finish its work
+HttpServerTest — unbinding @ /0.0.0.0:9999
+HttpServerTest — closing actor system: my-system
+HttpServerTest — main thread finished — shutdown hook ended — shutting down JVM
 ```
+
+You can customize how messages are logged by providing two functions to the `HttpServer` constructor:
+
+```scala
+  val logNormalFunction: HttpServer.LogIO = msg => IO(logger.info(msg))
+  val logErrorFunction:  HttpServer.LogIO = msg => IO(logger.info(msg))
+
+  val httpServer1 = HttpServer(
+    name        = "PlaygroundServer",
+    route       = restAPI.route,
+    config      = MinimalWebServerConfig.default,
+    logNormalIO = logNormalFunction,
+    logErrorIO  = logErrorFunction
+  )
+```
+
+You can also customize what cleaning is done, and what the shutdownhook of the application is by invoking the `startThenWaitUntilShutdownDoCustomCleanup` instead of the `startThenCleanUpActorSystem`:
+
+```scala
+    val httpServer = HttpServer(
+      name  = "HttpServerTest",
+      route = restAPI.route,
+      config = MinimalWebServerConfig(
+        host = "0.0.0.0",
+        port = 15898
+      )
+    ).startThenWaitUntilShutdownDoCustomCleanup(
+      waitForShutdownIO = ctx => ctx.logNormalIO("shutting down immediately"),
+      //N.B. that the port will still be unbound, it's just that the HttpServer won't close the ActorSystem as well this time.
+      cleanupIO         = ctx => ctx.logNormalIO("I refuse to clean up after myself")
+    )
+```
+
+The `ctx` object is of type `HttpServer.Context` and offers access to the logging functions the HttpServer uses, and the IOs for the default implementations of waiting for shutdown, and cleanup. Check scaladoc for more details.
 
 ## Integration with `core`
 

@@ -116,14 +116,13 @@ private[rest_json_test] class DefaultExceptionHandlerRestAPIForTesting
       pathEndOrSingleSlash {
         get {
           complete(
-            StatusCodes.OK,
-            Future.successful {
+            (StatusCodes.OK, Future.successful {
               SomeTestDTOGet(
                 42,
                 "fortyTwo",
                 None
               )
-            }
+            })
           )
         }
       }
@@ -178,11 +177,11 @@ private[rest_json_test] class DefaultExceptionHandlerRestAPIForTesting
   }
 
   def notImplementedBoxed(s: String): Future[String] = {
-    Future.fromTry(Try(throw new NotImplementedError("boxed")))
+    Future.fromTry(Try(throw new NotImplementedError(s)))
   }
 
   def notImplemented(s: String): Future[String] = {
-    throw new NotImplementedError("not boxed")
+    throw new NotImplementedError(s)
   }
 
 }

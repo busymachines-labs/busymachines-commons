@@ -1,5 +1,9 @@
 package busymachines.rest
 
+import cats.Show
+
+import scala.concurrent.duration._
+
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
@@ -8,14 +12,13 @@ package busymachines.rest
   */
 trait MinimalWebServerConfig {
   def host: String
-
   def port: Int
 
-  def show: String = s"$host:$port"
+  def waitAtMostForCleanup: FiniteDuration = FiniteDuration(60, SECONDS)
 }
 
 object MinimalWebServerConfig {
-  def default: MinimalWebServerConfig = MinimalWebServerConfigImpl("localhost", 9999)
+  def default: MinimalWebServerConfig = MinimalWebServerConfigImpl("0.0.0.0", 9999)
 
   def apply(host: String, port: Int): MinimalWebServerConfig = MinimalWebServerConfigImpl(host, port)
 
@@ -24,4 +27,6 @@ object MinimalWebServerConfig {
     override val port: Int
   ) extends MinimalWebServerConfig
 
+  implicit val MinimalWebServerConfigShow: Show[MinimalWebServerConfig] =
+    Show.show(c => s"/${c.host}:${c.port}")
 }

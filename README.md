@@ -23,41 +23,34 @@ Probably due to an missing implicit — probably automatic derivation of some ty
 
 #### versions
 * stable: `0.1.0` — but almost useless
-* latest: `0.2.0-RC6`
+* latest: `0.2.0-RC7`
 
 These modules are are cross-compiled for Scala versions: `2.12.3`. We try our best to keep them up to date.
 
 #### Modules:
-* `"com.busymachines" %% "busymachines-commons-core" % "0.2.0-RC6"`
-  * [README.md](/core) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
-* `"com.busymachines" %% "busymachines-commons-json" % "0.2.0-RC6"`
-  * [README.md](/json) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0-RC6"`
-  * [README.md](/rest-core) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-core-testkit" % "0.2.0-RC6" % Test`
-  * [README.md](/rest-core-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core-testkit_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0-RC6"`
-  * [README.md](/rest-json) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-RC6" % Test`
-  * [README.md](/rest-json-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-testkit_2.12)
-* `"com.busymachines" %% "busymachines-commons-semver" % "0.2.0-RC6"`
-  * [README.md](/semver) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver_2.12)  
-* `"com.busymachines" %% "busymachines-commons-semver-parsers" % "0.2.0-RC6"`  
-  * [README.md](/semver-parsers) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver-parsers_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver-parsers_2.12)
+Module | Description | Version
+-- | --- | ----
+[core](/core) | semantically relevant exceptions | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
+[json](/json) | all your json needs! | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
+[rest-core](/rest-core) | straightforward use of akka-http | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core_2.12)
+[`rest-core-testkit`](/rest-core-testkit) | concise DSL for writing REST level tests | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core-testkit_2.12)
+[rest-json](/rest-json) | json implementation of `rest-core` | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json_2.12)
+[rest-json-testkit](/rest-json-testkit) | REST endpoint testing DSL specialized for JSON input/output | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-testkit_2.12)
+[semver](/semver) | semantic version data-type with natural ordering | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver_2.12)
+[semver-parsers](/semver-parsers) | text parser for above semantic version | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-semver-parsers_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-semver-parsers_2.12)
 
 ##### deprecated:
 This is a parallel module hierarchy whose json serialization is handled by `spray-json`. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the `rest` packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the `json` package differs the most.
 
-* `"com.busymachines" %% "busymachines-commons-json-spray" % "0.2.0-RC6"`
-  * [README.md](/json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json-spray_2.12)
-* `"com.busymachines" %% "busymachines-commons-rest-json-spray" % "0.2.0-RC6"`
-  * [README.md](/rest-json-spray) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)  
-* `"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0-RC6" % Test`
-  * [README.md](/rest-json-spray-testkit) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12)
+Module | Description | Version
+--- | --- | ---
+[json-spray](/json-spray) | `spray` analog of the the `json` module.  | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json-spray_2.12)
+[rest-json-spray](/rest-json-spray) | `spray` analog of `rest-json` module | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)
+[json-spray-testkit](/rest-json-spray-testkit) | `spray` analog of the `rest-json-testkit` module | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12)
 
 For easy copy-pasting:
 ```scala
-val bmcVersion: String = "0.2.0-RC6"
+val bmcVersion: String = "0.2.0-RC7"
 
 val bmcCore            = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
 val bmcJson            = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
@@ -85,17 +78,17 @@ The idea behind these sets of libraries is to help jumpstart backend RESTful api
 Basically, as long as modules reside in the same repository they will be versioned with the same number, and released at the same time to avoid confusion. The moment we realize that a module has to take a life of its own, it will be moved to a separate module and versioned independently.
 
 * [core](/core) `0.1.0`
-* [json](/json) `0.2.0-RC6`
-* [rest-core](/rest-core) `0.2.0-RC6` - this is an abstract implementation that still requires specific serialization/deserialization
-* [rest-core-testkit](/rest-core-testkit) `0.2.0-RC6` - contains helpers that allow testing. Should never wind up in production code.
-* [rest-json](/rest-core) `0.2.0-RC6` - used to implement REST APIs that handle JSON
-* [rest-json-testkit](/rest-json-testkit) `0.2.0-RC6` - helpers for JSON powered REST APIs
+* [json](/json) `0.2.0-RC7`
+* [rest-core](/rest-core) `0.2.0-RC7` - this is an abstract implementation that still requires specific serialization/deserialization
+* [rest-core-testkit](/rest-core-testkit) `0.2.0-RC7` - contains helpers that allow testing. Should never wind up in production code.
+* [rest-json](/rest-core) `0.2.0-RC7` - used to implement REST APIs that handle JSON
+* [rest-json-testkit](/rest-json-testkit) `0.2.0-RC7` - helpers for JSON powered REST APIs
 
 Most likely you don't need to depend on the `rest-core*` modules. But rather on one or more of its reifications like `rest-json`. This separation was done because in the future we might need non-json REST APIs, and then we still want to have a common experience of using `commons`.
 
 Other modules:
-* [semver](/semver) `0.2.0-RC6` - definition of a `SemanticVersion` datatype and its natural ordering according to the [Semantic Version 2.0.0](http://semver.org/) spec. Useful only if you have to manipulate semantic versions in your code. No other modules here depend on it.
-* [semver](/semver-parsers) `0.2.0-RC6` - parsers from plain string to the above `SemanticVersion`.
+* [semver](/semver) `0.2.0-RC7` - definition of a `SemanticVersion` datatype and its natural ordering according to the [Semantic Version 2.0.0](http://semver.org/) spec. Useful only if you have to manipulate semantic versions in your code. No other modules here depend on it.
+* [semver](/semver-parsers) `0.2.0-RC7` - parsers from plain string to the above `SemanticVersion`.
 
 ### Current version
 

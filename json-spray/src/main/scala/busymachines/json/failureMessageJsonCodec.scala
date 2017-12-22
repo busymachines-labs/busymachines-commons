@@ -39,29 +39,11 @@ trait FailureMessageJsonCodec {
       Try(c.convertTo[immutable.Seq[String]])
         .map((s: immutable.Seq[String]) => FailureMessage.ParamValue(s))
         .recoverWith {
-          case NonFatal(e) => Try(c.convertTo[String]).map(FailureMessage.ParamValue.apply)
+          case NonFatal(_) => Try(c.convertTo[String]).map(FailureMessage.ParamValue.apply)
         }
         .get
     }
   }
-
-  //not needed because of the implicit formatting of maps
-  //  private implicit final val FailureMessageParamsCodec: Codec[FailureMessage.Parameters] = new Codec[FailureMessage.Parameters] {
-  //    override def read(c: Json): FailureMessage.Parameters = {
-  //      val x: Map[String, FailureMessage.Value] = c.asJsObject.fields.map { k =>
-  //        (k._1, k._2.convertTo[FailureMessage.Value])
-  //      }
-  //      x
-  //    }
-  //
-  //    override def write(a: FailureMessage.Parameters): Json = {
-  //      JsObject(
-  //        a.map { k =>
-  //          (k._1, k._2.toJson)
-  //        }
-  //      )
-  //    }
-  //  }
 
   final implicit val failureMessageCodec: Codec[FailureMessage] = new Codec[FailureMessage] {
     private val jsonCodec = jsonFormat3(FailureMessageRepr)

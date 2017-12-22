@@ -17,7 +17,7 @@ object Dependencies {
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
-  lazy val bmcv: String = "0.2.0-RC6"
+  lazy val bmcv: String = "0.2.0-RC7"
 
   lazy val bmcCore:       ModuleID = "com.busymachines" %% "busymachines-commons-core"              % bmcv
   lazy val bmcJson:       ModuleID = "com.busymachines" %% "busymachines-commons-json"              % bmcv
@@ -36,7 +36,7 @@ object Dependencies {
 
   lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
 
-  lazy val catsVersion: String = "1.0.0-RC1"
+  lazy val catsVersion: String = "1.0.0-RC2"
 
   lazy val catsCore:    ModuleID = "org.typelevel" %% "cats-core"    % catsVersion
   lazy val catsMacros:  ModuleID = "org.typelevel" %% "cats-macros"  % catsVersion
@@ -44,9 +44,9 @@ object Dependencies {
   lazy val catsLaws:    ModuleID = "org.typelevel" %% "cats-laws"    % catsVersion
   lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
 
-  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.5"
+  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.6"
 
-  lazy val circeVersion: String = "0.9.0-M2"
+  lazy val circeVersion: String = "0.9.0-M3"
 
   lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % circeVersion
   lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeVersion
