@@ -1,6 +1,6 @@
 # busymachines-commons
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12) !Sonatype[https://img.shields.io/nexus/r/https/oss.sonatype.org/com.busymachines/busymachines-commons-core_2.12.svg]
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12) [!Sonatype[https://img.shields.io/nexus/r/https/oss.sonatype.org/com.busymachines/busymachines-commons-core_2.12.svg]](https://oss.sonatype.org/#nexus-search;quick~busymachines-commons-core_2.12)
 
 Light-weight, modular, libraries for varying technology stacks, built _primarily_ on top of the [typelevel.scala](https://github.com/typelevel) ecosystem.
 
