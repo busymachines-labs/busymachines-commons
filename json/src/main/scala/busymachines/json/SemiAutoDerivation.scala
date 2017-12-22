@@ -25,9 +25,7 @@ trait SemiAutoDerivation {
     implicit
     encode: Lazy[encoding.ConfiguredObjectEncoder[A]],
     decode: Lazy[decoding.ConfiguredDecoder[A]]
-  ): Codec[A] = {
-    Codec[A](encode.value, decode.value)
-  }
+  ): Codec[A] = Codec.instance[A](encode.value, decode.value)
 
   final def deriveFor[A]: DerivationHelper[A] =
     circeSemiAuto.deriveFor[A]
@@ -42,6 +40,5 @@ trait SemiAutoDerivation {
     implicit
     encode: Lazy[encoding.EnumerationEncoder[A]],
     decode: Lazy[decoding.EnumerationDecoder[A]]
-  ): Codec[A] =
-    Codec[A](encode.value, decode.value)
+  ): Codec[A] = Codec.instance[A](encode.value, decode.value)
 }
