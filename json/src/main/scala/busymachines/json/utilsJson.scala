@@ -1,7 +1,7 @@
 package busymachines.json
 
 import io.circe.parser._
-import busymachines.core.exceptions._
+import busymachines.core._
 import io.circe.Printer
 
 /**
@@ -23,16 +23,16 @@ object JsonDecoding {
   }
 
   def unsafeDecodeAs[A](json: Json)(implicit decoder: Decoder[A]): A = {
-    this.decodeAs[A](json)(decoder).toTry.get
+    this.decodeAs[A](json)(decoder).unsafeGet
   }
 
   def unsafeDecodeAs[A](json: String)(implicit decoder: Decoder[A]): A = {
-    JsonDecoding.decodeAs(json).toTry.get
+    JsonDecoding.decodeAs(json).unsafeGet
   }
 }
 
 final case class JsonDecodingFailure(msg: String) extends InvalidInputFailure(msg) {
-  override def id: FailureID = JsonFailureIDs.JsonDecodingFailureID
+  override def id: AnomalyID = JsonAnomalyIDs.JsonDecodingAnomalyID
 }
 
 /**
@@ -47,7 +47,7 @@ object JsonParsing {
   }
 
   def unsafeParseString(input: String): Json = {
-    JsonParsing.parseString(input).toTry.get
+    JsonParsing.parseString(input).unsafeGet
   }
 
 }
@@ -64,19 +64,19 @@ object PrettyJson {
 }
 
 final case class JsonParsingFailure(msg: String) extends InvalidInputFailure(msg) {
-  override def id: FailureID = JsonFailureIDs.JsonParsingFailureID
+  override def id: AnomalyID = JsonAnomalyIDs.JsonParsingAnomalyID
 }
 
 /**
   *
   */
-object JsonFailureIDs {
+object JsonAnomalyIDs {
 
-  case object JsonParsingFailureID extends FailureID {
+  case object JsonParsingAnomalyID extends AnomalyID {
     override def name: String = "json_01"
   }
 
-  case object JsonDecodingFailureID extends FailureID {
+  case object JsonDecodingAnomalyID extends AnomalyID {
     override def name: String = "json_02"
   }
 

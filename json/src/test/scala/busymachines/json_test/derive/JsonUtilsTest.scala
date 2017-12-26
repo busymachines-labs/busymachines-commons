@@ -3,6 +3,7 @@ package busymachines.json_test.derive
 import busymachines.json.{JsonDecoding, JsonDecodingFailure, JsonParsing, JsonParsingFailure}
 import busymachines.json_test.AnarchistMelon
 import org.scalatest.{EitherValues, FlatSpec, Matchers}
+import busymachines.json._
 
 /**
   *
@@ -42,7 +43,7 @@ class JsonUtilsTest extends FlatSpec with EitherValues with Matchers {
       """.stripMargin
 
     an[JsonParsingFailure] shouldBe thrownBy {
-      throw JsonParsing.parseString(rawJson).left.value
+      JsonParsing.parseString(rawJson).unsafeGet
     }
   }
 
@@ -117,7 +118,7 @@ class JsonUtilsTest extends FlatSpec with EitherValues with Matchers {
       """.stripMargin
 
     an[JsonParsingFailure] shouldBe thrownBy {
-      throw JsonDecoding.decodeAs[AnarchistMelon](rawJson).left.value
+       JsonDecoding.decodeAs[AnarchistMelon](rawJson).unsafeGet
     }
   }
 
@@ -133,7 +134,7 @@ class JsonUtilsTest extends FlatSpec with EitherValues with Matchers {
       """.stripMargin
 
     the[JsonDecodingFailure] thrownBy {
-      throw JsonDecoding.decodeAs[AnarchistMelon](rawJson).left.value
+      JsonDecoding.decodeAs[AnarchistMelon](rawJson).unsafeGet
     }
   }
 
