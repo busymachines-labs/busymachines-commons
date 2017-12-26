@@ -10,7 +10,7 @@ import org.scalatest.FlatSpec
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class BearerAuthenticatedRoutesTest extends FlatSpec with JsonRestAPITest {
+class BearerAuthenticatedRoutesTest extends FlatSpec with JsonRestAPITest {
 
   private lazy val bearerAPI = new BearerAuthenticatedRoutesRestAPIForTesting()
   override implicit val testedRoute: Route = RestAPI.seal(bearerAPI).route

@@ -11,7 +11,7 @@ import org.scalatest.FlatSpec
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class RoutesCompositionTest extends FlatSpec with JsonRestAPITest {
+class RoutesCompositionTest extends FlatSpec with JsonRestAPITest {
   private lazy val combinedAPI: RestAPI = {
     val eh   = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()

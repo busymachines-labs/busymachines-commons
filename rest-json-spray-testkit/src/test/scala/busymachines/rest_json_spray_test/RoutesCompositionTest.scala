@@ -11,16 +11,15 @@ import org.scalatest.FlatSpec
   * @since 07 Sep 2017
   *
   */
-private[rest_json_spray_test] class RoutesCompositionTest
-    extends FlatSpec with JsonRestAPITest with SomeTestDTOJsonCodec {
+class RoutesCompositionTest extends FlatSpec with JsonRestAPITest with SomeTestDTOJsonCodec {
   private lazy val combinedAPI: RestAPI = {
     val eh   = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()
     RestAPI.seal(eh, crud)
   }
 
-  override implicit protected val testedRoute: Route         = combinedAPI.route
   private implicit val cc:                     CallerContext = Contexts.none
+  override implicit protected val testedRoute: Route         = combinedAPI.route
 
   //===========================================================================
 
@@ -29,11 +28,15 @@ private[rest_json_spray_test] class RoutesCompositionTest
   //===========================================================================
 
   it should "return 400 for InvalidInput" in {
-    get("/invalid_input") {
-      expectStatus(StatusCodes.BadRequest)
-      val fm = responseAs[FailureMessage]
-      assert(fm.id == FailureID("4"))
+    //usually it's a bad idea to leave these, but this is for illustrative purposes
+    debug {
+      get("/invalid_input") {
+        expectStatus(StatusCodes.BadRequest)
+        val fm = responseAs[FailureMessage]
+        assert(fm.id == FailureID("4"))
+      }
     }
+
   }
 
   //===========================================================================
