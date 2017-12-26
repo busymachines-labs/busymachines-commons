@@ -1,6 +1,6 @@
 package busymachines.json_spray_test
 
-import busymachines.core.exceptions._
+import busymachines.core._
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
@@ -9,19 +9,18 @@ import org.scalatest.{FlatSpec, Matchers}
   * @since 10 Aug 2017
   *
   */
-@scala.deprecated("Will be removed in 0.3.0", "0.2.0")
-class FailureMessageJsonTest extends FlatSpec with Matchers {
+class AnomalyJsonTest extends FlatSpec with Matchers {
 
   import busymachines.json._
+  import AnomalyJsonCodec._
   import syntax._
-  import FailureMessageJsonCodec._
 
-  behavior of "... serializing simple FailureMessages"
+  behavior of "... serializing simple Anomalies"
 
   it should "... encode a NotFoundFailure" in {
-    val failure: FailureMessage = NotFoundFailure(
+    val failure: Anomaly = NotFoundFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -41,16 +40,16 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a UnauthorizedFailure" in {
-    val failure: FailureMessage = UnauthorizedFailure(
+    val failure: Anomaly = UnauthorizedFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -70,16 +69,16 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a ForbiddenFailure" in {
-    val failure: FailureMessage = ForbiddenFailure(
+    val failure: Anomaly = ForbiddenFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -99,16 +98,16 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a DeniedFailure" in {
-    val failure: FailureMessage = DeniedFailure(
+    val failure: Anomaly = DeniedFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -128,16 +127,16 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a InvalidInputFailure" in {
-    val failure: FailureMessage = InvalidInputFailure(
+    val failure: Anomaly = InvalidInputFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -157,16 +156,16 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a ConflictFailure" in {
-    val failure: FailureMessage = ConflictFailure(
+    val failure: Anomaly = ConflictFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -186,28 +185,28 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
-  behavior of "... serializing composite FailureMessages"
+  behavior of "... serializing composite Anomalies"
 
   it should "... encode Failures" in {
-    val failure: FailureMessages = Failures(
-      FailureID("test"),
+    val failure: Anomalies = Anomalies(
+      AnomalyID("test"),
       "test message",
       NotFoundFailure(
         "one",
-        FailureMessage.Parameters(
+        Anomaly.Parameters(
           "3" -> "1",
           "4" -> List("1", "2")
         )
       ),
       NotFoundFailure(
         "two",
-        FailureMessage.Parameters(
+        Anomaly.Parameters(
           "5" -> "6",
           "6" -> List("6", "7")
         )
@@ -239,7 +238,7 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
@@ -255,6 +254,6 @@ class FailureMessageJsonTest extends FlatSpec with Matchers {
         |}
         |""".stripMargin.trim
 
-    the[JsonDecodingFailure] thrownBy rawJson.unsafeDecodeAs[FailureMessages]
+    the[JsonDecodingFailure] thrownBy rawJson.unsafeDecodeAs[Anomalies]
   }
 }
