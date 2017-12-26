@@ -36,7 +36,7 @@ object Dependencies {
 
   lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
 
-  lazy val catsVersion: String = "1.0.0-RC2"
+  lazy val catsVersion: String = "1.0.0"
 
   lazy val catsCore:    ModuleID = "org.typelevel" %% "cats-core"    % catsVersion
   lazy val catsMacros:  ModuleID = "org.typelevel" %% "cats-macros"  % catsVersion
