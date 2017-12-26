@@ -1,14 +1,15 @@
 import sbt._
 import Keys._
 
-/**
-  * * All instructions for publishing to sonatype can be found in the
-  * ``z-publishing-artifcats/README.md`` folder.
-  *
-  * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
-  * @since 31 Jul 2017
-  */
+addCommandAlias("ci", ";clean;update;compile;test:compile;test")
 
+/**
+  * Use with care.
+  *
+  * All instructions for publishing to sonatype can be found in
+  * ``z-publishing-artifcats/README.md``.
+  */
+addCommandAlias("doRelease", ";ci;publishSigned;sonatypeRelease")
 
 /**
   * this is used when a module depends on another, and it explicitly
