@@ -73,7 +73,7 @@ private[core] case object CatastrophicErrorID extends AnomalyID with Product wit
 private[core] final case class CatastrophicErrorImpl(
   override val id:         AnomalyID          = CatastrophicErrorID,
   override val message:    String             = CatastrophicError.`Catastrophic Error`,
-  override val parameters: Anomaly.Parameters = AnomalyParameters.empty,
+  override val parameters: Anomaly.Parameters = Anomaly.Parameters.empty,
   causedBy:                Option[Throwable]  = None
 ) extends CatastrophicError(message, causedBy = causedBy)
 
@@ -152,6 +152,6 @@ abstract class InconsistentStateError(
 private[core] final case class InconsistentStateErrorImpl(
   override val id:         AnomalyID          = InconsistentStateCatastropheID,
   override val message:    String             = InconsistentStateError.InconsistentStateError,
-  override val parameters: Anomaly.Parameters = AnomalyParameters.empty,
+  override val parameters: Anomaly.Parameters = Anomaly.Parameters.empty,
   causedBy:                Option[Throwable]  = None
 ) extends InconsistentStateError(message, causedBy = causedBy)

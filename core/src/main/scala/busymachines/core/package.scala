@@ -7,14 +7,9 @@ package busymachines
   *
   */
 package object core {
-  type Parameter         = Anomaly.Param
-  type AnomalyParameters = Anomaly.Parameters
-
-  val AnomalyParameters: Anomaly.Parameters.type = Anomaly.Parameters
-
-  implicit final def anomalyParamValueStringWrapper(s: String): Parameter =
+  implicit final def anomalyParamValueStringWrapper(s: String): Anomaly.Parameter =
     StringWrapper(s)
 
-  implicit final def anomalyParamValueSeqOfStringWrapper(ses: Seq[String]): Parameter =
+  implicit final def anomalyParamValueSeqOfStringWrapper(ses: Seq[String]): Anomaly.Parameter =
     SeqStringWrapper(ses.toVector)
 }

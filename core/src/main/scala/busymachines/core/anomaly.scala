@@ -77,7 +77,7 @@ private[core] final case class AnomalyIDUnderlying(override val name: String) ex
 object Anomaly extends AnomalyConstructors[Anomaly] {
   private[core] val Anomaly: String = "Anomaly"
 
-  type Param = StringOrSeqString
+  type Parameter = StringOrSeqString
 
   object ParamValue {
     def apply(s: String) = StringWrapper(s)
@@ -85,12 +85,12 @@ object Anomaly extends AnomalyConstructors[Anomaly] {
     def apply(ses: immutable.Seq[String]) = SeqStringWrapper(ses)
   }
 
-  type Parameters = Map[String, Param]
+  type Parameters = Map[String, Parameter]
 
   object Parameters {
-    def apply(ps: (String, Param)*): Parameters = Map.apply(ps: _*)
+    def apply(ps: (String, Parameter)*): Parameters = Map.apply(ps: _*)
 
-    def empty: Parameters = Map.empty[String, Param]
+    def empty: Parameters = Map.empty[String, Parameter]
   }
 
   override def apply(id: AnomalyID): Anomaly = AnomalyImpl(id = id)
@@ -119,7 +119,7 @@ object Anomaly extends AnomalyConstructors[Anomaly] {
 private[core] final case class AnomalyImpl(
   override val id:         AnomalyID         = DefaultAnomalyID,
   override val message:    String            = Anomaly.Anomaly,
-  override val parameters: AnomalyParameters = AnomalyParameters.empty
+  override val parameters: Anomaly.Parameters = Anomaly.Parameters.empty
 ) extends Anomaly {
 
   override def asThrowable: Throwable =
