@@ -31,6 +31,8 @@ private[core] trait FailureConstructors[Resulting <: AnomalousFailure] extends A
 
   def apply(causedBy: Throwable): Resulting
 
+  def apply(message: String, causedBy: Throwable): Resulting
+
   def apply(id: AnomalyID, message: String, causedBy: Throwable): Resulting
 
   def apply(id: AnomalyID, parameters: Parameters, causedBy: Throwable): Resulting
@@ -45,6 +47,8 @@ private[core] trait FailureConstructors[Resulting <: AnomalousFailure] extends A
 private[core] trait CatastrophicErrorConstructors[Resulting <: CatastrophicError] extends AnomalyConstructors[Resulting] {
 
   def apply(causedBy: Throwable): Resulting
+
+  def apply(message: String, causedBy: Throwable): Resulting
 
   def apply(id: AnomalyID, message: String, causedBy: Throwable): Resulting
 

@@ -64,6 +64,9 @@ object CatastrophicError extends CatastrophicErrorConstructors[CatastrophicError
 
   override def apply(a: Anomaly): CatastrophicError =
     CatastrophicErrorImpl(id = a.id, message = a.message, parameters = a.parameters, causedBy = Option(a.asThrowable))
+
+  override def apply(message: String, causedBy: Throwable): CatastrophicError =
+    CatastrophicErrorImpl(message = message, causedBy = Option(causedBy))
 }
 
 private[core] case object CatastrophicErrorID extends AnomalyID with Product with Serializable {
@@ -142,6 +145,8 @@ object InconsistentStateError extends CatastrophicErrorConstructors[Inconsistent
       causedBy   = Option(a.asThrowable)
     )
 
+  override def apply(message: String, causedBy: Throwable): InconsistentStateError =
+    InconsistentStateErrorImpl(message = message, causedBy = Option(causedBy))
 }
 
 abstract class InconsistentStateError(

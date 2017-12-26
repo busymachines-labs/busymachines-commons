@@ -94,6 +94,9 @@ object DeniedFailure extends FailureConstructors[DeniedFailure] {
 
   override def apply(a: Anomaly): DeniedFailure =
     DeniedFailureImpl(id = a.id, message = a.message, parameters = a.parameters)
+
+  override def apply(message: String, causedBy: Throwable): DeniedFailure =
+    DeniedFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
 private[core] final case class DeniedFailureImpl(

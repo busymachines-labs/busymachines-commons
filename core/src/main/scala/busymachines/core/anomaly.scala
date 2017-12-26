@@ -117,8 +117,8 @@ object Anomaly extends AnomalyConstructors[Anomaly] {
 }
 
 private[core] final case class AnomalyImpl(
-  override val id:         AnomalyID         = DefaultAnomalyID,
-  override val message:    String            = Anomaly.Anomaly,
+  override val id:         AnomalyID          = DefaultAnomalyID,
+  override val message:    String             = Anomaly.Anomaly,
   override val parameters: Anomaly.Parameters = Anomaly.Parameters.empty
 ) extends Anomaly {
 
@@ -197,6 +197,9 @@ object AnomalousFailure extends FailureConstructors[AnomalousFailure] {
 
   override def apply(a: Anomaly): AnomalousFailure =
     AnomalousFailureImpl(id = a.id, message = a.message, parameters = a.parameters)
+
+  override def apply(message: String, causedBy: Throwable): AnomalousFailure =
+    AnomalousFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
 private[core] final case class AnomalousFailureImpl(

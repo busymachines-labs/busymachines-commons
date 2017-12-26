@@ -94,6 +94,9 @@ object ForbiddenFailure extends FailureConstructors[ForbiddenFailure] {
 
   override def apply(a: Anomaly): ForbiddenFailure =
     ForbiddenFailureImpl(id = a.id, message = a.message, parameters = a.parameters)
+
+  override def apply(message: String, causedBy: Throwable): ForbiddenFailure =
+    ForbiddenFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
 private[core] final case class ForbiddenFailureImpl(

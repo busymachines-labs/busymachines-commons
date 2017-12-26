@@ -94,6 +94,9 @@ object InvalidInputFailure extends FailureConstructors[InvalidInputFailure] {
 
   override def apply(a: Anomaly): InvalidInputFailure =
     InvalidInputFailureImpl(id = a.id, message = a.message, parameters = a.parameters)
+
+  override def apply(message: String, causedBy: Throwable): InvalidInputFailure =
+    InvalidInputFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
 private[core] final case class InvalidInputFailureImpl(

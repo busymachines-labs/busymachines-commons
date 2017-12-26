@@ -94,6 +94,9 @@ object UnauthorizedFailure extends FailureConstructors[UnauthorizedFailure] {
 
   override def apply(a: Anomaly): UnauthorizedFailure =
     UnauthorizedFailureImpl(id = a.id, message = a.message, parameters = a.parameters)
+
+  override def apply(message: String, causedBy: Throwable): UnauthorizedFailure =
+    UnauthorizedFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
 private[core] final case class UnauthorizedFailureImpl(

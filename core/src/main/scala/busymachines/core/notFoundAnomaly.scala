@@ -95,6 +95,9 @@ object NotFoundFailure extends FailureConstructors[NotFoundFailure] {
   //we intentionally not pass a causedBy a.asThrowable. Not really meaningful in this case
   override def apply(a: Anomaly): NotFoundFailure =
     NotFoundFailureImpl(id = a.id, message = a.message, parameters = a.parameters)
+
+  override def apply(message: String, causedBy: Throwable): NotFoundFailure =
+    NotFoundFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
 private[core] final case class NotFoundFailureImpl(

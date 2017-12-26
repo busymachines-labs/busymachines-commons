@@ -94,6 +94,9 @@ object ConflictFailure extends FailureConstructors[ConflictFailure] {
 
   override def apply(a: Anomaly): ConflictFailure =
     ConflictFailureImpl(id = a.id, message = a.message, parameters = a.parameters)
+
+  override def apply(message: String, causedBy: Throwable): ConflictFailure =
+    ConflictFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
 private[core] final case class ConflictFailureImpl(
