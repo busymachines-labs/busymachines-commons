@@ -46,7 +46,7 @@ private[core] final case class AnomalyIDUnderlying(override val name: String) ex
 
 object Anomaly {
 
-  type PValue = StringOrSeqString
+  type Param = StringOrSeqString
 
   object ParamValue {
     def apply(s: String) = StringWrapper(s)
@@ -54,12 +54,12 @@ object Anomaly {
     def apply(ses: immutable.Seq[String]) = SeqStringWrapper(ses)
   }
 
-  type Parameters = Map[String, PValue]
+  type Parameters = Map[String, Param]
 
   object Parameters {
-    def apply(ps: (String, PValue)*): Parameters = Map.apply(ps: _*)
+    def apply(ps: (String, Param)*): Parameters = Map.apply(ps: _*)
 
-    def empty: Parameters = Map.empty[String, PValue]
+    def empty: Parameters = Map.empty[String, Param]
   }
 
   @scala.deprecated("WIP", "now")
@@ -76,7 +76,7 @@ object Anomaly {
 private[core] final case class AnomalyImpl(
   override val id:         AnomalyID,
   override val message:    String,
-  override val parameters: Anomaly.Parameters
+  override val parameters: AnomalyParameters
 ) extends Anomaly {
 
   override def asThrowable: Throwable =
