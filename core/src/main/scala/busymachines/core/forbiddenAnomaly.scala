@@ -37,7 +37,7 @@ private[core] final case class ForbiddenAnomalyImpl(
   override val id:         AnomalyID  = ForbiddenAnomalyID,
   override val message:    String     = MeaningfulAnomalies.`Forbidden`,
   override val parameters: Parameters = Parameters.empty
-) extends ForbiddenAnomaly {
+) extends ForbiddenAnomaly with Product with Serializable {
 
   override def asThrowable: Throwable = ForbiddenFailureImpl(id, message, parameters)
 }
@@ -49,7 +49,7 @@ private[core] final case class ForbiddenAnomalyImpl(
 abstract class ForbiddenFailure(
   override val message: String,
   causedBy:             Option[Throwable] = None,
-) extends AnomalousFailure(message, causedBy) with ForbiddenAnomaly {
+) extends AnomalousFailure(message, causedBy) with ForbiddenAnomaly with Product with Serializable {
   override def id: AnomalyID = ForbiddenAnomalyID
 }
 
@@ -101,4 +101,4 @@ private[core] final case class ForbiddenFailureImpl(
   override val message:    String            = MeaningfulAnomalies.`Forbidden`,
   override val parameters: Parameters        = Parameters.empty,
   causedBy:                Option[Throwable] = None,
-) extends ForbiddenFailure(message, causedBy)
+) extends ForbiddenFailure(message, causedBy) with Product with Serializable

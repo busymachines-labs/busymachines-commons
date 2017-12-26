@@ -37,7 +37,7 @@ private[core] final case class UnauthorizedAnomalyImpl(
   override val id:         AnomalyID  = UnauthorizedAnomalyID,
   override val message:    String     = MeaningfulAnomalies.`Unauthorized`,
   override val parameters: Parameters = Parameters.empty
-) extends UnauthorizedAnomaly {
+) extends UnauthorizedAnomaly with Product with Serializable {
 
   override def asThrowable: Throwable = UnauthorizedFailureImpl(id, message, parameters)
 }
@@ -49,7 +49,7 @@ private[core] final case class UnauthorizedAnomalyImpl(
 abstract class UnauthorizedFailure(
   override val message: String,
   causedBy:             Option[Throwable] = None,
-) extends AnomalousFailure(message, causedBy) with UnauthorizedAnomaly {
+) extends AnomalousFailure(message, causedBy) with UnauthorizedAnomaly with Product with Serializable {
   override def id: AnomalyID = UnauthorizedAnomalyID
 }
 
@@ -101,4 +101,4 @@ private[core] final case class UnauthorizedFailureImpl(
   override val message:    String            = MeaningfulAnomalies.`Unauthorized`,
   override val parameters: Parameters        = Parameters.empty,
   causedBy:                Option[Throwable] = None,
-) extends UnauthorizedFailure(message, causedBy)
+) extends UnauthorizedFailure(message, causedBy) with Product with Serializable

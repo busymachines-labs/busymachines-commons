@@ -37,7 +37,7 @@ private[core] final case class NotFoundAnomalyImpl(
   override val id:         AnomalyID  = NotFoundAnomalyID,
   override val message:    String     = MeaningfulAnomalies.`Not found`,
   override val parameters: Parameters = Parameters.empty
-) extends NotFoundAnomaly {
+) extends NotFoundAnomaly with Product with Serializable {
 
   override def asThrowable: Throwable = NotFoundFailureImpl(id, message, parameters)
 }
@@ -49,7 +49,7 @@ private[core] final case class NotFoundAnomalyImpl(
 abstract class NotFoundFailure(
   override val message: String,
   causedBy:             Option[Throwable] = None,
-) extends AnomalousFailure(message, causedBy) with NotFoundAnomaly {
+) extends AnomalousFailure(message, causedBy) with NotFoundAnomaly with Product with Serializable {
   override def id: AnomalyID = NotFoundAnomalyID
 }
 
@@ -101,4 +101,4 @@ private[core] final case class NotFoundFailureImpl(
   override val message:    String            = MeaningfulAnomalies.`Not found`,
   override val parameters: Parameters        = Parameters.empty,
   causedBy:                Option[Throwable] = None,
-) extends NotFoundFailure(message, causedBy)
+) extends NotFoundFailure(message, causedBy) with Product with Serializable

@@ -37,7 +37,7 @@ private[core] final case class InvalidInputAnomalyImpl(
   override val id:         AnomalyID  = InvalidInputAnomalyID,
   override val message:    String     = MeaningfulAnomalies.`Invalid Input`,
   override val parameters: Parameters = Parameters.empty
-) extends InvalidInputAnomaly {
+) extends InvalidInputAnomaly with Product with Serializable {
 
   override def asThrowable: Throwable = InvalidInputFailureImpl(id, message, parameters)
 }
@@ -49,7 +49,7 @@ private[core] final case class InvalidInputAnomalyImpl(
 abstract class InvalidInputFailure(
   override val message: String,
   causedBy:             Option[Throwable] = None,
-) extends AnomalousFailure(message, causedBy) with InvalidInputAnomaly {
+) extends AnomalousFailure(message, causedBy) with InvalidInputAnomaly with Product with Serializable {
   override def id: AnomalyID = InvalidInputAnomalyID
 }
 
@@ -101,4 +101,4 @@ private[core] final case class InvalidInputFailureImpl(
   override val message:    String            = MeaningfulAnomalies.`Invalid Input`,
   override val parameters: Parameters        = Parameters.empty,
   causedBy:                Option[Throwable] = None,
-) extends InvalidInputFailure(message, causedBy)
+) extends InvalidInputFailure(message, causedBy) with Product with Serializable
