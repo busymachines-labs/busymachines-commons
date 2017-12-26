@@ -69,12 +69,8 @@ object Dependencies {
 
   lazy val akkaVersion: String = "2.5.8"
 
-  lazy val akkaActor:           ModuleID = "com.typesafe.akka" %% "akka-actor"            % akkaVersion
-  lazy val akkaStream:          ModuleID = "com.typesafe.akka" %% "akka-stream"           % akkaVersion
-  lazy val akkaCluster:         ModuleID = "com.typesafe.akka" %% "akka-cluster"          % akkaVersion
-  lazy val akkaClusterSharding: ModuleID = "com.typesafe.akka" %% "akka-cluster-sharding" % akkaVersion
-  lazy val akkaDistributedData: ModuleID = "com.typesafe.akka" %% "akka-distributed-data" % akkaVersion
-  lazy val akkaPersistence:     ModuleID = "com.typesafe.akka" %% "akka-persistence"      % akkaVersion
+  lazy val akkaActor:  ModuleID = "com.typesafe.akka" %% "akka-actor"  % akkaVersion
+  lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
 
   lazy val akkaHttpVersion: String   = "10.0.11"
   lazy val akkaHttp:        ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
@@ -86,7 +82,7 @@ object Dependencies {
   //FIXME: required only while circe is at version 0.9.0-M2
   lazy val akkaCirceIntegrationResolver: MavenRepository = Resolver.bintrayRepo("hseeberger", "maven")
 
-  lazy val sprayJsonVersion = "1.3.3"
+  lazy val sprayJsonVersion = "1.3.4"
 
   @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC6")
   lazy val sprayJson: ModuleID = "io.spray" %% "spray-json" % sprayJsonVersion
