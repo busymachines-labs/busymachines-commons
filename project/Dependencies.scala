@@ -67,7 +67,7 @@ object Dependencies {
   //======================================== akka ==============================================
   //============================================================================================
 
-  lazy val akkaVersion: String = "2.5.4"
+  lazy val akkaVersion: String = "2.5.8"
 
   lazy val akkaActor:           ModuleID = "com.typesafe.akka" %% "akka-actor"            % akkaVersion
   lazy val akkaStream:          ModuleID = "com.typesafe.akka" %% "akka-stream"           % akkaVersion
@@ -76,7 +76,7 @@ object Dependencies {
   lazy val akkaDistributedData: ModuleID = "com.typesafe.akka" %% "akka-distributed-data" % akkaVersion
   lazy val akkaPersistence:     ModuleID = "com.typesafe.akka" %% "akka-persistence"      % akkaVersion
 
-  lazy val akkaHttpVersion: String   = "10.0.10"
+  lazy val akkaHttpVersion: String   = "10.0.11"
   lazy val akkaHttp:        ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 
   /**
