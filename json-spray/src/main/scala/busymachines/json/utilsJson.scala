@@ -41,7 +41,7 @@ final case class JsonDecodingFailure(msg: String) extends InvalidInputFailure(ms
 object JsonParsing {
 
   def unsafeParseString(input: String): Json = {
-    Try[Json](spray.json.pimpString(input).parseJson).recoverWith {
+    Try[Json](spray.json.JsonParser(input)).recoverWith {
       case NonFatal(e) =>
         scala.util.Failure(busymachines.json.JsonParsingFailure(e.getMessage))
     }.get
