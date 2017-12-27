@@ -44,7 +44,8 @@ private[core] trait FailureConstructors[Resulting <: AnomalousFailure] extends A
   def apply(a: Anomaly, causedBy: Throwable): Resulting
 }
 
-private[core] trait CatastrophicErrorConstructors[Resulting <: CatastrophicError] extends AnomalyConstructors[Resulting] {
+private[core] trait CatastrophicErrorConstructors[Resulting <: CatastrophicError]
+    extends AnomalyConstructors[Resulting] {
 
   def apply(causedBy: Throwable): Resulting
 
@@ -59,4 +60,18 @@ private[core] trait CatastrophicErrorConstructors[Resulting <: CatastrophicError
   def apply(id: AnomalyID, message: String, parameters: Parameters, causedBy: Throwable): Resulting
 
   def apply(a: Anomaly, causedBy: Throwable): Resulting
+}
+
+private[core] trait SingletonAnomalyProduct extends Product with Serializable {
+  this: Anomaly =>
+  override def productElement(n: Int): Any = n match {
+    case 0 => id
+    case 1 => message
+    case 2 => parameters
+    case i => throw new IndexOutOfBoundsException(s"Anomaly has only 3 elements, index 0-2. Trying to get $i")
+  }
+
+  override def productArity: Int = 3
+
+  override def canEqual(that: Any): Boolean = that.isInstanceOf[Anomaly]
 }

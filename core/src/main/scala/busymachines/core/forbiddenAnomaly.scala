@@ -53,7 +53,9 @@ abstract class ForbiddenFailure(
   override def id: AnomalyID = ForbiddenAnomalyID
 }
 
-object ForbiddenFailure extends FailureConstructors[ForbiddenFailure] {
+object ForbiddenFailure
+    extends ForbiddenFailure(MeaningfulAnomalies.`Forbidden`, None) with SingletonAnomalyProduct
+    with FailureConstructors[ForbiddenFailure] {
   override def apply(causedBy: Throwable): ForbiddenFailure = ForbiddenFailureImpl(causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): ForbiddenFailure =

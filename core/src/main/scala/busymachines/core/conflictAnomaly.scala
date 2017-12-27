@@ -53,7 +53,9 @@ abstract class ConflictFailure(
   override def id: AnomalyID = ConflictAnomalyID
 }
 
-object ConflictFailure extends FailureConstructors[ConflictFailure] {
+object ConflictFailure
+    extends ConflictFailure(MeaningfulAnomalies.`Conflict`, None) with SingletonAnomalyProduct
+    with FailureConstructors[ConflictFailure] {
   override def apply(causedBy: Throwable): ConflictFailure = ConflictFailureImpl(causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): ConflictFailure =

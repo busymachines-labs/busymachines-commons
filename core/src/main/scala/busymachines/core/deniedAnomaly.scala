@@ -53,7 +53,9 @@ abstract class DeniedFailure(
   override def id: AnomalyID = DeniedAnomalyID
 }
 
-object DeniedFailure extends FailureConstructors[DeniedFailure] {
+object DeniedFailure
+    extends DeniedFailure(MeaningfulAnomalies.`Denied`, None) with SingletonAnomalyProduct
+    with FailureConstructors[DeniedFailure] {
   override def apply(causedBy: Throwable): DeniedFailure = DeniedFailureImpl(causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): DeniedFailure =

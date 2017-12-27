@@ -53,7 +53,9 @@ abstract class NotFoundFailure(
   override def id: AnomalyID = NotFoundAnomalyID
 }
 
-object NotFoundFailure extends FailureConstructors[NotFoundFailure] {
+object NotFoundFailure
+    extends NotFoundFailure(MeaningfulAnomalies.`Not found`, None) with SingletonAnomalyProduct
+    with FailureConstructors[NotFoundFailure] {
   override def apply(causedBy: Throwable): NotFoundFailure = NotFoundFailureImpl(causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): NotFoundFailure =
