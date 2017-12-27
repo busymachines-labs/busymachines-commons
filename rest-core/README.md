@@ -146,7 +146,7 @@ You will probably notice that `ForbiddenFailure` is mapped to a `404 NotFound` s
 This is the copy-pasted partial function from the code linked above:
 ```scala
   /**
-    * Check the scaladoc for each of these failures in case something is not clear,
+    * Check the scaladoc for each of these anomalies in case something is not clear,
     * but for convenience that scaladoc has been copied here as well.
     */
     ExceptionHandler {
@@ -157,7 +157,7 @@ This is the copy-pasted partial function from the code linked above:
       * to tell you anything else"
       */
     case _: NotFoundFailure =>
-      failure(StatusCodes.NotFound)
+      anomaly(StatusCodes.NotFound)
 
     /**
       * Meaning:
@@ -166,7 +166,7 @@ This is the copy-pasted partial function from the code linked above:
       * so for short, you can't find it".
       */
     case _: ForbiddenFailure =>
-      failure(StatusCodes.NotFound)
+      anomaly(StatusCodes.NotFound)
 
     /**
       * Meaning:
@@ -175,10 +175,10 @@ This is the copy-pasted partial function from the code linked above:
       * differently"
       */
     case e: UnauthorizedFailure =>
-      failure(StatusCodes.Unauthorized, e)
+      anomaly(StatusCodes.Unauthorized, e)
 
     case e: DeniedFailure =>
-      failure(StatusCodes.Forbidden, e)
+      anomaly(StatusCodes.Forbidden, e)
 
 
     /**
@@ -200,7 +200,7 @@ This is the copy-pasted partial function from the code linked above:
       * Therefore, specialize frantically.
       */
     case e: InvalidInputFailure =>
-      failure(StatusCodes.BadRequest, e)
+      anomaly(StatusCodes.BadRequest, e)
 
     /**
       * Special type of invalid input.
@@ -209,19 +209,19 @@ This is the copy-pasted partial function from the code linked above:
       * like ids, emails.
       */
     case e: ConflictFailure =>
-      failure(StatusCodes.Conflict, e)
+      anomaly(StatusCodes.Conflict, e)
 
     /**
       * This might be a stretch of an assumption, but usually there's no
       * reason to accumulate messages, except in cases of input validation
       */
-    case es: FailureMessages =>
-      failures(StatusCodes.BadRequest, es)
+    case es: Anomalies =>
+      anomalies(StatusCodes.BadRequest, es)
 
-    case e: Error =>
-      failure(StatusCodes.InternalServerError, e)
+    case e: Catastrophe =>
+      anomaly(StatusCodes.InternalServerError, e)
 
     case e: NotImplementedError =>
-      failure(StatusCodes.NotImplemented, Error(e))
+      anomaly(StatusCodes.NotImplemented, Error(e))
   }
 ```

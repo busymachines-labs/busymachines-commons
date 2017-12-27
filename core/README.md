@@ -13,10 +13,31 @@ The full module id is:
 
 Here you find very basic buildings blocks for structuring your exceptions in meaningful ways, and very basic types. Generally, we are very conservative in what we put here, and this core will become stable really fast.
 
-## Failures (exceptions) and Errors
+## Anomaly (exception) and Catastrophe (error)
+
+There's nothing special about anomaly, and catastrophe, other than the fact they try to represent "pure" failures. They are traits with no pretenses of being thrown around, once they are transformed into a throwable, they become a "Failure".
+
+Why should you use them?
+Because they can provide decent failure management out of the box. Use in combination with the `rest` modules, you can move with almost zero effort to meaningful error messages.
+
+The Anomaly trait, the base class for everything in `core`:
+```scala
+trait Anomaly extends Product with Serializable {
+  def id: AnomalyID
+
+  def message: String
+
+  def parameters: Anomaly.Parameters = Anomaly.Parameters.empty
+
+  //important scaladoc elided
+  def asThrowable: Throwable
+}
+```
+
+A simple way of uniquely identifying any failure, together with some useful values to give more context.
 
 This library provides a `DSL` (although it's a bit of a stretch to call it that) to define, and instantiate semantically rich failures.
-Look at the scaladoc in [failures.scala](src/main/scala/com/busymachines/core/exceptions/failures.scala) for more information.
+Look at the scaladoc in [anomaly.scala](src/main/scala/com/busymachines/core/anomaly.scala) for more information.
 Essentially we have 6 types of failures (with a plural counterpart to each):
 
 * `NotFoundFailure`

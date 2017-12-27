@@ -271,7 +271,7 @@ trait DefaultTypeDiscriminatorConfig {
 
 ## provided decoders
 
-The object/trait `busymachines.json.FailureMessageJsonCodec` contains all encoders necessary for dealing with the exceptions from core.
+The object/trait `busymachines.json.AnomalyJsonCodec` contains all encoders necessary for dealing with the exceptions from core.
 
 ## tests
 
