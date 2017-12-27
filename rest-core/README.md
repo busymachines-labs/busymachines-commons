@@ -64,16 +64,16 @@ object MainRestPlaygroundApp extends App {
 }
 
 class HelloWorld extends RestAPI with Directives {
-  import busymachines.core.exceptions._
+  import busymachines.core._
   import akka.http.scaladsl.marshalling.{Marshaller, ToEntityMarshaller}
 
-  override protected def failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
+  override protected val anomalyMarshaller: ToEntityMarshaller[Anomaly] =
     Marshaller.apply { ec =>
       //intentionally not implemented, because we don't need it. Not an issue if you use `rest-json` module
       ???
     }
 
-  override protected def failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] =
+  override protected val anomaliesMarshaller: ToEntityMarshaller[Anomalies] =
     Marshaller.apply { ec =>
        //intentionally not implemented, because we don't need it. Not an issue if you use `rest-json` module
        ???
