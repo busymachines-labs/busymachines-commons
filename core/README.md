@@ -62,18 +62,18 @@ option.getOrElse(throw NotFoundFailure("this specific message, instead of generi
 ```scala
 object RevolutionaryDomainFailures {
   //create a stable, and unique ID
-  case object CannotBeDone extends FailureID { val name = "rd_001" }
+  case object CannotBeDone extends AnomalyID { val name = "rd_001" }
 }
 
 case class SolutionNotFoundFailure(problem: String, attempts: Seq[String]) extends NotFoundFailure(
   s"Solution to problem $problem not found."
 ) {
-  override def id: FailureID = RevolutionaryDomainFailures.CannotBeDone
+  override def id: AnomalyID = RevolutionaryDomainFailures.CannotBeDone
 
   //you can currently associate (String, String), (String, Seq[String])
   //this compiles because of the implicit conversions in the DSL
   //these implicit conversions can be removed when Dotty comes out
-  override def parameters: Parameters = Map(
+  override def parameters: Anomaly.Parameters = Map(
     "problem" -> problem,
     "attempts" -> attempts
   )
@@ -81,10 +81,10 @@ case class SolutionNotFoundFailure(problem: String, attempts: Seq[String]) exten
 
 object Main {
   //...
-  val solutionToPVSNP: Option[Boolean] = ???
+  val solutionToPVSNP: Option[Boolean] = None
   solutionToPVSNP.getOrElse(throw SolutionNotFoundFailure("P vs. NP", Seq("1", "2", "3")))
 
-  val solutionToHaltingProblem: Option[Boolean] = ???
+  val solutionToHaltingProblem: Option[Boolean] = None
   solutionToHaltingProblem.getOrElse(throw SolutionNotFoundFailure("Halting Problem", Seq("stop", "12")))
 }
 ```
