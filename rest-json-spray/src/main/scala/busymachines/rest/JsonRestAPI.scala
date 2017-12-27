@@ -1,8 +1,9 @@
 package busymachines.rest
 
 import akka.http.scaladsl.marshalling.ToEntityMarshaller
-import busymachines.core.exceptions.{FailureMessage, FailureMessages}
-import busymachines.json.FailureMessageJsonCodec
+import busymachines.core._
+import busymachines.core.{exceptions => dex}
+import busymachines.json.{AnomalyJsonCodec, FailureMessageJsonCodec}
 import busymachines.rest.jsonrest.JsonSupport
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -18,18 +19,25 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 trait JsonRestAPI extends RestAPI with JsonSupport {
 
-  import JsonRestAPI._
-
   implicit class SprayFutureOps[T](val f: Future[T]) {
-    def asEmptyResponse(implicit ec: ExecutionContext): Future[HttpEntity.Strict] = f map emptyResponseFun
+
+    def asEmptyResponse(implicit ec: ExecutionContext): Future[HttpEntity.Strict] =
+      f map JsonRestAPI.emptyResponseFun
   }
 
-  protected override val failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
-    failure.failureMessageMarshaller
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0-RC8")
+  protected override val failureMessageMarshaller: ToEntityMarshaller[dex.FailureMessage] =
+    sprayJsonMarshaller(FailureMessageJsonCodec.failureMessageCodec)
 
-  protected override val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] = {
-    failures.failureMessagesMarshaller
-  }
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0-RC8")
+  protected override val failureMessagesMarshaller: ToEntityMarshaller[dex.FailureMessages] =
+    sprayJsonMarshaller(FailureMessageJsonCodec.failureMessagesCodec)
+
+  override protected val anomalyMarshaller: ToEntityMarshaller[Anomaly] =
+    sprayJsonMarshaller(AnomalyJsonCodec.AnomalyCodec)
+
+  override protected val anomaliesMarshaller: ToEntityMarshaller[Anomalies] =
+    sprayJsonMarshaller(AnomalyJsonCodec.AnomaliesCodec)
 
 }
 
@@ -38,18 +46,4 @@ private[rest] object JsonRestAPI extends JsonSupport {
   private val emptyResponseFun: Any => HttpEntity.Strict = { _ =>
     HttpEntity.Empty
   }
-
-  private object failure {
-
-    implicit val failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
-      JsonSupport.sprayJsonMarshaller(FailureMessageJsonCodec.failureMessageCodec)
-
-  }
-
-  private object failures {
-
-    implicit val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] =
-      JsonSupport.sprayJsonMarshaller(FailureMessageJsonCodec.failureMessagesCodec)
-  }
-
 }

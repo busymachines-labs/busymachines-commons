@@ -1,7 +1,9 @@
 package busymachines.rest
 
 import akka.http.scaladsl.marshalling.ToEntityMarshaller
-import busymachines.core.exceptions.{FailureMessage, FailureMessages}
+import busymachines.core.{exceptions => dex}
+import busymachines.core._
+import busymachines.json.{AnomalyJsonCodec, FailureMessageJsonCodec}
 
 /**
   *
@@ -14,36 +16,17 @@ import busymachines.core.exceptions.{FailureMessage, FailureMessages}
   */
 trait JsonRestAPI extends RestAPI with jsonrest.JsonSupport {
 
-  import JsonRestAPI._
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
+  protected override val failureMessageMarshaller: ToEntityMarshaller[dex.FailureMessage] =
+    marshaller(FailureMessageJsonCodec.failureMessageCodec)
 
-  protected override val failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
-    failure.failureMessageMarshaller
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
+  protected override val failureMessagesMarshaller: ToEntityMarshaller[dex.FailureMessages] =
+    marshaller(FailureMessageJsonCodec.failureMessagesCodec)
 
-  protected override val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] = {
-    failures.failureMessagesMarshaller
-  }
+  override protected val anomalyMarshaller: ToEntityMarshaller[Anomaly] =
+    marshaller(AnomalyJsonCodec.AnomalyCodec)
 
-}
-
-private[rest] object JsonRestAPI {
-
-  private object failure {
-
-    import busymachines.json.FailureMessageJsonCodec._
-    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-
-    implicit val failureMessageMarshaller: ToEntityMarshaller[FailureMessage] =
-      marshaller[FailureMessage]
-
-  }
-
-  private object failures {
-
-    import busymachines.json.FailureMessageJsonCodec._
-    import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-
-    implicit val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages] =
-      marshaller[FailureMessages]
-  }
-
+  override protected val anomaliesMarshaller: ToEntityMarshaller[Anomalies] =
+    marshaller(AnomalyJsonCodec.AnomaliesCodec)
 }

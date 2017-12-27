@@ -128,7 +128,7 @@ class DefaultExceptionHandlerTest extends FlatSpec with JsonRestAPITest {
     get("/runtime_exception") {
       expectStatus(StatusCodes.InternalServerError)
       val fm = responseAs[FailureMessage]
-      assert(fm.id == FailureID("error"))
+      assert(fm.id == FailureID("CE_0"))
     }
   }
 
@@ -138,7 +138,7 @@ class DefaultExceptionHandlerTest extends FlatSpec with JsonRestAPITest {
     get("/not_implemented_boxed") {
       expectStatus(StatusCodes.NotImplemented)
       val fm = responseAs[FailureMessage]
-      assert(fm.id == FailureID("error"))
+      assert(fm.id == FailureID("CE_0"))
     }
   }
 
@@ -148,7 +148,7 @@ class DefaultExceptionHandlerTest extends FlatSpec with JsonRestAPITest {
     get("/not_implemented") {
       expectStatus(StatusCodes.NotImplemented)
       val fm = responseAs[FailureMessage]
-      assert(fm.id == FailureID("error"))
+      assert(fm.id == FailureID("CE_0"))
     }
   }
 

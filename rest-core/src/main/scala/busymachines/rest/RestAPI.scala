@@ -2,7 +2,8 @@ package busymachines.rest
 
 import Directives._
 import akka.http.scaladsl.marshalling.ToEntityMarshaller
-import busymachines.core.exceptions._
+import busymachines.core.{exceptions => dex}
+import busymachines.core._
 
 /**
   *
@@ -11,9 +12,16 @@ import busymachines.core.exceptions._
   *
   */
 trait RestAPI {
-  protected def failureMessageMarshaller: ToEntityMarshaller[FailureMessage]
 
-  protected def failureMessagesMarshaller: ToEntityMarshaller[FailureMessages]
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
+  protected def failureMessageMarshaller: ToEntityMarshaller[dex.FailureMessage]
+
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
+  protected def failureMessagesMarshaller: ToEntityMarshaller[dex.FailureMessages]
+
+  protected def anomalyMarshaller: ToEntityMarshaller[Anomaly]
+
+  protected def anomaliesMarshaller: ToEntityMarshaller[Anomalies]
 
   def route: Route =
     handleExceptions(defaultExceptionHandler)(routeDefinition)
@@ -21,7 +29,14 @@ trait RestAPI {
   protected def routeDefinition: Route
 
   protected def defaultExceptionHandler: ExceptionHandler =
-    ExceptionHandler.apply(RestAPI.defaultExceptionHandler(failureMessageMarshaller, failureMessagesMarshaller))
+    ExceptionHandler.apply(
+      RestAPI.defaultExceptionHandler(
+        failureMessageMarshaller,
+        failureMessagesMarshaller,
+        anomalyMarshaller,
+        anomaliesMarshaller,
+      )
+    )
 }
 
 /**
@@ -36,27 +51,59 @@ object RestAPI {
 
   import akka.http.scaladsl.marshalling.ToEntityMarshaller
 
+  @scala.deprecated("Will be removed in 0.3.0 — use anomaly", "0.2.0-RC8")
   object failure {
+
+    @scala.deprecated("Will be removed in 0.3.0 — use anomaly", "0.2.0-RC8")
+    def apply(statusCode: StatusCode): Route = {
+      complete(statusCode)
+    }
+
+    @scala.deprecated("Will be removed in 0.3.0 — use anomaly", "0.2.0-RC8")
+    def apply(statusCode: StatusCode, f: dex.FailureMessage)(
+      implicit fsm:       ToEntityMarshaller[dex.FailureMessage]
+    ): Route = {
+      complete((statusCode, f))
+    }
+  }
+
+  @scala.deprecated("Will be removed in 0.3.0 — use anomaly", "0.2.0-RC8")
+  object failures {
+
+    @scala.deprecated("Will be removed in 0.3.0 — use anomaly", "0.2.0-RC8")
+    def apply(statusCode: StatusCode, fs: dex.FailureMessages)(
+      implicit fsm:       ToEntityMarshaller[dex.FailureMessages]
+    ): Route =
+      complete((statusCode, fs))
+  }
+
+  object anomaly {
 
     def apply(statusCode: StatusCode): Route = {
       complete(statusCode)
     }
 
-    def apply(statusCode: StatusCode, f: FailureMessage)(implicit fsm: ToEntityMarshaller[FailureMessage]): Route = {
+    def apply(statusCode: StatusCode, f: Anomaly)(
+      implicit am:        ToEntityMarshaller[Anomaly]
+    ): Route = {
       complete((statusCode, f))
     }
   }
 
-  object failures {
+  object anomalies {
 
-    def apply(statusCode: StatusCode, fs: FailureMessages)(implicit fsm: ToEntityMarshaller[FailureMessages]): Route =
+    def apply(statusCode: StatusCode, fs: Anomalies)(
+      implicit asm:       ToEntityMarshaller[Anomalies]
+    ): Route =
       complete((statusCode, fs))
   }
 
   private class ReifiedRestAPI(
     private val r:                                    Route,
-    override protected val failureMessageMarshaller:  ToEntityMarshaller[FailureMessage],
-    override protected val failureMessagesMarshaller: ToEntityMarshaller[FailureMessages]
+    override protected val failureMessageMarshaller:  ToEntityMarshaller[dex.FailureMessage],
+    override protected val failureMessagesMarshaller: ToEntityMarshaller[dex.FailureMessages],
+    override protected val anomalyMarshaller:         ToEntityMarshaller[Anomaly],
+    override protected val anomaliesMarshaller:       ToEntityMarshaller[Anomalies],
   ) extends RestAPI {
     override protected def routeDefinition: Route = r
 
@@ -108,7 +155,13 @@ object RestAPI {
     exceptionHandler: ExceptionHandler = null): RestAPI = {
     val r           = combine(api, apis: _*)
     val sealedRoute = Route.seal(r.route)
-    new ReifiedRestAPI(sealedRoute, api.failureMessageMarshaller, api.failureMessageMarshaller)
+    new ReifiedRestAPI(
+      sealedRoute,
+      api.failureMessageMarshaller,
+      api.failureMessageMarshaller,
+      api.anomalyMarshaller,
+      api.anomaliesMarshaller,
+    )
   }
 
   /**
@@ -124,7 +177,13 @@ object RestAPI {
         }
       }
 
-    new ReifiedRestAPI(newRoute, api.failureMessageMarshaller, api.failureMessageMarshaller)
+    new ReifiedRestAPI(
+      newRoute,
+      api.failureMessageMarshaller,
+      api.failureMessageMarshaller,
+      api.anomalyMarshaller,
+      api.anomaliesMarshaller,
+    )
   }
 
   /**
@@ -132,8 +191,10 @@ object RestAPI {
     * but for convenience that scaladoc has been copied here as well.
     */
   private def semanticallyMeaningfulHandler(
-    implicit fm: ToEntityMarshaller[FailureMessage],
-    fsm:         ToEntityMarshaller[FailureMessages]
+    implicit fm: ToEntityMarshaller[dex.FailureMessage],
+    fsm:         ToEntityMarshaller[dex.FailureMessages],
+    am:          ToEntityMarshaller[Anomaly],
+    asm:         ToEntityMarshaller[Anomalies],
   ): ExceptionHandler =
     ExceptionHandler {
 
@@ -143,8 +204,11 @@ object RestAPI {
         * "you cannot find something; it may or may not exist, and I'm not going
         * to tell you anything else"
         */
-      case _: SemanticFailures.NotFound =>
+      case _: dex.SemanticFailures.NotFound =>
         failure(StatusCodes.NotFound)
+
+      case _: MeaningfulAnomalies.NotFound =>
+        anomaly(StatusCodes.NotFound)
 
       /**
         * Meaning:
@@ -152,8 +216,11 @@ object RestAPI {
         * "it exists, but you're not even allowed to know about that;
         * so for short, you can't find it".
         */
-      case _: SemanticFailures.Forbidden =>
+      case _: dex.SemanticFailures.Forbidden =>
         failure(StatusCodes.NotFound)
+
+      case _: MeaningfulAnomalies.Forbidden =>
+        anomaly(StatusCodes.NotFound)
 
       /**
         * Meaning:
@@ -161,11 +228,17 @@ object RestAPI {
         * "something is wrong in the way you authorized, you can try again slightly
         * differently"
         */
-      case e: FailureMessage with SemanticFailures.Unauthorized =>
+      case e: dex.FailureMessage with dex.SemanticFailures.Unauthorized =>
         failure(StatusCodes.Unauthorized, e)
 
-      case e: DeniedFailure =>
+      case e: Anomaly with MeaningfulAnomalies.Unauthorized =>
+        anomaly(StatusCodes.Unauthorized, e)
+
+      case e: dex.FailureMessage with dex.SemanticFailures.Denied =>
         failure(StatusCodes.Forbidden, e)
+
+      case e: Anomaly with MeaningfulAnomalies.Denied =>
+        anomaly(StatusCodes.Forbidden, e)
 
       /**
         * Obviously, whenever some input data is wrong.
@@ -185,8 +258,11 @@ object RestAPI {
         *
         * Therefore, specialize frantically.
         */
-      case e: FailureMessage with SemanticFailures.InvalidInput =>
+      case e: dex.FailureMessage with dex.SemanticFailures.InvalidInput =>
         failure(StatusCodes.BadRequest, e)
+
+      case e: Anomaly with MeaningfulAnomalies.InvalidInput =>
+        anomaly(StatusCodes.BadRequest, e)
 
       /**
         * Special type of invalid input.
@@ -194,21 +270,30 @@ object RestAPI {
         * E.g. when you're duplicating something that ought to be unique,
         * like ids, emails.
         */
-      case e: FailureMessage with SemanticFailures.Conflict =>
+      case e: dex.FailureMessage with dex.SemanticFailures.Conflict =>
         failure(StatusCodes.Conflict, e)
+
+      case e: Anomaly with MeaningfulAnomalies.Conflict =>
+        anomaly(StatusCodes.Conflict, e)
 
       /**
         * This might be a stretch of an assumption, but usually there's no
         * reason to accumulate messages, except in cases of input validation
         */
-      case es: FailureMessages =>
+      case es: dex.FailureMessages =>
         failures(StatusCodes.BadRequest, es)(fsm)
 
-      case e: ErrorMessage =>
+      case es: Anomalies =>
+        anomalies(StatusCodes.BadRequest, es)(asm)
+
+      case e: dex.ErrorMessage =>
         failure(StatusCodes.InternalServerError, e)
 
+      case e: Catastrophe =>
+        anomaly(StatusCodes.InternalServerError, e)
+
       case e: NotImplementedError =>
-        failure(StatusCodes.NotImplemented, Error(e))
+        anomaly(StatusCodes.NotImplemented, CatastrophicError(e))
     }
 
   /**
@@ -217,25 +302,27 @@ object RestAPI {
     * this applies to NotImplementedErrors, which is really annoying :/
     */
   private def boxedErrorHandler(
-    implicit fm: ToEntityMarshaller[FailureMessage]
+    implicit am: ToEntityMarshaller[Anomaly]
   ): ExceptionHandler = ExceptionHandler {
     case e: NotImplementedError =>
-      failure(StatusCodes.NotImplemented, Error(e))
+      anomaly(StatusCodes.NotImplemented, CatastrophicError(e))
 
     case e =>
-      failure(StatusCodes.InternalServerError, Error(e))
+      anomaly(StatusCodes.InternalServerError, CatastrophicError(e))
   }
 
   def defaultExceptionHandler(
-    implicit fm: ToEntityMarshaller[FailureMessage],
-    fsm:         ToEntityMarshaller[FailureMessages]
+    implicit fm: ToEntityMarshaller[dex.FailureMessage],
+    fsm:         ToEntityMarshaller[dex.FailureMessages],
+    am:          ToEntityMarshaller[Anomaly],
+    asm:         ToEntityMarshaller[Anomalies],
   ): ExceptionHandler =
-    semanticallyMeaningfulHandler(fm, fsm) orElse ExceptionHandler {
+    semanticallyMeaningfulHandler(fm, fsm, am, asm) orElse ExceptionHandler {
       case e: java.util.concurrent.ExecutionException =>
         boxedErrorHandler.apply(e.getCause)
 
       case e: Throwable =>
-        failure(StatusCodes.InternalServerError, Error(e))
+        anomaly(StatusCodes.InternalServerError, CatastrophicError(e))
     }
 
 }
