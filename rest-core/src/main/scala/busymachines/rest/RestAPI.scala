@@ -299,13 +299,17 @@ object RestAPI {
   /**
     * This is a handler for the fabled "Boxed Error" that you get when
     * a future fails with what is marked as an "Error". Unfortunately
-    * this applies to NotImplementedErrors, which is really annoying :/
+    * this applies to NotImplementedErrors, and our Catastrophes,
+    * which is really annoying :/
     */
   private def boxedErrorHandler(
     implicit am: ToEntityMarshaller[Anomaly]
   ): ExceptionHandler = ExceptionHandler {
     case e: NotImplementedError =>
       anomaly(StatusCodes.NotImplemented, CatastrophicError(e))
+
+    case e: Catastrophe =>
+      anomaly(StatusCodes.InternalServerError, e)
 
     case e =>
       anomaly(StatusCodes.InternalServerError, CatastrophicError(e))

@@ -46,6 +46,13 @@ abstract class AnomalousFailures(
   override val restOfAnomalies: immutable.Seq[Anomaly],
 ) extends AnomalousFailure(message) with Anomalies with Product with Serializable
 
+object AnomalousFailures {
+
+  def apply(id: AnomalyID, message: String, msg: Anomaly, msgs: Anomaly*): AnomalousFailures = {
+    AnomalousFailuresImpl(id, message, msg, msgs.toList)
+  }
+}
+
 private[core] case class AnomalousFailuresImpl(
   override val id:              AnomalyID,
   override val message:         String,
