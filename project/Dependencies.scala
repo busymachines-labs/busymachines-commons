@@ -60,7 +60,7 @@ object Dependencies {
     circeParser
   )
 
-  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.1-M7"
+  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.1"
 
   //============================================================================================
   //================================= http://akka.io/docs/ =====================================
