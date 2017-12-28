@@ -4,6 +4,11 @@ import Keys._
 addCommandAlias("ci", ";clean;update;compile;test:compile;test")
 
 /**
+  * Quick handy way of publishing locally.
+  */
+addCommandAlias("doLocal", ";clean;update;compile;publishLocal")
+
+/**
   * Use with care.
   *
   * All instructions for publishing to sonatype can be found in

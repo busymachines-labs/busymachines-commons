@@ -33,10 +33,10 @@ trait AnomalyJsonCodec {
     override def apply(c: HCursor): io.circe.Decoder.Result[Anomaly.Parameter] = {
       val sa: Result[String] = c.as[String]
       if (sa.isRight) {
-        sa.right.map(Anomaly.ParamValue.apply)
+        sa.right.map(Anomaly.Parameter)
       }
       else {
-        c.as[List[String]].right.map(Anomaly.ParamValue.apply)
+        c.as[List[String]].right.map(Anomaly.Parameter)
       }
     }
   }
@@ -62,7 +62,7 @@ trait AnomalyJsonCodec {
                   newVal  <- v.right
                 } yield prevAcc :+ newVal
               }
-              r.right.map(l => Anomaly.Parameters.apply(l: _*))
+              r.right.map(l => Anomaly.Parameters(l: _*))
             }
             else {
               Right[DecodingFailure, Anomaly.Parameters](Anomaly.Parameters.empty)

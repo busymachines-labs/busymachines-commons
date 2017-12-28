@@ -78,19 +78,24 @@ object Anomaly extends AnomalyConstructors[Anomaly] {
   private[core] val Anomaly: String = "Anomaly"
 
   type Parameter = StringOrSeqString
-
-  object ParamValue {
-    def apply(s: String) = StringWrapper(s)
-
-    def apply(ses: immutable.Seq[String]) = SeqStringWrapper(ses)
-  }
+  def Parameter(s:   String):                StringOrSeqString = StringWrapper(s)
+  def Parameter(ses: immutable.Seq[String]): StringOrSeqString = SeqStringWrapper(ses)
 
   type Parameters = Map[String, Parameter]
 
-  object Parameters {
-    def apply(ps: (String, Parameter)*): Parameters = Map.apply(ps: _*)
+  /**
+    * the reason why this type signature does not return Parameters is a pragmatical one,
+    * where intellij, does not infer it correctly in the IDE, and yields a false negative.
+    *
+    * As far as the client code is concerned this is the same, and scalac properly
+    * compiles both versions, so we'll keep the one which causes the least misery.
+    *
+    * Once intellij fixes this (need to look for issue) we can have cleaner code here
+    */
+  def Parameters(ps: (String, Parameter)*): Map[String, StringOrSeqString] = Map.apply(ps: _*)
 
-    def empty: Parameters = Map.empty[String, Parameter]
+  object Parameters {
+    def empty: Map[String, StringOrSeqString] = Map.empty[String, Parameter]
   }
 
   override def apply(id: AnomalyID): Anomaly = AnomalyImpl(id = id)

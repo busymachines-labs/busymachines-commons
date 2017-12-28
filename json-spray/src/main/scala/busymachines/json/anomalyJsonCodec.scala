@@ -36,9 +36,9 @@ trait AnomalyJsonCodec {
 
     override def read(c: Json): Anomaly.Parameter = {
       Try(c.convertTo[immutable.Seq[String]])
-        .map((s: immutable.Seq[String]) => Anomaly.ParamValue(s))
+        .map((s: immutable.Seq[String]) => Anomaly.Parameter(s))
         .recoverWith {
-          case NonFatal(_) => Try(c.convertTo[String]).map(Anomaly.ParamValue.apply)
+          case NonFatal(_) => Try(c.convertTo[String]).map(Anomaly.Parameter)
         }
         .get
     }
