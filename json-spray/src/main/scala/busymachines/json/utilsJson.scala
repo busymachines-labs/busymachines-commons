@@ -1,6 +1,6 @@
 package busymachines.json
 
-import busymachines.core.exceptions._
+import busymachines.core._
 import spray.json.{CompactPrinter, JsonPrinter, PrettyPrinter}
 
 import scala.util.Try
@@ -30,7 +30,7 @@ object JsonDecoding {
 }
 
 final case class JsonDecodingFailure(msg: String) extends InvalidInputFailure(msg) {
-  override def id: FailureID = JsonFailureIDs.JsonDecodingFailureID
+  override def id: AnomalyID = JsonAnomalyIDs.JsonDecodingAnomalyID
 }
 
 /**
@@ -41,7 +41,7 @@ final case class JsonDecodingFailure(msg: String) extends InvalidInputFailure(ms
 object JsonParsing {
 
   def unsafeParseString(input: String): Json = {
-    Try[Json](spray.json.pimpString(input).parseJson).recoverWith {
+    Try[Json](spray.json.JsonParser(input)).recoverWith {
       case NonFatal(e) =>
         scala.util.Failure(busymachines.json.JsonParsingFailure(e.getMessage))
     }.get
@@ -59,19 +59,19 @@ object PrettyJson {
 }
 
 final case class JsonParsingFailure(msg: String) extends InvalidInputFailure(msg) {
-  override def id: FailureID = JsonFailureIDs.JsonParsingFailureID
+  override def id: AnomalyID = JsonAnomalyIDs.JsonParsingAnomalyID
 }
 
 /**
   *
   */
-object JsonFailureIDs {
+object JsonAnomalyIDs {
 
-  case object JsonParsingFailureID extends FailureID {
+  case object JsonParsingAnomalyID extends AnomalyID {
     override def name: String = "json_01"
   }
 
-  case object JsonDecodingFailureID extends FailureID {
+  case object JsonDecodingAnomalyID extends AnomalyID {
     override def name: String = "json_02"
   }
 

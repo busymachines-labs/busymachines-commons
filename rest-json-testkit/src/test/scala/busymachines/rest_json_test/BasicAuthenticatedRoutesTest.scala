@@ -10,7 +10,7 @@ import org.scalatest.FlatSpec
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class BasicAuthenticatedRoutesTest extends FlatSpec with JsonRestAPITest {
+class BasicAuthenticatedRoutesTest extends FlatSpec with JsonRestAPITest {
   override implicit protected lazy val testedRoute: Route = {
     val authAPI = new BasicAuthenticatedRoutesRestAPIForTesting()
     RestAPI.seal(authAPI).route

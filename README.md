@@ -23,7 +23,7 @@ Probably due to an missing implicit — probably automatic derivation of some ty
 
 #### versions
 * stable: `0.1.0` — but almost useless
-* latest: `0.2.0-RC7`
+* latest: `0.2.0-RC8`
 
 These modules are are cross-compiled for Scala versions: `2.12.3`. We try our best to keep them up to date.
 
@@ -50,7 +50,7 @@ Module | Description | Version
 
 For easy copy-pasting:
 ```scala
-val bmcVersion: String = "0.2.0-RC7"
+val bmcVersion: String = "0.2.0-RC8"
 
 val bmcCore            = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
 val bmcJson            = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
@@ -78,17 +78,17 @@ The idea behind these sets of libraries is to help jumpstart backend RESTful api
 Basically, as long as modules reside in the same repository they will be versioned with the same number, and released at the same time to avoid confusion. The moment we realize that a module has to take a life of its own, it will be moved to a separate module and versioned independently.
 
 * [core](/core) `0.1.0`
-* [json](/json) `0.2.0-RC7`
-* [rest-core](/rest-core) `0.2.0-RC7` - this is an abstract implementation that still requires specific serialization/deserialization
-* [rest-core-testkit](/rest-core-testkit) `0.2.0-RC7` - contains helpers that allow testing. Should never wind up in production code.
-* [rest-json](/rest-core) `0.2.0-RC7` - used to implement REST APIs that handle JSON
-* [rest-json-testkit](/rest-json-testkit) `0.2.0-RC7` - helpers for JSON powered REST APIs
+* [json](/json) `0.2.0-RC8`
+* [rest-core](/rest-core) `0.2.0-RC8` - this is an abstract implementation that still requires specific serialization/deserialization
+* [rest-core-testkit](/rest-core-testkit) `0.2.0-RC8` - contains helpers that allow testing. Should never wind up in production code.
+* [rest-json](/rest-core) `0.2.0-RC8` - used to implement REST APIs that handle JSON
+* [rest-json-testkit](/rest-json-testkit) `0.2.0-RC8` - helpers for JSON powered REST APIs
 
 Most likely you don't need to depend on the `rest-core*` modules. But rather on one or more of its reifications like `rest-json`. This separation was done because in the future we might need non-json REST APIs, and then we still want to have a common experience of using `commons`.
 
 Other modules:
-* [semver](/semver) `0.2.0-RC7` - definition of a `SemanticVersion` datatype and its natural ordering according to the [Semantic Version 2.0.0](http://semver.org/) spec. Useful only if you have to manipulate semantic versions in your code. No other modules here depend on it.
-* [semver](/semver-parsers) `0.2.0-RC7` - parsers from plain string to the above `SemanticVersion`.
+* [semver](/semver) `0.2.0-RC8` - definition of a `SemanticVersion` datatype and its natural ordering according to the [Semantic Version 2.0.0](http://semver.org/) spec. Useful only if you have to manipulate semantic versions in your code. No other modules here depend on it.
+* [semver](/semver-parsers) `0.2.0-RC8` - parsers from plain string to the above `SemanticVersion`.
 
 ### Current version
 

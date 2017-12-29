@@ -85,12 +85,7 @@ trait FailureMessageJsonCodec {
   }
 }
 
-private[json] object CoreJsonConstants {
-  private[json] val id:         String = "id"
-  private[json] val message:    String = "message"
-  private[json] val messages:   String = "messages"
-  private[json] val parameters: String = "parameters"
-}
+
 
 private[json] case class FailureMessageRepr(
   id:         FailureID,

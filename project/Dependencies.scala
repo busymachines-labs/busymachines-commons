@@ -17,7 +17,7 @@ object Dependencies {
   //=================================== http://busymachines.com/ ===============================
   //========================================  busymachines =====================================
   //============================================================================================
-  lazy val bmcv: String = "0.2.0-RC7"
+  lazy val bmcv: String = "0.2.0-RC8"
 
   lazy val bmcCore:       ModuleID = "com.busymachines" %% "busymachines-commons-core"              % bmcv
   lazy val bmcJson:       ModuleID = "com.busymachines" %% "busymachines-commons-json"              % bmcv
@@ -36,7 +36,7 @@ object Dependencies {
 
   lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
 
-  lazy val catsVersion: String = "1.0.0-RC2"
+  lazy val catsVersion: String = "1.0.0"
 
   lazy val catsCore:    ModuleID = "org.typelevel" %% "cats-core"    % catsVersion
   lazy val catsMacros:  ModuleID = "org.typelevel" %% "cats-macros"  % catsVersion
@@ -44,7 +44,7 @@ object Dependencies {
   lazy val catsLaws:    ModuleID = "org.typelevel" %% "cats-laws"    % catsVersion
   lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
 
-  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.6"
+  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.7"
 
   lazy val circeVersion: String = "0.9.0-M3"
 
@@ -60,23 +60,19 @@ object Dependencies {
     circeParser
   )
 
-  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.1-M7"
+  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.1"
 
   //============================================================================================
   //================================= http://akka.io/docs/ =====================================
   //======================================== akka ==============================================
   //============================================================================================
 
-  lazy val akkaVersion: String = "2.5.4"
+  lazy val akkaVersion: String = "2.5.8"
 
-  lazy val akkaActor:           ModuleID = "com.typesafe.akka" %% "akka-actor"            % akkaVersion
-  lazy val akkaStream:          ModuleID = "com.typesafe.akka" %% "akka-stream"           % akkaVersion
-  lazy val akkaCluster:         ModuleID = "com.typesafe.akka" %% "akka-cluster"          % akkaVersion
-  lazy val akkaClusterSharding: ModuleID = "com.typesafe.akka" %% "akka-cluster-sharding" % akkaVersion
-  lazy val akkaDistributedData: ModuleID = "com.typesafe.akka" %% "akka-distributed-data" % akkaVersion
-  lazy val akkaPersistence:     ModuleID = "com.typesafe.akka" %% "akka-persistence"      % akkaVersion
+  lazy val akkaActor:  ModuleID = "com.typesafe.akka" %% "akka-actor"  % akkaVersion
+  lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
 
-  lazy val akkaHttpVersion: String   = "10.0.10"
+  lazy val akkaHttpVersion: String   = "10.0.11"
   lazy val akkaHttp:        ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 
   /**
@@ -86,7 +82,7 @@ object Dependencies {
   //FIXME: required only while circe is at version 0.9.0-M2
   lazy val akkaCirceIntegrationResolver: MavenRepository = Resolver.bintrayRepo("hseeberger", "maven")
 
-  lazy val sprayJsonVersion = "1.3.3"
+  lazy val sprayJsonVersion = "1.3.4"
 
   @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC6")
   lazy val sprayJson: ModuleID = "io.spray" %% "spray-json" % sprayJsonVersion

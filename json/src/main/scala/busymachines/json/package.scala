@@ -1,6 +1,6 @@
 package busymachines
 
-import busymachines.core.exceptions._
+import busymachines.core._
 
 /**
   * The reason we break the modularity of circe is rather pragmatic. The design philosophy of this
@@ -49,6 +49,22 @@ package object json extends DefaultTypeDiscriminatorConfig {
   type HCursor = io.circe.HCursor
   val HCursor: io.circe.HCursor.type = io.circe.HCursor
 
-  type JsonDecodingResult[A] = Either[FailureBase, A]
-  type JsonParsingResult     = Either[FailureBase, Json]
+  type JsonDecodingResult[A] = Either[Anomaly, A]
+  type JsonParsingResult     = Either[Anomaly, Json]
+
+  implicit class JsonDecodingResultOps[A](e: JsonDecodingResult[A]) {
+
+    def unsafeGet: A = e match {
+      case Left(value)  => throw value.asThrowable
+      case Right(value) => value
+    }
+  }
+
+  implicit class JsonParsingResultOps(e: JsonParsingResult) {
+
+    def unsafeGet: Json = e match {
+      case Left(value)  => throw value.asThrowable
+      case Right(value) => value
+    }
+  }
 }

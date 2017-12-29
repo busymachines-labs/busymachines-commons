@@ -7,7 +7,7 @@
 This module is vanilla scala _*only*_, cross-compiled against versions: `2.12.3`.
 
 The full module id is:
-`"com.busymachines" %% "busymachines-commons-semver" % "0.2.0-RC7"`
+`"com.busymachines" %% "busymachines-commons-semver" % "0.2.0-RC8"`
 
 ### Transitive dependencies
 None.

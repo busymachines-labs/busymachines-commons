@@ -1,6 +1,5 @@
-package busymachines.core.exceptions
+package busymachines.core
 
-import busymachines.core.exceptions.FailureMessage.Parameters
 import org.scalatest.FlatSpec
 
 /**
@@ -11,15 +10,17 @@ import org.scalatest.FlatSpec
   */
 class UnionTypeWorkaroundTest extends FlatSpec {
 
-  behavior of "Failures"
+  behavior of "Anomalies"
 
   it should "... apply implicit conversions as a workaround to union types" in {
     assertCompiles {
       """
         |
+        |import busymachines.core._
+        |
         |object RevolutionaryDomainFailures {
         |
-        |  case object CannotBeDone extends FailureID {
+        |  case object CannotBeDone extends AnomalyID {
         |    val name = "rd_001"
         |  }
         |
@@ -28,9 +29,9 @@ class UnionTypeWorkaroundTest extends FlatSpec {
         |case class SolutionNotFoundFailure(problem: String, attempts: List[String]) extends NotFoundFailure(
         |  s"Solution to problem $problem not found."
         |) {
-        |  override def id: FailureID = RevolutionaryDomainFailures.CannotBeDone
+        |  override def id: AnomalyID = RevolutionaryDomainFailures.CannotBeDone
         |
-        |  override def parameters: Parameters = Map(
+        |  override def parameters: Anomaly.Parameters = Anomaly.Parameters(
         |    "problem" -> problem,
         |    "attempts" -> attempts
         |  )

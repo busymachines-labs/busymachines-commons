@@ -9,6 +9,7 @@ import org.scalatest.{FlatSpec, Matchers}
   * @since 10 Aug 2017
   *
   */
+@scala.deprecated("Will be removed in 0.3.0", "0.2.0")
 class FailureMessageJsonTest extends FlatSpec with Matchers {
 
   import busymachines.json._

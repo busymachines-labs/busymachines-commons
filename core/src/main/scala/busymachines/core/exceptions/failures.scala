@@ -91,24 +91,32 @@ import scala.collection.immutable
   * @since 31 Jul 2017
   *
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 trait FailureID {
   def name: String
 }
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object FailureID {
 
   private case class GenericFailureID(override val name: String) extends FailureID
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(id: String): FailureID = GenericFailureID(id)
 }
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object FailureMessage {
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   type ParamValue = StringOrSeqString
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   object ParamValue {
+    @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
     def apply(s: String) = StringWrapper(s)
 
+    @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
     def apply(ses: immutable.Seq[String]) = SeqStringWrapper(ses)
   }
 
@@ -117,26 +125,35 @@ object FailureMessage {
     * Until then, boiler plate freedom is given by the implicit
     * conversions found in the package object
     */
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   sealed trait StringOrSeqString
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   final case class StringWrapper private (s: String) extends ParamValue
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   final case class SeqStringWrapper private (ses: immutable.Seq[String]) extends ParamValue
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   type Parameters = Map[String, ParamValue]
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   object Parameters {
+    @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
     def apply(ps: (String, ParamValue)*): Parameters = Map.apply(ps: _*)
 
+    @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
     def empty: Parameters = Map.empty[String, ParamValue]
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private final case class GenericFailureMessage(
     override val id:         FailureID,
     override val message:    String,
     override val parameters: Parameters
   ) extends FailureMessage
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(
     id:         FailureID,
     message:    String,
@@ -146,11 +163,15 @@ object FailureMessage {
   }
 }
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 trait FailureMessage {
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def id: FailureID
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def message: String
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 }
 
@@ -164,35 +185,47 @@ trait FailureMessage {
   *
   * Guaranteed to have non-empty FailureMessages
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 trait FailureMessages extends FailureMessage {
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def firstMessage: FailureMessage
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def restOfMessages: immutable.Seq[FailureMessage]
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   final def messages: immutable.Seq[FailureMessage] =
     firstMessage +: restOfMessages
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   final def hasNotFound: Boolean =
     messages.exists(_.isInstanceOf[NotFoundFailure])
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   final def hasUnauthorized: Boolean =
     messages.exists(_.isInstanceOf[UnauthorizedFailure])
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   final def hasForbidden: Boolean =
     messages.exists(_.isInstanceOf[ForbiddenFailure])
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   final def hasDenied: Boolean =
     messages.exists(_.isInstanceOf[DeniedFailure])
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   final def hasInvalidInput: Boolean =
     messages.exists(_.isInstanceOf[InvalidInputFailure])
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   final def hasConflict: Boolean =
     messages.exists(_.isInstanceOf[ConflictFailure])
 }
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object FailureMessages {
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private final case class GenericFailureMessages(
     override val id:             FailureID,
     override val message:        String,
@@ -200,6 +233,7 @@ object FailureMessages {
     override val restOfMessages: immutable.Seq[FailureMessage],
   ) extends FailureMessages
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(id: FailureID, message: String, msg: FailureMessage, msgs: FailureMessage*): FailureMessages = {
     GenericFailureMessages(id, message, msg, msgs.toList)
   }
@@ -210,14 +244,17 @@ object FailureMessages {
   *
   * Most likely you need to extend one of the other cases.
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 abstract class FailureBase(
   override val message:    String,
   val cause:               Option[Throwable] = None,
   override val parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends Exception(message, cause.orNull) with FailureMessage
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object FailureBase {
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private final class ReifiedFailure(
     override val id:         FailureID,
     override val message:    String,
@@ -229,10 +266,12 @@ object FailureBase {
         parameters = parameters
       )
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(fm: FailureMessage): FailureBase = {
     new ReifiedFailure(fm.id, fm.message, fm.parameters, None)
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(fm: FailureMessage, cause: Throwable): FailureBase = {
     new ReifiedFailure(fm.id, fm.message, fm.parameters, Option(cause))
   }
@@ -243,6 +282,7 @@ object FailureBase {
   *
   * Primarily used as containers for validation failures.
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 abstract class Failures(
   override val id:             FailureID,
   override val message:        String,
@@ -250,8 +290,10 @@ abstract class Failures(
   override val restOfMessages: immutable.Seq[FailureMessage],
 ) extends Exception(message) with FailureMessages
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object Failures {
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private final class ReifiedFailures(
     id:             FailureID,
     message:        String,
@@ -267,6 +309,7 @@ object Failures {
   * Marker traits, so that both the [[FailureBase]] and [[Failures]]
   * can be marked with the same semantic meaning
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object SemanticFailures {
 
   /**
@@ -275,12 +318,15 @@ object SemanticFailures {
     * "you cannot find something; it may or may not exist, and I'm not going
     * to tell you anything else"
     */
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   trait NotFound
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] case object NotFoundID extends FailureID {
     override def name: String = "0"
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] val `Not found` = "Not found"
 
   /**
@@ -289,12 +335,15 @@ object SemanticFailures {
     * "something is wrong in the way you authorized, you can try again slightly
     * differently"
     */
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   trait Unauthorized
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] case object UnauthorizedID extends FailureID {
     override def name: String = "1"
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] val `Unauthorized` = "Unauthorized"
 
   /**
@@ -303,12 +352,15 @@ object SemanticFailures {
     * "it exists, but you're not even allowed to know about that;
     * so for short, you can't find it".
     */
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   trait Forbidden
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] case object ForbiddenID extends FailureID {
     override def name: String = "2"
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] val `Forbidden` = "Forbidden"
 
   /**
@@ -316,12 +368,15 @@ object SemanticFailures {
     *
     * "you know it exists, but you are not allowed to see it"
     */
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   trait Denied
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] case object DeniedID extends FailureID {
     override def name: String = "3"
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] val `Denied` = "Denied"
 
   /**
@@ -342,12 +397,15 @@ object SemanticFailures {
     *
     * Therefore, specialize frantically.
     */
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   trait InvalidInput
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] case object InvalidInputID extends FailureID {
     override def name: String = "4"
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] val `Invalid Input` = "Invalid input"
 
   /**
@@ -356,12 +414,15 @@ object SemanticFailures {
     * E.g. when you're duplicating something that ought to be unique,
     * like ids, emails.
     */
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   trait Conflict
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] case object ConflictID extends FailureID {
     override def name: String = "5"
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private[exceptions] val `Conflict` = "Conflict"
 
 }
@@ -375,12 +436,14 @@ object SemanticFailures {
   *
   * See [[SemanticFailures.NotFound]] for intended use.
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 abstract class NotFoundFailure(
   message:    String,
   cause:      Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends FailureBase(message, cause, parameters) with SemanticFailures.NotFound
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object NotFoundFailure extends NotFoundFailure(SemanticFailures.`Not found`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.NotFoundID
@@ -393,15 +456,19 @@ object NotFoundFailure extends NotFoundFailure(SemanticFailures.`Not found`, Non
     override def id: FailureID = SemanticFailures.NotFoundID
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String): NotFoundFailure =
     new ReifiedNotFoundFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable): NotFoundFailure =
     new ReifiedNotFoundFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, params: FailureMessage.Parameters): NotFoundFailure =
     new ReifiedNotFoundFailure(message = msg, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable): NotFoundFailure =
     new ReifiedNotFoundFailure(
       message    = cause.getMessage,
@@ -409,9 +476,11 @@ object NotFoundFailure extends NotFoundFailure(SemanticFailures.`Not found`, Non
       parameters = FailureMessage.Parameters.empty
     )
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable, params: FailureMessage.Parameters): NotFoundFailure =
     new ReifiedNotFoundFailure(message = cause.getMessage, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): NotFoundFailure =
     new ReifiedNotFoundFailure(message = msg, cause = Some(cause), parameters = params)
 }
@@ -425,17 +494,20 @@ object NotFoundFailure extends NotFoundFailure(SemanticFailures.`Not found`, Non
   *
   * See [[SemanticFailures.Unauthorized]] for intended use.
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 abstract class UnauthorizedFailure(
   message:    String,
   cause:      Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends FailureBase(message, cause, parameters) with SemanticFailures.Unauthorized
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object UnauthorizedFailure
     extends UnauthorizedFailure(SemanticFailures.`Unauthorized`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.UnauthorizedID
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private final class ReifiedUnauthorizedFailure(
     message:    String,
     cause:      Option[Throwable],
@@ -444,15 +516,19 @@ object UnauthorizedFailure
     override def id: FailureID = SemanticFailures.UnauthorizedID
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String): UnauthorizedFailure =
     new ReifiedUnauthorizedFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable): UnauthorizedFailure =
     new ReifiedUnauthorizedFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, params: FailureMessage.Parameters): UnauthorizedFailure =
     new ReifiedUnauthorizedFailure(message = msg, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable): UnauthorizedFailure =
     new ReifiedUnauthorizedFailure(
       message    = cause.getMessage,
@@ -460,9 +536,11 @@ object UnauthorizedFailure
       parameters = FailureMessage.Parameters.empty
     )
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable, params: FailureMessage.Parameters): UnauthorizedFailure =
     new ReifiedUnauthorizedFailure(message = cause.getMessage, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): UnauthorizedFailure =
     new ReifiedUnauthorizedFailure(message = msg, cause = Some(cause), parameters = params)
 }
@@ -476,16 +554,20 @@ object UnauthorizedFailure
   *
   * See [[SemanticFailures.Forbidden]] for intended use.
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 abstract class ForbiddenFailure(
   message:    String,
   cause:      Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends FailureBase(message, cause, parameters) with SemanticFailures.Forbidden
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object ForbiddenFailure extends ForbiddenFailure(SemanticFailures.`Forbidden`, None, FailureMessage.Parameters.empty) {
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   override def id: FailureID = SemanticFailures.ForbiddenID
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private final class ReifiedForbiddenFailure(
     message:    String,
     cause:      Option[Throwable],
@@ -494,15 +576,19 @@ object ForbiddenFailure extends ForbiddenFailure(SemanticFailures.`Forbidden`, N
     override def id: FailureID = SemanticFailures.ForbiddenID
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String): ForbiddenFailure =
     new ReifiedForbiddenFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable): ForbiddenFailure =
     new ReifiedForbiddenFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, params: FailureMessage.Parameters): ForbiddenFailure =
     new ReifiedForbiddenFailure(message = msg, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable): ForbiddenFailure =
     new ReifiedForbiddenFailure(
       message    = cause.getMessage,
@@ -510,9 +596,11 @@ object ForbiddenFailure extends ForbiddenFailure(SemanticFailures.`Forbidden`, N
       parameters = FailureMessage.Parameters.empty
     )
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable, params: FailureMessage.Parameters): ForbiddenFailure =
     new ReifiedForbiddenFailure(message = cause.getMessage, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): ForbiddenFailure =
     new ReifiedForbiddenFailure(message = msg, cause = Some(cause), parameters = params)
 }
@@ -526,16 +614,19 @@ object ForbiddenFailure extends ForbiddenFailure(SemanticFailures.`Forbidden`, N
   *
   * See [[SemanticFailures.Denied]] for intended use.
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 abstract class DeniedFailure(
   message:    String,
   cause:      Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends FailureBase(message, cause, parameters) with SemanticFailures.Denied
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object DeniedFailure extends DeniedFailure(SemanticFailures.`Denied`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.DeniedID
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private final class ReifiedDeniedFailure(
     message:    String,
     cause:      Option[Throwable],
@@ -544,15 +635,19 @@ object DeniedFailure extends DeniedFailure(SemanticFailures.`Denied`, None, Fail
     override def id: FailureID = SemanticFailures.DeniedID
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String): DeniedFailure =
     new ReifiedDeniedFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable): DeniedFailure =
     new ReifiedDeniedFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, params: FailureMessage.Parameters): DeniedFailure =
     new ReifiedDeniedFailure(message = msg, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable): DeniedFailure =
     new ReifiedDeniedFailure(
       message    = cause.getMessage,
@@ -560,9 +655,11 @@ object DeniedFailure extends DeniedFailure(SemanticFailures.`Denied`, None, Fail
       parameters = FailureMessage.Parameters.empty
     )
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable, params: FailureMessage.Parameters): DeniedFailure =
     new ReifiedDeniedFailure(message = cause.getMessage, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): DeniedFailure =
     new ReifiedDeniedFailure(message = msg, cause = Some(cause), parameters = params)
 }
@@ -576,17 +673,20 @@ object DeniedFailure extends DeniedFailure(SemanticFailures.`Denied`, None, Fail
   *
   * See [[SemanticFailures.InvalidInput]] for intended use.
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 abstract class InvalidInputFailure(
   message:    String,
   cause:      Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends FailureBase(message, cause, parameters) with SemanticFailures.InvalidInput
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object InvalidInputFailure
     extends InvalidInputFailure(SemanticFailures.`Invalid Input`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.InvalidInputID
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private final class ReifiedInvalidInputFailure(
     message:    String,
     cause:      Option[Throwable],
@@ -595,15 +695,19 @@ object InvalidInputFailure
     override def id: FailureID = SemanticFailures.InvalidInputID
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String): InvalidInputFailure =
     new ReifiedInvalidInputFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable): InvalidInputFailure =
     new ReifiedInvalidInputFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, params: FailureMessage.Parameters): InvalidInputFailure =
     new ReifiedInvalidInputFailure(message = msg, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable): InvalidInputFailure =
     new ReifiedInvalidInputFailure(
       message    = cause.getMessage,
@@ -611,9 +715,11 @@ object InvalidInputFailure
       parameters = FailureMessage.Parameters.empty
     )
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable, params: FailureMessage.Parameters): InvalidInputFailure =
     new ReifiedInvalidInputFailure(message = cause.getMessage, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): InvalidInputFailure =
     new ReifiedInvalidInputFailure(message = msg, cause = Some(cause), parameters = params)
 }
@@ -627,16 +733,19 @@ object InvalidInputFailure
   *
   * See [[SemanticFailures.Conflict]] for intended use.
   */
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 abstract class ConflictFailure(
   message:    String,
   cause:      Option[Throwable] = None,
   parameters: FailureMessage.Parameters = FailureMessage.Parameters.empty
 ) extends FailureBase(message, cause, parameters) with SemanticFailures.Conflict
 
+@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
 object ConflictFailure extends ConflictFailure(SemanticFailures.`Conflict`, None, FailureMessage.Parameters.empty) {
 
   override def id: FailureID = SemanticFailures.ConflictID
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   private final class ReifiedConflictFailure(
     message:    String,
     cause:      Option[Throwable],
@@ -645,15 +754,19 @@ object ConflictFailure extends ConflictFailure(SemanticFailures.`Conflict`, None
     override def id: FailureID = SemanticFailures.ConflictID
   }
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String): ConflictFailure =
     new ReifiedConflictFailure(message = msg, cause = None, parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable): ConflictFailure =
     new ReifiedConflictFailure(message = msg, cause = Some(cause), parameters = FailureMessage.Parameters.empty)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, params: FailureMessage.Parameters): ConflictFailure =
     new ReifiedConflictFailure(message = msg, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable): ConflictFailure =
     new ReifiedConflictFailure(
       message    = cause.getMessage,
@@ -661,9 +774,11 @@ object ConflictFailure extends ConflictFailure(SemanticFailures.`Conflict`, None
       parameters = FailureMessage.Parameters.empty
     )
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(cause: Throwable, params: FailureMessage.Parameters): ConflictFailure =
     new ReifiedConflictFailure(message = cause.getMessage, cause = None, parameters = params)
 
+  @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
   def apply(msg: String, cause: Throwable, params: FailureMessage.Parameters): ConflictFailure =
     new ReifiedConflictFailure(message = msg, cause = Some(cause), parameters = params)
 }

@@ -1,6 +1,6 @@
 package busymachines.rest_json_test
 
-import busymachines.core.exceptions._
+import busymachines.core._
 import busymachines.rest._
 import busymachines.rest_json_test.routes_to_test._
 import org.scalatest.FlatSpec
@@ -11,7 +11,7 @@ import org.scalatest.FlatSpec
   * @since 07 Sep 2017
   *
   */
-private[rest_json_test] class RoutesCompositionTest extends FlatSpec with JsonRestAPITest {
+class RoutesCompositionTest extends FlatSpec with JsonRestAPITest {
   private lazy val combinedAPI: RestAPI = {
     val eh   = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()
@@ -23,7 +23,7 @@ private[rest_json_test] class RoutesCompositionTest extends FlatSpec with JsonRe
   private implicit val cc:                     CallerContext = Contexts.none
 
   import SomeTestDTOJsonCodec._
-  import busymachines.json.FailureMessageJsonCodec._
+  import busymachines.json.AnomalyJsonCodec._
 
   //===========================================================================
 
@@ -34,8 +34,8 @@ private[rest_json_test] class RoutesCompositionTest extends FlatSpec with JsonRe
   it should "return 400 for InvalidInput" in {
     get("/invalid_input") {
       expectStatus(StatusCodes.BadRequest)
-      val fm = responseAs[FailureMessage]
-      assert(fm.id == FailureID("4"))
+      val fm = responseAs[Anomaly]
+      assert(fm.id == AnomalyID("4"))
     }
   }
 

@@ -10,10 +10,13 @@ import io.circe.DecodingFailure
   * @since 10 Aug 2017
   *
   */
+@scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
 object FailureMessageJsonCodec extends FailureMessageJsonCodec
 
+@scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
 trait FailureMessageJsonCodec {
 
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
   private implicit final val FailureIDCodec: Codec[FailureID] = new Codec[FailureID] {
     override def apply(c: HCursor): Result[FailureID] = {
       c.as[String].right.map(FailureID.apply)
@@ -22,6 +25,7 @@ trait FailureMessageJsonCodec {
     override def apply(a: FailureID): Json = Json.fromString(a.name)
   }
 
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
   private implicit final val StringOrSeqCodec: Codec[FailureMessage.ParamValue] = new Codec[FailureMessage.ParamValue] {
     override def apply(a: FailureMessage.ParamValue): Json = {
       a match {
@@ -41,6 +45,7 @@ trait FailureMessageJsonCodec {
     }
   }
 
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
   private implicit final val FailureMessageParamsCodec: Codec[FailureMessage.Parameters] =
     new Codec[FailureMessage.Parameters] {
       override def apply(c: HCursor): Result[FailureMessage.Parameters] = {
@@ -85,6 +90,7 @@ trait FailureMessageJsonCodec {
       }
     }
 
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
   final implicit val failureMessageCodec: Codec[FailureMessage] = new Codec[FailureMessage] {
     override def apply(c: HCursor): io.circe.Decoder.Result[FailureMessage] = {
       for {
@@ -114,6 +120,7 @@ trait FailureMessageJsonCodec {
     }
   }
 
+  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
   final implicit val failureMessagesCodec: Codec[FailureMessages] = new Codec[FailureMessages] {
     override def apply(a: FailureMessages): Json = {
       val fm          = failureMessageCodec.apply(a)
@@ -127,17 +134,10 @@ trait FailureMessageJsonCodec {
         fm   <- c.as[FailureMessage].right
         msgs <- c.get[Seq[FailureMessage]](CoreJsonConstants.messages).right
         _ <- (if (msgs.isEmpty)
-                Left(DecodingFailure("FailureMessages.message needs to be non empty array", c.history))
-              else
-                Right.apply(())).right
+          Left(DecodingFailure("FailureMessages.message needs to be non empty array", c.history))
+        else
+          Right.apply(())).right
       } yield FailureMessages.apply(fm.id, fm.message, msgs.head, msgs.tail: _*)
     }
   }
-}
-
-private[json] object CoreJsonConstants {
-  private[json] val id:         String = "id"
-  private[json] val message:    String = "message"
-  private[json] val messages:   String = "messages"
-  private[json] val parameters: String = "parameters"
 }

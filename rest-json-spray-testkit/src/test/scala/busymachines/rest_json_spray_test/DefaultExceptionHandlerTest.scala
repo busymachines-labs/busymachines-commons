@@ -11,7 +11,7 @@ import org.scalatest.FlatSpec
   * @since 06 Sep 2017
   *
   */
-private[rest_json_spray_test] class DefaultExceptionHandlerTest
+class DefaultExceptionHandlerTest
     extends FlatSpec with JsonRestAPITest with SomeTestDTOJsonCodec {
   private lazy val defApi = new DefaultExceptionHandlerRestAPIForTesting()
   override implicit val testedRoute: Route         = RestAPI.seal(defApi).route
@@ -115,7 +115,7 @@ private[rest_json_spray_test] class DefaultExceptionHandlerTest
     get("/runtime_exception") {
       expectStatus(StatusCodes.InternalServerError)
       val fm = responseAs[FailureMessage]
-      assert(fm.id == FailureID("error"))
+      assert(fm.id == FailureID("CE_0"))
     }
   }
 
@@ -125,7 +125,7 @@ private[rest_json_spray_test] class DefaultExceptionHandlerTest
     get("/not_implemented_boxed") {
       expectStatus(StatusCodes.NotImplemented)
       val fm = responseAs[FailureMessage]
-      assert(fm.id == FailureID("error"))
+      assert(fm.id == FailureID("CE_0"))
     }
   }
 
@@ -135,7 +135,7 @@ private[rest_json_spray_test] class DefaultExceptionHandlerTest
     get("/not_implemented") {
       expectStatus(StatusCodes.NotImplemented)
       val fm = responseAs[FailureMessage]
-      assert(fm.id == FailureID("error"))
+      assert(fm.id == FailureID("CE_0"))
     }
   }
 

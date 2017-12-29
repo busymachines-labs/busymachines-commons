@@ -1,6 +1,6 @@
 package busymachines.rest_json_test.routes_to_test
 
-import busymachines.core.exceptions._
+import busymachines.core._
 import busymachines.rest._
 
 import scala.concurrent.Future
@@ -130,40 +130,40 @@ private[rest_json_test] class DefaultExceptionHandlerRestAPIForTesting
   }
 
   def notFound(s: String): Future[String] = {
-    Future.failed(NotFoundFailure(s, FailureMessage.Parameters("not_found" -> s)))
+    Future.failed(NotFoundFailure(s, Anomaly.Parameters("not_found" -> s)))
   }
 
   def unauthorized(s: String): Future[String] = {
-    Future.failed(UnauthorizedFailure(s, FailureMessage.Parameters("unauthorized" -> s)))
+    Future.failed(UnauthorizedFailure(s, Anomaly.Parameters("unauthorized" -> s)))
   }
 
   def noAccess(s: String): Future[String] = {
-    Future.failed(ForbiddenFailure(s, FailureMessage.Parameters("forbidden" -> s)))
+    Future.failed(ForbiddenFailure(s, Anomaly.Parameters("forbidden" -> s)))
   }
 
   def denied(s: String): Future[String] = {
-    Future.failed(DeniedFailure(s, FailureMessage.Parameters("denied" -> s)))
+    Future.failed(DeniedFailure(s, Anomaly.Parameters("denied" -> s)))
   }
 
   def invalidInput(s: String): Future[String] = {
-    Future.failed(InvalidInputFailure(s, FailureMessage.Parameters("invalidInput" -> s)))
+    Future.failed(InvalidInputFailure(s, Anomaly.Parameters("invalidInput" -> s)))
   }
 
   def conflict(s: String): Future[String] = {
-    Future.failed(ConflictFailure(s, FailureMessage.Parameters("conflict" -> s)))
+    Future.failed(ConflictFailure(s, Anomaly.Parameters("conflict" -> s)))
   }
 
   def failures: Future[String] = {
     Future.failed {
-      Failures(
-        FailureID("1234"),
+      AnomalousFailures(
+        AnomalyID("1234"),
         "a lot of failures",
-        NotFoundFailure("notFound",    FailureMessage.Parameters("one"   -> "1")),
-        UnauthorizedFailure("unauth",  FailureMessage.Parameters("two"   -> "2")),
-        ForbiddenFailure("no_access",  FailureMessage.Parameters("three" -> "3")),
-        DeniedFailure("denied",        FailureMessage.Parameters("four"  -> "4")),
-        InvalidInputFailure("invalid", FailureMessage.Parameters("five"  -> "5")),
-        ConflictFailure("conflict",    FailureMessage.Parameters("six"   -> "6")),
+        NotFoundFailure("notFound",    Anomaly.Parameters("one"   -> "1")),
+        UnauthorizedFailure("unauth",  Anomaly.Parameters("two"   -> "2")),
+        ForbiddenFailure("no_access",  Anomaly.Parameters("three" -> "3")),
+        DeniedFailure("denied",        Anomaly.Parameters("four"  -> "4")),
+        InvalidInputFailure("invalid", Anomaly.Parameters("five"  -> "5")),
+        ConflictFailure("conflict",    Anomaly.Parameters("six"   -> "6")),
       )
     }
   }

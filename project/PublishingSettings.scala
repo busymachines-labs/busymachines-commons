@@ -59,6 +59,8 @@ object PublishingSettings {
   )
 
   def noPublishSettings = Seq(
+    publish              := {},
+    publishLocal         := {},
     skip in publishLocal := true,
     skip in publish      := true,
     publishArtifact      := false

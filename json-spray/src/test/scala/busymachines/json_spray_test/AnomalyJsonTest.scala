@@ -1,7 +1,7 @@
-package busymachines.json_test
+package busymachines.json_spray_test
 
-import busymachines.core.exceptions._
-import org.scalatest.FlatSpec
+import busymachines.core._
+import org.scalatest.{FlatSpec, Matchers}
 
 /**
   *
@@ -9,19 +9,18 @@ import org.scalatest.FlatSpec
   * @since 10 Aug 2017
   *
   */
-@scala.deprecated("Will be removed in 0.3.0", "0.2.0")
-class FailureMessageJsonTest extends FlatSpec {
+class AnomalyJsonTest extends FlatSpec with Matchers {
 
   import busymachines.json._
+  import AnomalyJsonCodec._
   import syntax._
-  import FailureMessageJsonCodec._
 
-  behavior of "... serializing simple FailureMessages"
+  behavior of "... serializing simple Anomalies"
 
   it should "... encode a NotFoundFailure" in {
-    val failure: FailureMessage = NotFoundFailure(
+    val failure: Anomaly = NotFoundFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -31,29 +30,26 @@ class FailureMessageJsonTest extends FlatSpec {
     assert(
       rawJson ==
         """{
-          |  "id" : "0",
-          |  "message" : "test message",
-          |  "parameters" : {
-          |    "one" : "one",
-          |    "two" : [
-          |      "one",
-          |      "two"
-          |    ]
+          |  "id": "0",
+          |  "message": "test message",
+          |  "parameters": {
+          |    "one": "one",
+          |    "two": ["one", "two"]
           |  }
           |}
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a UnauthorizedFailure" in {
-    val failure: FailureMessage = UnauthorizedFailure(
+    val failure: Anomaly = UnauthorizedFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -63,29 +59,26 @@ class FailureMessageJsonTest extends FlatSpec {
     assert(
       rawJson ==
         """{
-          |  "id" : "1",
-          |  "message" : "test message",
-          |  "parameters" : {
-          |    "one" : "one",
-          |    "two" : [
-          |      "one",
-          |      "two"
-          |    ]
+          |  "id": "1",
+          |  "message": "test message",
+          |  "parameters": {
+          |    "one": "one",
+          |    "two": ["one", "two"]
           |  }
           |}
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a ForbiddenFailure" in {
-    val failure: FailureMessage = ForbiddenFailure(
+    val failure: Anomaly = ForbiddenFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -95,29 +88,26 @@ class FailureMessageJsonTest extends FlatSpec {
     assert(
       rawJson ==
         """{
-          |  "id" : "2",
-          |  "message" : "test message",
-          |  "parameters" : {
-          |    "one" : "one",
-          |    "two" : [
-          |      "one",
-          |      "two"
-          |    ]
+          |  "id": "2",
+          |  "message": "test message",
+          |  "parameters": {
+          |    "one": "one",
+          |    "two": ["one", "two"]
           |  }
           |}
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a DeniedFailure" in {
-    val failure: FailureMessage = DeniedFailure(
+    val failure: Anomaly = DeniedFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -127,29 +117,26 @@ class FailureMessageJsonTest extends FlatSpec {
     assert(
       rawJson ==
         """{
-          |  "id" : "3",
-          |  "message" : "test message",
-          |  "parameters" : {
-          |    "one" : "one",
-          |    "two" : [
-          |      "one",
-          |      "two"
-          |    ]
+          |  "id": "3",
+          |  "message": "test message",
+          |  "parameters": {
+          |    "one": "one",
+          |    "two": ["one", "two"]
           |  }
           |}
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a InvalidInputFailure" in {
-    val failure: FailureMessage = InvalidInputFailure(
+    val failure: Anomaly = InvalidInputFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -159,29 +146,26 @@ class FailureMessageJsonTest extends FlatSpec {
     assert(
       rawJson ==
         """{
-          |  "id" : "4",
-          |  "message" : "test message",
-          |  "parameters" : {
-          |    "one" : "one",
-          |    "two" : [
-          |      "one",
-          |      "two"
-          |    ]
+          |  "id": "4",
+          |  "message": "test message",
+          |  "parameters": {
+          |    "one": "one",
+          |    "two": ["one", "two"]
           |  }
           |}
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
   it should "... encode a ConflictFailure" in {
-    val failure: FailureMessage = ConflictFailure(
+    val failure: Anomaly = ConflictFailure(
       "test message",
-      FailureMessage.Parameters(
+      Anomaly.Parameters(
         "one" -> "one",
         "two" -> List("one", "two")
       )
@@ -191,41 +175,38 @@ class FailureMessageJsonTest extends FlatSpec {
     assert(
       rawJson ==
         """{
-          |  "id" : "5",
-          |  "message" : "test message",
-          |  "parameters" : {
-          |    "one" : "one",
-          |    "two" : [
-          |      "one",
-          |      "two"
-          |    ]
+          |  "id": "5",
+          |  "message": "test message",
+          |  "parameters": {
+          |    "one": "one",
+          |    "two": ["one", "two"]
           |  }
           |}
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
-  behavior of "... serializing composite FailureMessages"
+  behavior of "... serializing composite Anomalies"
 
   it should "... encode Failures" in {
-    val failure: FailureMessages = Failures(
-      FailureID("test"),
+    val failure: Anomalies = Anomalies(
+      AnomalyID("test"),
       "test message",
       NotFoundFailure(
         "one",
-        FailureMessage.Parameters(
+        Anomaly.Parameters(
           "3" -> "1",
           "4" -> List("1", "2")
         )
       ),
       NotFoundFailure(
         "two",
-        FailureMessage.Parameters(
+        Anomaly.Parameters(
           "5" -> "6",
           "6" -> List("6", "7")
         )
@@ -236,37 +217,28 @@ class FailureMessageJsonTest extends FlatSpec {
       rawJson ==
         """
           |{
-          |  "id" : "test",
-          |  "message" : "test message",
-          |  "messages" : [
-          |    {
-          |      "id" : "0",
-          |      "message" : "one",
-          |      "parameters" : {
-          |        "3" : "1",
-          |        "4" : [
-          |          "1",
-          |          "2"
-          |        ]
-          |      }
-          |    },
-          |    {
-          |      "id" : "0",
-          |      "message" : "two",
-          |      "parameters" : {
-          |        "5" : "6",
-          |        "6" : [
-          |          "6",
-          |          "7"
-          |        ]
-          |      }
+          |  "id": "test",
+          |  "message": "test message",
+          |  "messages": [{
+          |    "id": "0",
+          |    "message": "one",
+          |    "parameters": {
+          |      "3": "1",
+          |      "4": ["1", "2"]
           |    }
-          |  ]
+          |  }, {
+          |    "id": "0",
+          |    "message": "two",
+          |    "parameters": {
+          |      "5": "6",
+          |      "6": ["6", "7"]
+          |    }
+          |  }]
           |}
           |""".stripMargin.trim
     )
 
-    val read = rawJson.unsafeDecodeAs[FailureMessage]
+    val read = rawJson.unsafeDecodeAs[Anomaly]
     assert(read.id.name == failure.id.name,       "id")
     assert(read.message == failure.message,       "message")
     assert(read.parameters == failure.parameters, "parameters")
@@ -282,9 +254,6 @@ class FailureMessageJsonTest extends FlatSpec {
         |}
         |""".stripMargin.trim
 
-    rawJson.decodeAs[FailureMessages] match {
-      case Left(_) => //yey!!!
-      case Right(_) => fail("should have failed")
-    }
+    the[JsonDecodingFailure] thrownBy rawJson.unsafeDecodeAs[Anomalies]
   }
 }

@@ -1,7 +1,6 @@
 package busymachines.semver
 
-import busymachines.core.exceptions.FailureMessage.Parameters
-import busymachines.core.exceptions._
+import busymachines.core._
 
 /**
   *
@@ -15,9 +14,9 @@ final case class InvalidSemanticVersionFailure(input: String, parseError: String
     extends InvalidSemanticVersionParsingFailure(
       s"Failed to parse semantic version '$input' because: $parseError"
     ) {
-  override def id: FailureID = ParsingFailureIDs.InvalidSemanticVersion
+  override def id: AnomalyID = ParsingAnomalyIDs.InvalidSemanticVersion
 
-  override val parameters: Parameters = Parameters(
+  override val parameters: Anomaly.Parameters = Anomaly.Parameters(
     "input"      -> input,
     "parseError" -> parseError
   )
@@ -27,21 +26,21 @@ final case class InvalidSemanticVersionLabelFailure(input: String, parseError: S
     extends InvalidSemanticVersionParsingFailure(
       s"Failed to parse label of semantic version '$input' because: $parseError"
     ) {
-  override def id: FailureID = ParsingFailureIDs.InvalidSemanticVersionLabel
+  override def id: AnomalyID = ParsingAnomalyIDs.InvalidSemanticVersionLabel
 
-  override val parameters: Parameters = Parameters(
+  override val parameters: Anomaly.Parameters = Anomaly.Parameters(
     "input"      -> input,
     "parseError" -> parseError
   )
 }
 
-object ParsingFailureIDs {
+object ParsingAnomalyIDs {
 
-  case object InvalidSemanticVersion extends FailureID {
+  case object InvalidSemanticVersion extends AnomalyID {
     override def name: String = "BMC_P_1"
   }
 
-  case object InvalidSemanticVersionLabel extends FailureID {
+  case object InvalidSemanticVersionLabel extends AnomalyID {
     override def name: String = "BMC_P_2"
   }
 
