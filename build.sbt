@@ -14,6 +14,10 @@ addCommandAlias("doSnapshotLocal", ";clean;update;compile;setSnapshotVersion;pub
 /**
   * Use with care. Releases a snapshot to sonatype repository.
   *
+  * Currently this will not work properly because of an SBT bug where
+  * the artifacts are not overriden in the SONATYPE repo:
+  * https://github.com/sbt/sbt/issues/3725
+  *
   * All instructions for publishing to sonatype can be found in
   * ``z-publishing-artifcats/README.md``.
   */
