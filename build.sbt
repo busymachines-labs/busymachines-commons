@@ -1,12 +1,23 @@
 import sbt._
 import Keys._
 
+lazy val currentSnapshotVersion = "0.2.0-SNAPSHOT"
+
+addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
+
 addCommandAlias("ci", ";clean;update;compile;test:compile;test")
 
-/**
-  * Quick handy way of publishing locally.
-  */
 addCommandAlias("doLocal", ";clean;update;compile;publishLocal")
+
+addCommandAlias("doSnapshotLocal", ";clean;update;compile;setSnapshotVersion;publishLocal")
+
+/**
+  * Use with care. Releases a snapshot to sonatype repository.
+  *
+  * All instructions for publishing to sonatype can be found in
+  * ``z-publishing-artifcats/README.md``.
+  */
+addCommandAlias("doSnapshotRelease", ";ci;setSnapshotVersion;publishSigned")
 
 /**
   * Use with care.
@@ -15,14 +26,6 @@ addCommandAlias("doLocal", ";clean;update;compile;publishLocal")
   * ``z-publishing-artifcats/README.md``.
   */
 addCommandAlias("doRelease", ";ci;publishSigned;sonatypeRelease")
-
-/**
-  * this is used when a module depends on another, and it explicitly
-  * states that the "compile", i.e. the sources, of a module depend
-  * on the sources of another module. And the same thing for tests,
-  * otherwise the dependencies between the tests are not created.
-  */
-val `compile->compile;test->test` = "compile->compile;test->test"
 
 /**
   * this is a phantom project that is simply supposed to aggregate all modules for convenience,
