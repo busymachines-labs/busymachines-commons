@@ -44,7 +44,7 @@ object Dependencies {
   lazy val catsLaws:    ModuleID = "org.typelevel" %% "cats-laws"    % catsVersion
   lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
 
-  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.7"
+  lazy val catsEffects: ModuleID = "org.typelevel" %% "cats-effect" % "0.8"
 
   lazy val circeVersion: String = "0.9.0-M3"
 
