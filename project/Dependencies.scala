@@ -80,14 +80,6 @@ object Dependencies {
     */
   lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.19.0"
 
-  lazy val sprayJsonVersion = "1.3.4"
-
-  @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC6")
-  lazy val sprayJson: ModuleID = "io.spray" %% "spray-json" % sprayJsonVersion
-
-  @scala.deprecated("seriously, migrate to circe, and use the json module", "0.2.0-RC6")
-  lazy val akkaHttpSprayJson: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
-
   //============================================================================================
   //=========================================  testing =========================================
   //============================================================================================
