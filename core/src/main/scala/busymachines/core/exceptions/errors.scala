@@ -19,7 +19,7 @@ abstract class Error(
 ) extends Exception(message, cause.orNull) with FailureMessage with ErrorMessage
 
 @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
-object Error extends Error(SemanticErrors.Error, None) {
+object Error extends Error(SemanticErrors.Error,          None) {
 
   override def id: FailureID = SemanticErrors.GenericErrorID
 
@@ -81,7 +81,7 @@ abstract class InconsistentStateError(
   cause:   Option[Throwable] = None
 ) extends Error(message, cause) with SemanticErrors.InconsistentState
 
-@scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")
+@scala.deprecated("Use the types from busymachines.core",                                         "0.2.0-RC8")
 object InconsistentStateError extends InconsistentStateError(SemanticErrors.`Inconsistent state`, None) {
 
   @scala.deprecated("Use the types from busymachines.core", "0.2.0-RC8")

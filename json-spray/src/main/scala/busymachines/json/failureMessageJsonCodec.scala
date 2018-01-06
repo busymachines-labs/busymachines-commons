@@ -85,8 +85,6 @@ trait FailureMessageJsonCodec {
   }
 }
 
-
-
 private[json] case class FailureMessageRepr(
   id:         FailureID,
   message:    String,

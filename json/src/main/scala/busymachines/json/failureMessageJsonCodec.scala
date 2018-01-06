@@ -134,9 +134,9 @@ trait FailureMessageJsonCodec {
         fm   <- c.as[FailureMessage].right
         msgs <- c.get[Seq[FailureMessage]](CoreJsonConstants.messages).right
         _ <- (if (msgs.isEmpty)
-          Left(DecodingFailure("FailureMessages.message needs to be non empty array", c.history))
-        else
-          Right.apply(())).right
+                Left(DecodingFailure("FailureMessages.message needs to be non empty array", c.history))
+              else
+                Right.apply(())).right
       } yield FailureMessages.apply(fm.id, fm.message, msgs.head, msgs.tail: _*)
     }
   }

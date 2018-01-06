@@ -53,9 +53,9 @@ abstract class UnauthorizedFailure(
   override def id: AnomalyID = UnauthorizedAnomalyID
 }
 
-object UnauthorizedFailure extends
-  UnauthorizedFailure(MeaningfulAnomalies.UnauthorizedMsg, None) with SingletonAnomalyProduct with
-  FailureConstructors[UnauthorizedFailure] {
+object UnauthorizedFailure
+    extends UnauthorizedFailure(MeaningfulAnomalies.UnauthorizedMsg, None) with SingletonAnomalyProduct
+    with FailureConstructors[UnauthorizedFailure] {
   override def apply(causedBy: Throwable): UnauthorizedFailure = UnauthorizedFailureImpl(causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): UnauthorizedFailure =
