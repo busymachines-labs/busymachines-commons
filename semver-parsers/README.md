@@ -4,10 +4,8 @@
 
 ## artifacts
 
-This module is vanilla scala _*only*_, cross-compiled against versions: `2.12.3`.
-
 The full module id is:
-`"com.busymachines" %% "busymachines-commons-semver-parsers" % "0.2.0-RC8"`
+`"com.busymachines" %% "busymachines-commons-semver-parsers" % "0.2.0"`
 
 ### Transitive dependencies
 
