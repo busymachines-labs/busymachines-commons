@@ -4,7 +4,9 @@
 
 ## artifacts
 
-Current version is `0.2.0`. SBT module id:
+* stable: `0.2.0`
+* latest: `0.3.0-M1`
+
 `"com.busymachines" %% "busymachines-commons-rest-core" % "0.2.0"`
 
 ### Transitive dependencies

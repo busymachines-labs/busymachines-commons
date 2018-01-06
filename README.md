@@ -25,7 +25,7 @@ Probably due to an missing implicit — probably automatic derivation of some ty
 * stable: `0.2.0`
 * latest: `0.3.0-M1`
 
-These modules are are cross-compiled for Scala versions: `2.12.4`. We try our best to keep them up to date.
+These modules compiled for Scala version: `2.12.4`. We try our best to keep them up to date.
 
 #### Modules:
 Module | Description | Version

@@ -4,7 +4,9 @@
 
 ## artifacts
 
-Current version is `0.2.0`. SBT module id:
+* stable: `0.2.0`
+* latest: `0.3.0-M1`
+
 `"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0" % test`
 
 N.B. that this is a testing library, and you should only depend on it in test. Because otherwise you wind up with scalatest and akka http testing libraries on your runtime classpath.
