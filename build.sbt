@@ -5,7 +5,7 @@ lazy val currentSnapshotVersion = "0.2.0-SNAPSHOT"
 
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
-addCommandAlias("ci", ";clean;update;compile;test:compile;test")
+addCommandAlias("ci", ";clean;update;compile;Test/compile;Test")
 
 addCommandAlias("doLocal", ";clean;update;compile;publishLocal")
 
