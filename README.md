@@ -25,7 +25,7 @@ Probably due to an missing implicit — probably automatic derivation of some ty
 * stable: `0.2.0`
 * latest: `0.3.0-M1`
 
-These modules are are cross-compiled for Scala versions: `2.12.3`. We try our best to keep them up to date.
+These modules compiled for Scala version: `2.12.4`. We try our best to keep them up to date.
 
 #### Modules:
 Module | Description | Version
@@ -41,6 +41,8 @@ Module | Description | Version
 
 ##### deprecated:
 This is a parallel module hierarchy whose json serialization is handled by `spray-json`. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the `rest` packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the `json` package differs the most.
+
+These modules have been removed starting with version `0.3.0-M1`. In case any bugs are found, they will be fixed and released as version `0.2.x`. Think parallel scala `2.11`, and `2.12` series.
 
 Module | Description | Version
 --- | --- | ---
@@ -61,13 +63,6 @@ val bmcRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-json-t
 
 val bmcSemVer         = "com.busymachines" %% "busymachines-commons-semver" % bmcVersion
 val bmcSemVerParsers  = "com.busymachines" %% "busymachines-commons-semver-parsers" % bmcVersion
-
-@scala.deprecated("use json module instead", "0.2.0")
-val bmcJsonSpray = "com.busymachines" %% "busymachines-commons-json-spray" % bmcVersion
-@scala.deprecated("use rest-json module instead", "0.2.0")
-val bmcRestJsonSpray = "com.busymachines" %% "busymachines-commons-rest-json-spray" % bmcVersion
-@scala.deprecated("use rest-json-testkit module instead", "0.2.0")
-val bmcRestJsonSprayTestkit = "com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % bmcVersion % Test
 
 ```
 

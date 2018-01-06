@@ -4,9 +4,11 @@
 
 ## artifacts
 
-This module is vanilla scala _*only*_, cross-compiled against versions: `2.12.4`.
+This module is vanilla scala _*only*_, compiled with scala version : `2.12.4`.
 
-The full module id is:
+* stable: `0.2.0`
+* latest: `0.3.0-M1`
+
 `"com.busymachines" %% "busymachines-commons-core" % "0.2.0"`
 
 ## Description

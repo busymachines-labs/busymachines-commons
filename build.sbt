@@ -48,10 +48,7 @@ lazy val root = Project(
     `rest-core-testkit`,
     `rest-json`,
     `rest-json-testkit`,
-    `json-spray`,
-    `rest-json-spray`,
-    `rest-json-spray-testkit`,
-
+    
     `semver`,
     `semver-parsers`,
   )
@@ -73,24 +70,6 @@ lazy val json = project
       Dependencies.circe.map(c => c withSources()) ++ Seq(
         Dependencies.shapeless withSources(),
         Dependencies.catsCore withSources(),
-
-        Dependencies.scalaTest % Test withSources()
-      )
-  )
-  .dependsOn(
-    core
-  )
-
-@scala.deprecated("better use `json` module. This one is not part of the future roadmap of the library", "0.2.0-RC6")
-lazy val `json-spray` = project
-  .settings(Settings.commonSettings)
-  .settings(PublishingSettings.sonatypeSettings)
-  .settings(
-    name in ThisProject := "busymachines-commons-json-spray",
-    libraryDependencies ++=
-      Seq(
-        Dependencies.sprayJson withSources(),
-        Dependencies.scalaReflect withSources(),
 
         Dependencies.scalaTest % Test withSources()
       )
@@ -155,22 +134,6 @@ lazy val `rest-json` = project
     `rest-core`,
   )
 
-@scala.deprecated("better use `rest-json` module. This one is not part of the future roadmap of the library", "0.2.0-RC6")
-lazy val `rest-json-spray` = project
-  .settings(Settings.commonSettings)
-  .settings(PublishingSettings.sonatypeSettings)
-  .settings(
-    name in ThisProject := "busymachines-commons-rest-json-spray",
-    libraryDependencies ++= Seq(
-      Dependencies.akkaHttpSprayJson withSources()
-    )
-  )
-  .dependsOn(
-    core,
-    `json-spray`,
-    `rest-core`,
-  )
-
 lazy val `rest-json-testkit` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
@@ -185,23 +148,6 @@ lazy val `rest-json-testkit` = project
     json,
     `rest-core`,
     `rest-json`,
-    `rest-core-testkit`,
-  )
-
-lazy val `rest-json-spray-testkit` = project
-  .settings(Settings.commonSettings)
-  .settings(PublishingSettings.sonatypeSettings)
-  .settings(
-    name in ThisProject := "busymachines-commons-rest-json-spray-testkit",
-    libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources(),
-    )
-  )
-  .dependsOn(
-    core,
-    `json-spray`,
-    `rest-core`,
-    `rest-json-spray`,
     `rest-core-testkit`,
   )
 

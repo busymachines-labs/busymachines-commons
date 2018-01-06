@@ -1,9 +1,8 @@
 package busymachines.rest
 
 import akka.http.scaladsl.marshalling.ToEntityMarshaller
-import busymachines.core.{exceptions => dex}
 import busymachines.core._
-import busymachines.json.{AnomalyJsonCodec, FailureMessageJsonCodec}
+import busymachines.json.AnomalyJsonCodec
 
 /**
   *
@@ -15,14 +14,6 @@ import busymachines.json.{AnomalyJsonCodec, FailureMessageJsonCodec}
   *
   */
 trait JsonRestAPI extends RestAPI with jsonrest.JsonSupport {
-
-  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
-  protected override val failureMessageMarshaller: ToEntityMarshaller[dex.FailureMessage] =
-    marshaller(FailureMessageJsonCodec.failureMessageCodec)
-
-  @scala.deprecated("Will be removed in 0.3.0 — Use AnomalyJsonCodec", "0.2.0")
-  protected override val failureMessagesMarshaller: ToEntityMarshaller[dex.FailureMessages] =
-    marshaller(FailureMessageJsonCodec.failureMessagesCodec)
 
   override protected val anomalyMarshaller: ToEntityMarshaller[Anomaly] =
     marshaller(AnomalyJsonCodec.AnomalyCodec)
