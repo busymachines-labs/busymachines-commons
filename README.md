@@ -46,9 +46,9 @@ These modules have been removed starting with version `0.3.0-M1`. In case any bu
 
 Module | Description | Version
 --- | --- | ---
-[json-spray](/json-spray) | `spray` analog of the the `json` module.  | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json-spray_2.12)
-[rest-json-spray](/rest-json-spray) | `spray` analog of `rest-json` module | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)
-[json-spray-testkit](/rest-json-spray-testkit) | `spray` analog of the `rest-json-testkit` module | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12)
+[json-spray](https://github.com/busymachines/busymachines-commons/tree/68ab320e3e9f56aba0efb518fe687a806de84728/json-spray) | `spray` analog of the the `json` module.  | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json-spray_2.12)
+[rest-json-spray](https://github.com/busymachines/busymachines-commons/tree/68ab320e3e9f56aba0efb518fe687a806de84728/rest-json-spray) | `spray` analog of `rest-json` module | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray_2.12)
+[rest-json-spray-testkit](https://github.com/busymachines/busymachines-commons/tree/68ab320e3e9f56aba0efb518fe687a806de84728/rest-json-spray-testkit) | `spray` analog of the `rest-json-testkit` module | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json-spray-testkit_2.12)
 
 For easy copy-pasting:
 ```scala
