@@ -36,8 +36,6 @@ addCommandAlias("doRelease", ";ci;publishSigned;sonatypeRelease")
   * it is NOT published as an artifact. It doesn't have any source files, it is just a convenient
   * way to propagate all commands to the modules via the aggregation
   */
-resolvers in ThisBuild += Dependencies.akkaCirceIntegrationResolver
-
 lazy val root = Project(
   id = "busymachines-commons",
   base = file("."))
