@@ -35,7 +35,7 @@ object DeniedAnomaly extends AnomalyConstructors[DeniedAnomaly] {
 
 private[core] final case class DeniedAnomalyImpl(
   override val id:         AnomalyID  = DeniedAnomalyID,
-  override val message:    String     = MeaningfulAnomalies.`Denied`,
+  override val message:    String     = MeaningfulAnomalies.DeniedMsg,
   override val parameters: Parameters = Parameters.empty
 ) extends DeniedAnomaly with Product with Serializable {
 
@@ -54,7 +54,7 @@ abstract class DeniedFailure(
 }
 
 object DeniedFailure
-    extends DeniedFailure(MeaningfulAnomalies.`Denied`, None) with SingletonAnomalyProduct
+    extends DeniedFailure(MeaningfulAnomalies.DeniedMsg, None) with SingletonAnomalyProduct
     with FailureConstructors[DeniedFailure] {
   override def apply(causedBy: Throwable): DeniedFailure = DeniedFailureImpl(causedBy = Option(causedBy))
 
@@ -103,7 +103,7 @@ object DeniedFailure
 
 private[core] final case class DeniedFailureImpl(
   override val id:         AnomalyID         = DeniedAnomalyID,
-  override val message:    String            = MeaningfulAnomalies.`Denied`,
+  override val message:    String            = MeaningfulAnomalies.DeniedMsg,
   override val parameters: Parameters        = Parameters.empty,
   causedBy:                Option[Throwable] = None,
 ) extends DeniedFailure(message, causedBy) with Product with Serializable

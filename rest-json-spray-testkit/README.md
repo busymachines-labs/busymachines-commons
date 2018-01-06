@@ -6,8 +6,8 @@ _*DO NOT DEPEND ON BOTH THIS MODULE AND `rest-json-testkit`. They share the same
 
 ## artifacts
 
-Current version is `0.2.0-RC8`. SBT module id:
-`"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0-RC8" % test`
+Current version is `0.2.0`. SBT module id:
+`"com.busymachines" %% "busymachines-commons-rest-json-spray-testkit" % "0.2.0" % test`
 
 ## usage
 It's literally the same as with [`rest-json-testkit`](../rest-json-testkit/README.md), you just need to have the corresponding JSON serializers/deserializers in scope for your tests, and that's it.

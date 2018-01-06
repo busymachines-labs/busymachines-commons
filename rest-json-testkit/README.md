@@ -4,8 +4,8 @@
 
 ## artifacts
 
-Current version is `0.2.0-RC8`. SBT module id:
-`"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0-RC8" % test`
+Current version is `0.2.0`. SBT module id:
+`"com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0" % test`
 
 N.B. that this is a testing library, and you should only depend on it in test. Because otherwise you wind up with scalatest and akka http testing libraries on your runtime classpath.
 
@@ -13,13 +13,13 @@ N.B. that this is a testing library, and you should only depend on it in test. B
 - busymachines-commons-core
 - busymachines-commons-rest-core
 - busymachines-commons-rest-json
-- akka-http 10.0.10
-- akka-actor 2.5.4
-- akka-stream 2.5.4
-- cats 1.0.0-MF
-- circe 0.9.0-M1
-- akka-http-circe 1.19.0-M1
-- akka-http-testkit 10.0.10
+- akka-http 10.0.11
+- akka-actor 2.5.8
+- akka-stream 2.5.8
+- cats 1.0.1
+- circe 0.9.0
+- akka-http-circe 1.19.0
+- akka-http-testkit 10.0.11
 - scalatest 3.0.4
 
 ## Description

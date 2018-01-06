@@ -41,13 +41,13 @@ trait Anomaly extends Product with Serializable {
   * - [[busymachines.core.MeaningfulAnomalies.NotFound]]
   *   - range: 000-099; e.g. pone_001, ptwo_076, pthree_099
   *
-  * - [[busymachines.core.MeaningfulAnomalies.Unauthorized]]
+  * - [[busymachines.core.MeaningfulAnomalies.UnauthorizedMsg]]
   *   - range: 100-199; e.g. pone_100, ptwo_176, pthree_199
   *
-  * - [[busymachines.core.MeaningfulAnomalies.Forbidden]]
+  * - [[busymachines.core.MeaningfulAnomalies.ForbiddenMsg]]
   *   - range: 200-299; e.g. pone_200, ptwo_276, pthree_299
   *
-  * - [[busymachines.core.MeaningfulAnomalies.Denied]]
+  * - [[busymachines.core.MeaningfulAnomalies.DeniedMsg]]
   *   - range: 300-399; e.g. pone_300, ptwo_376, pthree_399
   *
   * - [[busymachines.core.MeaningfulAnomalies.InvalidInput]]
@@ -84,8 +84,8 @@ object Anomaly extends AnomalyConstructors[Anomaly] {
   type Parameters = Map[String, Parameter]
 
   /**
-    * the reason why this type signature does not return Parameters is a pragmatical one,
-    * where intellij, does not infer it correctly in the IDE, and yields a false negative.
+    * the reason why this type signature does not return Parameters is a pragmatic one.
+    * Intellij does not infer it correctly in the IDE and yields a false negative.
     *
     * As far as the client code is concerned this is the same, and scalac properly
     * compiles both versions, so we'll keep the one which causes the least misery.

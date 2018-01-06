@@ -7,13 +7,13 @@ package busymachines.core
   * - [[busymachines.core.MeaningfulAnomalies.NotFound]]
   *   - range: 000-099; e.g. pone_001, ptwo_076, pthree_099
   *
-  * - [[busymachines.core.MeaningfulAnomalies.Unauthorized]]
+  * - [[busymachines.core.MeaningfulAnomalies.UnauthorizedMsg]]
   *   - range: 100-199; e.g. pone_100, ptwo_176, pthree_199
   *
-  * - [[busymachines.core.MeaningfulAnomalies.Forbidden]]
+  * - [[busymachines.core.MeaningfulAnomalies.ForbiddenMsg]]
   *   - range: 200-299; e.g. pone_200, ptwo_276, pthree_299
   *
-  * - [[busymachines.core.MeaningfulAnomalies.Denied]]
+  * - [[busymachines.core.MeaningfulAnomalies.DeniedMsg]]
   *   - range: 300-399; e.g. pone_300, ptwo_376, pthree_399
   *
   * - [[busymachines.core.MeaningfulAnomalies.InvalidInput]]
@@ -31,7 +31,7 @@ object MeaningfulAnomalies {
     * to tell you anything else"
     */
   trait NotFound
-  private[core] val `Not found` = "Not found"
+  private[core] val NotFoundMsg = "Not found"
 
   /**
     * Meaning:
@@ -40,7 +40,7 @@ object MeaningfulAnomalies {
     * differently"
     */
   trait Unauthorized
-  private[core] val `Unauthorized` = "Unauthorized"
+  private[core] val UnauthorizedMsg = "Unauthorized"
 
   /**
     * Meaning:
@@ -49,7 +49,7 @@ object MeaningfulAnomalies {
     * so for short, you can't find it".
     */
   trait Forbidden
-  private[core] val `Forbidden` = "Forbidden"
+  private[core] val ForbiddenMsg = "Forbidden"
 
   /**
     * Meaning:
@@ -57,7 +57,7 @@ object MeaningfulAnomalies {
     * "you know it exists, but you are not allowed to see it"
     */
   trait Denied
-  private[core] val `Denied` = "Denied"
+  private[core] val DeniedMsg = "Denied"
 
   /**
     * Obviously, whenever some input data is wrong.
@@ -78,7 +78,7 @@ object MeaningfulAnomalies {
     * Therefore, specialize frantically.
     */
   trait InvalidInput
-  private[core] val `Invalid Input` = "Invalid input"
+  private[core] val InvalidInputMsg = "Invalid input"
 
   /**
     * Special type of invalid input
@@ -87,7 +87,7 @@ object MeaningfulAnomalies {
     * like ids, emails.
     */
   trait Conflict
-  private[core] val `Conflict` = "Conflict"
+  private[core] val ConflictMsg = "Conflict"
 }
 
 private[core] case object NotFoundAnomalyID extends AnomalyID {

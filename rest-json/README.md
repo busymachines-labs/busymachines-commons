@@ -4,8 +4,8 @@
 
 ## artifacts
 
-Current version is `0.2.0-RC8`. SBT module id:
-`"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0-RC8"`
+Current version is `0.2.0`. SBT module id:
+`"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0"`
 
 ### Transitive dependencies
 - busymachines-commons-core
