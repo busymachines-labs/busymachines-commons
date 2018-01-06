@@ -22,7 +22,7 @@ abstract class CatastrophicError(
 }
 
 object CatastrophicError extends CatastrophicErrorConstructors[CatastrophicError] {
-  private[core] val `Catastrophic Error` = "Catastrophic Error"
+  private[core] val CatastrophicErrorMsg = "Catastrophic Error"
 
   override def apply(causedBy: Throwable): CatastrophicError = CatastrophicErrorImpl(causedBy = Option(causedBy))
 
@@ -75,7 +75,7 @@ private[core] case object CatastrophicErrorID extends AnomalyID with Product wit
 
 private[core] final case class CatastrophicErrorImpl(
   override val id:         AnomalyID          = CatastrophicErrorID,
-  override val message:    String             = CatastrophicError.`Catastrophic Error`,
+  override val message:    String             = CatastrophicError.CatastrophicErrorMsg,
   override val parameters: Anomaly.Parameters = Anomaly.Parameters.empty,
   causedBy:                Option[Throwable]  = None
 ) extends CatastrophicError(message, causedBy = causedBy)
@@ -91,7 +91,7 @@ private[core] case object InconsistentStateCatastropheID extends AnomalyID with 
 }
 
 object InconsistentStateError extends CatastrophicErrorConstructors[InconsistentStateError] {
-  private[core] val InconsistentStateError: String = "Inconsistent State Error"
+  private[core] val InconsistentStateErrorMsg: String = "Inconsistent State Error"
 
   override def apply(causedBy: Throwable): InconsistentStateError =
     InconsistentStateErrorImpl(causedBy = Option(causedBy))
@@ -156,7 +156,7 @@ abstract class InconsistentStateError(
 
 private[core] final case class InconsistentStateErrorImpl(
   override val id:         AnomalyID          = InconsistentStateCatastropheID,
-  override val message:    String             = InconsistentStateError.InconsistentStateError,
+  override val message:    String             = InconsistentStateError.InconsistentStateErrorMsg,
   override val parameters: Anomaly.Parameters = Anomaly.Parameters.empty,
   causedBy:                Option[Throwable]  = None
 ) extends InconsistentStateError(message, causedBy = causedBy)

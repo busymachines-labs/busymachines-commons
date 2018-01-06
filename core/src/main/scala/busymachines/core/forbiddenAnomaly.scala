@@ -35,7 +35,7 @@ object ForbiddenAnomaly extends AnomalyConstructors[ForbiddenAnomaly] {
 
 private[core] final case class ForbiddenAnomalyImpl(
   override val id:         AnomalyID  = ForbiddenAnomalyID,
-  override val message:    String     = MeaningfulAnomalies.`Forbidden`,
+  override val message:    String     = MeaningfulAnomalies.ForbiddenMsg,
   override val parameters: Parameters = Parameters.empty
 ) extends ForbiddenAnomaly with Product with Serializable {
 
@@ -54,7 +54,7 @@ abstract class ForbiddenFailure(
 }
 
 object ForbiddenFailure
-    extends ForbiddenFailure(MeaningfulAnomalies.`Forbidden`, None) with SingletonAnomalyProduct
+    extends ForbiddenFailure(MeaningfulAnomalies.ForbiddenMsg, None) with SingletonAnomalyProduct
     with FailureConstructors[ForbiddenFailure] {
   override def apply(causedBy: Throwable): ForbiddenFailure = ForbiddenFailureImpl(causedBy = Option(causedBy))
 
@@ -103,7 +103,7 @@ object ForbiddenFailure
 
 private[core] final case class ForbiddenFailureImpl(
   override val id:         AnomalyID         = ForbiddenAnomalyID,
-  override val message:    String            = MeaningfulAnomalies.`Forbidden`,
+  override val message:    String            = MeaningfulAnomalies.ForbiddenMsg,
   override val parameters: Parameters        = Parameters.empty,
   causedBy:                Option[Throwable] = None,
 ) extends ForbiddenFailure(message, causedBy) with Product with Serializable

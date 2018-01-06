@@ -35,7 +35,7 @@ object NotFoundAnomaly extends AnomalyConstructors[NotFoundAnomaly] {
 
 private[core] final case class NotFoundAnomalyImpl(
   override val id:         AnomalyID  = NotFoundAnomalyID,
-  override val message:    String     = MeaningfulAnomalies.`Not found`,
+  override val message:    String     = MeaningfulAnomalies.NotFoundMsg,
   override val parameters: Parameters = Parameters.empty
 ) extends NotFoundAnomaly with Product with Serializable {
 
@@ -54,7 +54,7 @@ abstract class NotFoundFailure(
 }
 
 object NotFoundFailure
-    extends NotFoundFailure(MeaningfulAnomalies.`Not found`, None) with SingletonAnomalyProduct
+    extends NotFoundFailure(MeaningfulAnomalies.NotFoundMsg, None) with SingletonAnomalyProduct
     with FailureConstructors[NotFoundFailure] {
   override def apply(causedBy: Throwable): NotFoundFailure = NotFoundFailureImpl(causedBy = Option(causedBy))
 
@@ -104,7 +104,7 @@ object NotFoundFailure
 
 private[core] final case class NotFoundFailureImpl(
   override val id:         AnomalyID         = NotFoundAnomalyID,
-  override val message:    String            = MeaningfulAnomalies.`Not found`,
+  override val message:    String            = MeaningfulAnomalies.NotFoundMsg,
   override val parameters: Parameters        = Parameters.empty,
   causedBy:                Option[Throwable] = None,
 ) extends NotFoundFailure(message, causedBy) with Product with Serializable
