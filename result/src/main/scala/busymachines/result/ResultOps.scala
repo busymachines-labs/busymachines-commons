@@ -1,6 +1,7 @@
 package busymachines.result
 
 import busymachines.core.Anomaly
+import cats.effect.IO
 
 import scala.concurrent.Future
 import scala.util.Try
@@ -33,8 +34,13 @@ final class ResultOps[T](private[this] val r: Result[T]) {
   }
 
   //===========================================================================
-  //================== Result to standard scala (pseudo)monads ================
+  //===================== Result to various (pseudo)monads ====================
   //===========================================================================
+
+  def asIO: IO[T] = r match {
+    case Left(value)  => IO.raiseError(value.asThrowable)
+    case Right(value) => IO.pure(value)
+  }
 
   def unsafeAsOption: Option[T] = r match {
     case Left(value)  => throw value.asThrowable
