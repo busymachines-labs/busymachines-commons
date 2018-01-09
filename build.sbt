@@ -67,6 +67,7 @@ lazy val result = project
     name in ThisProject := "busymachines-commons-result",
     libraryDependencies ++= Seq(
       Dependencies.catsCore withSources (),
+      Dependencies.catsEffect withSources (),
       Dependencies.scalaTest % Test withSources ()
     )
   )
@@ -106,7 +107,7 @@ lazy val `rest-core` = project
         */
       Dependencies.akkaStream withSources (),
       //used for building the WebServerIO helpers
-      Dependencies.catsEffects withSources ()
+      Dependencies.catsEffect withSources ()
     )
   )
   .dependsOn(
