@@ -16,11 +16,13 @@ import busymachines.core._
   * @since 09 Jan 2018
   */
 object Result {
-  def pure[T](t: T): Result[T] = Good(t)
+  def pure[T](t:    T): Result[T] = Correct(t)
+  def correct[T](t: T): Result[T] = Correct(t)
 
-  def fail[T](a: Anomaly): Result[T] = Bad(a)
+  def fail[T](a:      Anomaly): Result[T] = Incorrect(a)
+  def incorrect[T](a: Anomaly): Result[T] = Incorrect(a)
 
-  def unit: Result[Unit] = Good(())
+  def unit: Result[Unit] = Correct(())
 
   /**
     * Useful when one wants to do interop with unknown 3rd party code and you cannot
@@ -30,8 +32,8 @@ object Result {
     try {
       Result.pure(thunk)
     } catch {
-      case a: Anomaly                  => Result.fail(a)
-      case t: Throwable if NonFatal(t) => Result.fail(CatastrophicError(t))
+      case a: Anomaly                  => Result.incorrect(a)
+      case t: Throwable if NonFatal(t) => Result.incorrect(CatastrophicError(t))
     }
   }
 
@@ -39,8 +41,8 @@ object Result {
     elr match {
       case Left(left) =>
         ev(left) match {
-          case a: Anomaly => Result fail a
-          case NonFatal(t) => Result fail CatastrophicError(t)
+          case a: Anomaly => Result incorrect a
+          case NonFatal(t) => Result incorrect CatastrophicError(t)
         }
       case Right(value) => Result.pure(value)
     }
@@ -48,38 +50,36 @@ object Result {
 
   def fromEither[L, R](elr: Either[L, R], transformLeft: L => Anomaly): Result[R] = {
     elr match {
-      case Left(left)   => Result.fail(transformLeft(left))
+      case Left(left)   => Result.incorrect(transformLeft(left))
       case Right(value) => Result.pure(value)
     }
   }
 
   def fromTry[T](t: Try[T]): Result[T] = t match {
-    case Failure(a: Anomaly) => Result.fail(a)
-    case Failure(NonFatal(r)) => Result.fail(CatastrophicError(r))
-    case Success(value) => Result.pure(value)
+    case Failure(a: Anomaly) => Result.incorrect(a)
+    case Failure(NonFatal(r)) => Result.incorrect(CatastrophicError(r))
+    case Success(value)       => Result.pure(value)
   }
 
   def fromOption[T](opt: Option[T], ifNone: => Anomaly): Result[T] = {
     opt match {
-      case None    => Result.fail(ifNone)
+      case None    => Result.incorrect(ifNone)
       case Some(v) => Result.pure(v)
     }
   }
 
 }
 
-
-
 /**
   *
   *
   *
   *
   */
-object Good {
+object Correct {
   def apply[T](r: T): Result[T] = Right[Anomaly, T](r)
 
-  def unapply[T](arg: Good[T]): Option[T] = Right.unapply(arg)
+  def unapply[T](arg: Correct[T]): Option[T] = Right.unapply(arg)
 }
 
 /**
@@ -88,8 +88,8 @@ object Good {
   *
   *
   */
-object Bad {
+object Incorrect {
   def apply[T](a: Anomaly): Result[T] = Left[Anomaly, T](a)
 
-  def unapply[T](arg: Bad[T]): Option[Anomaly] = Left.unapply(arg)
+  def unapply[T](arg: Incorrect[T]): Option[Anomaly] = Left.unapply(arg)
 }

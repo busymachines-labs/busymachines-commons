@@ -17,9 +17,9 @@ import scala.util.Try
   *
   */
 trait ResultDefinitions {
-  type Result[T] = Either[Anomaly, T]
-  type Good[T]   = Right[Anomaly,  T]
-  type Bad[T]    = Left[Anomaly,   T]
+  type Result[T]    = Either[Anomaly, T]
+  type Correct[T]   = Right[Anomaly,  T]
+  type Incorrect[T] = Left[Anomaly,   T]
 
   implicit def bmCommonsResultOps[T](t: Result[T]): ResultOps[T] =
     new ResultOps(t)
