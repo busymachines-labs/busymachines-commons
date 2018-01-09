@@ -55,8 +55,9 @@ lazy val core = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
-    name in ThisProject                           := "busymachines-commons-core",
-    libraryDependencies += Dependencies.scalaTest % Test withSources ()
+    name in ThisProject := "busymachines-commons-core",
+    libraryDependencies +=
+      Dependencies.scalaTest % Test withSources ()
   )
 
 lazy val result = project
@@ -68,6 +69,9 @@ lazy val result = project
       Dependencies.catsCore withSources (),
       Dependencies.scalaTest % Test withSources ()
     )
+  )
+  .dependsOn(
+    core
   )
 
 lazy val json = project
