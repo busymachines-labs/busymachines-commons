@@ -41,6 +41,7 @@ lazy val root = Project(id = "busymachines-commons", base = file("."))
   .settings(Settings.commonSettings)
   .aggregate(
     core,
+    result,
     json,
     `rest-core`,
     `rest-core-testkit`,
@@ -56,6 +57,17 @@ lazy val core = project
   .settings(
     name in ThisProject                           := "busymachines-commons-core",
     libraryDependencies += Dependencies.scalaTest % Test withSources ()
+  )
+
+lazy val result = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-result",
+    libraryDependencies ++= Seq(
+      Dependencies.catsCore withSources (),
+      Dependencies.scalaTest % Test withSources ()
+    )
   )
 
 lazy val json = project
