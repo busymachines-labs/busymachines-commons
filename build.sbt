@@ -76,6 +76,20 @@ lazy val result = project
     core
   )
 
+lazy val `result-testkit` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-result-testkit",
+    libraryDependencies ++= Seq(
+      Dependencies.scalaTest withSources ()
+    )
+  )
+  .dependsOn(
+    core,
+    result
+  )
+
 lazy val future = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
@@ -90,6 +104,21 @@ lazy val future = project
   .dependsOn(
     core,
     result
+  )
+
+lazy val `future-testkit` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-future-testkit",
+    libraryDependencies ++= Seq(
+      Dependencies.scalaTest withSources ()
+    )
+  )
+  .dependsOn(
+    core,
+    result,
+    future
   )
 
 lazy val json = project

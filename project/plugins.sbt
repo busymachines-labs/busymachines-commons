@@ -12,14 +12,14 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.0")
   *
   * https://github.com/sbt/sbt-pgp
   */
-addSbtPlugin("com.jsuereth"   % "sbt-pgp"      % "1.1.0")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
 
 /**
   * The best thing since sliced bread.
   *
   * https://github.com/scalameta/scalafmt
   */
-addSbtPlugin("com.geirsson"   % "sbt-scalafmt" % "1.4.0")
+addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.4.0")
 
 /**
   * Refactoring/linting tool for scala.
