@@ -5,9 +5,9 @@ import scala.util.control.NonFatal
 import busymachines.core._
 
 /**
-  * The reason I chose this instead of aliasing [[Either]] companion object
+  * The reason this approach was chosen instead of aliasing the [[Either]] companion object
   * is to avoid situations where implicit ops defined on [[scala.util.Either#type]]
-  * conflict with any operations I'd like to define here.
+  * conflict with any operations defined here.
   *
   * Plus, I can seriously help out type inference by writing all method signatures in
   * terms of the rhs type only.
@@ -67,6 +67,9 @@ object Result {
       case Some(v) => Result.pure(v)
     }
   }
+
+  def cond[T](test: Boolean, correct: => T, anomaly: => Anomaly): Result[T] =
+    Either.cond[Anomaly, T](test, correct, anomaly)
 
 }
 
