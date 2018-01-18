@@ -11,7 +11,7 @@ import scala.collection.mutable
 /**
   *
   * These operations are impure, and should be rarely, if ever used. Definitely never in any
-  * production code that responds to your request. Acceptable only on application startup
+  * production code that responds to your request. Acceptable only on application startup, or test code
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
   * @since 09 Jan 2018
@@ -44,7 +44,7 @@ final class SafeFutureOps[T](f: => Future[T]) {
 /**
   *
   */
-final class CompanionFutureOps {
+object CompanionFutureOps {
 
   def asIO[T](f: => Future[T])(implicit ec: ExecutionContext): IO[T] = {
     IO.fromFuture(IO(f))

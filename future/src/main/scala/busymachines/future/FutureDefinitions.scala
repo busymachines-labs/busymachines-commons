@@ -19,7 +19,7 @@ trait FutureDefinitions {
 
   implicit def bmCommonsUnsafeFutureOps[T](f: Future[T]): UnsafeFutureOps[T] = new UnsafeFutureOps[T](f)
 
-  implicit def bmCommonsFutureCompanionOps(f: Future.type): CompanionFutureOps = new CompanionFutureOps
+  implicit def bmCommonsFutureCompanionOps: CompanionFutureOps.type = CompanionFutureOps
 
   implicit def bmCommonsSafeFutureOps[T](f: => Future[T]): SafeFutureOps[T] = new SafeFutureOps[T](f)
 }
