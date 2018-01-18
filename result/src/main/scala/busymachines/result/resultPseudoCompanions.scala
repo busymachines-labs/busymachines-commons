@@ -26,7 +26,7 @@ object Result {
 
   /**
     * Useful when one wants to do interop with unknown 3rd party code and you cannot
-    * trust it not to throw exceptions in your face.
+    * trust not to throw exceptions in your face
     */
   def apply[T](thunk: => T): Result[T] = {
     try {
@@ -74,25 +74,34 @@ object Result {
 }
 
 /**
+  * Convenience methods to provide more semantically meaningful pattern matches.
+  * If you want to preserve the semantically richer meaning of Result, you'd
+  * have to explicitely match on the Left with Anomaly, like such:
+  * {{{
+  *   result match {
+  *      Right(v)         => v //...
+  *      Left(a: Anomaly) => throw a.asThrowable
+  *   }
+  * }}}
   *
+  * But with these convenience unapplies, the above becomes:
   *
-  *
+  * {{{
+  *   result match {
+  *      Correct(v)   => v //...
+  *      Incorrect(a) =>  throw a.asThrowable
+  *   }
+  * }}}
   *
   */
 object Correct {
   def apply[T](r: T): Result[T] = Right[Anomaly, T](r)
 
-  def unapply[T](arg: Correct[T]): Option[T] = Right.unapply(arg)
+  def unapply[A <: Anomaly, C](arg: Right[A, C]): Option[C] = Right.unapply(arg)
 }
 
-/**
-  *
-  *
-  *
-  *
-  */
 object Incorrect {
   def apply[T](a: Anomaly): Result[T] = Left[Anomaly, T](a)
 
-  def unapply[T](arg: Incorrect[T]): Option[Anomaly] = Left.unapply(arg)
+  def unapply[A <: Anomaly, C](arg: Left[A, C]): Option[A] = Left.unapply(arg)
 }
