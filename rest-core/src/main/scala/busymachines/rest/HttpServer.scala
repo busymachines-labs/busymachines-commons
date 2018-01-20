@@ -40,7 +40,8 @@ object HttpServer {
     config:      MinimalWebServerConfig,
     logNormalIO: LogIO = printlnConsoleOutput,
     logErrorIO:  LogIO = sysErrConsoleOutput,
-  )(implicit
+  )(
+    implicit
     as: ActorSystem,
     ec: ExecutionContext,
     am: ActorMaterializer,
@@ -88,7 +89,8 @@ final class HttpServer private (
   private val config:      MinimalWebServerConfig,
   private val logNormalIO: HttpServer.LogIO,
   private val logErrorIO:  HttpServer.LogIO,
-)(implicit
+)(
+  implicit
   private val actorSystem:       ActorSystem,
   private val execContext:       ExecutionContext,
   private val actorMaterializer: ActorMaterializer,
