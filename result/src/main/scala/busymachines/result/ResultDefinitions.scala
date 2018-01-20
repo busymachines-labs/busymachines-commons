@@ -33,6 +33,9 @@ trait ResultDefinitions {
   implicit def bmCommonsResultFromTryOps[T](tr: Try[T]): TryToResultOps[T] =
     new TryToResultOps(tr)
 
-  implicit def bmCommonsFromEitherOps[L, R](eit: Either[L, R]): EitherToResultOps[L, R] =
+  implicit def bmCommonsResultFromEitherOps[L, R](eit: Either[L, R]): EitherToResultOps[L, R] =
     new EitherToResultOps(eit)
+
+  implicit def bmCommonsResultFromBooleanOps(b: Boolean): BooleanToResultOps =
+    new BooleanToResultOps(b)
 }

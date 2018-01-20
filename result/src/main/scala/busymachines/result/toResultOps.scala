@@ -32,3 +32,36 @@ final class TryToResultOps[T](private[this] val t: Try[T]) {
 
   def toResult: Result[T] = Result.fromTry(t)
 }
+
+/**
+  *
+  *
+  */
+final class BooleanToResultOps(private[this] val b: Boolean) {
+
+  def toResult[T](correct: => T, anomaly: => Anomaly): Result[T] =
+    Result.cond(b, correct, anomaly)
+
+  def failOnTrue(anomaly: => Anomaly): Result[Unit] =
+    if (b) Result.incorrect(anomaly) else Result.unit
+
+  def failOnFalse(anomaly: => Anomaly): Result[Unit] =
+    if (!b) Result.incorrect(anomaly) else Result.unit
+}
+
+/**
+  *
+  *
+  */
+final class ResultBooleanToResultOps(private[this] val br: Result[Boolean]) {
+
+  def cond[T](correct: => T, anomaly: => Anomaly): Result[T] =
+    br flatMap (b => Result.cond(b, correct, anomaly))
+
+  def failOnTrue(anomaly: => Anomaly): Result[Unit] =
+    br flatMap (b => if (b) Result.incorrect(anomaly) else Result.unit)
+
+  def failOnFalse(anomaly: => Anomaly): Result[Unit] =
+    br flatMap (b => if (!b) Result.incorrect(anomaly) else Result.unit)
+
+}
