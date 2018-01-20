@@ -30,6 +30,9 @@ trait ResultDefinitions {
   implicit def bmCommonsResultFromOptionOps[T](opt: Option[T]): OptionToResultOps[T] =
     new OptionToResultOps(opt)
 
+  implicit def bmCommonsResultFromResultOptionsOps[T](ropt: Result[Option[T]]): ResultOptionToResultOps[T] =
+    new ResultOptionToResultOps(ropt)
+
   implicit def bmCommonsResultFromTryOps[T](tr: Try[T]): TryToResultOps[T] =
     new TryToResultOps(tr)
 

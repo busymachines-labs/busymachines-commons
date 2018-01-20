@@ -17,6 +17,16 @@ final class OptionToResultOps[T](private[this] val opt: Option[T]) {
   *
   *
   */
+final class ResultOptionToResultOps[T](private[this] val ropt: Result[Option[T]]) {
+
+  def flatten(ifNone: => Anomaly): Result[T] =
+    ropt flatMap (opt => Result.fromOption(opt, ifNone))
+}
+
+/**
+  *
+  *
+  */
 final class EitherToResultOps[L, R](private[this] val eit: Either[L, R]) {
 
   def toResult(implicit ev: L <:< Throwable): Result[R] = Result.fromEither(eit)
