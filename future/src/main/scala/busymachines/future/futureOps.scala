@@ -6,7 +6,6 @@ import busymachines.result._
 import cats.effect.IO
 
 import scala.collection.generic.CanBuildFrom
-import scala.collection.mutable
 
 /**
   *
@@ -24,9 +23,16 @@ final class UnsafeFutureOps[T](private[this] val f: Future[T]) {
     *
     * This is here more as a convenience method for testing
     */
-  def unsafeGet(timeout: FiniteDuration = duration.minutes(1)): T = Await.result(f, timeout)
+  def unsafeGet(timeout: FiniteDuration = duration.minutes(1)): T =
+    FutureUtil.unsafeGet(f, timeout)
 
-  def asResult(timeout: FiniteDuration = duration.minutes(1)): Result[T] = Result(this.unsafeGet(timeout))
+  /**
+    * Using this is highly discouraged
+    *
+    * This is here more as a convenience method for testing
+    */
+  def toResult(timeout: FiniteDuration = duration.minutes(1)): Result[T] =
+    FutureUtil.toResult(f, timeout)
 
 }
 
@@ -36,8 +42,8 @@ final class UnsafeFutureOps[T](private[this] val f: Future[T]) {
   */
 final class SafeFutureOps[T](f: => Future[T]) {
 
-  def asIO(implicit ec: ExecutionContext): IO[T] = {
-    IO.fromFuture(IO(f))
+  def toIO(implicit ec: ExecutionContext): IO[T] = {
+    FutureUtil.toIO(f)
   }
 }
 
@@ -46,9 +52,8 @@ final class SafeFutureOps[T](f: => Future[T]) {
   */
 object CompanionFutureOps {
 
-  def asIO[T](f: => Future[T])(implicit ec: ExecutionContext): IO[T] = {
-    IO.fromFuture(IO(f))
-  }
+  def toIO[T](f: => Future[T])(implicit ec: ExecutionContext): IO[T] =
+    FutureUtil.toIO(f)
 
   /**
     *
@@ -81,30 +86,5 @@ object CompanionFutureOps {
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]],
     ec:  ExecutionContext
-  ): Future[C[B]] = {
-    if (col.isEmpty) {
-      Future.successful(cbf.apply().result())
-    }
-    else {
-      val seq  = col.toSeq
-      val head = seq.head
-      val tail = seq.tail
-      val builder: mutable.Builder[B, C[B]] = cbf.apply()
-      val firstBuilder = fn(head) map { z =>
-        builder.+=(z)
-      }
-      val eventualBuilder: Future[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
-        (serializedBuilder: Future[mutable.Builder[B, C[B]]], element: A) =>
-          serializedBuilder flatMap[mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
-            val f: Future[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
-              result.+=(newElement)
-            }
-            f
-          }
-      }
-      eventualBuilder map { b =>
-        b.result()
-      }
-    }
-  }
+  ): Future[C[B]] = FutureUtil.serialize(col)(fn)
 }
