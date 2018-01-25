@@ -31,6 +31,8 @@ These modules compiled for Scala version: `2.12.4`. We try our best to keep them
 Module | Description | Version
 -- | --- | ----
 [core](/core) | semantically relevant exceptions | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
+[json](/result) | failures abundant! | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-result_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-result_2.12)
+[json](/future) | easier scala `Future` | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-future_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-future_2.12)
 [json](/json) | all your json needs! | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
 [rest-core](/rest-core) | straightforward use of akka-http | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core_2.12)
 [`rest-core-testkit`](/rest-core-testkit) | concise DSL for writing REST level tests | [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core-testkit_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core-testkit_2.12)
@@ -64,6 +66,9 @@ val bmcRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-json-t
 val bmcSemVer         = "com.busymachines" %% "busymachines-commons-semver" % bmcVersion
 val bmcSemVerParsers  = "com.busymachines" %% "busymachines-commons-semver-parsers" % bmcVersion
 
+val bmcResult         = "com.busymachines" %% "busymachines-commons-result" % "0.3.0-M2"
+val bmcFuture         = "com.busymachines" %% "busymachines-commons-future" % "0.3.0-M2"
+
 ```
 
 ## Library Structure
@@ -78,6 +83,8 @@ Basically, as long as modules reside in the same repository they will be version
 * [rest-core-testkit](/rest-core-testkit) `0.2.0` - contains helpers that allow testing. Should never wind up in production code.
 * [rest-json](/rest-core) `0.2.0` - used to implement REST APIs that handle JSON
 * [rest-json-testkit](/rest-json-testkit) `0.2.0` - helpers for JSON powered REST APIs
+* [result](/result) `0.3.0-M2`
+* [future](/future) `0.3.0-M2`
 
 Most likely you don't need to depend on the `rest-core*` modules. But rather on one or more of its reifications like `rest-json`. This separation was done because in the future we might need non-json REST APIs, and then we still want to have a common experience of using `commons`.
 
