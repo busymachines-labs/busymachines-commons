@@ -1,4 +1,289 @@
-<html><head><title>busymachines-commmons: json</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="com.busymachines" /><meta name="description" content="Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala" /><meta name="og:image" content="/busymachines-commons/img/poster.png" /><meta name="og:title" content="busymachines-commmons: json" /><meta name="og:site_name" content="busymachines-commmons" /><meta name="og:url" content="http://busymachines.github.io/busymachines-commons/" /><meta name="og:type" content="website" /><meta name="og:description" content="Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala" /><link rel="icon" type="image/png" href="/busymachines-commons/img/favicon.png" /><meta name="twitter:title" content="busymachines-commmons: json" /><meta name="twitter:image" content="http://busymachines.github.io/busymachines-commons/img/poster.png" /><meta name="twitter:description" content="Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/busymachines-commons/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/busymachines-commons/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/busymachines-commons/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/busymachines-commons/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/busymachines-commons/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/busymachines-commons/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/busymachines-commons/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/busymachines-commons/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/busymachines-commons/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/busymachines-commons/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/busymachines-commons/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/busymachines-commons/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/busymachines-commons/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/busymachines-commons/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/busymachines-commons/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/busymachines-commons/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/busymachines-commons/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/busymachines-commons/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/busymachines-commons/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/busymachines-commons/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/busymachines-commons/highlight/styles/monokai.css" /><link rel="stylesheet" href="/busymachines-commons/css/style.css" /><link rel="stylesheet" href="/busymachines-commons/css/palette.css" /><link rel="stylesheet" href="/busymachines-commons/css/codemirror.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/busymachines-commons/" class="brand"><div class="brand-wrapper"><span>busymachines-commmons</span></div></a></li> <li><a href="/busymachines-commons/docs/index.html" class="">Getting Started</a></li> <li><a href="/busymachines-commons/docs/help.html" class="">Help!</a></li> <li><a href="/busymachines-commons/docs/learning.html" class="">Learning Materials</a></li> <li><a href="/busymachines-commons/docs/developer-guide.html" class="">Developer's Guide</a></li> <li><a href="/busymachines-commons/docs/core.html" class="">core</a></li> <li><a href="/busymachines-commons/docs/result.html" class="">result</a></li> <li><a href="/busymachines-commons/docs/future.html" class="">future</a></li> <li><a href="/busymachines-commons/docs/json.html" class=" active ">json</a></li> <li><a href="/busymachines-commons/docs/rest.html" class="">rest</a></li> <li><a href="/busymachines-commons/docs/rest-testkit.html" class="">rest-testkit</a></li> <li><a href="/busymachines-commons/docs/semver.html" class="">semver</a></li> <li><a href="/busymachines-commons/docs/semver-parsers.html" class="">semver-parsers</a></li> <li><a href="/busymachines-commons/docs/publishing-artifacts.html" class="">Publishing Artifacts</a></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/busymachines/busymachines-commons"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/busymachines/busymachines-commons"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('busymachines-commmons Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('busymachines-commmons Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="busymachines" data-github-repo="busymachines-commons"><div class="content-wrapper"><section>
+<html><head><title>busymachines-commmons: json</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="com.busymachines" /><meta name="description" content="Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala" /><meta name="og:image" content="/busymachines-commons/img/poster.png" /><meta name="og:title" content="busymachines-commmons: json" /><meta name="og:site_name" content="busymachines-commmons" /><meta name="og:url" content="http://busymachines.github.io/busymachines-commons/" /><meta name="og:type" content="website" /><meta name="og:description" content="Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala" /><link rel="icon" type="image/png" href="/busymachines-commons/img/favicon.png" /><meta name="twitter:title" content="busymachines-commmons: json" /><meta name="twitter:image" content="http://busymachines.github.io/busymachines-commons/img/poster.png" /><meta name="twitter:description" content="Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/busymachines-commons/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/busymachines-commons/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/busymachines-commons/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/busymachines-commons/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/busymachines-commons/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/busymachines-commons/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/busymachines-commons/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/busymachines-commons/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/busymachines-commons/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/busymachines-commons/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/busymachines-commons/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/busymachines-commons/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/busymachines-commons/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/busymachines-commons/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/busymachines-commons/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/busymachines-commons/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/busymachines-commons/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/busymachines-commons/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/busymachines-commons/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/busymachines-commons/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/busymachines-commons/highlight/styles/atom-one-light.css" /><link rel="stylesheet" href="/busymachines-commons/css/style.css" /><link rel="stylesheet" href="/busymachines-commons/css/palette.css" /><link rel="stylesheet" href="/busymachines-commons/css/codemirror.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/busymachines-commons/" class="brand"><div class="brand-wrapper"><span>busymachines-commmons</span></div></a></li> <li><a href="/busymachines-commons/docs/index.html" class="">Getting Started</a></li> <li><a href="/busymachines-commons/docs/help.html" class="">Help!</a></li> <li><a href="/busymachines-commons/docs/learning.html" class="">Learning Materials</a></li> <li><a href="/busymachines-commons/docs/developer-guide.html" class="">Developer's Guide</a></li> <li><a href="/busymachines-commons/docs/core.html" class="">core</a></li> <li><a href="/busymachines-commons/docs/result.html" class="">result</a></li> <li><a href="/busymachines-commons/docs/future.html" class="">future</a></li> <li><a href="/busymachines-commons/docs/json.html" class=" active ">json</a></li> <li><a href="/busymachines-commons/docs/rest.html" class="">rest</a></li> <li><a href="/busymachines-commons/docs/rest-testkit.html" class="">rest-testkit</a></li> <li><a href="/busymachines-commons/docs/semver.html" class="">semver</a></li> <li><a href="/busymachines-commons/docs/semver-parsers.html" class="">semver-parsers</a></li> <li><a href="/busymachines-commons/docs/publishing-artifacts.html" class="">Publishing Artifacts</a></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/busymachines/busymachines-commons"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/busymachines/busymachines-commons"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('busymachines-commmons Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('busymachines-commmons Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="busymachines" data-github-repo="busymachines-commons"><div class="content-wrapper"><section><p><a href="https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json_2.12"><img src="https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json_2.12.svg" alt="Maven Central" /></a></p>
+
+<h1 id="busymachines-commons-json">busymachines-commons-json</h1>
+
+<ul>
+  <li>stable: <code class="highlighter-rouge">0.2.0</code></li>
+  <li>latest: <code class="highlighter-rouge">0.3.0-M2</code></li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-json"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
+</code></pre>
+</div>
+
+<h2 id="how-it-works">How it works</h2>
+<p>This module is a thin layer over <a href="https://circe.github.io/circe/">circe</a>, additionally, it depends on <a href="https://github.com/milessabin/shapeless">shapeless</a>. The latter being the mechanism through which <code class="highlighter-rouge">autoderive</code> and <code class="highlighter-rouge">derive</code> derivation can be made to work.</p>
+
+<p>You can glean 99% of what’s going on here by first understanding <code class="highlighter-rouge">circe</code>. This module provides just convenience and a principled way of using it. The only “real” contribution of this is that provides a <code class="highlighter-rouge">Codec</code> type class, which is lacking from <code class="highlighter-rouge">circe</code>, although there is an open <a href="https://github.com/circe/circe/pull/811">pull-request against circe</a> to introduce it there as well.</p>
+
+<h3 id="transitive-dependencies">Transitive dependencies</h3>
+<ul>
+  <li>circe 0.9.0 (with all its modules)</li>
+  <li>shapeless 2.3.3</li>
+  <li>cats 1.0.1</li>
+</ul>
+
+<h2 id="recommended-usage">Recommended usage</h2>
+
+<p>If you are writing a full-fledged web-server with literally hundreds of REST API endpoints, then it is a good idea to minimize the usage of <code class="highlighter-rouge">import busymachines.json.autoderive._</code> because this can seriously increase your compilation times, and instead use the following pattern:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">DomainSpecificJsonCodecs</span> <span class="k">extends</span> <span class="nc">DomainSpecificJsonCodecs</span>
+
+<span class="k">trait</span> <span class="nc">DomainSpecificJsonCodecs</span> <span class="o">{</span>
+  <span class="k">import</span> <span class="nn">busymachines.json._</span>
+
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">postDTOCodec</span><span class="k">:</span> <span class="kt">Codec</span><span class="o">[</span><span class="kt">PostDTO</span><span class="o">]</span> <span class="k">=</span> <span class="n">derive</span><span class="o">.</span><span class="n">codec</span><span class="o">[</span><span class="kt">PostDTO</span><span class="o">]</span>
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">getDTOCodec</span> <span class="k">:</span> <span class="kt">Codec</span><span class="o">[</span><span class="kt">GetDTO</span><span class="o">]</span>  <span class="k">=</span> <span class="n">derive</span><span class="o">.</span><span class="n">codec</span><span class="o">[</span><span class="kt">GetDTO</span><span class="o">]</span>
+<span class="o">}</span>
+<span class="c1">//...
+</span>
+<span class="k">object</span> <span class="nc">WhereINeedMyCodecUsuallyInMyEndpointDefinitions</span> <span class="k">extends</span> <span class="nc">DomainSpecificJsonCodecs</span> <span class="o">{</span>
+  <span class="c1">//....
+</span><span class="o">}</span>
+<span class="c1">//or:
+</span><span class="k">object</span> <span class="nc">OtherPlaceINeedMyJson</span> <span class="o">{</span>
+  <span class="k">import</span> <span class="nn">DomainSpecificJsonCodecs._</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>But for small-scale stuff, sure, go crazy with <code class="highlighter-rouge">autoderive._</code>.</p>
+
+<h2 id="description">Description</h2>
+
+<p>Most likely the best way to make use of the library is to have the following imports:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.json._</span>
+<span class="k">import</span> <span class="nn">busymachines.json.syntax._</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">json._</code> brings in common type definitions, and an object <code class="highlighter-rouge">derive</code> which is the rough equivalent of circe’s <code class="highlighter-rouge">semiauto</code>, and an object <code class="highlighter-rouge">autoderive</code> which is a rough equivalent of circe’s <code class="highlighter-rouge">auto</code>. When importing <code class="highlighter-rouge">autoderive._</code>, the compiler will try to automatically generate <code class="highlighter-rouge">Encoder[T]</code>, <code class="highlighter-rouge">Decoder[T]</code> type-classes whenever one is required. So, when a method like <code class="highlighter-rouge">def decodeAs[A](json: String)(implicit decoder: Decoder[A])</code> is called the compiler will attempt to derive a <code class="highlighter-rouge">Decoder</code> for a type <code class="highlighter-rouge">A</code>.</p>
+
+<p><code class="highlighter-rouge">syntax._</code> brings in handy syntactic ops to parse strings to <code class="highlighter-rouge">Json</code> and/or to decode them to a specified type—these are just syntactically convenient ways of doing what the objects in <code class="highlighter-rouge">utilsJson.scala</code> can do.</p>
+
+<h2 id="decodingencoding-simple-case-classes">Decoding/encoding simple case classes</h2>
+
+<h3 id="semi-auto-derivation-busymachinesjsonderive">semi-auto derivation (<code class="highlighter-rouge">busymachines.json.derive</code>)</h3>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">AnarchistMelon</span><span class="o">(</span>
+  <span class="n">noGods</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>
+  <span class="n">noMasters</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>
+  <span class="n">noSuperTypes</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span>
+
+<span class="k">object</span> <span class="nc">CommonsJson</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+
+  <span class="k">import</span> <span class="nn">busymachines.json._</span>
+  <span class="k">import</span> <span class="nn">busymachines.json.syntax._</span>
+
+  <span class="k">val</span> <span class="n">anarchistMelon</span> <span class="k">=</span> <span class="nc">AnarchistMelon</span><span class="o">(</span><span class="kc">true</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+
+  <span class="c1">//we need an encoder, so using the functions from derive we can explicitly create it
+</span>  <span class="k">implicit</span> <span class="k">val</span> <span class="n">encoder</span><span class="k">:</span> <span class="kt">Encoder</span><span class="o">[</span><span class="kt">AnarchistMelon</span><span class="o">]</span> <span class="k">=</span> <span class="n">derive</span><span class="o">.</span><span class="n">encoder</span><span class="o">[</span><span class="kt">AnarchistMelon</span><span class="o">]</span>
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">decoder</span><span class="k">:</span> <span class="kt">Decoder</span><span class="o">[</span><span class="kt">AnarchistMelon</span><span class="o">]</span> <span class="k">=</span> <span class="n">derive</span><span class="o">.</span><span class="n">decoder</span><span class="o">[</span><span class="kt">AnarchistMelon</span><span class="o">]</span>
+  <span class="c1">//Alternatively, if we always need both encoders/decoders then we just:
+</span>  <span class="c1">//implicit val decoder: Codec[AnarchistMelon] = derive.codec[AnarchistMelon]
+</span>
+  <span class="k">val</span> <span class="n">jsonString</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">anarchistMelon</span><span class="o">.</span><span class="n">asJson</span><span class="o">.</span><span class="n">spaces2</span>
+  <span class="n">println</span><span class="o">(</span><span class="n">jsonString</span><span class="o">)</span>
+  <span class="n">println</span><span class="o">(</span><span class="n">jsonString</span><span class="o">.</span><span class="n">unsafeDecodeAs</span><span class="o">[</span><span class="kt">AnarchistMelon</span><span class="o">])</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>Will print:</p>
+<div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"noGods"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"noMasters"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"noSuperTypes"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
+<div class="highlighter-rouge"><pre class="highlight"><code>AnarchistMelon(true,true,true)
+</code></pre>
+</div>
+
+<h3 id="automatic-derivation-busymachinesjsonautoderive">automatic derivation (<code class="highlighter-rouge">busymachines.json.autoderive</code>)</h3>
+<p>It’s more or less the same, but with less boilerplate. But one should be wary of using this
+except in fairly trivial cases because it takes considerably longer to compile your code.</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">CommonsJson</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+
+  <span class="k">import</span> <span class="nn">busymachines.json._</span>
+  <span class="k">import</span> <span class="nn">busymachines.json.autoderive._</span>
+  <span class="k">import</span> <span class="nn">busymachines.json.syntax._</span>
+
+  <span class="k">val</span> <span class="n">anarchistMelon</span> <span class="k">=</span> <span class="nc">AnarchistMelon</span><span class="o">(</span><span class="kc">true</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+
+  <span class="k">val</span> <span class="n">jsonString</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">anarchistMelon</span><span class="o">.</span><span class="n">asJson</span><span class="o">.</span><span class="n">spaces2</span>
+  <span class="n">println</span><span class="o">(</span><span class="n">jsonString</span><span class="o">)</span>
+  <span class="n">println</span><span class="o">(</span><span class="n">jsonString</span><span class="o">.</span><span class="n">unsafeDecodeAs</span><span class="o">[</span><span class="kt">AnarchistMelon</span><span class="o">])</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="codec">Codec</h3>
+<p>If you know you need both an <code class="highlighter-rouge">Encoder</code> and <code class="highlighter-rouge">Decoder</code> then you can just use <code class="highlighter-rouge">Codec</code> which is both of those things. So in the <code class="highlighter-rouge">derive</code> case we can simplify the code more by deriving only:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">implicit</span> <span class="k">val</span> <span class="n">codec</span><span class="k">:</span> <span class="kt">Codec</span><span class="o">[</span><span class="kt">AnarchistMelon</span><span class="o">]</span> <span class="k">=</span> <span class="n">deriveCodec</span><span class="o">[</span><span class="kt">AnarchistMelon</span><span class="o">]</span>
+</code></pre>
+</div>
+
+<h2 id="dealing-with-hierarchies">Dealing with hierarchies</h2>
+
+<p>Unlike the <code class="highlighter-rouge">AnarchistMelon</code> in our previous example, regular melons accept hierarchy. And, like in real life, we have many hierarchies in code. But <code class="highlighter-rouge">circe</code> helps to wrangle them in—for dealing with real life hierarchies you should google Murray Bookchin.</p>
+
+<p>Take the following hierarchy:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">sealed</span> <span class="k">trait</span> <span class="nc">Melon</span> <span class="o">{</span> <span class="k">def</span> <span class="n">weight</span><span class="k">:</span> <span class="kt">Int</span><span class="o">}</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">WinterMelon</span><span class="o">(</span><span class="n">fuzzy</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">weight</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Melon</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">WaterMelon</span><span class="o">(</span><span class="n">seeds</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">weight</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Melon</span>
+<span class="k">case</span> <span class="k">object</span> <span class="nc">SmallMelon</span> <span class="k">extends</span> <span class="nc">Melon</span> <span class="o">{</span> <span class="k">override</span> <span class="k">val</span> <span class="n">weight</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">}</span>
+
+<span class="k">sealed</span> <span class="k">trait</span> <span class="nc">Taste</span>
+<span class="k">case</span> <span class="k">object</span> <span class="nc">SweetTaste</span> <span class="k">extends</span> <span class="nc">Taste</span>
+<span class="k">case</span> <span class="k">object</span> <span class="nc">SourTaste</span> <span class="k">extends</span> <span class="nc">Taste</span>
+
+<span class="k">sealed</span> <span class="k">trait</span> <span class="nc">TastyMelon</span> <span class="k">extends</span> <span class="nc">Melon</span> <span class="o">{</span> <span class="k">def</span> <span class="n">tastes</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Taste</span><span class="o">]}</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">SquareMelon</span><span class="o">(</span><span class="n">weight</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">tastes</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Taste</span><span class="o">])</span> <span class="k">extends</span> <span class="nc">TastyMelon</span>
+</code></pre>
+</div>
+<p>As you can see we have two parallel hierarchies. <code class="highlighter-rouge">Melon</code>, and <code class="highlighter-rouge">Taste</code> (this one being a vanilla way of doing “enumerations”). And a sub-hierarchy <code class="highlighter-rouge">TastyMelon</code>.
+Now, as per good practice we’ll put the Codecs separately from our application code.</p>
+
+<h3 id="semi-auto-derivation-of-hierarchies">semi-auto derivation of hierarchies</h3>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">MelonsDefaultJsonCodecs</span> <span class="o">{</span>
+  <span class="k">import</span> <span class="nn">busymachines.json._</span>
+
+  <span class="c1">//this is a special method that encodes/decodes sealed trait hierarchies
+</span>  <span class="c1">//composed of case objects only as plain strings, as opposed to the derivedCodec
+</span>  <span class="k">implicit</span> <span class="k">val</span> <span class="n">tasteEncoder</span><span class="k">:</span> <span class="kt">Codec</span><span class="o">[</span><span class="kt">Taste</span><span class="o">]</span> <span class="k">=</span> <span class="n">derive</span><span class="o">.</span><span class="n">enumerationCodec</span><span class="o">[</span><span class="kt">Taste</span><span class="o">]</span>
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">melonEncoder</span><span class="k">:</span> <span class="kt">Codec</span><span class="o">[</span><span class="kt">Melon</span><span class="o">]</span> <span class="k">=</span> <span class="n">derive</span><span class="o">.</span><span class="n">codec</span><span class="o">[</span><span class="kt">Melon</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Variants of an abstract datatype are distinguished by inserting a field in the json object called <code class="highlighter-rouge">"_type"</code> whose value is the name of the variant. As can be seen from the example bellow:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">CommonsJson</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+  <span class="k">import</span> <span class="nn">busymachines.json.syntax._</span>
+  <span class="k">import</span> <span class="nn">MelonsDefaultJsonCodecs._</span>
+
+  <span class="k">val</span> <span class="n">winterMelon</span> <span class="k">=</span> <span class="nc">WinterMelon</span><span class="o">(</span><span class="n">fuzzy</span> <span class="k">=</span> <span class="kc">true</span><span class="o">,</span> <span class="n">weight</span> <span class="k">=</span> <span class="mi">45</span><span class="o">)</span>
+  <span class="k">val</span> <span class="n">waterMelon</span> <span class="k">=</span> <span class="nc">WaterMelon</span><span class="o">(</span><span class="n">seeds</span> <span class="k">=</span> <span class="kc">true</span><span class="o">,</span> <span class="n">weight</span> <span class="k">=</span> <span class="mi">90</span><span class="o">)</span>
+  <span class="k">val</span> <span class="n">smallMelon</span> <span class="k">=</span> <span class="nc">SmallMelon</span>
+  <span class="k">val</span> <span class="n">squareMelon</span> <span class="k">=</span> <span class="nc">SquareMelon</span><span class="o">(</span><span class="n">weight</span> <span class="k">=</span> <span class="mi">10</span><span class="o">,</span> <span class="n">tastes</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="nc">SourTaste</span><span class="o">,</span> <span class="nc">SweetTaste</span><span class="o">))</span>
+  <span class="k">val</span> <span class="n">melons</span> <span class="k">=</span> <span class="nc">List</span><span class="o">[</span><span class="kt">Melon</span><span class="o">](</span><span class="n">winterMelon</span><span class="o">,</span> <span class="n">waterMelon</span><span class="o">,</span> <span class="n">smallMelon</span><span class="o">,</span> <span class="n">squareMelon</span><span class="o">)</span>
+
+  <span class="k">val</span> <span class="n">rawJson</span> <span class="k">=</span> <span class="n">melons</span><span class="o">.</span><span class="n">asJson</span><span class="o">.</span><span class="n">spaces2</span>
+  <span class="n">println</span><span class="o">(</span><span class="n">rawJson</span><span class="o">)</span>
+  <span class="n">rawJson</span><span class="o">.</span><span class="n">unsafeDecodeAs</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Melon</span><span class="o">]]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>Notice that the tastes array contains simple strings, but the <code class="highlighter-rouge">SmallMelon</code>, even though it was a case object is still represented as a json object.</p>
+<div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"fuzzy"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"weight"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"WinterMelon"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"seeds"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"weight"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"WaterMelon"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"SmallMelon"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"weight"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"tastes"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"SourTaste"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"SweetTaste"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nt">"_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"SquareMelon"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre>
+</div>
+
+<h3 id="auto-derivation-of-hierarchies">auto derivation of hierarchies</h3>
+
+<p>It should be clear by now what we have to do. Essentially nothing, but if we want to maintain the same behavior when converting <code class="highlighter-rouge">Taste</code> case objects, then we do have to explicitly create a codec for it. Otherwise it would represent this enumeration as json objects with only the <code class="highlighter-rouge">_type</code> field in them.</p>
+
+<p>So, our code in this case looks like the following—and the result is the same:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">CommonsJson</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+
+  <span class="k">import</span> <span class="nn">busymachines.json._</span>
+  <span class="k">import</span> <span class="nn">busymachines.json.autoderive._</span>
+  <span class="k">import</span> <span class="nn">busymachines.json.syntax._</span>
+
+  <span class="c1">//The explicitly defined enumeration codec
+</span>  <span class="k">implicit</span> <span class="k">val</span> <span class="n">tasteEncoder</span><span class="k">:</span> <span class="kt">Codec</span><span class="o">[</span><span class="kt">Taste</span><span class="o">]</span> <span class="k">=</span> <span class="n">derive</span><span class="o">.</span><span class="n">enumerationCodec</span><span class="o">[</span><span class="kt">Taste</span><span class="o">]</span>
+
+  <span class="k">val</span> <span class="n">winterMelon</span> <span class="k">=</span> <span class="nc">WinterMelon</span><span class="o">(</span><span class="n">fuzzy</span> <span class="k">=</span> <span class="kc">true</span><span class="o">,</span> <span class="n">weight</span> <span class="k">=</span> <span class="mi">45</span><span class="o">)</span>
+  <span class="k">val</span> <span class="n">waterMelon</span> <span class="k">=</span> <span class="nc">WaterMelon</span><span class="o">(</span><span class="n">seeds</span> <span class="k">=</span> <span class="kc">true</span><span class="o">,</span> <span class="n">weight</span> <span class="k">=</span> <span class="mi">90</span><span class="o">)</span>
+  <span class="k">val</span> <span class="n">smallMelon</span> <span class="k">=</span> <span class="nc">SmallMelon</span>
+  <span class="k">val</span> <span class="n">squareMelon</span> <span class="k">=</span> <span class="nc">SquareMelon</span><span class="o">(</span><span class="n">weight</span> <span class="k">=</span> <span class="mi">10</span><span class="o">,</span> <span class="n">tastes</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="nc">SourTaste</span><span class="o">,</span> <span class="nc">SweetTaste</span><span class="o">))</span>
+  <span class="k">val</span> <span class="n">melons</span> <span class="k">=</span> <span class="nc">List</span><span class="o">[</span><span class="kt">Melon</span><span class="o">](</span><span class="n">winterMelon</span><span class="o">,</span> <span class="n">waterMelon</span><span class="o">,</span> <span class="n">smallMelon</span><span class="o">,</span> <span class="n">squareMelon</span><span class="o">)</span>
+
+  <span class="k">val</span> <span class="n">rawJson</span> <span class="k">=</span> <span class="n">melons</span><span class="o">.</span><span class="n">asJson</span><span class="o">.</span><span class="n">spaces2</span>
+  <span class="n">println</span><span class="o">(</span><span class="n">rawJson</span><span class="o">)</span>
+  <span class="n">rawJson</span><span class="o">.</span><span class="n">unsafeDecodeAs</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">Melon</span><span class="o">]]</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="on-_type-discrimination">On <code class="highlighter-rouge">_type</code> discrimination</h3>
+
+<p>Here we have to delve a bit into the internals of this library. We depend on the <code class="highlighter-rouge">circe.generic.extras</code> packages, where derivation requires an implicit an implicit <code class="highlighter-rouge">Configuration</code> to derive all sealed traits. This configuration can be found in <code class="highlighter-rouge">busymachines.json.DefaultTypeDiscriminatorConfig</code> and is mixed into both the root <code class="highlighter-rouge">json</code> package object, so that it can be made available to us in both use cases:</p>
+
+<p>semi-auto:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.json._</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">e</span> <span class="k">=</span> <span class="n">derive</span><span class="o">.</span><span class="n">encoder</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+</code></pre>
+</div>
+<p>auto:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.json._</span>
+<span class="k">import</span> <span class="nn">busymachines.json.autoderive._</span>
+<span class="k">val</span> <span class="n">m</span><span class="k">:</span> <span class="kt">Melon</span> <span class="o">=</span> <span class="o">???</span>
+<span class="n">m</span><span class="o">.</span><span class="n">asJson</span>
+</code></pre>
+</div>
+<p>In either case if you remove the <code class="highlighter-rouge">busymachines.json._</code> import, it will fail to compile. But importing:
+<code class="highlighter-rouge">import busymachines.json.defaultDerivationConfiguration</code> is also enough. You can also define your own rules — just look at the implementation of this default config. But, you have to be very careful not to import both, or have both in scope. If you do that then have two conflicting implicits—that are needed to derive <em>other</em> implicits, that’s why your compilation fails with <code class="highlighter-rouge">"Could not find implicit Encoder[A]"</code> instead of <code class="highlighter-rouge">"Conflicting Configuration implicit.</code>. Therefore, it is recommended that you do the following:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+  * unfortunately this exclusion is absolutely necessary if you want to use the non-default _type
+  * discriminator for sealed hierarchies of classes AND auto-derivation at the same time
+  */</span>
+<span class="k">import</span> <span class="nn">busymachines.json.</span><span class="o">{</span><span class="n">defaultDerivationConfiguration</span> <span class="k">=&gt;</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">}</span>
+<span class="k">import</span> <span class="nn">busymachines.json.autoderive._</span>
+
+<span class="k">final</span> <span class="k">implicit</span> <span class="k">val</span> <span class="nc">_melonManiaDiscriminatorConfig</span><span class="k">:</span> <span class="kt">Configuration</span> <span class="o">=</span>
+  <span class="nc">Configuration</span><span class="o">.</span><span class="n">default</span><span class="o">.</span><span class="n">withDiscriminator</span><span class="o">(</span><span class="s">"_melonMania"</span><span class="o">)</span>
+</code></pre>
+</div>
+
+<p>As illustrated in the <code class="highlighter-rouge">JsonAutoDerivationWithSpecialConfigurationTest</code> test.</p>
+
+<p>The definition of the magic configuration trait:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">trait</span> <span class="nc">DefaultTypeDiscriminatorConfig</span> <span class="o">{</span>
+
+  <span class="k">private</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">final</span> <span class="k">val</span> <span class="nc">JsonTypeString</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"_type"</span>
+
+  <span class="k">final</span> <span class="k">implicit</span> <span class="k">val</span> <span class="n">defaultDerivationConfiguration</span><span class="k">:</span> <span class="kt">io.circe.generic.extras.Configuration</span> <span class="o">=</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">circe</span><span class="o">.</span><span class="n">generic</span><span class="o">.</span><span class="n">extras</span><span class="o">.</span><span class="nc">Configuration</span><span class="o">.</span><span class="n">default</span>
+      <span class="o">.</span><span class="n">withDiscriminator</span><span class="o">(</span><span class="nc">JsonTypeString</span><span class="o">)</span>
+
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h2 id="provided-decoders">provided decoders</h2>
+
+<p>The object/trait <code class="highlighter-rouge">busymachines.json.AnomalyJsonCodec</code> contains all encoders necessary for dealing with the exceptions from core.</p>
+
+<h2 id="tests">tests</h2>
+
+<p>Check out all the tests for runnable usage examples.</p>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/busymachines-commons/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });
