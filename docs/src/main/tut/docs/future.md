@@ -13,7 +13,9 @@ Provides convenient `scala.concurrent.Future` related syntax for 99% of your use
 * stable: `N/A`
 * latest: `0.3.0-M2`
 
-`"com.busymachines" %% "busymachines-commons-future" % "0.3.0-M2"`
+```scala
+"com.busymachines" %% "busymachines-commons-future" % "0.3.0-M2"
+```
 
 ### Transitive dependencies
 - busymachines-commons-result

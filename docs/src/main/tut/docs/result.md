@@ -16,7 +16,9 @@ type Result[T] = Either[Anomaly, T]
 * stable: `N/A`
 * latest: `0.3.0-M2`
 
-`"com.busymachines" %% "busymachines-commons-result" % "0.3.0-M2"`
+```scala
+"com.busymachines" %% "busymachines-commons-result" % "0.3.0-M2"
+```
 
 ### Transitive dependencies
 - busymachines-commons-core

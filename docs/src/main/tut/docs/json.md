@@ -9,7 +9,9 @@ title: json
 * stable: `0.2.0`
 * latest: `0.3.0-M2`
 
-`"com.busymachines" %% "busymachines-commons-json" % "0.2.0"`
+```scala
+"com.busymachines" %% "busymachines-commons-json" % "0.2.0"
+```
 
 ## How it works
 This module is a thin layer over [circe](https://circe.github.io/circe/), additionally, it depends on [shapeless](https://github.com/milessabin/shapeless). The latter being the mechanism through which `autoderive` and `derive` derivation can be made to work.
