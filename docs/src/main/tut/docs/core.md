@@ -2,8 +2,11 @@
 layout: docs
 title: core
 ---
-# busymachines-commons-core
 [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12)
+
+# busymachines-commons-core
+
+Here you find very basic buildings blocks for structuring your exceptions in meaningful ways.
 
 ## artifacts
 
@@ -16,7 +19,7 @@ This module is vanilla scala _*only*_, compiled with scala version : `2.12.4`.
 
 ## Description
 
-Here you find very basic buildings blocks for structuring your exceptions in meaningful ways, and very basic types. Generally, we are very conservative in what we put here, and this core will become stable really fast.
+Currently only contains ways to represent failure of some sort or another. Generally, we are very conservative in what we put here.
 
 ## Anomaly (exception) and Catastrophe (error)
 

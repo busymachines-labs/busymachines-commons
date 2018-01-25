@@ -2,10 +2,11 @@
 layout: docs
 title: future
 ---
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-future_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-future_2.12)
 
 # busymachines-commons-future
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-future_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-future_2.12)
+Provides convenient `scala.concurrent.Future` related syntax for 99% of your use cases under one single `import busymachines.future`.
 
 ## artifacts
 
@@ -20,8 +21,6 @@ title: future
 - cats-core 1.0.1
 
 ## How it works
-
-Provides convenient `scala.concurrent.Future` related syntax for 99% of your use cases under one single `import busymachines.future`.
 
 Documentation still under construction. You can glance over this thing:
 
