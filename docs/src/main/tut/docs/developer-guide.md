@@ -15,4 +15,4 @@ The build is fairly straightforward. The root folder contains a phantom build fr
 
 This codebase is formatted using [scalafmt](http://scalameta.org/scalafmt/). A simple `sbt scalafmt` formats your entire code. There are plenty of ways of using it with your favorite editor, as well.
 
-There's an [IntelliJ plugin](https://plugins.jetbrains.com/plugin/8236-scalafmt).
+There's an [IntelliJ plugin](https://plugins.jetbrains.com/plugin/8236-scalafmt) that you can/should use.

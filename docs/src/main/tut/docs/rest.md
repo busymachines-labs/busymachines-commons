@@ -48,29 +48,30 @@ Examples of usage are rather verbose so you'll have to check the tests in the [b
 A convenient and pure way—based on `cats.effects.IO`—of binding your server to the network interface. Read the code to trivially spot how to tailor it better to your needs. Fully functioning example:
 
 ```scala
-
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import busymachines.rest._
 
 import scala.concurrent.ExecutionContext
 
-object MainRestPlaygroundApp extends App {
+object HttpServerIOExample extends App {
 
-    implicit val as: ActorSystem       = ActorSystem("http-server-test")
-    implicit val am: ActorMaterializer = ActorMaterializer()
-    implicit val ec: ExecutionContext  = as.dispatcher
+  implicit val as: ActorSystem       = ActorSystem("http-server-test")
+  implicit val am: ActorMaterializer = ActorMaterializer()
+  implicit val ec: ExecutionContext  = as.dispatcher
 
-    val httpServer = HttpServer(
-      name  = "HttpServerTest",
-      route = restAPI.route,
-      config = MinimalWebServerConfig(
-        host = "0.0.0.0",
-        port = 9999
-      ) // or.default
-    ).startThenCleanUpActorSystem
+  val restAPI = new HelloWorld
 
-    httpServer.unsafeRunSync()
+  val httpServer = HttpServer(
+    name  = "HttpServerTest",
+    route = restAPI.route,
+    config = MinimalWebServerConfig(
+      host = "0.0.0.0",
+      port = 9999
+    ) // or.default
+  ).startThenCleanUpActorSystem
+
+  httpServer.unsafeRunSync()
 
 }
 
@@ -83,6 +84,7 @@ class HelloWorld extends JsonRestAPI with Directives {
     }
   }
 }
+
 
 ```
 
@@ -133,91 +135,97 @@ The `ctx` object is of type `HttpServer.Context` and offers access to the loggin
 
 ## Integration with `core`
 
-By using of the `RestAPI` (like `JsonRestAPI`) subclasses you get automatic translation of the exceptions defined in [`busymachines-commons-core`](../core) to a specific response code, with a proper presentation for the [[ErrorMessage]].
+By using the `RestAPI` subclasses (e.g. `JsonRestAPI`) you get automatic translation of the anomalies and catastrophes defined in [busymachines-commons-core](core.html) to a specific response code, with a proper presentation for the `Anomaly`.
 
-The mappings between the type of exception/error-message and response codes can be seen in [`busymachines.rest.RestAPI#semanticallyMeaningfulHandler`](./rest-core/src/main/scala/busymachines/rest/RestAPI.scala#126).
+The mappings between the type of exception/error-message and response codes can be seen in `busymachines.rest.RestAPI#semanticallyMeaningfulHandler`
 
-You will probably notice that `ForbiddenFailure` is mapped to a `404 NotFound` status code, and `DeniedFailure` is mapped to `403 Forbidden` status code. This is because the status codes in the HTTP method are poorly named to begin with.
+You will probably notice that `MeaningfulAnomalies.Forbidden` is mapped to a `404 NotFound` status code, and `MeaningfulAnomalies.Denied` is mapped to `403 Forbidden` status code. This is because the status codes in the HTTP method are poorly named to begin with.
 
-This is the copy-pasted partial function from the code linked above:
+This is the copy-pasted partial function from the code mentioned above:
 ```scala
   /**
     * Check the scaladoc for each of these failures in case something is not clear,
     * but for convenience that scaladoc has been copied here as well.
     */
+  private def semanticallyMeaningfulHandler(
+    implicit
+    am:  ToEntityMarshaller[Anomaly],
+    asm: ToEntityMarshaller[Anomalies],
+  ): ExceptionHandler =
     ExceptionHandler {
-    /**
-      * Meaning:
-      *
-      * "you cannot find something; it may or may not exist, and I'm not going
-      * to tell you anything else"
-      */
-    case _: NotFoundFailure =>
-      failure(StatusCodes.NotFound)
 
-    /**
-      * Meaning:
-      *
-      * "it exists, but you're not even allowed to know about that;
-      * so for short, you can't find it".
-      */
-    case _: ForbiddenFailure =>
-      failure(StatusCodes.NotFound)
+      /**
+        * Meaning:
+        *
+        * "you cannot find something; it may or may not exist, and I'm not going
+        * to tell you anything else"
+        */
+      case _: MeaningfulAnomalies.NotFound =>
+        anomaly(StatusCodes.NotFound)
 
-    /**
-      * Meaning:
-      *
-      * "something is wrong in the way you authorized, you can try again slightly
-      * differently"
-      */
-    case e: UnauthorizedFailure =>
-      failure(StatusCodes.Unauthorized, e)
+      /**
+        * Meaning:
+        *
+        * "it exists, but you're not even allowed to know about that;
+        * so for short, you can't find it".
+        */
+      case _: MeaningfulAnomalies.Forbidden =>
+        anomaly(StatusCodes.NotFound)
 
-    case e: DeniedFailure =>
-      failure(StatusCodes.Forbidden, e)
+      /**
+        * Meaning:
+        *
+        * "something is wrong in the way you authorized, you can try again slightly
+        * differently"
+        */
+      case e: Anomaly with MeaningfulAnomalies.Unauthorized =>
+        anomaly(StatusCodes.Unauthorized, e)
 
+      case e: Anomaly with MeaningfulAnomalies.Denied =>
+        anomaly(StatusCodes.Forbidden, e)
 
-    /**
-      * Obviously, whenever some input data is wrong.
-      *
-      * This one is probably your best friend, and the one you
-      * have to specialize the most for any given problem domain.
-      * Otherwise you just wind up with a bunch of nonsense, obtuse
-      * errors like:
-      * - "the input was wrong"
-      * - "gee, thanks, more details, please?"
-      * - sometimes you might be tempted to use NotFound, but this
-      * might be better suited. For instance, when you are dealing
-      * with a "foreign key" situation, and the foreign key is
-      * the input of the client. You'd want to be able to tell
-      * the user that their input was wrong because something was
-      * not found, not simply that it was not found.
-      *
-      * Therefore, specialize frantically.
-      */
-    case e: InvalidInputFailure =>
-      failure(StatusCodes.BadRequest, e)
+      /**
+        * Obviously, whenever some input data is wrong.
+        *
+        * This one is probably your best friend, and the one you
+        * have to specialize the most for any given problem domain.
+        * Otherwise you just wind up with a bunch of nonsense, obtuse
+        * errors like:
+        * - "the input was wrong"
+        * - "gee, thanks, more details, please?"
+        * - sometimes you might be tempted to use NotFound, but this
+        * might be better suited. For instance, when you are dealing
+        * with a "foreign key" situation, and the foreign key is
+        * the input of the client. You'd want to be able to tell
+        * the user that their input was wrong because something was
+        * not found, not simply that it was not found.
+        *
+        * Therefore, specialize frantically.
+        */
+      case e: Anomaly with MeaningfulAnomalies.InvalidInput =>
+        anomaly(StatusCodes.BadRequest, e)
 
-    /**
-      * Special type of invalid input.
-      *
-      * E.g. when you're duplicating something that ought to be unique,
-      * like ids, emails.
-      */
-    case e: ConflictFailure =>
-      failure(StatusCodes.Conflict, e)
+      /**
+        * Special type of invalid input.
+        *
+        * E.g. when you're duplicating something that ought to be unique,
+        * like ids, emails.
+        */
+      case e: Anomaly with MeaningfulAnomalies.Conflict =>
+        anomaly(StatusCodes.Conflict, e)
 
-    /**
-      * This might be a stretch of an assumption, but usually there's no
-      * reason to accumulate messages, except in cases of input validation
-      */
-    case es: FailureMessages =>
-      failures(StatusCodes.BadRequest, es)
+      /**
+        * This might be a stretch of an assumption, but usually there's no
+        * reason to accumulate messages, except in cases of input validation
+        */
+      case es: Anomalies =>
+        anomalies(StatusCodes.BadRequest, es)(asm)
 
-    case e: Error =>
-      failure(StatusCodes.InternalServerError, e)
+      case e: Catastrophe =>
+        anomaly(StatusCodes.InternalServerError, e)
 
-    case e: NotImplementedError =>
-      failure(StatusCodes.NotImplemented, Error(e))
-  }
+      case e: NotImplementedError =>
+        anomaly(StatusCodes.NotImplemented, CatastrophicError(e))
+    }
+
 ```

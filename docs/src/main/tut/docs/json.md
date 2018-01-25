@@ -14,7 +14,7 @@ title: json
 ## How it works
 This module is a thin layer over [circe](https://circe.github.io/circe/), additionally, it depends on [shapeless](https://github.com/milessabin/shapeless). The latter being the mechanism through which `autoderive` and `derive` derivation can be made to work.
 
-You can glean 99% of what's going on here by first understanding `circe`. This module provides just convenience, and a principled way of using it. The only "real" contribution of this is that provides a `Codec` type class, which is lacking from `circe`.
+You can glean 99% of what's going on here by first understanding `circe`. This module provides just convenience and a principled way of using it. The only "real" contribution of this is that provides a `Codec` type class, which is lacking from `circe`, although there is an open [pull-request against circe](https://github.com/circe/circe/pull/811) to introduce it there as well.
 
 ### Transitive dependencies
 - circe 0.9.0 (with all its modules)

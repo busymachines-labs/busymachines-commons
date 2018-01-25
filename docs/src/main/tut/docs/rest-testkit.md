@@ -42,7 +42,7 @@ N.B. that this is a testing library, and you should only depend on it in test. B
 
 ## Description
 
-The testing companion of [`busymachines-commons-rest-json`]. And it is fully useable with no abstract stuff like its parent `busymachines-commons-rest-core`.
+The testing companion of `busymachines-commons-rest-json`. And it is fully useable with no abstract stuff like its parent `busymachines-commons-rest-core`.
 
 Check out the tests of this module for full running examples.
 
