@@ -86,7 +86,7 @@ object FutureUtil {
     test flatMap (b => FutureUtil.cond(b, correct, anomaly))
 
   def flatCondWith[T](
-    test:          Future[Boolean],
+    test:        Future[Boolean],
     correct:     => Future[T],
     anomaly:     => Anomaly
   )(implicit ec: ExecutionContext): Future[T] =
