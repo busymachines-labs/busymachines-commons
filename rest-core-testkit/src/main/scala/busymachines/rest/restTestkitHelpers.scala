@@ -144,9 +144,11 @@ private[rest] object RequestDebugging {
     printingTimeoutDuration: FiniteDuration
   )(
     transformEntity: String => String
-  )(implicit
+  )(
+    implicit
     mat: Materializer,
-    ec:  ExecutionContext): String = {
+    ec:  ExecutionContext
+  ): String = {
     rr match {
       case Complete(response) =>
         val responseCode = response.status.intValue().toString

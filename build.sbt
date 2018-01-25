@@ -11,6 +11,9 @@ addCommandAlias("ci-quick",        ";build;test")
 addCommandAlias("doLocal",         ";rebuild;publishLocal")
 addCommandAlias("doSnapshotLocal", ";rebuild;setSnapshotVersion;publishLocal")
 
+addCommandAlias("mkSite",      ";docs/makeMicrosite")
+addCommandAlias("publishSite", ";docs/publishMicrosite")
+
 /**
   * Use with care. Releases a snapshot to sonatype repository.
   *
@@ -41,6 +44,8 @@ lazy val root = Project(id = "busymachines-commons", base = file("."))
   .settings(Settings.commonSettings)
   .aggregate(
     core,
+    result,
+    future,
     json,
     `rest-core`,
     `rest-core-testkit`,
@@ -54,8 +59,40 @@ lazy val core = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
-    name in ThisProject                           := "busymachines-commons-core",
-    libraryDependencies += Dependencies.scalaTest % Test withSources ()
+    name in ThisProject := "busymachines-commons-core",
+    libraryDependencies +=
+      Dependencies.scalaTest % Test withSources ()
+  )
+
+lazy val result = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-result",
+    libraryDependencies ++= Seq(
+      Dependencies.catsCore   withSources (),
+      Dependencies.catsEffect withSources (),
+      Dependencies.scalaTest  % Test withSources ()
+    )
+  )
+  .dependsOn(
+    core
+  )
+
+lazy val future = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-future",
+    libraryDependencies ++= Seq(
+      Dependencies.catsCore   withSources (),
+      Dependencies.catsEffect withSources (),
+      Dependencies.scalaTest  % Test withSources ()
+    )
+  )
+  .dependsOn(
+    core,
+    result
   )
 
 lazy val json = project
@@ -66,7 +103,7 @@ lazy val json = project
     libraryDependencies ++=
       Dependencies.circe.map(c => c withSources ()) ++ Seq(
         Dependencies.shapeless withSources (),
-        Dependencies.catsCore withSources (),
+        Dependencies.catsCore  withSources (),
         Dependencies.scalaTest % Test withSources ()
       )
   )
@@ -80,7 +117,7 @@ lazy val `rest-core` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-core",
     libraryDependencies ++= Seq(
-      Dependencies.akkaHttp withSources (),
+      Dependencies.akkaHttp  withSources (),
       Dependencies.akkaActor withSources (),
       /**
         * http://doc.akka.io/docs/akka-http/current/scala/http/introduction.html#using-akka-http
@@ -90,7 +127,7 @@ lazy val `rest-core` = project
         */
       Dependencies.akkaStream withSources (),
       //used for building the WebServerIO helpers
-      Dependencies.catsEffects withSources ()
+      Dependencies.catsEffect withSources ()
     )
   )
   .dependsOn(
@@ -104,8 +141,8 @@ lazy val `rest-core-testkit` = project
     name in ThisProject := "busymachines-commons-rest-core-testkit",
     libraryDependencies ++= Seq(
       Dependencies.akkaHttpTestKit withSources (),
-      Dependencies.scalaTest withSources (),
-      Dependencies.scalaTest % Test withSources ()
+      Dependencies.scalaTest       withSources (),
+      Dependencies.scalaTest       % Test withSources ()
     )
   )
   .dependsOn(
@@ -170,4 +207,55 @@ lazy val `semver-parsers` = project
   .dependsOn(
     core,
     `semver`
+  )
+
+lazy val docs = project
+  .enablePlugins(MicrositesPlugin)
+  .enablePlugins(TutPlugin)
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.noPublishSettings)
+  .settings(micrositeTasksSettings)
+  .settings(
+    micrositeName             := "busymachines-commmons",
+    micrositeDescription      := "Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala",
+    micrositeBaseUrl          := "/busymachines-commons",
+    micrositeDocumentationUrl := "/busymachines-commons/docs/",
+    micrositeHomepage         := "http://busymachines.github.io/busymachines-commons/",
+    micrositeGithubOwner      := "busymachines",
+    micrositeGithubRepo       := "busymachines-commons",
+    micrositeHighlightTheme   := "atom-one-light",
+    //-------------- docs project ------------
+    //micrositeImgDirectory := (resourceDirectory in Compile).value / "microsite" / "images",
+    //micrositeCssDirectory := (resourceDirectory in Compile).value / "microsite" / "styles"
+    //micrositeJsDirectory := (resourceDirectory in Compile).value / "microsite" / "scripts"
+    micrositePalette := Map(
+      "brand-primary"   -> "#E05236",
+      "brand-secondary" -> "#3F3242",
+      "brand-tertiary"  -> "#2D232F",
+      "gray-dark"       -> "#453E46",
+      "gray"            -> "#837F84",
+      "gray-light"      -> "#E3E2E3",
+      "gray-lighter"    -> "#F4F3F4",
+      "white-color"     -> "#FFFFFF"
+    ),
+    //micrositeFavicons := Seq(
+    //  MicrositeFavicon("favicon16x16.png", "16x16"),
+    //  MicrositeFavicon("favicon32x32.png", "32x32")
+    //),
+    micrositeFooterText := Some("""Ⓒ 2018 <a href="https://www.busymachines.com/">BusyMachines</a>"""),
+    //------ same as default settings --------
+    micrositePushSiteWith      := GHPagesPlugin,
+    micrositeGitHostingService := GitHub
+  )
+  .dependsOn(
+    //core,
+    //result,
+    //future,
+    //json,
+    //`rest-core`,
+    //`rest-core-testkit`,
+    //`rest-json`,
+    //`rest-json-testkit`,
+    //`semver`,
+    //`semver-parsers`
   )

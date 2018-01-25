@@ -1,0 +1,39 @@
+options:
+  - title: Getting Started
+    url: docs/index.html
+
+  - title: Help!
+    url: docs/help.html
+
+  - title: Learning Materials
+    url: docs/learning.html
+
+  - title: Developer's Guide
+    url: docs/developer-guide.html
+
+  - title: core
+    url: docs/core.html
+
+  - title: result
+    url: docs/result.html
+
+  - title: future
+    url: docs/future.html
+
+  - title: json
+    url: docs/json.html
+
+  - title: rest
+    url: docs/rest.html
+
+  - title: rest-testkit
+    url: docs/rest-testkit.html
+
+  - title: semver
+    url: docs/semver.html
+
+  - title: semver-parsers
+    url: docs/semver-parsers.html
+
+  - title: Publishing Artifacts
+    url: docs/publishing-artifacts.html
