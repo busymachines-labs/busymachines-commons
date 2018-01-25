@@ -1,5 +1,6 @@
 package busymachines.future
 
+import busymachines.core.Anomaly
 import busymachines.duration
 import busymachines.duration.FiniteDuration
 import busymachines.result._
@@ -23,17 +24,26 @@ final class UnsafeFutureOps[T](private[this] val f: Future[T]) {
     *
     * This is here more as a convenience method for testing
     */
-  def unsafeGet(timeout: FiniteDuration = duration.minutes(1)): T =
-    FutureUtil.unsafeGet(f, timeout)
+  def syncUnsafeGet(timeout: FiniteDuration = duration.minutes(1)): T =
+    FutureUtil.syncUnsafeGet(f, timeout)
 
   /**
     * Using this is highly discouraged
     *
     * This is here more as a convenience method for testing
     */
-  def toResult(timeout: FiniteDuration = duration.minutes(1)): Result[T] =
-    FutureUtil.toResult(f, timeout)
+  def syncAwaitReady(timeout: FiniteDuration = duration.minutes(1)): Future[T] =
+    FutureUtil.syncAwaitReady(f, timeout)
 
+  /**
+    * Using this is highly discouraged
+    *
+    * This is here more as a convenience method for testing
+    */
+  def syncAsResult(timeout: FiniteDuration = duration.minutes(1)): Result[T] =
+    FutureUtil.syncAsResult(f, timeout)
+
+  def asUnit(implicit ec: ExecutionContext): Future[Unit] = FutureUtil.asUnitFuture(f)
 }
 
 /**
@@ -42,9 +52,7 @@ final class UnsafeFutureOps[T](private[this] val f: Future[T]) {
   */
 final class SafeFutureOps[T](f: => Future[T]) {
 
-  def toIO(implicit ec: ExecutionContext): IO[T] = {
-    FutureUtil.toIO(f)
-  }
+  def asIO(implicit ec: ExecutionContext): IO[T] = FutureUtil.asIO(f)
 }
 
 /**
@@ -52,8 +60,16 @@ final class SafeFutureOps[T](f: => Future[T]) {
   */
 object CompanionFutureOps {
 
-  def toIO[T](f: => Future[T])(implicit ec: ExecutionContext): IO[T] =
-    FutureUtil.toIO(f)
+  /**
+    * @param t
+    *   Never, ever use a side-effecting computation when defining the value of
+    *   this parameter
+    */
+  def pure[T](t: T): Future[T] = FutureUtil.pure(t)
+
+  def fail[T](a: Anomaly): Future[T] = FutureUtil.fail(a)
+
+  def asIO[T](f: => Future[T])(implicit ec: ExecutionContext): IO[T] = FutureUtil.asIO(f)
 
   /**
     *

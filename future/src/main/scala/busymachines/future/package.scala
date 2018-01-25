@@ -6,4 +6,4 @@ package busymachines
   * @since 09 Jan 2018
   *
   */
-package object future extends FutureDefinitions
+package object future extends FutureTypeDefinitions with FutureSyntaxImplicits
