@@ -42,3 +42,18 @@ addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.4.0")
   * }}}
   */
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.5.7")
+
+/**
+  * Used to build the documentation.
+  *
+  * https://github.com/47deg/sbt-microsites
+  */
+addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.15")
+
+/**
+  *
+  * Used by sbt-microsites
+  *
+  * https://github.com/sbt/sbt-ghpages
+  */
+addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
