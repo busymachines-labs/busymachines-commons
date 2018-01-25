@@ -76,39 +76,39 @@ object FutureUtil {
   def condWith[T](test: Boolean, correct: => Future[T], anomaly: => Anomaly): Future[T] =
     if (test) correct else FutureUtil.fail(anomaly)
 
-  def failOnTrue(b: Boolean, anomaly: => Anomaly): Future[Unit] =
-    if (b) FutureUtil.fail(anomaly) else Future.unit
+  def failOnTrue(test: Boolean, anomaly: => Anomaly): Future[Unit] =
+    if (test) FutureUtil.fail(anomaly) else Future.unit
 
-  def failOnFalse(b: Boolean, anomaly: => Anomaly): Future[Unit] =
-    if (!b) FutureUtil.fail(anomaly) else Future.unit
+  def failOnFalse(test: Boolean, anomaly: => Anomaly): Future[Unit] =
+    if (!test) FutureUtil.fail(anomaly) else Future.unit
 
-  def flatCond[T](fb: Future[Boolean], correct: => T, anomaly: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
-    fb flatMap (b => FutureUtil.cond(b, correct, anomaly))
+  def flatCond[T](test: Future[Boolean], correct: => T, anomaly: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+    test flatMap (b => FutureUtil.cond(b, correct, anomaly))
 
   def flatCondWith[T](
-    fb:          Future[Boolean],
+    test:          Future[Boolean],
     correct:     => Future[T],
     anomaly:     => Anomaly
   )(implicit ec: ExecutionContext): Future[T] =
-    fb flatMap (b => FutureUtil.condWith(b, correct, anomaly))
+    test flatMap (b => FutureUtil.condWith(b, correct, anomaly))
 
-  def flatFailOnTrue(fb: Future[Boolean], anomaly: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
-    fb flatMap (b => if (b) FutureUtil.fail(anomaly) else Future.unit)
+  def flatFailOnTrue(test: Future[Boolean], anomaly: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
+    test flatMap (b => if (b) FutureUtil.fail(anomaly) else Future.unit)
 
-  def flatFailOnFalse(fb: Future[Boolean], anomaly: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
-    fb flatMap (b => if (!b) FutureUtil.fail(anomaly) else Future.unit)
+  def flatFailOnFalse(test: Future[Boolean], anomaly: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
+    test flatMap (b => if (!b) FutureUtil.fail(anomaly) else Future.unit)
 
-  def effectOnTrue[T](b: Boolean, eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
-    if (b) FutureUtil.asUnitFuture(eff) else Future.unit
+  def effectOnTrue[T](test: Boolean, eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
+    if (test) FutureUtil.asUnitFuture(eff) else Future.unit
 
-  def effectOnFalse[T](b: Boolean, eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
-    if (!b) FutureUtil.asUnitFuture(eff) else Future.unit
+  def effectOnFalse[T](test: Boolean, eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
+    if (!test) FutureUtil.asUnitFuture(eff) else Future.unit
 
-  def flatEffectOnTrue[T](fb: Future[Boolean], eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
-    fb flatMap (b => if (b) FutureUtil.asUnitFuture(eff) else Future.unit)
+  def flatEffectOnTrue[T](test: Future[Boolean], eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
+    test flatMap (b => if (b) FutureUtil.asUnitFuture(eff) else Future.unit)
 
-  def flatEffectOnFalse[T](fb: Future[Boolean], eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
-    fb flatMap (b => if (!b) FutureUtil.asUnitFuture(eff) else Future.unit)
+  def flatEffectOnFalse[T](test: Future[Boolean], eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
+    test flatMap (b => if (!b) FutureUtil.asUnitFuture(eff) else Future.unit)
 
   private val UnitFunction: Any => Unit = _ => ()
   def asUnitFuture[T](f: Future[T])(implicit ec: ExecutionContext): Future[Unit] = f.map(UnitFunction)

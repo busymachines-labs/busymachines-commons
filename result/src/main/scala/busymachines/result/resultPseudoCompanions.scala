@@ -84,23 +84,23 @@ object Result {
   //==================== Result from special cased Result =====================
   //===========================================================================
 
-  def cond[T](b: Boolean, correct: => T, anomaly: => Anomaly): Result[T] =
-    Either.cond[Anomaly, T](b, correct, anomaly)
+  def cond[T](test: Boolean, correct: => T, anomaly: => Anomaly): Result[T] =
+    Either.cond[Anomaly, T](test, correct, anomaly)
 
-  def failOnTrue(b: Boolean, anomaly: => Anomaly): Result[Unit] =
-    if (b) Result.incorrect(anomaly) else Result.unit
+  def failOnTrue(test: Boolean, anomaly: => Anomaly): Result[Unit] =
+    if (test) Result.incorrect(anomaly) else Result.unit
 
-  def failOnFalse(b: Boolean, anomaly: => Anomaly): Result[Unit] =
-    if (!b) Result.incorrect(anomaly) else Result.unit
+  def failOnFalse(test: Boolean, anomaly: => Anomaly): Result[Unit] =
+    if (!test) Result.incorrect(anomaly) else Result.unit
 
-  def flatCond[T](br: Result[Boolean], correct: => T, anomaly: => Anomaly): Result[T] =
-    br flatMap (b => Result.cond(b, correct, anomaly))
+  def flatCond[T](test: Result[Boolean], correct: => T, anomaly: => Anomaly): Result[T] =
+    test flatMap (b => Result.cond(b, correct, anomaly))
 
-  def flatFailOnTrue(br: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
-    br flatMap (b => if (b) Result.incorrect(anomaly) else Result.unit)
+  def flatFailOnTrue(test: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
+    test flatMap (b => if (b) Result.incorrect(anomaly) else Result.unit)
 
-  def flatFailOnFalse(br: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
-    br flatMap (b => if (!b) Result.incorrect(anomaly) else Result.unit)
+  def flatFailOnFalse(test: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
+    test flatMap (b => if (!b) Result.incorrect(anomaly) else Result.unit)
 
   //===========================================================================
   //===================== Result to various (pseudo)monads ====================
