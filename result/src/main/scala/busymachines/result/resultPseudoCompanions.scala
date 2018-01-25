@@ -3,6 +3,9 @@ package busymachines.result
 import scala.util.{Failure, Success, Try}
 import scala.util.control.NonFatal
 import busymachines.core._
+import cats.effect.IO
+
+import scala.concurrent.Future
 
 /**
   * The reason this approach was chosen instead of aliasing the [[Either]] companion object
@@ -16,6 +19,11 @@ import busymachines.core._
   * @since 09 Jan 2018
   */
 object Result {
+
+  //===========================================================================
+  //========================== Primary constructors ===========================
+  //===========================================================================
+
   def pure[T](t:    T): Result[T] = Correct(t)
   def correct[T](t: T): Result[T] = Correct(t)
 
@@ -36,6 +44,10 @@ object Result {
       case t: Throwable if NonFatal(t) => Result.incorrect(CatastrophicError(t))
     }
   }
+
+  //===========================================================================
+  //==================== Result from various (pseudo)monads ===================
+  //===========================================================================
 
   def fromEither[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = {
     elr match {
@@ -68,9 +80,115 @@ object Result {
     }
   }
 
-  def cond[T](test: Boolean, correct: => T, anomaly: => Anomaly): Result[T] =
-    Either.cond[Anomaly, T](test, correct, anomaly)
+  //===========================================================================
+  //==================== Result from special cased Result =====================
+  //===========================================================================
 
+  def cond[T](b: Boolean, correct: => T, anomaly: => Anomaly): Result[T] =
+    Either.cond[Anomaly, T](b, correct, anomaly)
+
+  def failOnTrue(b: Boolean, anomaly: => Anomaly): Result[Unit] =
+    if (b) Result.incorrect(anomaly) else Result.unit
+
+  def failOnFalse(b: Boolean, anomaly: => Anomaly): Result[Unit] =
+    if (!b) Result.incorrect(anomaly) else Result.unit
+
+  def flatCond[T](br: Result[Boolean], correct: => T, anomaly: => Anomaly): Result[T] =
+    br flatMap (b => Result.cond(b, correct, anomaly))
+
+  def flatFailOnTrue(br: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
+    br flatMap (b => if (b) Result.incorrect(anomaly) else Result.unit)
+
+  def flatFailOnFalse(br: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
+    br flatMap (b => if (!b) Result.incorrect(anomaly) else Result.unit)
+
+  //===========================================================================
+  //===================== Result to various (pseudo)monads ====================
+  //===========================================================================
+
+  def asIO[T](r: Result[T]): IO[T] = r match {
+    case Left(value)  => IO.raiseError(value.asThrowable)
+    case Right(value) => IO.pure(value)
+  }
+
+  def unsafeAsOption[T](r: Result[T]): Option[T] = r match {
+    case Left(value)  => throw value.asThrowable
+    case Right(value) => Option(value)
+  }
+
+  def unsafeAsList[T](r: Result[T]): List[T] = r match {
+    case Left(value)  => throw value.asThrowable
+    case Right(value) => List(value)
+  }
+
+  def asTry[T](r: Result[T]): Try[T] = r match {
+    case Left(value)  => scala.util.Failure(value.asThrowable)
+    case Right(value) => scala.util.Success(value)
+  }
+
+  def asFuture[T](r: Result[T]): Future[T] = r match {
+    case Left(value)  => Future.failed(value.asThrowable)
+    case Right(value) => Future.successful(value)
+  }
+
+  def unsafeGet[T](r: Result[T]): T = r match {
+    case Left(value)  => throw value.asThrowable
+    case Right(value) => value
+  }
+
+  /**
+    * Use for those rare cases in which you suspect that functions returning Result
+    * are not pure.
+    *
+    * Need for this is indicative of bugs in the functions you're calling
+    *
+    * Example usage:
+    * {{{
+    *   var sideEffect = 0
+    *
+    *   val suspendedSideEffect: IO[Int] = Result {
+    *     println("DOING SPOOKY UNSAFE SIDE-EFFECTS BECAUSE I CAN'T PROGRAM PURELY!!")
+    *     sideEffect = 42
+    *     sideEffect
+    *   }.suspendInIO
+    *
+    *  //this is not thrown:
+    *  if (sideEffect == 42) throw CatastrophicError("Side-effects make me sad")
+    * }}}
+    */
+  def suspendInIO[T](r: => Result[T]): IO[T] = {
+    IO(r).flatMap {
+      case Right(value) => IO.pure(value)
+      case Left(value)  => IO.raiseError(value.asThrowable)
+    }
+  }
+
+  //===========================================================================
+  //============================== Transformers ===============================
+  //===========================================================================
+
+  def bimap[T, R](r: Result[T], good: T => R, bad: Anomaly => Anomaly): Result[R] = {
+    r.right.map(good).left.map(bad)
+  }
+
+  def morph[T, R](r: Result[T], good: T => R, bad: Anomaly => R): Result[R] = r match {
+    case Left(value)  => Result.pure(bad(value))
+    case Right(value) => Result.pure(good(value))
+  }
+
+  def recover[T, R >: T](r: Result[T], pf: PartialFunction[Anomaly, R]): Result[R] = r match {
+    case Left(a: Anomaly) if pf.isDefinedAt(a) => Result.pure(pf(a))
+    case _ => r
+  }
+
+  def recoverWith[T, R >: T](r: Result[T], pf: PartialFunction[Anomaly, Result[R]]): Result[R] = r match {
+    case Left(a: Anomaly) if pf.isDefinedAt(a) => pf(a)
+    case _ => r
+  }
+
+  //===========================================================================
+  //====================== Low-priority implicits =============================
+  //===========================================================================
 }
 
 /**
