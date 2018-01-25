@@ -5,7 +5,7 @@ title: rest
 [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-json_2.12) [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-rest-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-rest-core_2.12)
 # busymachines-commons-rest
 
-This is the joint documentation for two modules:
+This is the joint documentation for of modules:
 * `busymachines-commons-rest-core`
 * `busymachines-commonst-rest-json`
 
