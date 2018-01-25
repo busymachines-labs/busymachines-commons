@@ -3,7 +3,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-json_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-json_2.12)
 
 * stable: `0.2.0`
-* latest: `0.3.0-M1`
+* latest: `0.3.0-M2`
 
 `"com.busymachines" %% "busymachines-commons-json" % "0.2.0"`
 

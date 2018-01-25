@@ -7,7 +7,7 @@
 This module is vanilla scala _*only*_, compiled for scala version `2.12.4`
 
 * stable: `0.2.0`
-* latest: `0.3.0-M1`
+* latest: `0.3.0-M2`
 
 `"com.busymachines" %% "busymachines-commons-semver" % "0.2.0"`
 

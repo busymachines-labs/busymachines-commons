@@ -5,7 +5,7 @@
 ## artifacts
 
 * stable: `0.2.0`
-* latest: `0.3.0-M1`
+* latest: `0.3.0-M2`
 
 `"com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0"`
 
