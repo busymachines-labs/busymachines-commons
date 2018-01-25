@@ -11,7 +11,8 @@ addCommandAlias("ci-quick",        ";build;test")
 addCommandAlias("doLocal",         ";rebuild;publishLocal")
 addCommandAlias("doSnapshotLocal", ";rebuild;setSnapshotVersion;publishLocal")
 
-addCommandAlias("mkSite", ";docs/makeMicrosite")
+addCommandAlias("mkSite",      ";docs/makeMicrosite")
+addCommandAlias("publishSite", ";docs/publishMicrosite")
 
 /**
   * Use with care. Releases a snapshot to sonatype repository.
