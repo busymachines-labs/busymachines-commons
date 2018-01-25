@@ -222,7 +222,7 @@ lazy val docs = project
     micrositeHomepage         := "http://busymachines.github.io/busymachines-commons/",
     micrositeGithubOwner      := "busymachines",
     micrositeGithubRepo       := "busymachines-commons",
-    micrositeHighlightTheme   := "monokai",
+    micrositeHighlightTheme   := "atom-one-light",
     //-------------- docs project ------------
     //micrositeImgDirectory := (resourceDirectory in Compile).value / "microsite" / "images",
     //micrositeCssDirectory := (resourceDirectory in Compile).value / "microsite" / "styles"
