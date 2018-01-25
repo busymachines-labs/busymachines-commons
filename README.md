@@ -54,20 +54,20 @@ Module | Description | Version
 
 For easy copy-pasting:
 ```scala
-val bmcVersion: String = "0.2.0"
+lazy val bmCommonsVersion: String = "0.3.0-M2"
 
-val bmcCore            = "com.busymachines" %% "busymachines-commons-core" % bmcVersion
-val bmcJson            = "com.busymachines" %% "busymachines-commons-json" % bmcVersion
-val bmcRestCore        = "com.busymachines" %% "busymachines-commons-rest-core" % bmcVersion
-val bmcRestCoreTestkit = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmcVersion % Test
-val bmcRestJson        = "com.busymachines" %% "busymachines-commons-rest-json" % bmcVersion
-val bmcRestJsonTestkit = "com.busymachines" %% "busymachines-commons-rest-json-testkit" % bmcVersion % Test
+def bmCommons(n: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$n" % bmCommonsVersion
 
-val bmcSemVer         = "com.busymachines" %% "busymachines-commons-semver" % bmcVersion
-val bmcSemVerParsers  = "com.busymachines" %% "busymachines-commons-semver-parsers" % bmcVersion
-
-val bmcResult         = "com.busymachines" %% "busymachines-commons-result" % "0.3.0-M2"
-val bmcFuture         = "com.busymachines" %% "busymachines-commons-future" % "0.3.0-M2"
+lazy val bmcCore:          ModuleID = bmCommons("core") withSources ()
+lazy val bmcResult:        ModuleID = bmCommons("result") withSources () //not in 0.2.0
+lazy val bmcFuture:        ModuleID = bmCommons("future") withSources ()  //not in 0.2.0
+lazy val bmcJson:          ModuleID = bmCommons("json") withSources ()
+lazy val bmcRestCore:      ModuleID = bmCommons("rest-core") withSources ()
+lazy val bmcRestCoreTK:    ModuleID = bmCommons("rest-core-testkit") % Test withSources ()
+lazy val bmcRestJson:      ModuleID = bmCommons("rest-json") withSources ()
+lazy val bmcRestJsonTK:    ModuleID = bmCommons("rest-json-testkit") % Test withSources ()
+lazy val bmcSemVer:        ModuleID = bmCommons("semver") withSources ()
+lazy val bmcSemVerParsers: ModuleID = bmCommons("semver-parsers") withSources ()
 
 ```
 
@@ -107,39 +107,9 @@ The build is fairly straightforward. The root folder contains a phantom build fr
 
 ### scalafmt
 
-This codebase is formatted using [scalafmt](http://scalameta.org/scalafmt/). A simple `sbt scalafmt` formats your entire code. There are plenty of ways of using it with your favorite editor, as well. There's an [IntelliJ plugin](https://plugins.jetbrains.com/plugin/8236-scalafmt).
+This codebase is formatted using [scalafmt](http://scalameta.org/scalafmt/). A simple `sbt scalafmt` formats your entire code. There are plenty of ways of using it with your favorite editor, as well.
 
-#### scalafmt IntelliJ gotchas
-
-When using IntelliJ, for some unknown reason, the `.scalafmt.conf` file in the root folder is not picked up in any of the subfolders. This is especially weird since in other multiproject builds this has worked out well. Therefore, I duplicated the `.scalafmt.conf` file in all subfolders, for now. Yey, code duplication!
-
-In `sbt` it works just as expected.
-
-#### scalafmt dangling closing parenthesis ')'
-
-As is pointed out in the fmt config file, not putting a closing parenthesis on a newline when defining/using method params or case class properties one gets this perfect abomination:
-
-```scala
-final case class SemanticVersion(major: Int,
-                                 minor: Int,
-                                 patch: Int,
-                                 label: Option[Label] = Option.empty[Label],
-                                 meta:  Option[String] = Option.empty[String])
-    extends SemanticVersionOrdering with Ordered[SemanticVersion]
-```
-
-Instead of the reasonable formatting of:
-
-```scala
-final case class SemanticVersion(
-  major: Int,
-  minor: Int,
-  patch: Int,
-  label: Option[Label] = Option.empty[Label],
-  meta:  Option[String] = Option.empty[String]
-) extends SemanticVersionOrdering with Ordered[SemanticVersion]
-```
-
+There's an [IntelliJ plugin](https://plugins.jetbrains.com/plugin/8236-scalafmt).
 
 ## Contributing
 
