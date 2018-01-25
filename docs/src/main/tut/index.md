@@ -18,6 +18,7 @@ The vast majority of the credit goes out to the maintainers and contributors of 
 * [cats](https://github.com/typelevel/cats)
 * [cats-effect](https://github.com/typelevel/cats-effect)
 * [circe](https://github.com/circe/circe)
+* [shapeless](https://github.com/milessabin/shapeless)
 * [atto-parsers](https://github.com/tpolecat/atto)
 * [akka](https://github.com/akka/akka)
 * [akka-http](https://github.com/akka/akka-http)
