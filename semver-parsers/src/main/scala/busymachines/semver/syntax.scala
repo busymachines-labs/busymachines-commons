@@ -1,6 +1,6 @@
 package busymachines.semver
 
-import busymachines.semver.SemanticVersionParsers.SemVerParsingResult
+import busymachines.result._
 
 /**
   *
@@ -12,7 +12,7 @@ object syntax {
 
   implicit class SemanticVersionCompanionOps(doNotCare: SemanticVersion.type) {
 
-    def fromString(semVer: String): SemVerParsingResult[SemanticVersion] =
+    def fromString(semVer: String): Result[SemanticVersion] =
       SemanticVersionParsers.parseSemanticVersion(semVer)
 
     def unsafeFromString(semVer: String): SemanticVersion =
@@ -21,7 +21,7 @@ object syntax {
 
   implicit class SemanticVersionLabelCompanionOps(doNotCare: Labels.type) {
 
-    def fromString(semVer: String): SemVerParsingResult[Label] =
+    def fromString(semVer: String): Result[Label] =
       SemanticVersionParsers.parseLabel(semVer)
 
     def unsafeFromString(label: String): Label =

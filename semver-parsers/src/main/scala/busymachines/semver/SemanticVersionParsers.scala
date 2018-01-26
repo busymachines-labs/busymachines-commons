@@ -1,5 +1,7 @@
 package busymachines.semver
 
+import busymachines.result._
+
 /**
   *
   * A fairly straight-forward definition of parsers.
@@ -14,30 +16,32 @@ package busymachines.semver
   */
 object SemanticVersionParsers {
 
-  type SemVerParsingResult[T] = Either[InvalidSemanticVersionParsingFailure, T]
-
   import atto._
   import atto.parser.all._
   import atto.syntax.all._
 
-  def parseSemanticVersion(semver: String): SemVerParsingResult[SemanticVersion] = {
-    Parser.parseOnly(semanticVersionEOI,    semver).either.left.map { parseError =>
-      InvalidSemanticVersionFailure(semver, parseError)
-    }
+  def parseSemanticVersion(semver: String): Result[SemanticVersion] = {
+    Parser
+      .parseOnly(semanticVersionEOI, semver)
+      .either
+      .left
+      .map(parseError => InvalidSemanticVersionFailure(semver, parseError))
   }
 
   def unsafeParseSemanticVersion(semVer: String): SemanticVersion = {
-    parseSemanticVersion(semVer).toTry.get
+    parseSemanticVersion(semVer).unsafeGet
   }
 
-  def parseLabel(label: String): SemVerParsingResult[Label] = {
-    Parser.parseOnly(labelParserEOI,            label).either.left.map { parseError =>
-      InvalidSemanticVersionLabelFailure(label, parseError)
-    }
+  def parseLabel(label: String): Result[Label] = {
+    Parser
+      .parseOnly(labelParserEOI, label)
+      .either
+      .left
+      .map(parseError => InvalidSemanticVersionLabelFailure(label, parseError))
   }
 
   def unsafeParseLabel(label: String): Label = {
-    this.parseLabel(label).toTry.get
+    this.parseLabel(label).unsafeGet
   }
 
   private val dotParser:  Parser[Char] = char('.')

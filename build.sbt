@@ -225,6 +225,7 @@ lazy val `semver-parsers` = project
   )
   .dependsOn(
     core,
+    result,
     `semver`
   )
 
