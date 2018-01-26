@@ -73,7 +73,7 @@ lazy val result = project
   .settings(
     name in ThisProject := "busymachines-commons-result",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest  % Test withSources ()
+      Dependencies.scalaTest % Test withSources ()
     )
   )
   .dependsOn(
@@ -86,7 +86,7 @@ lazy val future = project
   .settings(
     name in ThisProject := "busymachines-commons-future",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest  % Test withSources ()
+      Dependencies.scalaTest % Test withSources ()
     )
   )
   .dependsOn(
