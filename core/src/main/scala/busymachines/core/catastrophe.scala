@@ -24,7 +24,8 @@ abstract class CatastrophicError(
 object CatastrophicError extends CatastrophicErrorConstructors[CatastrophicError] {
   private[core] val CatastrophicErrorMsg = "Catastrophic Error"
 
-  override def apply(causedBy: Throwable): CatastrophicError = CatastrophicErrorImpl(causedBy = Option(causedBy))
+  override def apply(causedBy: Throwable): CatastrophicError =
+    CatastrophicErrorImpl(message = causedBy.getMessage, causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): CatastrophicError =
     CatastrophicErrorImpl(id = id, message = message, causedBy = Option(causedBy))
@@ -94,7 +95,7 @@ object InconsistentStateError extends CatastrophicErrorConstructors[Inconsistent
   private[core] val InconsistentStateErrorMsg: String = "Inconsistent State Error"
 
   override def apply(causedBy: Throwable): InconsistentStateError =
-    InconsistentStateErrorImpl(causedBy = Option(causedBy))
+    InconsistentStateErrorImpl(message = causedBy.getMessage, causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): InconsistentStateError =
     InconsistentStateErrorImpl(id = id, message = message, causedBy = Option(causedBy))
