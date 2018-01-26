@@ -7,7 +7,11 @@ Light-weight, modular eco-system of libraries needed to build http web apps, bui
 Head over to the microsite for more information:
 [http://busymachines.github.io/busymachines-commons/](http://busymachines.github.io/busymachines-commons/)
 
-### Contributors
+## Scala Version
+
+Currently built only against scala `2.12.4`. Latest version is `0.3.0-M2`
+
+## Contributors
 
 People who have contributed to the new version are:
 * @lorandszakacs
