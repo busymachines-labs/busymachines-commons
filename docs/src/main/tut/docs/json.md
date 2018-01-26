@@ -23,6 +23,22 @@ You can glean 99% of what's going on here by first understanding `circe`. This m
 - shapeless 2.3.3
 - cats 1.0.1
 
+## Gotchas!!
+
+If you are trying to `autoderive` codecs for [Result[T]](result.html) then avoid explicitely importing or otherwise having in scope the codec `busymachines.json.AnomalyJsonCodec`.
+
+Having these causes automatic derivation to derive a generic encoder for `Either[Anomaly, T]`, which is quite even without this bug. What will happen is that it will not be able to deserialize `Anomalies`, only simple `Anomaly` object.
+
+Instead, explicitely import (or otherwise have in scope) the implicits defined in `busymachines.json.ResultJsonCodec`. So you ought to have the following in scope when `autoderiving`:
+```scala
+  import busymachines.result.Result
+  import busymachines.json._
+  import busymachines.json.autoderive._
+  import busymachines.json.ResultJsonCodec._
+```
+
+Same applies to `derive` as well. But there it should be more intuitive to import the `ResultJsonCodec`.
+
 ## Recommended usage
 
 If you are writing a full-fledged web-server with literally hundreds of REST API endpoints, then it is a good idea to minimize the usage of `import busymachines.json.autoderive._` because this can seriously increase your compilation times, and instead use the following pattern:
