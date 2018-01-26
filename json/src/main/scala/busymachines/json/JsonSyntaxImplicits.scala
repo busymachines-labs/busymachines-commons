@@ -1,12 +1,14 @@
 package busymachines.json
 
+import busymachines.result.Result
+
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
   * @since 19 Oct 2017
   *
   */
-trait JsonSyntax {
+trait JsonSyntaxImplicits {
 
   implicit final class EncoderOps[A](val wrappedEncodeable: A) {
     def asJson(implicit encoder: Encoder[A]): Json = encoder(wrappedEncodeable)
@@ -21,7 +23,7 @@ trait JsonSyntax {
     def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
       JsonDecoding.unsafeDecodeAs[A](rawJson)
 
-    def decodeAs[A](implicit decoder: Decoder[A]): JsonDecodingResult[A] = {
+    def decodeAs[A](implicit decoder: Decoder[A]): Result[A] = {
       JsonDecoding.decodeAs[A](rawJson)
     }
   }
@@ -31,7 +33,7 @@ trait JsonSyntax {
     def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
       JsonDecoding.unsafeDecodeAs[A](js)
 
-    def decodeAs[A](implicit decoder: Decoder[A]): JsonDecodingResult[A] = {
+    def decodeAs[A](implicit decoder: Decoder[A]): Result[A] = {
       JsonDecoding.decodeAs[A](js)
     }
 

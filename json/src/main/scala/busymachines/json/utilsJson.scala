@@ -1,7 +1,9 @@
 package busymachines.json
 
-import io.circe.parser._
 import busymachines.core._
+import busymachines.result._
+
+import io.circe.parser._
 import io.circe.Printer
 
 /**
@@ -12,12 +14,12 @@ import io.circe.Printer
   */
 object JsonDecoding {
 
-  def decodeAs[A](json: Json)(implicit decoder: Decoder[A]): JsonDecodingResult[A] = {
+  def decodeAs[A](json: Json)(implicit decoder: Decoder[A]): Result[A] = {
     val r: io.circe.Decoder.Result[A] = decoder.decodeJson(json)
     r.left.map(df => JsonDecodingFailure(df.getMessage))
   }
 
-  def decodeAs[A](json: String)(implicit decoder: Decoder[A]): JsonDecodingResult[A] = {
+  def decodeAs[A](json: String)(implicit decoder: Decoder[A]): Result[A] = {
     val je = JsonParsing.parseString(json)
     je.flatMap(json => this.decodeAs(json))
   }
@@ -42,7 +44,7 @@ final case class JsonDecodingFailure(msg: String) extends InvalidInputFailure(ms
   */
 object JsonParsing {
 
-  def parseString(input: String): JsonParsingResult = {
+  def parseString(input: String): Result[Json] = {
     parse(input).left.map(pf => JsonParsingFailure(pf.message))
   }
 

@@ -126,7 +126,8 @@ lazy val json = project
       )
   )
   .dependsOn(
-    core
+    core,
+    result
   )
 
 lazy val `rest-core` = project

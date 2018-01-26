@@ -19,7 +19,7 @@ package busymachines.json
   * @since 19 Oct 2017
   *
   */
-object syntax extends JsonSyntax
+object syntax extends JsonSyntaxImplicits
 
 object derive extends SemiAutoDerivation
 

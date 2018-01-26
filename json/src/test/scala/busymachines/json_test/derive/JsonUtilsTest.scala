@@ -1,8 +1,8 @@
 package busymachines.json_test.derive
 
-import busymachines.json.{JsonDecoding, JsonDecodingFailure, JsonParsing, JsonParsingFailure}
 import busymachines.json_test.AnarchistMelon
 import org.scalatest.{EitherValues, FlatSpec, Matchers}
+import busymachines.result._
 import busymachines.json._
 
 /**
