@@ -11,4 +11,6 @@ import busymachines.result.{ResultSyntaxImplicits, ResultTypeDefinitions}
   */
 package object effects
     extends ResultTypeDefinitions with FutureTypeDefinitions with IOTypeDefinitions with TaskTypeDefinitions
-    with ResultSyntaxImplicits with FutureSyntaxImplicits {}
+    with ResultSyntaxImplicits with FutureSyntaxImplicits with ResultEffectsSyntaxImplicits {
+  val Result: busymachines.result.Result.type = busymachines.result.Result
+}
