@@ -51,4 +51,3 @@ final class ResultOps[T](private[this] val r: Result[T]) {
     */
   def asFutureAlias: Future[T] = Result.asFuture(r)
 }
-

@@ -1,6 +1,5 @@
 package busymachines
 
-
 /**
   * The reason we break the modularity of circe is rather pragmatic. The design philosophy of this
   * library is to have one import for the most common use case. And that is making it easy to encode/decode
