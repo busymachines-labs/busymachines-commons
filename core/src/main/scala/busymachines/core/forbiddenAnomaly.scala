@@ -56,7 +56,8 @@ abstract class ForbiddenFailure(
 object ForbiddenFailure
     extends ForbiddenFailure(MeaningfulAnomalies.ForbiddenMsg, None) with SingletonAnomalyProduct
     with FailureConstructors[ForbiddenFailure] {
-  override def apply(causedBy: Throwable): ForbiddenFailure = ForbiddenFailureImpl(causedBy = Option(causedBy))
+  override def apply(causedBy: Throwable): ForbiddenFailure =
+    ForbiddenFailureImpl(message = causedBy.getMessage, causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): ForbiddenFailure =
     ForbiddenFailureImpl(id = id, message = message, causedBy = Option(causedBy))

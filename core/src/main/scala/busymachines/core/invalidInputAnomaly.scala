@@ -56,7 +56,8 @@ abstract class InvalidInputFailure(
 object InvalidInputFailure
     extends InvalidInputFailure(MeaningfulAnomalies.InvalidInputMsg, None) with SingletonAnomalyProduct
     with FailureConstructors[InvalidInputFailure] {
-  override def apply(causedBy: Throwable): InvalidInputFailure = InvalidInputFailureImpl(causedBy = Option(causedBy))
+  override def apply(causedBy: Throwable): InvalidInputFailure =
+    InvalidInputFailureImpl(message = causedBy.getMessage, causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): InvalidInputFailure =
     InvalidInputFailureImpl(id = id, message = message, causedBy = Option(causedBy))

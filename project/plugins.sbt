@@ -57,3 +57,8 @@ addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.15")
   * https://github.com/sbt/sbt-ghpages
   */
 addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
+
+/**
+  * https://github.com/scoverage/sbt-scoverage
+  */
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")

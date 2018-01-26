@@ -162,7 +162,8 @@ object AnomalousFailure extends FailureConstructors[AnomalousFailure] {
   private[core] val AnomalousFailure = "Anomalous Failure"
   import busymachines.core.Anomaly.Parameters
 
-  override def apply(causedBy: Throwable): AnomalousFailure = AnomalousFailureImpl(causedBy = Option(causedBy))
+  override def apply(causedBy: Throwable): AnomalousFailure =
+    AnomalousFailureImpl(message = causedBy.getMessage, causedBy = Option(causedBy))
 
   override def apply(id: AnomalyID, message: String, causedBy: Throwable): AnomalousFailure =
     AnomalousFailureImpl(id = id, message = message, causedBy = Option(causedBy))

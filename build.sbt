@@ -14,6 +14,9 @@ addCommandAlias("doSnapshotLocal", ";rebuild;setSnapshotVersion;publishLocal")
 addCommandAlias("mkSite",      ";docs/makeMicrosite")
 addCommandAlias("publishSite", ";docs/publishMicrosite")
 
+addCommandAlias("coverageTest",       ";rebuild;coverage;test;coverageReport")
+addCommandAlias("coverageTest-quick", ";build;coverage;test;coverageReport")
+
 /**
   * Use with care. Releases a snapshot to sonatype repository.
   *
