@@ -6,16 +6,16 @@ addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentS
 
 addCommandAlias("build",           ";compile;Test/compile")
 addCommandAlias("rebuild",         ";clean;update;compile;Test/compile")
-addCommandAlias("ci",              ";rebuild;test")
-addCommandAlias("ci-quick",        ";build;test")
+addCommandAlias("ci",              ";scalafmtCheck;rebuild;coverage;test;coverageReport")
+addCommandAlias("ci-quick",        ";scalafmtCheck;build;coverage;test;coverageReport")
 addCommandAlias("doLocal",         ";rebuild;publishLocal")
 addCommandAlias("doSnapshotLocal", ";rebuild;setSnapshotVersion;publishLocal")
 
 addCommandAlias("mkSite",      ";docs/makeMicrosite")
 addCommandAlias("publishSite", ";docs/publishMicrosite")
 
-addCommandAlias("coverageTest",       ";rebuild;coverage;test;coverageReport")
-addCommandAlias("coverageTest-quick", ";build;coverage;test;coverageReport")
+addCommandAlias("doCoverage",       ";rebuild;coverage;test;coverageReport")
+addCommandAlias("doCoverage-quick", ";build;coverage;test;coverageReport")
 
 /**
   * Use with care. Releases a snapshot to sonatype repository.
