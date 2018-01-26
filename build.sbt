@@ -232,6 +232,8 @@ lazy val `semver-parsers` = project
 lazy val docs = project
   .enablePlugins(MicrositesPlugin)
   .enablePlugins(TutPlugin)
+  .disablePlugins(ScalafmtPlugin)
+  .disablePlugins(ScalafixPlugin)
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.noPublishSettings)
   .settings(micrositeTasksSettings)
@@ -267,15 +269,4 @@ lazy val docs = project
     micrositePushSiteWith      := GHPagesPlugin,
     micrositeGitHostingService := GitHub
   )
-  .dependsOn(
-    //core,
-    //result,
-    //future,
-    //json,
-    //`rest-core`,
-    //`rest-core-testkit`,
-    //`rest-json`,
-    //`rest-json-testkit`,
-    //`semver`,
-    //`semver-parsers`
-  )
+  .dependsOn()
