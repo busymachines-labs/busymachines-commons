@@ -47,15 +47,19 @@ final class UnsafeFutureOps[T](private[this] val f: Future[T]) {
 
 /**
   *
+  * This parameter is useless, this could have easily have been
+  * an object, but this way I get rid of the "unused variable"
+  * in the implicit def when doing this module's syntax...
+  *
   */
-object CompanionFutureOps {
+final class CompanionFutureOps(f: Future.type) {
 
   /**
     * @param t
     *   Never, ever use a side-effecting computation when defining the value of
     *   this parameter
     */
-  def pure[T](t: T): Future[T] = FutureUtil.pure(t)
+  def pure[T](t: T): Future[T] = f.successful(t)
 
   def fail[T](a: Anomaly): Future[T] = FutureUtil.fail(a)
 

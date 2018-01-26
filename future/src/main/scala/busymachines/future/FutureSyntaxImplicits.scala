@@ -1,7 +1,5 @@
 package busymachines.future
 
-import busymachines.result.Result
-
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
@@ -13,8 +11,8 @@ trait FutureSyntaxImplicits {
   implicit def bmCommonsUnsafeFutureOps[T](f: Future[T]): UnsafeFutureOps[T] =
     new UnsafeFutureOps[T](f)
 
-  implicit def bmCommonsFutureCompanionOps(f: Future.type): CompanionFutureOps.type =
-    CompanionFutureOps
+  implicit def bmCommonsFutureCompanionOps(f: Future.type): CompanionFutureOps =
+    new CompanionFutureOps(f)
 
   implicit def bmCommonsOptionToFutureOps[T](opt: Option[T]) =
     new OptionToFutureOps(opt)
