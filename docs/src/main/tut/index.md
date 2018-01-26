@@ -2,7 +2,7 @@
 layout: home
 ---
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12) [![Sonatype](https://img.shields.io/nexus/r/https/oss.sonatype.org/com.busymachines/busymachines-commons-core_2.12.svg)](https://oss.sonatype.org/#nexus-search;quick~busymachines-commons-core_2.12)
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12) [![Sonatype](https://img.shields.io/nexus/r/https/oss.sonatype.org/com.busymachines/busymachines-commons-core_2.12.svg)](https://oss.sonatype.org/#nexus-search;quick~busymachines-commons-core_2.12) [![Scala](https://img.shields.io/badge/scala-2.12.4-brightgreen.svg)](https://github.com/scala/scala/releases/tag/v2.12.4)
 
 # busymachines-commons
 
@@ -53,6 +53,3 @@ You can use github API to get a list of contributors from a public project. At t
 ```
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://api.github.com/repos/busymachines/busymachines-commons/contributors  > contributors.json
 ```
-
-
-
