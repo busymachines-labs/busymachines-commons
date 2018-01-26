@@ -3,7 +3,6 @@ package busymachines.result
 import scala.util.{Failure, Success, Try}
 import scala.util.control.NonFatal
 import busymachines.core._
-import cats.effect.IO
 
 import scala.concurrent.Future
 
@@ -106,11 +105,6 @@ object Result {
   //===================== Result to various (pseudo)monads ====================
   //===========================================================================
 
-  def asIO[T](r: Result[T]): IO[T] = r match {
-    case Left(value)  => IO.raiseError(value.asThrowable)
-    case Right(value) => IO.pure(value)
-  }
-
   def unsafeAsOption[T](r: Result[T]): Option[T] = r match {
     case Left(value)  => throw value.asThrowable
     case Right(value) => Option(value)
@@ -134,33 +128,6 @@ object Result {
   def unsafeGet[T](r: Result[T]): T = r match {
     case Left(value)  => throw value.asThrowable
     case Right(value) => value
-  }
-
-  /**
-    * Use for those rare cases in which you suspect that functions returning Result
-    * are not pure.
-    *
-    * Need for this is indicative of bugs in the functions you're calling
-    *
-    * Example usage:
-    * {{{
-    *   var sideEffect = 0
-    *
-    *   val suspendedSideEffect: IO[Int] = Result {
-    *     println("DOING SPOOKY UNSAFE SIDE-EFFECTS BECAUSE I CAN'T PROGRAM PURELY!!")
-    *     sideEffect = 42
-    *     sideEffect
-    *   }.suspendInIO
-    *
-    *  //this is not thrown:
-    *  if (sideEffect == 42) throw CatastrophicError("Side-effects make me sad")
-    * }}}
-    */
-  def suspendInIO[T](r: => Result[T]): IO[T] = {
-    IO(r).flatMap {
-      case Right(value) => IO.pure(value)
-      case Left(value)  => IO.raiseError(value.asThrowable)
-    }
   }
 
   //===========================================================================

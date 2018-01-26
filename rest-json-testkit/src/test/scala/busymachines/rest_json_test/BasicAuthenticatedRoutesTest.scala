@@ -26,8 +26,10 @@ class BasicAuthenticatedRoutesTest extends FlatSpec with JsonRestAPITest {
 
   it should "... return 401 Unauthorized when trying to access route without authentication" in {
     context(Contexts.none) { implicit cc =>
-      get("/basic_authentication") {
-        expectStatus(StatusCodes.Unauthorized)
+      debug {
+        get("/basic_authentication") {
+          expectStatus(StatusCodes.Unauthorized)
+        }
       }
     }
   }

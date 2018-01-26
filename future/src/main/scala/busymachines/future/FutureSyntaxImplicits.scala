@@ -16,9 +16,6 @@ trait FutureSyntaxImplicits {
   implicit def bmCommonsFutureCompanionOps(f: Future.type): CompanionFutureOps.type =
     CompanionFutureOps
 
-  implicit def bmCommonsSafeFutureOps[T](f: => Future[T]): SafeFutureOps[T] =
-    new SafeFutureOps[T](f)
-
   implicit def bmCommonsOptionToFutureOps[T](opt: Option[T]) =
     new OptionToFutureOps(opt)
 
@@ -27,9 +24,6 @@ trait FutureSyntaxImplicits {
 
   implicit def bmCommonsEitherToFutureOps[L, R](eit: Either[L, R]) =
     new EitherToFutureOps(eit)
-
-  implicit def bmCommonsResultToFutureOps[R](r: Result[R]) =
-    new ResultToFutureOps(r)
 
   implicit def bmCommonsBooleanToFutureOps(b: Boolean) =
     new BooleanToFutureOps(b)

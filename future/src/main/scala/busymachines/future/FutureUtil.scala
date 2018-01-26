@@ -5,7 +5,6 @@ import busymachines.core.CatastrophicError
 import busymachines.duration
 import busymachines.duration.FiniteDuration
 import busymachines.result._
-import cats.effect.IO
 
 import scala.collection.generic.CanBuildFrom
 import scala.collection.mutable
@@ -116,14 +115,6 @@ object FutureUtil {
   //===========================================================================
   //===================== Result to various (pseudo)monads ====================
   //===========================================================================
-
-  /**
-    * Safely suspend a Future in an IO monad, making this call referrentially
-    * transparent, if the given future is yielded by a def or an uninitialized
-    * lazy val.
-    */
-  def asIO[T](f: => Future[T])(implicit ec: ExecutionContext): IO[T] =
-    IO.fromFuture(IO(f))
 
   /**
     * Captures the failure of this Future in a [[Result]].

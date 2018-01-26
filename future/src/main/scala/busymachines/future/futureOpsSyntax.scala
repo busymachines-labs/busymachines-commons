@@ -4,7 +4,6 @@ import busymachines.core.Anomaly
 import busymachines.duration
 import busymachines.duration.FiniteDuration
 import busymachines.result._
-import cats.effect.IO
 
 import scala.collection.generic.CanBuildFrom
 
@@ -47,15 +46,6 @@ final class UnsafeFutureOps[T](private[this] val f: Future[T]) {
 }
 
 /**
-  * This is the most useful thing since sliced-bread. No more hidden side-effects
-  * from annoying Future.apply
-  */
-final class SafeFutureOps[T](f: => Future[T]) {
-
-  def asIO(implicit ec: ExecutionContext): IO[T] = FutureUtil.asIO(f)
-}
-
-/**
   *
   */
 object CompanionFutureOps {
@@ -68,8 +58,6 @@ object CompanionFutureOps {
   def pure[T](t: T): Future[T] = FutureUtil.pure(t)
 
   def fail[T](a: Anomaly): Future[T] = FutureUtil.fail(a)
-
-  def asIO[T](f: => Future[T])(implicit ec: ExecutionContext): IO[T] = FutureUtil.asIO(f)
 
   /**
     *

@@ -13,9 +13,6 @@ trait ResultSyntaxImplicits {
   implicit def bmCommonsResultOps[T](t: Result[T]): ResultOps[T] =
     new ResultOps(t)
 
-  implicit def bmCommonsSuspendedResultOps[T](t: => Result[T]): SuspendedResultOps[T] =
-    new SuspendedResultOps(t)
-
   implicit def bmCommonsOptionAsResultOps[T](opt: Option[T]): OptionAsResultOps[T] =
     new OptionAsResultOps(opt)
 

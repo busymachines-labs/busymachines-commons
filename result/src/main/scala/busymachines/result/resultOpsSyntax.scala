@@ -1,7 +1,6 @@
 package busymachines.result
 
 import busymachines.core.Anomaly
-import cats.effect.IO
 
 import scala.concurrent.Future
 import scala.util.Try
@@ -32,8 +31,6 @@ final class ResultOps[T](private[this] val r: Result[T]) {
   //===================== Result to various (pseudo)monads ====================
   //===========================================================================
 
-  def asIO: IO[T] = Result.asIO(r)
-
   def unsafeAsOption: Option[T] = Result.unsafeAsOption(r)
 
   def unsafeAsList: List[T] = Result.unsafeAsList(r)
@@ -55,27 +52,3 @@ final class ResultOps[T](private[this] val r: Result[T]) {
   def asFutureAlias: Future[T] = Result.asFuture(r)
 }
 
-final class SuspendedResultOps[T](r: => Result[T]) {
-
-  /**
-    * Use for those rare cases in which you suspect that functions returning Result
-    * are not pure.
-    *
-    * Need for this is indicative of bugs in the functions you're calling
-    *
-    * Example usage:
-    * {{{
-    *   var sideEffect = 0
-    *
-    *   val suspendedSideEffect: IO[Int] = Result {
-    *     println("DOING SPOOKY UNSAFE SIDE-EFFECTS BECAUSE I CAN'T PROGRAM PURELY!!")
-    *     sideEffect = 42
-    *     sideEffect
-    *   }.suspendInIO
-    *
-    *  //this is not thrown:
-    *  if (sideEffect == 42) throw CatastrophicError("Side-effects make me sad")
-    * }}}
-    */
-  def suspendInIO: IO[T] = Result.suspendInIO(r)
-}

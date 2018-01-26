@@ -71,7 +71,7 @@ object RestAPI {
     override protected def routeDefinition: Route = r
 
     //no point in "handling exceptions again"
-    override def route: Route = r
+    override def route: Route = routeDefinition
   }
 
   /**
