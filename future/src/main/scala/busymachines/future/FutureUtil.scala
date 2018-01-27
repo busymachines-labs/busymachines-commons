@@ -98,19 +98,19 @@ object FutureUtil {
     test flatMap (b => if (!b) FutureUtil.fail(anomaly) else Future.unit)
 
   def effectOnTrue[T](test: Boolean, eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
-    if (test) FutureUtil.asUnitFuture(eff) else Future.unit
+    if (test) FutureUtil.discardContent(eff) else Future.unit
 
   def effectOnFalse[T](test: Boolean, eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
-    if (!test) FutureUtil.asUnitFuture(eff) else Future.unit
+    if (!test) FutureUtil.discardContent(eff) else Future.unit
 
   def flatEffectOnTrue[T](test: Future[Boolean], eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
-    test flatMap (b => if (b) FutureUtil.asUnitFuture(eff) else Future.unit)
+    test flatMap (b => if (b) FutureUtil.discardContent(eff) else Future.unit)
 
   def flatEffectOnFalse[T](test: Future[Boolean], eff: => Future[T])(implicit ec: ExecutionContext): Future[Unit] =
-    test flatMap (b => if (!b) FutureUtil.asUnitFuture(eff) else Future.unit)
+    test flatMap (b => if (!b) FutureUtil.discardContent(eff) else Future.unit)
 
   private val UnitFunction: Any => Unit = _ => ()
-  def asUnitFuture[T](f: Future[T])(implicit ec: ExecutionContext): Future[Unit] = f.map(UnitFunction)
+  def discardContent[T](f: Future[T])(implicit ec: ExecutionContext): Future[Unit] = f.map(UnitFunction)
 
   //===========================================================================
   //===================== Result to various (pseudo)monads ====================

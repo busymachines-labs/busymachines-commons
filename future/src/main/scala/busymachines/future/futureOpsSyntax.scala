@@ -42,7 +42,7 @@ final class UnsafeFutureOps[T](private[this] val f: Future[T]) {
   def syncAsResult(timeout: FiniteDuration = duration.minutes(1)): Result[T] =
     FutureUtil.syncAsResult(f, timeout)
 
-  def asUnit(implicit ec: ExecutionContext): Future[Unit] = FutureUtil.asUnitFuture(f)
+  def discardContent(implicit ec: ExecutionContext): Future[Unit] = FutureUtil.discardContent(f)
 }
 
 /**
