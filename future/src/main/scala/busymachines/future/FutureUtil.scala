@@ -27,7 +27,7 @@ object FutureUtil {
   def fail[T](a: Anomaly): Future[T] = Future.failed(a.asThrowable)
 
   //===========================================================================
-  //==================== Result from various (pseudo)monads ===================
+  //==================== Future from various (pseudo)monads ===================
   //===========================================================================
 
   def fromResult[R](r: Result[R]): Future[R] = Result.asFuture(r)
@@ -62,11 +62,18 @@ object FutureUtil {
     }
   }
 
+  def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): Future[T] = {
+    opt match {
+      case None    => Future.failed(ifNone)
+      case Some(v) => FutureUtil.pure(v)
+    }
+  }
+
   def optionFlatten[T](fopt: Future[Option[T]], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
     fopt flatMap (opt => FutureUtil.fromOption(opt, ifNone))
 
   //===========================================================================
-  //==================== Result from special cased Result =====================
+  //==================== Future from special cased Future =====================
   //===========================================================================
 
   def cond[T](test: Boolean, correct: => T, anomaly: => Anomaly): Future[T] =
@@ -113,7 +120,7 @@ object FutureUtil {
   def discardContent[T](f: Future[T])(implicit ec: ExecutionContext): Future[Unit] = f.map(UnitFunction)
 
   //===========================================================================
-  //===================== Result to various (pseudo)monads ====================
+  //===================== Future to various (pseudo)monads ====================
   //===========================================================================
 
   /**
@@ -161,9 +168,15 @@ object FutureUtil {
   //============================== Transformers ===============================
   //===========================================================================
 
-  def bimap[T, R](f: Future[T], good: T => R, bad: Throwable => Throwable)(implicit ec: ExecutionContext): Future[R] = {
-    f.transform(good, bad)
-  }
+  def bimap[T, R](f: Future[T], good: T => R, bad: Throwable => Anomaly)(implicit ec: ExecutionContext): Future[R] =
+    f.transform {
+      case scala.util.Success(g) => scala.util.Success(good(g))
+      case scala.util.Failure(g) => scala.util.Failure(bad(g).asThrowable)
+    }
+
+  def bimapWeak[T, R](f: Future[T], good: T => R, bad: Throwable => Throwable)(
+    implicit ec: ExecutionContext
+  ): Future[R] = f.transform(good, bad)
 
   /**
     * Used to transform the underlying [[Future]] into a successful one.

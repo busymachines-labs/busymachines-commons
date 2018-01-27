@@ -153,9 +153,8 @@ object Result {
     case _ => r
   }
 
-  //===========================================================================
-  //====================== Low-priority implicits =============================
-  //===========================================================================
+  private val UnitFunction: Any => Unit = _ => ()
+  def discardContent[T](r: Result[T]): Result[Unit] = r.map(UnitFunction)
 }
 
 /**

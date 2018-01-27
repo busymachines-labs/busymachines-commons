@@ -27,6 +27,8 @@ final class ResultOps[T](private[this] val r: Result[T]) {
 
   def recoverWith[R >: T](pf: PartialFunction[Anomaly, Result[R]]): Result[R] = Result.recoverWith(r, pf)
 
+  def discardContent: Result[Unit] = Result.discardContent(r)
+
   //===========================================================================
   //===================== Result to various (pseudo)monads ====================
   //===========================================================================
@@ -47,7 +49,8 @@ final class ResultOps[T](private[this] val r: Result[T]) {
     * Unfortunately because [[Result]] is not an actual companion
     * object, we cannot use implicit resolution priorities to make
     * this conversion "lower priority" than the one in the ``future``
-    * module.
+    * module, thus being able to keep the same name, but without ruining
+    * any imports of both the result, and future modules.
     */
   def asFutureAlias: Future[T] = Result.asFuture(r)
 }

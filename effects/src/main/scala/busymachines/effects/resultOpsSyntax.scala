@@ -1,7 +1,5 @@
 package busymachines.effects
 
-import busymachines.result._
-
 /**
   *
   * This is complementary syntax to [[busymachines.result.ResultOps]]
