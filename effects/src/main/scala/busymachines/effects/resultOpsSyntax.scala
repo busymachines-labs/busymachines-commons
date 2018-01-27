@@ -92,7 +92,7 @@ object ResultEffectsUtil {
     *  if (sideEffect == 42) throw CatastrophicError("Side-effects make me sad")
     * }}}
     */
-  def suspendInIO[T](r: => Result[T]): IO[T] = IO(r).flatMap(ResultEffectsUtil.asIO)
+  def suspendInIO[T](r: => Result[T]): IO[T] = IOEffectsUtil.fromResultSuspend(r)
 
   /**
     * Analagous to [[suspendInIO]]

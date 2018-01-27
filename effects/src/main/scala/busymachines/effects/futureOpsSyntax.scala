@@ -74,7 +74,7 @@ object FutureEffectsUtil {
     * you wish to transform is referentially transparent
     *
     */
-  def asIO[T](f: Future[T])(implicit ec: ExecutionContext): IO[T] = IOEffectsUtil.fromFuture(f)
+  def asIO[T](f: Future[T])(implicit ec: ExecutionContext): IO[T] = IOEffectsUtil.fromPureFuture(f)
 
   /**
     * !!! USE WITH CAUTION !!!
