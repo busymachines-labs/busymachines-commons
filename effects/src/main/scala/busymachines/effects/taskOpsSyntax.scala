@@ -14,8 +14,8 @@ import scala.util.control.NonFatal
   */
 trait TaskEffectsSyntaxImplicits {
 
-  implicit def bmCommonsTaskEffectsOpsSyntax[T](io: Task[T]): TaskEffectsOpsSyntax[T] =
-    new TaskEffectsOpsSyntax(io)
+  implicit def bmCommonsTaskEffectsOpsSyntax[T](task: Task[T]): TaskEffectsOpsSyntax[T] =
+    new TaskEffectsOpsSyntax(task)
 
   implicit def bmCommonsBooleanAsTaskOps(b: Boolean): BooleanAsTaskOps =
     new BooleanAsTaskOps(b)
@@ -26,8 +26,11 @@ trait TaskEffectsSyntaxImplicits {
   implicit def bmCommonsTaskOptionAsTaskOps[T](topt: Task[Option[T]]): TaskOptionAsTaskOps[T] =
     new TaskOptionAsTaskOps(topt)
 
-  implicit def bmCommonsTaskCompanionOps(io: Task.type): TaskCompanionOps =
-    new TaskCompanionOps(io)
+  implicit def bmCommonsTaskResultAsTaskOps[T](tr: Task[Result[T]]): TaskResultAsTaskOps[T] =
+    new TaskResultAsTaskOps(tr)
+
+  implicit def bmCommonsTaskCompanionOps(task: Task.type): TaskCompanionOps =
+    new TaskCompanionOps(task)
 
 }
 
@@ -90,13 +93,13 @@ final class TaskCompanionOps(val io: Task.type) {
   def discardContent[T](f: Task[T]) = TaskEffectsUtil.discardContent(f)
 
   def optionFlatten[T](fopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
-    TaskEffectsUtil.optionFlatten(fopt, ifNone)
+    TaskEffectsUtil.flattenOption(fopt, ifNone)
 
   def optionFlattenWeak[T](fopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
-    TaskEffectsUtil.optionFlattenWeak(fopt, ifNone)
+    TaskEffectsUtil.flattenOptionWeak(fopt, ifNone)
 
-  def resultFlatten[T](fr: Task[Result[T]]): Task[T] =
-    TaskEffectsUtil.resultFlatten(fr)
+  def flattenResult[T](fr: Task[Result[T]]): Task[T] =
+    TaskEffectsUtil.flattenResult(fr)
 
   def asIO[T](io: Task[T])(implicit s: Scheduler): IO[T] = TaskEffectsUtil.asIO(io)
 
@@ -206,9 +209,17 @@ final class TaskEffectsOpsSyntax[T](private[this] val io: Task[T]) {
   *
   */
 final class TaskOptionAsTaskOps[T](private[this] val ropt: Task[Option[T]]) {
-  def flattenOpt(ifNone: => Anomaly): Task[T] = TaskEffectsUtil.optionFlatten(ropt, ifNone)
+  def flattenOption(ifNone: => Anomaly): Task[T] = TaskEffectsUtil.flattenOption(ropt, ifNone)
 
-  def flattenOptWeak(ifNone: => Throwable): Task[T] = TaskEffectsUtil.optionFlattenWeak(ropt, ifNone)
+  def flattenOptionWeak(ifNone: => Throwable): Task[T] = TaskEffectsUtil.flattenOptionWeak(ropt, ifNone)
+}
+
+/**
+  *
+  *
+  */
+final class TaskResultAsTaskOps[T](private[this] val tr: Task[Result[T]]) {
+  def flattenResult: Task[T] = TaskEffectsUtil.flattenResult(tr)
 }
 
 /**
@@ -399,14 +410,14 @@ object TaskEffectsUtil {
   private val UnitFunction: Any => Unit = _ => ()
   def discardContent[T](f: Task[T]): Task[Unit] = f.map(UnitFunction)
 
-  def optionFlatten[T](fopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
+  def flattenOption[T](fopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
     fopt flatMap (opt => TaskEffectsUtil.fromOption(opt, ifNone))
 
-  def optionFlattenWeak[T](fopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
+  def flattenOptionWeak[T](fopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
     fopt flatMap (opt => TaskEffectsUtil.fromOptionWeak(opt, ifNone))
 
-  def resultFlatten[T](fr: Task[Result[T]]): Task[T] =
-    fr.flatMap(r => TaskEffectsUtil.fromResult(r))
+  def flattenResult[T](tr: Task[Result[T]]): Task[T] =
+    tr.flatMap(r => TaskEffectsUtil.fromResult(r))
 
   //===========================================================================
   //======================= Task to various (pseudo)monads ======================

@@ -518,13 +518,13 @@ class TaskEffectsTest extends FunSpec with Matchers {
 
     it("Task.optionFlattenWeak - correct") {
       val io     = Task(Result(42))
-      val flatIO = Task.resultFlatten(io)
+      val flatIO = Task.flattenResult(io)
       assert(flatIO.syncUnsafeGet() == 42)
     }
 
     it("Task.optionFlattenWeak - incorrect") {
       val io     = Task(Result.fail(anomaly))
-      val flatIO = Task.resultFlatten(io)
+      val flatIO = Task.flattenResult(io)
       the[InvalidInputFailure] thrownBy {
         flatIO.syncUnsafeGet()
       }
@@ -986,28 +986,43 @@ class TaskEffectsTest extends FunSpec with Matchers {
   }
 
   describe("Task — syntax Task[Option]") {
-    it("Task[Option].flattenOpt - some") {
-      val flatIO = Task(some).flattenOpt(anomaly)
+    it("Task[Option].flattenOption - some") {
+      val flatIO = Task(some).flattenOption(anomaly)
 
       assert(flatIO.syncUnsafeGet() == 42)
     }
 
-    it("Task[Option].flattenOpt - none") {
-      val flatIO = Task(none).flattenOpt(anomaly)
+    it("Task[Option].flattenOption - none") {
+      val flatIO = Task(none).flattenOption(anomaly)
       the[InvalidInputFailure] thrownBy {
         flatIO.syncUnsafeGet()
       }
     }
 
-    it("Task[Option].flattenWeak - some") {
-      val flatIO = Task(some).flattenOptWeak(throwable)
+    it("Task[Option].flattenOptionWeak - some") {
+      val flatIO = Task(some).flattenOptionWeak(throwable)
 
       assert(flatIO.syncUnsafeGet() == 42)
     }
 
-    it("Task[Option].flattenWeak - none") {
-      val flatIO = Task(none).flattenOptWeak(throwable)
+    it("Task[Option].flattenOptionWeak - none") {
+      val flatIO = Task(none).flattenOptionWeak(throwable)
       the[RuntimeException] thrownBy {
+        flatIO.syncUnsafeGet()
+      }
+    }
+  }
+
+  describe("Task — syntax Task[Result]") {
+    it("Task[Result].flattenResult - correct") {
+      val flatIO = Task(correct).flattenResult
+
+      assert(flatIO.syncUnsafeGet() == 42)
+    }
+
+    it("Task[Result].flattenResult - none") {
+      val flatIO = Task(incorrect).flattenResult
+      the[InvalidInputFailure] thrownBy {
         flatIO.syncUnsafeGet()
       }
     }
