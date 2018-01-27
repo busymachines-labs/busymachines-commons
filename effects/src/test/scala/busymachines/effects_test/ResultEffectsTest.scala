@@ -61,7 +61,7 @@ class ResultEffectsTest extends FlatSpec with Matchers {
     }.suspendInIO
 
     //this is not thrown:
-    if (sideEffect == 42) throw CatastrophicError("Side-effects make me sad")
+    if (sideEffect == 42) fail("side-effects make me sad")
 
     suspendedSideEffect.unsafeRunSync()
 
@@ -77,7 +77,7 @@ class ResultEffectsTest extends FlatSpec with Matchers {
     }.suspendInTask
 
     //this is not thrown:
-    if (sideEffect == 42) throw CatastrophicError("Side-effects make me sad")
+    if (sideEffect == 42) fail("side-effects make me sad")
 
     suspendedSideEffect.runAsync.syncAwaitReady()
 
