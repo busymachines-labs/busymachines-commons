@@ -2,8 +2,7 @@ package busymachines.effects_test
 
 import busymachines.core._
 import busymachines.effects._
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
+import org.scalatest._
 
 /**
   *
@@ -11,112 +10,113 @@ import org.scalatest.Matchers
   * @since 26 Jan 2018
   *
   */
-final class ResultEffectsTest extends FlatSpec with Matchers {
+final class ResultEffectsTest extends FunSpec with Matchers {
   private implicit val sc: Scheduler = Scheduler.global
 
-  behavior of "Result — effects ops"
+  describe("Result — effects ops") {
+    it("convert to IO — correct") {
+      assert(Result(42).asIO.unsafeRunSync() == 42)
 
-  it should "convert to IO — correct" in {
-    assert(Result(42).asIO.unsafeRunSync() == 42)
-
-    assert(Result.asIO(Result(42)).unsafeRunSync() == 42)
-  }
-
-  it should "convert to IO — incorrect" in {
-    the[InvalidInputFailure] thrownBy {
-      Result.fail(InvalidInputFailure("incorrect Result")).asIO.unsafeRunSync()
+      assert(Result.asIO(Result(42)).unsafeRunSync() == 42)
     }
 
-    the[InvalidInputFailure] thrownBy {
-      Result.asIO {
-        Result.fail(InvalidInputFailure("incorrect Result"))
-      }.unsafeRunSync()
-    }
-  }
+    it("convert to IO — incorrect") {
+      the[InvalidInputFailure] thrownBy {
+        Result.fail(InvalidInputFailure("incorrect Result")).asIO.unsafeRunSync()
+      }
 
-  it should "convert to Task — correct" in {
-    assert(Result(42).asTask.runAsync.syncUnsafeGet() == 42)
-
-    assert(Result.asTask(Result(42)).runAsync.syncUnsafeGet() == 42)
-  }
-
-  it should "convert to Task — incorrect" in {
-    the[InvalidInputFailure] thrownBy {
-      Result.fail(InvalidInputFailure("incorrect Result")).asTask.runAsync.syncUnsafeGet()
-    }
-
-    the[InvalidInputFailure] thrownBy {
-      Result.asTask {
-        Result.fail(InvalidInputFailure("incorrect Result"))
-      }.runAsync.syncUnsafeGet()
-    }
-  }
-
-  it should "properly suspend in IO" in {
-    var sideEffect = 0
-
-    val suspendedSideEffect: IO[Int] = Result {
-      sideEffect = 42
-      sideEffect
-    }.suspendInIO
-
-    //this is not thrown:
-    if (sideEffect == 42) fail("side-effects make me sad")
-
-    suspendedSideEffect.unsafeRunSync()
-
-    assert(sideEffect == 42, "side-effect should have been applied")
-  }
-
-  it should "properly suspend in IO — companion object method" in {
-    var sideEffect = 0
-
-    val suspendedSideEffect: IO[Int] = Result.suspendInIO {
-      Result {
-        sideEffect = 42
-        sideEffect
+      the[InvalidInputFailure] thrownBy {
+        Result.asIO {
+          Result.fail(InvalidInputFailure("incorrect Result"))
+        }.unsafeRunSync()
       }
     }
 
-    //this is not thrown:
-    if (sideEffect == 42) fail("side-effects make me sad")
+    it("convert to Task — correct") {
+      assert(Result(42).asTask.runAsync.syncUnsafeGet() == 42)
 
-    suspendedSideEffect.unsafeRunSync()
+      assert(Result.asTask(Result(42)).runAsync.syncUnsafeGet() == 42)
+    }
 
-    assert(sideEffect == 42, "side-effect should have been applied")
-  }
+    it("convert to Task — incorrect") {
+      the[InvalidInputFailure] thrownBy {
+        Result.fail(InvalidInputFailure("incorrect Result")).asTask.runAsync.syncUnsafeGet()
+      }
 
-  it should "properly suspend in Task" in {
-    var sideEffect = 0
-
-    val suspendedSideEffect: Task[Int] = Result {
-      sideEffect = 42
-      sideEffect
-    }.suspendInTask
-
-    //this is not thrown:
-    if (sideEffect == 42) fail("side-effects make me sad")
-
-    suspendedSideEffect.runAsync.syncAwaitReady()
-
-    assert(sideEffect == 42, "side-effect should have been applied")
-  }
-
-  it should "properly suspend in Task — companion object method" in {
-    var sideEffect = 0
-
-    val suspendedSideEffect: Task[Int] = Result.suspendInTask {
-      Result {
-        sideEffect = 42
-        sideEffect
+      the[InvalidInputFailure] thrownBy {
+        Result.asTask {
+          Result.fail(InvalidInputFailure("incorrect Result"))
+        }.runAsync.syncUnsafeGet()
       }
     }
 
-    //this is not thrown:
-    if (sideEffect == 42) fail("side-effects make me sad")
+    it("properly suspend ) IO") {
+      var sideEffect = 0
 
-    suspendedSideEffect.runAsync.syncAwaitReady()
+      val suspendedSideEffect: IO[Int] = Result {
+        sideEffect = 42
+        sideEffect
+      }.suspendInIO
 
-    assert(sideEffect == 42, "side-effect should have been applied")
+      //this is not thrown:
+      if (sideEffect == 42) fail("side-effects make me sad")
+
+      suspendedSideEffect.unsafeRunSync()
+
+      assert(sideEffect == 42, "side-effect ( have been applied")
+    }
+
+    it("properly suspend ) IO — companion object method") {
+      var sideEffect = 0
+
+      val suspendedSideEffect: IO[Int] = Result.suspendInIO {
+        Result {
+          sideEffect = 42
+          sideEffect
+        }
+      }
+
+      //this is not thrown:
+      if (sideEffect == 42) fail("side-effects make me sad")
+
+      suspendedSideEffect.unsafeRunSync()
+
+      assert(sideEffect == 42, "side-effect ( have been applied")
+    }
+
+    it("properly suspend ) Task") {
+      var sideEffect = 0
+
+      val suspendedSideEffect: Task[Int] = Result {
+        sideEffect = 42
+        sideEffect
+      }.suspendInTask
+
+      //this is not thrown:
+      if (sideEffect == 42) fail("side-effects make me sad")
+
+      suspendedSideEffect.runAsync.syncAwaitReady()
+
+      assert(sideEffect == 42, "side-effect ( have been applied")
+    }
+
+    it("properly suspend ) Task — companion object method") {
+      var sideEffect = 0
+
+      val suspendedSideEffect: Task[Int] = Result.suspendInTask {
+        Result {
+          sideEffect = 42
+          sideEffect
+        }
+      }
+
+      //this is not thrown:
+      if (sideEffect == 42) fail("side-effects make me sad")
+
+      suspendedSideEffect.runAsync.syncAwaitReady()
+
+      assert(sideEffect == 42, "side-effect ( have been applied")
+    }
   }
+
 }
