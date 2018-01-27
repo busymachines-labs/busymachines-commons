@@ -12,6 +12,12 @@ import monix.{eval      => mev}
 trait TaskTypeDefinitions {
   type CancellableFuture[T] = mex.CancelableFuture[T]
 
+  /**
+    * N.B.
+    * that Scheduler is also a [[scala.concurrent.ExecutionContext]],
+    * which makes this type the only implicit in context necessary to do
+    * interop between [[Task]] and [[scala.concurrent.Future]]
+    */
   type Scheduler = mex.Scheduler
   type Task[T]   = mev.Task[T]
 
