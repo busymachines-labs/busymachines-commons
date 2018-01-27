@@ -50,7 +50,7 @@ final class ResultEffectsTest extends FunSpec with Matchers {
       }
     }
 
-    it("properly suspend ) IO") {
+    it("properly suspend in IO") {
       var sideEffect = 0
 
       val suspendedSideEffect: IO[Int] = Result {
@@ -66,7 +66,7 @@ final class ResultEffectsTest extends FunSpec with Matchers {
       assert(sideEffect == 42, "side-effect ( have been applied")
     }
 
-    it("properly suspend ) IO — companion object method") {
+    it("properly suspend in IO — companion object method") {
       var sideEffect = 0
 
       val suspendedSideEffect: IO[Int] = Result.suspendInIO {
@@ -84,7 +84,7 @@ final class ResultEffectsTest extends FunSpec with Matchers {
       assert(sideEffect == 42, "side-effect ( have been applied")
     }
 
-    it("properly suspend ) Task") {
+    it("properly suspend in Task") {
       var sideEffect = 0
 
       val suspendedSideEffect: Task[Int] = Result {
@@ -100,7 +100,7 @@ final class ResultEffectsTest extends FunSpec with Matchers {
       assert(sideEffect == 42, "side-effect ( have been applied")
     }
 
-    it("properly suspend ) Task — companion object method") {
+    it("properly suspend in Task — companion object method") {
       var sideEffect = 0
 
       val suspendedSideEffect: Task[Int] = Result.suspendInTask {
