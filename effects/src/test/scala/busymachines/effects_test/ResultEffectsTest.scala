@@ -68,6 +68,24 @@ class ResultEffectsTest extends FlatSpec with Matchers {
     assert(sideEffect == 42, "side-effect should have been applied")
   }
 
+  it should "properly suspend in IO — companion object method" in {
+    var sideEffect = 0
+
+    val suspendedSideEffect: IO[Int] = Result.suspendInIO {
+      Result {
+        sideEffect = 42
+        sideEffect
+      }
+    }
+
+    //this is not thrown:
+    if (sideEffect == 42) fail("side-effects make me sad")
+
+    suspendedSideEffect.unsafeRunSync()
+
+    assert(sideEffect == 42, "side-effect should have been applied")
+  }
+
   it should "properly suspend in Task" in {
     var sideEffect = 0
 
@@ -75,6 +93,24 @@ class ResultEffectsTest extends FlatSpec with Matchers {
       sideEffect = 42
       sideEffect
     }.suspendInTask
+
+    //this is not thrown:
+    if (sideEffect == 42) fail("side-effects make me sad")
+
+    suspendedSideEffect.runAsync.syncAwaitReady()
+
+    assert(sideEffect == 42, "side-effect should have been applied")
+  }
+
+  it should "properly suspend in Task — companion object method" in {
+    var sideEffect = 0
+
+    val suspendedSideEffect: Task[Int] = Result.suspendInTask {
+      Result {
+        sideEffect = 42
+        sideEffect
+      }
+    }
 
     //this is not thrown:
     if (sideEffect == 42) fail("side-effects make me sad")

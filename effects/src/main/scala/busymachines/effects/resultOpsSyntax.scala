@@ -23,13 +23,6 @@ trait ResultEffectsSyntaxImplicits {
     new ResultCompanionOpsSyntax(r)
 }
 
-final class ResultOpsEffectsSyntax[T](private[this] val r: Result[T]) {
-
-  def asIO: IO[T] = ResultEffectsUtil.asIO(r)
-
-  def asTask: Task[T] = ResultEffectsUtil.asTask(r)
-}
-
 /**
   *
   * Imitates the style of [[Result.asFuture]] (et. all) methods.
@@ -41,8 +34,27 @@ final class ResultCompanionOpsSyntax(val r: Result.type) {
   def asIO[T](r: Result[T]): IO[T] = ResultEffectsUtil.asIO(r)
 
   def asTask[T](r: Result[T]): Task[T] = ResultEffectsUtil.asTask(r)
+
+  def suspendInIO[T](r: => Result[T]): IO[T] = ResultEffectsUtil.suspendInIO(r)
+
+  def suspendInTask[T](r: => Result[T]): Task[T] = ResultEffectsUtil.suspendInTask(r)
 }
 
+/**
+  *
+  *
+  */
+final class ResultOpsEffectsSyntax[T](private[this] val r: Result[T]) {
+
+  def asIO: IO[T] = ResultEffectsUtil.asIO(r)
+
+  def asTask: Task[T] = ResultEffectsUtil.asTask(r)
+}
+
+/**
+  *
+  *
+  */
 final class SafeResultOpsEffectsSyntax[T](r: => Result[T]) {
 
   def suspendInIO: IO[T] = ResultEffectsUtil.suspendInIO(r)
@@ -50,6 +62,9 @@ final class SafeResultOpsEffectsSyntax[T](r: => Result[T]) {
   def suspendInTask: Task[T] = ResultEffectsUtil.suspendInTask(r)
 }
 
+/**
+  *
+  */
 object ResultEffectsUtil {
 
   def asIO[T](r: Result[T]): IO[T] = r match {
