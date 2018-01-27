@@ -44,8 +44,6 @@ trait ResultJsonCodec {
       AnomalyJsonCodec.AnomalyCodec,
       AnomalyJsonCodec.AnomaliesCodec
     )
-
-  final def explicitResultCodecHack[T](implicit encode: Encoder[T], decode: Decoder[T]): Codec[Result[T]] = ???
 }
 
 private[json] final class ResultJsonEncoderImpl[T](
