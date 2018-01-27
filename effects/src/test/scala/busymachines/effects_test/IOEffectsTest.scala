@@ -514,14 +514,14 @@ class IOEffectsTest extends FunSpec with Matchers {
       }
     }
 
-    it("IO.optionFlattenWeak - correct") {
-      val io     = IO(Result(42))
+    it("IO.resultFlatten - correct") {
+      val io     = IO(correct)
       val flatIO = IO.resultFlatten(io)
       assert(flatIO.unsafeRunSync() == 42)
     }
 
-    it("IO.optionFlattenWeak - incorrect") {
-      val io     = IO(Result.fail(anomaly))
+    it("IO.resultFlatten - incorrect") {
+      val io     = IO(incorrect)
       val flatIO = IO.resultFlatten(io)
       the[InvalidInputFailure] thrownBy {
         flatIO.unsafeRunSync()
@@ -1006,6 +1006,21 @@ class IOEffectsTest extends FunSpec with Matchers {
     it("IO[Option].flattenWeak - none") {
       val flatIO = IO(none).flattenWeak(throwable)
       the[RuntimeException] thrownBy {
+        flatIO.unsafeRunSync()
+      }
+    }
+  }
+
+  describe("IO — syntax IO[Result]") {
+    it("IO[Result].flattenResult - correct") {
+      val flatIO = IO(correct).flattenResult
+
+      assert(flatIO.unsafeRunSync() == 42)
+    }
+
+    it("IO[Result].flattenResult - none") {
+      val flatIO = IO(incorrect).flattenResult
+      the[InvalidInputFailure] thrownBy {
         flatIO.unsafeRunSync()
       }
     }

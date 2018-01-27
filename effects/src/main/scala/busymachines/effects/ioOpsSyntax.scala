@@ -25,6 +25,9 @@ trait IOEffectsSyntaxImplicits {
   implicit def bmCommonsIOOptionAsIOOps[T](iopt: IO[Option[T]]): IOOptionAsIOOps[T] =
     new IOOptionAsIOOps(iopt)
 
+  implicit def bmCommonsIOResultAsIOOps[T](ior: IO[Result[T]]): IOResultAsIOOps[T] =
+    new IOResultAsIOOps(ior)
+
   implicit def bmCommonsIOCompanionOps(io: IO.type): IOCompanionOps =
     new IOCompanionOps(io)
 
@@ -200,6 +203,10 @@ final class IOOptionAsIOOps[T](private[this] val ropt: IO[Option[T]]) {
   def flatten(ifNone: => Anomaly): IO[T] = IOEffectsUtil.optionFlatten(ropt, ifNone)
 
   def flattenWeak(ifNone: => Throwable): IO[T] = IOEffectsUtil.optionFlattenWeak(ropt, ifNone)
+}
+
+final class IOResultAsIOOps[T](private[this] val ior: IO[Result[T]]) {
+  def flattenResult: IO[T] = IOEffectsUtil.resultFlatten(ior)
 }
 
 /**
