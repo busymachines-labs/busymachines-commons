@@ -12,7 +12,7 @@ import busymachines.result.{ResultSyntaxImplicits, ResultTypeDefinitions}
 package object effects
     extends ResultTypeDefinitions with FutureTypeDefinitions with IOTypeDefinitions with TaskTypeDefinitions
     with ResultSyntaxImplicits with FutureSyntaxImplicits with ResultEffectsSyntaxImplicits
-    with FutureEffectsSyntaxImplicits with IOEffectsSyntaxImplicits {
+    with FutureEffectsSyntaxImplicits with IOEffectsSyntaxImplicits with TaskEffectsSyntaxImplicits {
 
   val Result:    busymachines.result.Result.type    = busymachines.result.Result
   val Correct:   busymachines.result.Correct.type   = busymachines.result.Correct

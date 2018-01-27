@@ -128,7 +128,8 @@ final class TaskCompanionOps(val io: Task.type) {
     *
     * Only for testing
     */
-  def syncUnsafeGet[T](io: Task[T])(implicit s: Scheduler): T = TaskEffectsUtil.syncUnsafeGet(io)
+  def syncUnsafeGet[T](io: Task[T], timeout: FiniteDuration = duration.minutes(1))(implicit s: Scheduler): T =
+    TaskEffectsUtil.syncUnsafeGet(io)
 
   //===========================================================================
   //============================== Transformers ===============================
@@ -174,7 +175,8 @@ final class TaskEffectsOpsSyntax[T](private[this] val io: Task[T]) {
     *
     * Only for testing
     */
-  def syncUnsafeAsResult(implicit s: Scheduler): Result[T] = TaskEffectsUtil.syncUnsafeAsResult(io)
+  def syncUnsafeAsResult(timeout: FiniteDuration = duration.minutes(1))(implicit s: Scheduler): Result[T] =
+    TaskEffectsUtil.syncUnsafeAsResult(io, timeout)
 
   /**
     * !!! USE WITH CARE !!!
@@ -183,7 +185,8 @@ final class TaskEffectsOpsSyntax[T](private[this] val io: Task[T]) {
     *
     * Only for testing
     */
-  def syncUnsafeGet(implicit s: Scheduler): T = TaskEffectsUtil.syncUnsafeGet(io)
+  def syncUnsafeGet(timeout: FiniteDuration = duration.minutes(1))(implicit s: Scheduler): T =
+    TaskEffectsUtil.syncUnsafeGet(io, timeout)
 
   def discardContent: Task[Unit] = TaskEffectsUtil.discardContent(io)
 
@@ -203,9 +206,9 @@ final class TaskEffectsOpsSyntax[T](private[this] val io: Task[T]) {
   *
   */
 final class TaskOptionAsTaskOps[T](private[this] val ropt: Task[Option[T]]) {
-  def flatten(ifNone: => Anomaly): Task[T] = TaskEffectsUtil.optionFlatten(ropt, ifNone)
+  def flattenOpt(ifNone: => Anomaly): Task[T] = TaskEffectsUtil.optionFlatten(ropt, ifNone)
 
-  def flattenWeak(ifNone: => Throwable): Task[T] = TaskEffectsUtil.optionFlattenWeak(ropt, ifNone)
+  def flattenOptWeak(ifNone: => Throwable): Task[T] = TaskEffectsUtil.optionFlattenWeak(ropt, ifNone)
 }
 
 /**
