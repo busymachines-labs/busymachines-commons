@@ -11,7 +11,7 @@ import org.scalatest.Matchers
   * @since 26 Jan 2018
   *
   */
-class ResultEffectsTest extends FlatSpec with Matchers {
+final class ResultEffectsTest extends FlatSpec with Matchers {
   private implicit val sc: Scheduler = Scheduler.global
 
   behavior of "Result — effects ops"

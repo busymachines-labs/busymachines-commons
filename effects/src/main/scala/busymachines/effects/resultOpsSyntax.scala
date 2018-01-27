@@ -67,10 +67,7 @@ final class SafeResultOpsEffectsSyntax[T](r: => Result[T]) {
   */
 object ResultEffectsUtil {
 
-  def asIO[T](r: Result[T]): IO[T] = r match {
-    case Correct(value)     => IO.pure(value)
-    case Incorrect(anomaly) => IO.raiseError(anomaly.asThrowable)
-  }
+  def asIO[T](r: Result[T]): IO[T] = IOEffectsUtil.fromResult(r)
 
   def asTask[T](r: Result[T]): Task[T] = r match {
     case Correct(value)     => Task.pure(value)

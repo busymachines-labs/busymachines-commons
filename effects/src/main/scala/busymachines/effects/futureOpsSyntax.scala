@@ -55,7 +55,8 @@ final class SafeFutureOpsEffectsSyntax[T](r: => Future[T]) {
   */
 object FutureEffectsUtil {
 
-  def suspendInIO[T](f: => Future[T])(implicit ec: ExecutionContext): IO[T] = IO.fromFuture(IO(f))
+  def suspendInIO[T](f: => Future[T])(implicit ec: ExecutionContext): IO[T] =
+    IOEffectsUtil.fromFutureSuspend(f)
 
   def suspendInTask[T](f: => Future[T]): Task[T] = Task.deferFuture(f)
 
@@ -73,7 +74,7 @@ object FutureEffectsUtil {
     * you wish to transform is referentially transparent
     *
     */
-  def asIO[T](f: Future[T])(implicit ec: ExecutionContext): IO[T] = IO.fromFuture(IO.pure(f))
+  def asIO[T](f: Future[T])(implicit ec: ExecutionContext): IO[T] = IOEffectsUtil.fromFuture(f)
 
   /**
     * !!! USE WITH CAUTION !!!
