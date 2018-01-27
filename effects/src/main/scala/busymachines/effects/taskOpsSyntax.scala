@@ -132,7 +132,7 @@ final class TaskCompanionOps(val io: Task.type) {
     * Only for testing
     */
   def syncUnsafeGet[T](io: Task[T], timeout: FiniteDuration = duration.minutes(1))(implicit s: Scheduler): T =
-    TaskEffectsUtil.syncUnsafeGet(io)
+    TaskEffectsUtil.syncUnsafeGet(io, timeout)
 
   //===========================================================================
   //============================== Transformers ===============================
