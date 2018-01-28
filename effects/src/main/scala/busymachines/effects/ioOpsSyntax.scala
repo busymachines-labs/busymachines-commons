@@ -180,7 +180,7 @@ final class IOEffectsOpsSyntax[T](private[this] val io: IO[T]) {
     *
     * Only for testing
     */
-  def syncUnsafeGet: T = IOEffectsUtil.syncUnsafeGet(io)
+  def syncUnsafeGet(): T = IOEffectsUtil.syncUnsafeGet(io)
 
   def discardContent: IO[Unit] = IOEffectsUtil.discardContent(io)
 
