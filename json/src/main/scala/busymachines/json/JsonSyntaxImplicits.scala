@@ -1,6 +1,6 @@
 package busymachines.json
 
-import busymachines.result.Result
+import busymachines.effects.result.Result
 
 /**
   *

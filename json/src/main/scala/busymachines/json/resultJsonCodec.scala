@@ -1,7 +1,7 @@
 package busymachines.json
 
 import busymachines.core._
-import busymachines.result._
+import busymachines.effects.result._
 import io.circe.Decoder.{Result => DecoderResult}
 import io.circe.DecodingFailure
 import cats.implicits._

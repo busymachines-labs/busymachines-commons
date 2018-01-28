@@ -2,7 +2,7 @@ package busymachines.effects
 
 /**
   *
-  * This is complementary syntax to [[busymachines.result.ResultOps]]
+  * This is complementary syntax to [[busymachines.effects.result.ResultOps]]
   * it adds conversions to [[IO]] and [[Task]]
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com

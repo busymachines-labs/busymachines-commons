@@ -1,7 +1,7 @@
 package busymachines
 
-import busymachines.future.{FutureSyntaxImplicits, FutureTypeDefinitions}
-import busymachines.result.{ResultSyntaxImplicits, ResultTypeDefinitions}
+import busymachines.future.{FutureSyntaxImplicits,         FutureTypeDefinitions}
+import busymachines.effects.result.{ResultSyntaxImplicits, ResultTypeDefinitions}
 
 /**
   *
@@ -15,7 +15,7 @@ package object effects
     with TryEffectsSyntaxImplicits with ResultEffectsSyntaxImplicits with FutureEffectsSyntaxImplicits
     with IOEffectsSyntaxImplicits with TaskEffectsSyntaxImplicits {
 
-  val Result:    busymachines.result.Result.type    = busymachines.result.Result
-  val Correct:   busymachines.result.Correct.type   = busymachines.result.Correct
-  val Incorrect: busymachines.result.Incorrect.type = busymachines.result.Incorrect
+  val Result:    busymachines.effects.result.Result.type    = busymachines.effects.result.Result
+  val Correct:   busymachines.effects.result.Correct.type   = busymachines.effects.result.Correct
+  val Incorrect: busymachines.effects.result.Incorrect.type = busymachines.effects.result.Incorrect
 }

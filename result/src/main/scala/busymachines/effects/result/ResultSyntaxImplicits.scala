@@ -1,4 +1,4 @@
-package busymachines.result
+package busymachines.effects.result
 
 import scala.util.Try
 

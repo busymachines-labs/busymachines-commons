@@ -4,7 +4,7 @@ import busymachines.core.Anomaly
 import busymachines.core.CatastrophicError
 import busymachines.duration
 import busymachines.duration.FiniteDuration
-import busymachines.result._
+import busymachines.effects.result._
 
 import scala.collection.generic.CanBuildFrom
 import scala.collection.mutable

@@ -1,4 +1,4 @@
-package busymachines.result
+package busymachines.effects.result
 
 import scala.util.{Failure, Success, Try}
 import scala.util.control.NonFatal
