@@ -1,7 +1,7 @@
 package busymachines.effects
 
 import busymachines.core.Anomaly
-import busymachines.effects.result.ResultOps
+import busymachines.effects.sync.ResultOps
 
 import scala.util._
 

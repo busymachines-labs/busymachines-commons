@@ -1,7 +1,7 @@
 package busymachines.effects.future
 
 import busymachines.core.Anomaly
-import busymachines.effects.result.Result
+import busymachines.effects.sync.Result
 
 import scala.util.Try
 

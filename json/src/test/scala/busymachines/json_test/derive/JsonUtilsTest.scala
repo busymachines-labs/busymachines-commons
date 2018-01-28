@@ -2,7 +2,7 @@ package busymachines.json_test.derive
 
 import busymachines.json_test.AnarchistMelon
 import org.scalatest.{EitherValues, FlatSpec, Matchers}
-import busymachines.effects.result._
+import busymachines.effects.sync._
 import busymachines.json._
 
 /**

@@ -12,7 +12,7 @@ import org.scalatest.FlatSpec
 class JsonResultCodecDerivationTest extends FlatSpec {
 
   import busymachines.core._
-  import busymachines.effects.result._
+  import busymachines.effects.sync._
   import busymachines.json.syntax._
   import melonsDefaultSemiAutoCodecs._
   import busymachines.json.ResultJsonCodec._

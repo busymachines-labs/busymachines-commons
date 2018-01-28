@@ -1,4 +1,4 @@
-package busymachines.effects.result
+package busymachines.effects.sync
 
 import busymachines.core._
 

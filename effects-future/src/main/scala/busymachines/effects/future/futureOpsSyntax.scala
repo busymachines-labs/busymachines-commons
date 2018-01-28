@@ -3,7 +3,7 @@ package busymachines.effects.future
 import busymachines.core.Anomaly
 import busymachines.duration
 import busymachines.duration.FiniteDuration
-import busymachines.effects.result._
+import busymachines.effects.sync._
 
 import scala.collection.generic.CanBuildFrom
 

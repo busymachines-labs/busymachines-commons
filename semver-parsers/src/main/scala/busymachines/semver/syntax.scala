@@ -1,6 +1,6 @@
 package busymachines.semver
 
-import busymachines.effects.result._
+import busymachines.effects.sync._
 
 /**
   *

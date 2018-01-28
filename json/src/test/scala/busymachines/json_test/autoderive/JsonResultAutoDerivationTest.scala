@@ -12,7 +12,7 @@ class JsonResultAutoDerivationTest extends FlatSpec {
 
   import busymachines.json_test._
   import busymachines.core._
-  import busymachines.effects.result._
+  import busymachines.effects.sync._
 
   import busymachines.json._
   import busymachines.json.autoderive._

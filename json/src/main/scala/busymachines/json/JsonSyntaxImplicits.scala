@@ -1,6 +1,6 @@
 package busymachines.json
 
-import busymachines.effects.result.Result
+import busymachines.effects.sync.Result
 
 /**
   *

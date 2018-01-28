@@ -1,7 +1,7 @@
 package busymachines.json
 
 import busymachines.core._
-import busymachines.effects.result._
+import busymachines.effects.sync._
 
 import io.circe.parser._
 import io.circe.Printer
