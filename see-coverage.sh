@@ -7,9 +7,11 @@
 if (( $# == 0 ));
 then
   echo ""
-  echo "ERROR executing coverage.sh"
+  echo "ERROR executing see-coverage.sh"
   echo "No command line arguments passed"
   echo "Please specify one valid module name to open report of."
+  echo "And make sure that you execute it with the current working directory"
+  echo "as the root of the repository"
   echo "... exiting"
   echo ""
   exit 1
