@@ -87,10 +87,10 @@ final class TaskCompanionOps(val io: Task.type) {
 
   def discardContent[T](f: Task[T]) = TaskEffectsUtil.discardContent(f)
 
-  def optionFlatten[T](fopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
+  def flattenOption[T](fopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
     TaskEffectsUtil.flattenOption(fopt, ifNone)
 
-  def optionFlattenWeak[T](fopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
+  def flattenOptionWeak[T](fopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
     TaskEffectsUtil.flattenOptionWeak(fopt, ifNone)
 
   def flattenResult[T](fr: Task[Result[T]]): Task[T] =

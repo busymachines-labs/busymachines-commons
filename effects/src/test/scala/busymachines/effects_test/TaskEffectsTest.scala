@@ -471,43 +471,43 @@ class TaskEffectsTest extends FunSpec with Matchers {
       assert(sideEffect == 42)
     }
 
-    it("Task.optionFlatten - some") {
+    it("Task.flattenOption - some") {
       val io     = Task(some)
-      val flatIO = Task.optionFlatten(io, anomaly)
+      val flatIO = Task.flattenOption(io, anomaly)
 
       assert(flatIO.syncUnsafeGet() == 42)
     }
 
-    it("Task.optionFlatten - none") {
+    it("Task.flattenOption - none") {
       val io     = Task(none)
-      val flatIO = Task.optionFlatten(io, anomaly)
+      val flatIO = Task.flattenOption(io, anomaly)
       the[InvalidInputFailure] thrownBy {
         flatIO.syncUnsafeGet()
       }
     }
 
-    it("Task.optionFlattenWeak - some") {
+    it("Task.flattenOptionWeak - some") {
       val io     = Task(some)
-      val flatIO = Task.optionFlattenWeak(io, throwable)
+      val flatIO = Task.flattenOptionWeak(io, throwable)
 
       assert(flatIO.syncUnsafeGet() == 42)
     }
 
-    it("Task.optionFlattenWeak - none") {
+    it("Task.flattenOptionWeak - none") {
       val io     = Task(none)
-      val flatIO = Task.optionFlattenWeak(io, throwable)
+      val flatIO = Task.flattenOptionWeak(io, throwable)
       the[RuntimeException] thrownBy {
         flatIO.syncUnsafeGet()
       }
     }
 
-    it("Task.optionFlattenWeak - correct") {
+    it("Task.flattenOptionWeak - correct") {
       val io     = Task(Result(42))
       val flatIO = Task.flattenResult(io)
       assert(flatIO.syncUnsafeGet() == 42)
     }
 
-    it("Task.optionFlattenWeak - incorrect") {
+    it("Task.flattenOptionWeak - incorrect") {
       val io     = Task(Result.fail(anomaly))
       val flatIO = Task.flattenResult(io)
       the[InvalidInputFailure] thrownBy {

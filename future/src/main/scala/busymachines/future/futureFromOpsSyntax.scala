@@ -24,7 +24,7 @@ final class OptionToFutureOps[T](private[this] val opt: Option[T]) {
 final class FutureOptionToFutureOps[T](private[this] val fopt: Future[Option[T]]) {
 
   def flatten(ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
-    FutureUtil.optionFlatten(fopt, ifNone)
+    FutureUtil.flattenOption(fopt, ifNone)
 }
 
 /**

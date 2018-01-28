@@ -86,13 +86,13 @@ final class IOCompanionOps(val io: IO.type) {
 
   def discardContent[T](f: IO[T]) = IOEffectsUtil.discardContent(f)
 
-  def optionFlatten[T](fopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
+  def flattenOption[T](fopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
     IOEffectsUtil.flattenOption(fopt, ifNone)
 
-  def optionFlattenWeak[T](fopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
+  def flattenOptionWeak[T](fopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
     IOEffectsUtil.flattenOptionWeak(fopt, ifNone)
 
-  def resultFlatten[T](fr: IO[Result[T]]): IO[T] =
+  def flattenResult[T](fr: IO[Result[T]]): IO[T] =
     IOEffectsUtil.flattenResult(fr)
 
   def asTask[T](io: IO[T]): Task[T] = IOEffectsUtil.asTask(io)

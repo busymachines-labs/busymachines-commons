@@ -478,7 +478,7 @@ final class TryEffectsTest extends FunSpecAlias with Matchers {
         assert(Try.discardContent(Try.pure(42)) == Try.unit)
       }
 
-      describe("Try.optionFlatten") {
+      describe("Try.flattenOption") {
         test("some") {
           assert(Try.flattenOption(Try.pure(some), anomaly).get == 42)
         }
@@ -491,7 +491,7 @@ final class TryEffectsTest extends FunSpecAlias with Matchers {
         }
       }
 
-      describe("Try.optionFlattenWeak") {
+      describe("Try.flattenOptionWeak") {
         test("some") {
           assert(Try.flattenOptionWeak(Try.pure(some), throwable).get == 42)
         }
@@ -504,7 +504,7 @@ final class TryEffectsTest extends FunSpecAlias with Matchers {
         }
       }
 
-      describe("Try.resultFlatten") {
+      describe("Try.flattenResult") {
         test("some") {
           assert(Try.flattenResult(Try.pure(correct)).get == 42)
         }
@@ -920,7 +920,7 @@ final class TryEffectsTest extends FunSpecAlias with Matchers {
         }
       }
 
-      describe(".resultFlatten") {
+      describe(".flattenResult") {
         test("some") {
           assert(Try.pure(correct).flattenResult.get == 42)
         }

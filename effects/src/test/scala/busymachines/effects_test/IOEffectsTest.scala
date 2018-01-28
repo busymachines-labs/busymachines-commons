@@ -484,45 +484,45 @@ class IOEffectsTest extends FunSpec with Matchers {
       assert(sideEffect == 42)
     }
 
-    it("IO.optionFlatten - some") {
+    it("IO.flattenOption - some") {
       val io     = IO(some)
-      val flatIO = IO.optionFlatten(io, anomaly)
+      val flatIO = IO.flattenOption(io, anomaly)
 
       assert(flatIO.unsafeRunSync() == 42)
     }
 
-    it("IO.optionFlatten - none") {
+    it("IO.flattenOption - none") {
       val io     = IO(none)
-      val flatIO = IO.optionFlatten(io, anomaly)
+      val flatIO = IO.flattenOption(io, anomaly)
       the[InvalidInputFailure] thrownBy {
         flatIO.unsafeRunSync()
       }
     }
 
-    it("IO.optionFlattenWeak - some") {
+    it("IO.flattenOptionWeak - some") {
       val io     = IO(some)
-      val flatIO = IO.optionFlattenWeak(io, throwable)
+      val flatIO = IO.flattenOptionWeak(io, throwable)
 
       assert(flatIO.unsafeRunSync() == 42)
     }
 
-    it("IO.optionFlattenWeak - none") {
+    it("IO.flattenOptionWeak - none") {
       val io     = IO(none)
-      val flatIO = IO.optionFlattenWeak(io, throwable)
+      val flatIO = IO.flattenOptionWeak(io, throwable)
       the[RuntimeException] thrownBy {
         flatIO.unsafeRunSync()
       }
     }
 
-    it("IO.resultFlatten - correct") {
+    it("IO.flattenResult - correct") {
       val io     = IO(correct)
-      val flatIO = IO.resultFlatten(io)
+      val flatIO = IO.flattenResult(io)
       assert(flatIO.unsafeRunSync() == 42)
     }
 
-    it("IO.resultFlatten - incorrect") {
+    it("IO.flattenResult - incorrect") {
       val io     = IO(incorrect)
-      val flatIO = IO.resultFlatten(io)
+      val flatIO = IO.flattenResult(io)
       the[InvalidInputFailure] thrownBy {
         flatIO.unsafeRunSync()
       }

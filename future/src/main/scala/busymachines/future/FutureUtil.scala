@@ -32,7 +32,7 @@ object FutureUtil {
 
   def fromResult[R](r: Result[R]): Future[R] = Result.asFuture(r)
 
-  def resultFlatten[T](fres: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] = fres flatMap {
+  def flattenResult[T](fres: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] = fres flatMap {
     case Correct(c)   => FutureUtil.pure(c)
     case Incorrect(a) => FutureUtil.fail(a)
   }
@@ -69,7 +69,7 @@ object FutureUtil {
     }
   }
 
-  def optionFlatten[T](fopt: Future[Option[T]], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+  def flattenOption[T](fopt: Future[Option[T]], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
     fopt flatMap (opt => FutureUtil.fromOption(opt, ifNone))
 
   //===========================================================================
@@ -191,7 +191,7 @@ object FutureUtil {
     }
 
   def morph[T, R](f: Future[T], morphism: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
-    FutureUtil.resultFlatten(FutureUtil.asResult(f).map(morphism))
+    FutureUtil.flattenResult(FutureUtil.asResult(f).map(morphism))
 
   //===========================================================================
   //================================== Utils ==================================
