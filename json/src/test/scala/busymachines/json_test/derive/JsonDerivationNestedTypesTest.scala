@@ -9,7 +9,7 @@ import org.scalatest.FlatSpec
   * @since 26 Oct 2017
   *
   */
-class JsonDerivationNestedTypesTest extends FlatSpec {
+final class JsonDerivationNestedTypesTest1 extends FlatSpec {
 
   import busymachines.json._
   import busymachines.json.syntax._
@@ -20,10 +20,11 @@ class JsonDerivationNestedTypesTest extends FlatSpec {
   )
 
   //-----------------------------------------------------------------------------------------------
+  //moved outside of the test to avoid false positive of "implicit not used" warning
+  implicit val color:             Codec[OutdoorMelons.Color] = codecs.`OutdoorMelons.Color.codec`
+  implicit val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
 
   it should "... derive for case classes defined within objects — normal codecs" in {
-    implicit val color:             Codec[OutdoorMelons.Color] = derive.codec[OutdoorMelons.Color]
-    implicit val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
 
     val stringyJson =
       """
@@ -44,9 +45,24 @@ class JsonDerivationNestedTypesTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 
+}
+
+final class JsonDerivationNestedTypesTest2 extends FlatSpec {
+
+  import busymachines.json._
+  import busymachines.json.syntax._
+
+  val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
+    weight = 42,
+    color  = OutdoorMelons.Colors.Green
+  )
+
+  //-----------------------------------------------------------------------------------------------
+  //moved outside of the test to avoid false positive of "implicit not used" warning
+  implicit val color:             Codec[OutdoorMelons.Color] = codecs.`OutdoorMelons.Color.enumerationCodec`
+  implicit val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
+
   it should "... derive for case classes defined within objects — enumerationCodec" in {
-    implicit val color:             Codec[OutdoorMelons.Color] = derive.enumerationCodec[OutdoorMelons.Color]
-    implicit val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
 
     val stringyJson =
       """

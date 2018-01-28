@@ -10,14 +10,17 @@ import org.scalatest.FlatSpec
   * @since 10 Aug 2017
   *
   */
-class JsonDefaultAutoSemiAutoInteractionTest extends FlatSpec {
+final class JsonDefaultAutoSemiAutoInteractionTest extends FlatSpec {
 
   import busymachines.json._
   import busymachines.json.autoderive._
   import busymachines.json.syntax._
 
+  //moved outside of the scope of the test to avoid false positive "implicit not used" warning
+  implicit val explicitImplicitTasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
+
   it should "... auto should use the explicit codec for sub-hierarchies of Melon" in {
-    implicit val explicitImplicitTasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
+
 
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
     val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)

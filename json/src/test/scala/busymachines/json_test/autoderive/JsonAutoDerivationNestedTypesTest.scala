@@ -9,7 +9,7 @@ import org.scalatest.FlatSpec
   * @since 26 Oct 2017
   *
   */
-class JsonAutoDerivationNestedTypesTest extends FlatSpec {
+class JsonAutoDerivationNestedTypesTest1 extends FlatSpec {
 
   import busymachines.json._
   import busymachines.json.syntax._
@@ -41,9 +41,25 @@ class JsonAutoDerivationNestedTypesTest extends FlatSpec {
   }
 
   //-----------------------------------------------------------------------------------------------
+}
+
+final class JsonAutoDerivationNestedTypesTest2 extends FlatSpec {
+
+  import busymachines.json._
+  import busymachines.json.syntax._
+  import busymachines.json.autoderive._
+
+  val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
+    weight = 42,
+    color  = OutdoorMelons.Colors.Green
+  )
+
+  //-----------------------------------------------------------------------------------------------
+
+  //moved here to avoid false positive "implicit not used" warning if put in the scope of the test
+  implicit val color: Codec[OutdoorMelons.Color] = codecs.`OutdoorMelons.Color.enumerationCodec`
 
   it should "... autoderive for case classes defined within objects with explicit enumerationEncoder" in {
-    implicit val color: Codec[OutdoorMelons.Color] = derive.enumerationCodec[OutdoorMelons.Color]
 
     val stringyJson =
       """
