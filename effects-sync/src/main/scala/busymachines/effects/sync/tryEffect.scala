@@ -1,7 +1,6 @@
-package busymachines.effects
+package busymachines.effects.sync
 
 import busymachines.core.Anomaly
-import busymachines.effects.sync.ResultOps
 
 import scala.util._
 
@@ -95,12 +94,6 @@ object TrySyntax {
 
     def asResult[T](io: Try[T]): Result[T] = TryOps.asResult(io)
 
-    def asIO[T](io: Try[T]): IO[T] = TryOps.asIO(io)
-
-    def asFuture[T](io: Try[T]): Future[T] = TryOps.asFuture(io)
-
-    def asTask[T](io: Try[T]): Task[T] = TryOps.asTask(io)
-
     /**
       * !!! USE WITH CARE !!!
       *
@@ -134,12 +127,6 @@ object TrySyntax {
   final class ReferenceOps[T](private[this] val tr: Try[T]) {
 
     def asResult: Result[T] = TryOps.asResult(tr)
-
-    def asFuture: Future[T] = TryOps.asFuture(tr)
-
-    def asIO: IO[T] = TryOps.asIO(tr)
-
-    def asTask: Task[T] = TryOps.asTask(tr)
 
     def unsafeGet: T = TryOps.unsafeGet(tr)
 
@@ -347,12 +334,6 @@ object TryOps {
   }
 
   def asResult[T](tr: Try[T]): Result[T] = ResultOps.fromTry(tr)
-
-  def asFuture[T](tr: Try[T]): Future[T] = Future.fromTry(tr)
-
-  def asIO[T](tr: Try[T]): IO[T] = IOEffectsUtil.fromTry(tr)
-
-  def asTask[T](tr: Try[T]): Task[T] = Task.fromTry(tr)
 
   def unsafeGet[T](tr: Try[T]): T = tr.get
 

@@ -1,7 +1,7 @@
 package busymachines
 
 import busymachines.effects.future.{FutureSyntaxImplicits, FutureTypeDefinitions}
-import busymachines.effects.sync.{ResultSyntax,          ResultTypeDefinitions}
+import busymachines.effects.sync.{ResultSyntax,            ResultTypeDefinitions, TrySyntax}
 
 /**
   *

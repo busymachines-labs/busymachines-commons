@@ -4,6 +4,9 @@ import Keys._
 lazy val currentSnapshotVersion = "0.3.0-SNAPSHOT"
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
+//FIXME: remove this when done writing the effects package
+addCommandAlias("dev", ";effects/clean;effects/compile;effects/Test/compile;coverage;effects/test;effects/coverageReport")
+
 addCommandAlias("build",           ";compile;Test/compile")
 addCommandAlias("rebuild",         ";clean;update;compile;Test/compile")
 addCommandAlias("ci",              ";scalafmtCheck;rebuild;coverage;test;coverageReport")

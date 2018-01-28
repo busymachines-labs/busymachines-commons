@@ -6,4 +6,4 @@ package busymachines.effects
   * @since 09 Jan 2018
   *
   */
-package object sync extends ResultTypeDefinitions with ResultSyntax.Implicits
+package object sync extends ResultTypeDefinitions with ResultSyntax.Implicits with TrySyntax.Implicits
