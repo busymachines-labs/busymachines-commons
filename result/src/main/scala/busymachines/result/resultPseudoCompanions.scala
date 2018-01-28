@@ -29,7 +29,7 @@ object Result {
   def fail[T](a:      Anomaly): Result[T] = Incorrect(a)
   def incorrect[T](a: Anomaly): Result[T] = Incorrect(a)
 
-  def unit: Result[Unit] = Correct(())
+  val unit: Result[Unit] = Correct(())
 
   /**
     * Useful when one wants to do interop with unknown 3rd party code and you cannot
