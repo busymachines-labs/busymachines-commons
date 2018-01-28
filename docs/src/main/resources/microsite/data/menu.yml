@@ -17,7 +17,7 @@ options:
   - title: effects
     url: docs/effects.html
 
-  - title: result
+  - title: effects-sync
     url: docs/result.html
 
   - title: future

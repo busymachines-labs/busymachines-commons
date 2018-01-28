@@ -47,7 +47,7 @@ lazy val root = Project(id = "busymachines-commons", base = file("."))
   .settings(Settings.commonSettings)
   .aggregate(
     core,
-    result,
+    `effects-sync`,
     future,
     effects,
     json,
@@ -68,11 +68,11 @@ lazy val core = project
       Dependencies.scalaTest % Test withSources ()
   )
 
-lazy val result = project
+lazy val `effects-sync` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
-    name in ThisProject := "busymachines-commons-result",
+    name in ThisProject := "busymachines-commons-effects-sync",
     libraryDependencies ++= Seq(
       Dependencies.scalaTest % Test withSources ()
     )
@@ -92,7 +92,7 @@ lazy val future = project
   )
   .dependsOn(
     core,
-    result
+    `effects-sync`
   )
 
 lazy val effects = project
@@ -109,7 +109,7 @@ lazy val effects = project
   )
   .dependsOn(
     core,
-    result,
+    `effects-sync`,
     future
   )
 
@@ -127,7 +127,7 @@ lazy val json = project
   )
   .dependsOn(
     core,
-    result
+    `effects-sync`
   )
 
 lazy val `rest-core` = project
@@ -225,7 +225,7 @@ lazy val `semver-parsers` = project
   )
   .dependsOn(
     core,
-    result,
+    `effects-sync`,
     `semver`
   )
 
