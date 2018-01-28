@@ -5,7 +5,6 @@ import busymachines.effects._
 import org.scalatest._
 import busymachines.scalatest.FunSpecAlias
 
-import scala.util.Failure
 import scala.util.Try
 
 /**
@@ -18,19 +17,9 @@ final class OptionEffectsTest extends FunSpecAlias with Matchers {
   private implicit val sc: Scheduler = Scheduler.global
 
   private val anomaly:   InvalidInputFailure = InvalidInputFailure("invalid_input_failure")
-  private val throwable: RuntimeException    = new RuntimeException("runtime_exception")
-
-  private val failedTryThrowable: Try[Int] = Failure(throwable)
-  private val failedTryAnomaly:   Try[Int] = Failure(anomaly)
-  private val tryInt:             Try[Int] = scala.util.Success(42)
-
-  private val incorrect: Result[Int] = Result.fail(anomaly)
-  private val correct:   Result[Int] = Result(42)
 
   private val none: Option[Int] = Option.empty
   private val some: Option[Int] = Option(42)
-
-  private def sleep(time: Int = 20): Unit = Thread.sleep(time.toLong)
 
   describe("Option — companion object syntax") {
     describe("conversion to other effects") {

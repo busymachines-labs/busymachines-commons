@@ -87,13 +87,13 @@ final class IOCompanionOps(val io: IO.type) {
   def discardContent[T](f: IO[T]) = IOEffectsUtil.discardContent(f)
 
   def optionFlatten[T](fopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
-    IOEffectsUtil.optionFlatten(fopt, ifNone)
+    IOEffectsUtil.flattenOption(fopt, ifNone)
 
   def optionFlattenWeak[T](fopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
-    IOEffectsUtil.optionFlattenWeak(fopt, ifNone)
+    IOEffectsUtil.flattenOptionWeak(fopt, ifNone)
 
   def resultFlatten[T](fr: IO[Result[T]]): IO[T] =
-    IOEffectsUtil.resultFlatten(fr)
+    IOEffectsUtil.flattenResult(fr)
 
   def asTask[T](io: IO[T]): Task[T] = IOEffectsUtil.asTask(io)
 
@@ -200,13 +200,13 @@ final class IOEffectsOpsSyntax[T](private[this] val io: IO[T]) {
   *
   */
 final class IOOptionAsIOOps[T](private[this] val ropt: IO[Option[T]]) {
-  def flatten(ifNone: => Anomaly): IO[T] = IOEffectsUtil.optionFlatten(ropt, ifNone)
+  def flatten(ifNone: => Anomaly): IO[T] = IOEffectsUtil.flattenOption(ropt, ifNone)
 
-  def flattenWeak(ifNone: => Throwable): IO[T] = IOEffectsUtil.optionFlattenWeak(ropt, ifNone)
+  def flattenWeak(ifNone: => Throwable): IO[T] = IOEffectsUtil.flattenOptionWeak(ropt, ifNone)
 }
 
 final class IOResultAsIOOps[T](private[this] val ior: IO[Result[T]]) {
-  def flattenResult: IO[T] = IOEffectsUtil.resultFlatten(ior)
+  def flattenResult: IO[T] = IOEffectsUtil.flattenResult(ior)
 }
 
 /**
@@ -396,13 +396,13 @@ object IOEffectsUtil {
   private val UnitFunction: Any => Unit = _ => ()
   def discardContent[T](f: IO[T]): IO[Unit] = f.map(UnitFunction)
 
-  def optionFlatten[T](fopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
+  def flattenOption[T](fopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
     fopt flatMap (opt => IOEffectsUtil.fromOption(opt, ifNone))
 
-  def optionFlattenWeak[T](fopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
+  def flattenOptionWeak[T](fopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
     fopt flatMap (opt => IOEffectsUtil.fromOptionWeak(opt, ifNone))
 
-  def resultFlatten[T](fr: IO[Result[T]]): IO[T] =
+  def flattenResult[T](fr: IO[Result[T]]): IO[T] =
     fr.flatMap(r => IOEffectsUtil.fromResult(r))
 
   //===========================================================================
