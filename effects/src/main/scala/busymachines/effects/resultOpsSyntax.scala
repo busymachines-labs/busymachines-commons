@@ -2,8 +2,6 @@ package busymachines.effects
 
 /**
   *
-  * This is complementary syntax to [[busymachines.effects.result.ResultOps]]
-  * it adds conversions to [[IO]] and [[Task]]
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
   * @since 26 Jan 2018
@@ -23,7 +21,6 @@ trait ResultEffectsSyntaxImplicits {
 
 /**
   *
-  * Imitates the style of [[Result.asFuture]] (et. all) methods.
   *
   * @param r
   *   unused

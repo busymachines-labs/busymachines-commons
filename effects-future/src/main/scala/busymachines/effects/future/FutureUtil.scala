@@ -30,7 +30,10 @@ object FutureUtil {
   //==================== Future from various (pseudo)monads ===================
   //===========================================================================
 
-  def fromResult[R](r: Result[R]): Future[R] = Result.asFuture(r)
+  def fromResult[R](r: Result[R]): Future[R] = r match {
+    case Left(value)  => Future.failed(value.asThrowable)
+    case Right(value) => Future.successful(value)
+  }
 
   def flattenResult[T](fres: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] = fres flatMap {
     case Correct(c)   => FutureUtil.pure(c)

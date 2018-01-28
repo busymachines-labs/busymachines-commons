@@ -15,7 +15,6 @@ package object effects
     with TryEffectsSyntaxImplicits with ResultEffectsSyntaxImplicits with FutureEffectsSyntaxImplicits
     with IOEffectsSyntaxImplicits with TaskEffectsSyntaxImplicits {
 
-  val Result:    busymachines.effects.result.Result.type    = busymachines.effects.result.Result
   val Correct:   busymachines.effects.result.Correct.type   = busymachines.effects.result.Correct
   val Incorrect: busymachines.effects.result.Incorrect.type = busymachines.effects.result.Incorrect
 }
