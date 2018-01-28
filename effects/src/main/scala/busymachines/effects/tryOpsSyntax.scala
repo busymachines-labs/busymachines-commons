@@ -52,18 +52,24 @@ final class TryCompanionOps(val io: Try.type) {
 
   def cond[T](test: Boolean, correct: => T, anomaly: => Anomaly): Try[T] = TryEffectsUtil.cond(test, correct, anomaly)
 
+  def condWeak[T](test: Boolean, correct: => T, throwable: => Throwable): Try[T] =
+    TryEffectsUtil.condWeak(test, correct, throwable)
+
   def condWith[T](test: Boolean, correct: => Try[T], anomaly: => Anomaly): Try[T] =
     TryEffectsUtil.condWith(test, correct, anomaly)
 
-  def failOnTrue(test: Boolean, anomaly: => Anomaly): Try[Unit] = TryEffectsUtil.failOnTrue(test, anomaly)
-
-  def failOnFalse(test: Boolean, anomaly: => Anomaly): Try[Unit] = TryEffectsUtil.failOnFalse(test, anomaly)
+  def condWithWeak[T](test: Boolean, correct: => Try[T], throwable: => Throwable): Try[T] =
+    TryEffectsUtil.condWithWeak(test, correct, throwable)
 
   def flatCond[T](test: Try[Boolean], correct: => T, anomaly: => Anomaly): Try[T] =
     TryEffectsUtil.flatCond(test, correct, anomaly)
 
   def flatCondWith[T](test: Try[Boolean], correct: => Try[T], anomaly: => Anomaly): Try[T] =
     TryEffectsUtil.flatCondWith(test, correct, anomaly)
+
+  def failOnTrue(test: Boolean, anomaly: => Anomaly): Try[Unit] = TryEffectsUtil.failOnTrue(test, anomaly)
+
+  def failOnFalse(test: Boolean, anomaly: => Anomaly): Try[Unit] = TryEffectsUtil.failOnFalse(test, anomaly)
 
   def flatFailOnTrue(test: Try[Boolean], anomaly: => Anomaly): Try[Unit] = TryEffectsUtil.flatFailOnTrue(test, anomaly)
 
@@ -72,13 +78,13 @@ final class TryCompanionOps(val io: Try.type) {
 
   def discardContent[T](f: Try[T]) = TryEffectsUtil.discardContent(f)
 
-  def optionFlatten[T](fopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
+  def flattenOption[T](fopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
     TryEffectsUtil.flattenOption(fopt, ifNone)
 
-  def optionFlattenWeak[T](fopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
+  def flattenOptionWeak[T](fopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
     TryEffectsUtil.flattenOptionWeak(fopt, ifNone)
 
-  def resultFlatten[T](fr: Try[Result[T]]): Try[T] =
+  def flattenResult[T](fr: Try[Result[T]]): Try[T] =
     TryEffectsUtil.flattenResult(fr)
 
   def asResult[T](io: Try[T]): Result[T] = TryEffectsUtil.asResult(io)
@@ -121,13 +127,17 @@ final class TryCompanionOps(val io: Try.type) {
   */
 final class TryEffectsOpsSyntax[T](private[this] val tr: Try[T]) {
 
-  def asResult: Result[T] = TryEffectsUtil.asResult(tr)
+  // —— asResult already defined in ``result`` module
+
+  //def asResult: Result[T] = TryEffectsUtil.asResult(tr)
 
   def asFuture: Future[T] = TryEffectsUtil.asFuture(tr)
 
   def asIO: IO[T] = TryEffectsUtil.asIO(tr)
 
   def asTask: Task[T] = TryEffectsUtil.asTask(tr)
+
+  def unsafeGet: T = tr.get
 
   def discardContent: Try[Unit] = TryEffectsUtil.discardContent(tr)
 
@@ -147,9 +157,9 @@ final class TryEffectsOpsSyntax[T](private[this] val tr: Try[T]) {
   *
   */
 final class TryOptionAsTryOps[T](private[this] val ropt: Try[Option[T]]) {
-  def flatten(ifNone: => Anomaly): Try[T] = TryEffectsUtil.flattenOption(ropt, ifNone)
+  def flattenOption(ifNone: => Anomaly): Try[T] = TryEffectsUtil.flattenOption(ropt, ifNone)
 
-  def flattenWeak(ifNone: => Throwable): Try[T] = TryEffectsUtil.flattenOptionWeak(ropt, ifNone)
+  def flattenOptionWeak(ifNone: => Throwable): Try[T] = TryEffectsUtil.flattenOptionWeak(ropt, ifNone)
 }
 
 final class TryResultAsTryOps[T](private[this] val ior: Try[Result[T]]) {
@@ -164,7 +174,12 @@ final class BooleanAsTryOps(private[this] val b: Boolean) {
 
   def condTry[T](correct: => T, anomaly: => Anomaly): Try[T] = TryEffectsUtil.cond(b, correct, anomaly)
 
+  def condTryWeak[T](correct: => T, throwable: => Throwable): Try[T] = TryEffectsUtil.condWeak(b, correct, throwable)
+
   def condWithTry[T](correct: => Try[T], anomaly: => Anomaly): Try[T] = TryEffectsUtil.condWith(b, correct, anomaly)
+
+  def condWithWeakTry[T](correct: => Try[T], throwable: => Throwable): Try[T] =
+    TryEffectsUtil.condWithWeak(b, correct, throwable)
 
   def failOnTrueTry(anomaly: => Anomaly): Try[Unit] = TryEffectsUtil.failOnTrue(b, anomaly)
 
@@ -237,8 +252,14 @@ object TryEffectsUtil {
   def cond[T](test: Boolean, correct: => T, anomaly: => Anomaly): Try[T] =
     if (test) Try(correct) else TryEffectsUtil.fail(anomaly)
 
+  def condWeak[T](test: Boolean, correct: => T, anomaly: => Throwable): Try[T] =
+    if (test) Try(correct) else TryEffectsUtil.failWeak(anomaly)
+
   def condWith[T](test: Boolean, correct: => Try[T], anomaly: => Anomaly): Try[T] =
     if (test) correct else TryEffectsUtil.fail(anomaly)
+
+  def condWithWeak[T](test: Boolean, correct: => Try[T], anomaly: => Throwable): Try[T] =
+    if (test) correct else TryEffectsUtil.failWeak(anomaly)
 
   def failOnTrue(test: Boolean, anomaly: => Anomaly): Try[Unit] =
     if (test) TryEffectsUtil.fail(anomaly) else TryEffectsUtil.unit
@@ -281,15 +302,6 @@ object TryEffectsUtil {
   def asIO[T](tr: Try[T]): IO[T] = IOEffectsUtil.fromTry(tr)
 
   def asTask[T](tr: Try[T]): Task[T] = Task.fromTry(tr)
-
-  /**
-    * !!! USE WITH CARE !!!
-    *
-    * Using this is highly discouraged!
-    *
-    * Only for testing
-    */
-  def unsafeGet[T](tr: Try[T]): T = tr.get
 
   //===========================================================================
   //============================== Transformers ===============================
