@@ -4,7 +4,6 @@ import busymachines.core.Anomaly
 import busymachines.duration, duration.FiniteDuration
 
 import scala.util._
-import scala.util.control.NonFatal
 
 /**
   *
@@ -44,8 +43,6 @@ final class TaskCompanionOps(val io: Task.type) {
 
   def fromResultSuspend[T](r: => Result[T]) = TaskEffectsUtil.fromResultSuspend(r)
 
-  def fromTry[T](t: Try[T]): Task[T] = TaskEffectsUtil.fromTry(t)
-
   def fromTrySuspend[T](t: => Try[T]): Task[T] = TaskEffectsUtil.fromTrySuspend(t)
 
   def fromOption[T](opt: Option[T], ifNone: => Anomaly): Task[T] = TaskEffectsUtil.fromOption(opt, ifNone)
@@ -56,8 +53,6 @@ final class TaskCompanionOps(val io: Task.type) {
 
   def fromFutureSuspend[T](f: => Future[T]): Task[T] =
     TaskEffectsUtil.fromFutureSuspend(f)
-
-  def fromIO[T](io: IO[T]): Task[T] = TaskEffectsUtil.fromIO(io)
 
   def cond[T](test: Boolean, correct: => T, anomaly: => Anomaly): Task[T] = TaskEffectsUtil.cond(test, correct, anomaly)
 
@@ -305,11 +300,6 @@ object TaskEffectsUtil {
   def fromResultSuspend[T](r: => Result[T]): Task[T] =
     Task(r).flatMap(TaskEffectsUtil.fromResult)
 
-  def fromTry[T](t: Try[T]): Task[T] = t match {
-    case Success(value)       => Task.pure(value)
-    case Failure(NonFatal(r)) => Task.raiseError(r)
-  }
-
   /**
     * Use for those rare cases in which you suspect that functions returning Result
     * are not pure.
@@ -320,7 +310,7 @@ object TaskEffectsUtil {
     * {{{
     *   var sideEffect = 0
     *
-    *   val suspendedSideEffect: Task[Int] = Task.fromResultSuspend {
+    *   val suspendedSideEffect: Task[Int] = Task.fromTrySuspend {
     *     Try {
     *       println("DOING SPOOKY UNSAFE SIDE-EFFECTS BECAUSE I CAN'T PROGRAM PURELY!!")
     *       sideEffect = 42
@@ -333,7 +323,7 @@ object TaskEffectsUtil {
     * }}}
     */
   def fromTrySuspend[T](t: => Try[T]): Task[T] =
-    Task(t).flatMap(TaskEffectsUtil.fromTry)
+    Task(t).flatMap(Task.fromTry)
 
   def fromOption[T](opt: Option[T], ifNone: => Anomaly): Task[T] = {
     opt match {
@@ -361,11 +351,6 @@ object TaskEffectsUtil {
 
   def fromFutureSuspend[T](f: => Future[T]): Task[T] =
     Task.deferFuture(f)
-
-  /**
-    * Alias for [[Task#fromIO]]
-    */
-  def fromIO[T](io: IO[T]): Task[T] = Task.fromIO(io)
 
   //===========================================================================
   //======================== Task from special cased Task =========================

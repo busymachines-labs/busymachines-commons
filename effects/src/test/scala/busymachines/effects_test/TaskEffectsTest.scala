@@ -177,21 +177,6 @@ class TaskEffectsTest extends FunSpec with Matchers {
       assert(value == 42,      "the resulting value of the Task is wrong")
       assert(sideEffect == 42, "the side effect ( have been applied after running Task")
     }
-
-    it("Task.fromTask — suspend side-effects") {
-      var sideEffect: Int = 0
-      val io: Task[Int] = Task.fromIO {
-        IO {
-          sideEffect = 42
-          sideEffect
-        }
-      }
-      sleep()
-      if (sideEffect == 42) fail("Task did not properly suspend side effects")
-      val value = io.syncUnsafeGet()
-      assert(value == 42,      "the resulting value of the Task is wrong")
-      assert(sideEffect == 42, "the side effect ( have been applied after running Task")
-    }
   }
 
   describe("Task — companion methods Task to Task") {
