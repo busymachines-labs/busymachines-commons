@@ -1,4 +1,4 @@
-package busymachines
+package busymachines.effects
 
 /**
   *

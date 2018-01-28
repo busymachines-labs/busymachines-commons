@@ -1,7 +1,7 @@
 package busymachines.effects
 
 import busymachines.core.Anomaly
-import busymachines.future.FutureUtil
+import busymachines.effects.future.FutureUtil
 
 import scala.util._
 

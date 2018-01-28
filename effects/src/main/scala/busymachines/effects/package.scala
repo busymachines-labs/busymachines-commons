@@ -1,6 +1,6 @@
 package busymachines
 
-import busymachines.future.{FutureSyntaxImplicits,         FutureTypeDefinitions}
+import busymachines.effects.future.{FutureSyntaxImplicits, FutureTypeDefinitions}
 import busymachines.effects.result.{ResultSyntaxImplicits, ResultTypeDefinitions}
 
 /**

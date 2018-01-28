@@ -1,4 +1,4 @@
-package busymachines.future
+package busymachines.effects.future
 
 import busymachines.core.Anomaly
 import busymachines.duration
