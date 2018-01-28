@@ -48,7 +48,7 @@ lazy val root = Project(id = "busymachines-commons", base = file("."))
   .aggregate(
     core,
     `effects-sync`,
-    future,
+    `effects-future`,
     effects,
     json,
     `rest-core`,
@@ -81,11 +81,11 @@ lazy val `effects-sync` = project
     core
   )
 
-lazy val future = project
+lazy val `effects-future` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
-    name in ThisProject := "busymachines-commons-future",
+    name in ThisProject := "busymachines-commons-effects-future",
     libraryDependencies ++= Seq(
       Dependencies.scalaTest % Test withSources ()
     )
@@ -110,7 +110,7 @@ lazy val effects = project
   .dependsOn(
     core,
     `effects-sync`,
-    future
+    `effects-future`
   )
 
 lazy val json = project
