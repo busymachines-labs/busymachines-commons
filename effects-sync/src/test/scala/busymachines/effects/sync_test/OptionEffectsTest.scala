@@ -328,6 +328,37 @@ final class OptionEffectsTest extends FunSpec {
         }
       }
 
+      describe("recover") {
+        test("fail") {
+          assert(
+            Option.recover(failV, 11) == Option.pure(11)
+          )
+        }
+
+        test("pure") {
+          assert(Option.recover(pureV, 11) == pureV)
+
+        }
+      }
+
+      describe("recoverWith") {
+        test("fail — pure") {
+          assert(Option.recoverWith(failV, Option.pure(11)) == Option.pure(11))
+        }
+
+        test("fail — fail") {
+          assert(Option.recoverWith(failV, Option.none) == None)
+        }
+
+        test("pure — pure") {
+          assert(Option.recoverWith(pureV, Option.pure(11)) == pureV)
+        }
+
+        test("pure — fail") {
+          assert(Option.recoverWith(pureV, Option.none) == pureV)
+        }
+      }
+
     } //end transformers
 
   } //end companion object syntax tests
@@ -523,6 +554,34 @@ final class OptionEffectsTest extends FunSpec {
             ano.message
           )
           assert(value.r == "42")
+        }
+      }
+
+      describe("recover") {
+        test("fail") {
+          assert(failV.recover(11) == Option.pure(11))
+        }
+
+        test("pure") {
+          assert(pureV.recover(11) == pureV)
+        }
+      }
+
+      describe("recoverWith") {
+        test("fail — pure") {
+          assert(failV.recoverWith(Option.pure(11)) == Option.pure(11))
+        }
+
+        test("fail — fail") {
+          assert(failV.recoverWith(Option.none) == None)
+        }
+
+        test("pure — pure") {
+          assert(pureV.recoverWith(Option.pure(11)) == pureV)
+        }
+
+        test("pure — fail") {
+          assert(pureV.recoverWith(Option.none) == pureV)
         }
       }
 

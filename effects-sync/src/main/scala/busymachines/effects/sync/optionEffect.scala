@@ -101,6 +101,12 @@ object OptionSyntax {
     def morph[T, R](value: Option[T], good: T => R, bad: => R): Option[R] =
       OptionOps.morph(value, good, bad)
 
+    def recover[T](value: Option[T], ifNone: => T): Option[T] =
+      OptionOps.recover(value, ifNone)
+
+    def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] =
+      OptionOps.recoverWith(value, ifNone)
+
   }
 
   /**
@@ -129,6 +135,11 @@ object OptionSyntax {
     def morph[R](good: T => R, bad: => R): Option[R] =
       OptionOps.morph(value, good, bad)
 
+    def recover(ifNone: => T): Option[T] =
+      OptionOps.recover(value, ifNone)
+
+    def recoverWith(ifNone: => Option[T]): Option[T] =
+      OptionOps.recoverWith(value, ifNone)
   }
 
   /**
@@ -230,8 +241,18 @@ object OptionOps {
   //===========================================================================
 
   def morph[T, R](value: Option[T], good: T => R, bad: => R): Option[R] = value match {
-    case Some(v) => Some(good(v))
-    case None    => Some(bad)
+    case Some(v) => Option(good(v))
+    case None    => Option(bad)
+  }
+
+  def recover[T](value: Option[T], ifNone: => T): Option[T] = value match {
+    case Some(v) => Option(v)
+    case None    => Option(ifNone)
+  }
+
+  def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] = value match {
+    case Some(v) => Option(v)
+    case None    => ifNone
   }
 
 }
