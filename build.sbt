@@ -5,7 +5,10 @@ lazy val currentSnapshotVersion = "0.3.0-SNAPSHOT"
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
 //FIXME: remove this when done writing the effects package
-addCommandAlias("dev", ";effects/clean;effects/compile;effects/Test/compile;coverage;effects/test;effects/coverageReport")
+addCommandAlias(
+  "dev",
+  ";effects/clean;effects/compile;effects/Test/compile;coverage;effects/test;effects/coverageReport"
+)
 
 addCommandAlias("build",           ";compile;Test/compile")
 addCommandAlias("rebuild",         ";clean;update;compile;Test/compile")
@@ -77,7 +80,12 @@ lazy val `effects-sync` = project
   .settings(
     name in ThisProject := "busymachines-commons-effects-sync",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources ()
+      Dependencies.scalaTest % Test withSources (),
+      /**
+        * only in tests because we want to test if syntax
+        * plays well with import cats._, cats.implicits._
+        */
+      Dependencies.catsCore % Test withSources ()
     )
   )
   .dependsOn(
