@@ -413,7 +413,7 @@ object TryOps {
     result.flatMap(r => TryOps.fromResult(r))
 
   //===========================================================================
-  //======================= Try to various (pseudo)monads ======================
+  //========================== Try to various effects =========================
   //===========================================================================
 
   def asOptionUnsafe[T](value: Try[T]): Option[T] = value match {

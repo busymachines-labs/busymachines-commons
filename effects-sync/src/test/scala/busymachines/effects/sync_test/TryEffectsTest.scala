@@ -29,24 +29,24 @@ final class TryEffectsTest extends FunSpec {
   private val none: Option[Int] = Option.empty
   private val some: Option[Int] = Option(42)
 
-  private val failV: Try[Int] = Try.fail(ano)
-  private val pureV: Try[Int] = Try.pure(42)
-
   private val left:  Either[Throwable, Int] = Left(thr)
   private val right: Either[Throwable, Int] = Right(42)
 
   private val correct:   Result[Int] = Result(42)
   private val incorrect: Result[Int] = Result.fail(ano)
 
-  private val btrue:  Try[Boolean] = Try.pure(true)
-  private val bfalse: Try[Boolean] = Try.pure(false)
-  private val bfail:  Try[Boolean] = Try.failWeak(iae)
-
   private val int2str: Int => String = i => i.toString
 
   private val thr2str: Throwable => String    = thr => thr.getMessage
   private val thr2ano: Throwable => Anomaly   = thr => ForbiddenFailure
   private val thr2thr: Throwable => Throwable = thr => iae
+
+  private val failV: Try[Int] = Try.fail(ano)
+  private val pureV: Try[Int] = Try.pure(42)
+
+  private val btrue:  Try[Boolean] = Try.pure(true)
+  private val bfalse: Try[Boolean] = Try.pure(false)
+  private val bfail:  Try[Boolean] = Try.failWeak(iae)
 
   //---------------------------------------------------------------------------
 

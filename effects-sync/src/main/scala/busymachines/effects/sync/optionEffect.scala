@@ -214,7 +214,7 @@ object OptionOps {
     test.flatMap(b => OptionOps.condWith(b, good))
 
   //===========================================================================
-  //======================= Option to various (pseudo)monads ======================
+  //========================= Option to various effects =======================
   //===========================================================================
 
   // —— def asList —— direct alias to option.toList

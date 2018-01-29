@@ -314,7 +314,7 @@ object ResultOps {
     nopt.flatMap(opt => ResultOps.fromOption(opt, ifNone))
 
   //===========================================================================
-  //======================= Result to various (pseudo)monads ======================
+  //======================= Result to various effects =========================
   //===========================================================================
 
   def asOptionUnsafe[T](value: Result[T]): Option[T] = value match {
