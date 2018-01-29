@@ -83,7 +83,11 @@ object ResultSyntax {
     def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Result[R] =
       ResultOps.fromEither(either, transformLeft)
 
-    def cond[T](test: Boolean, good: => T, bad: => Anomaly): Result[T] =
+    /**
+      * Similar to [[Either.cond]], but specialized on result. It has a different
+      * name because the [[Either.cond]] method is always selected over this one.
+      */
+    def condResult[T](test: Boolean, good: => T, bad: => Anomaly): Result[T] =
       ResultOps.cond(test, good, bad)
 
     def condWith[T](test: Boolean, good: => Result[T], bad: => Anomaly): Result[T] =
@@ -109,9 +113,6 @@ object ResultSyntax {
 
     def flattenOption[T](nopt: Result[Option[T]], ifNone: => Anomaly): Result[T] =
       ResultOps.flattenOption(nopt, ifNone)
-
-    def flattenResult[T](value: Result[Result[T]]): Result[T] =
-      ResultOps.flattenResult(value)
 
     def asOptionUnsafe[T](value: Result[T]): Option[T] =
       ResultOps.asOptionUnsafe(value)
@@ -161,6 +162,12 @@ object ResultSyntax {
 
     def morph[R](good: T => R, bad: Anomaly => R): Result[R] =
       ResultOps.morph(value, good, bad)
+
+    def recover[R >: T](pf: PartialFunction[Anomaly, R]): Result[R] =
+      ResultOps.recover(value, pf)
+
+    def recoverWith[R >: T](pf: PartialFunction[Anomaly, Result[R]]): Result[R] =
+      ResultOps.recoverWith(value, pf)
 
     def discardContent: Result[Unit] =
       ResultOps.discardContent(value)
@@ -306,8 +313,6 @@ object ResultOps {
   def flattenOption[T](nopt: Result[Option[T]], ifNone: => Anomaly): Result[T] =
     nopt.flatMap(opt => ResultOps.fromOption(opt, ifNone))
 
-  def flattenResult[T](result: Result[Result[T]]): Result[T] = result.flatMap(identity)
-
   //===========================================================================
   //======================= Result to various (pseudo)monads ======================
   //===========================================================================
@@ -382,13 +387,19 @@ object ResultOps {
   *
   */
 object Correct {
-  def apply[T](r: T): Result[T] = Right[Anomaly, T](r)
 
-  def unapply[A <: Anomaly, C](arg: Right[A, C]): Option[C] = Right.unapply(arg)
+  def apply[T](value: T): Result[T] =
+    Right[Anomaly, T](value)
+
+  def unapply[A <: Anomaly, C](arg: Right[A, C]): Option[C] =
+    Right.unapply(arg)
 }
 
 object Incorrect {
-  def apply[T](a: Anomaly): Result[T] = Left[Anomaly, T](a)
 
-  def unapply[A <: Anomaly, C](arg: Left[A, C]): Option[A] = Left.unapply(arg)
+  def apply[T](bad: Anomaly): Result[T] =
+    Left[Anomaly, T](bad)
+
+  def unapply[A <: Anomaly, C](arg: Left[A, C]): Option[A] =
+    Left.unapply(arg)
 }
