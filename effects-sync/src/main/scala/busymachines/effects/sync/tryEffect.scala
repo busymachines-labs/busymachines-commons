@@ -169,7 +169,7 @@ object TrySyntax {
     def morph[T, R](value: Try[T], good: T => R, bad: Throwable => R): Try[R] =
       TryOps.morph(value, good, bad)
 
-    def discardContent[T](value: Try[T]) =
+    def discardContent[T](value: Try[T]): Try[Unit] =
       TryOps.discardContent(value)
   }
 
