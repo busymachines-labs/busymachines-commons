@@ -19,50 +19,50 @@ trait ResultTypeDefinitions {
   val Result: Either.type = Either
 }
 
-/**
-  *
-  */
 object ResultSyntax {
 
+  /**
+    *
+    */
   trait Implicits {
+    implicit def bmcResultCompanionObjectOps(obj: Result.type): CompationObjectOps =
+      new CompationObjectOps(obj)
 
-    implicit def bmcResultCompanionObjectOps(t: Result.type): ResultSyntax.CompanionObjectOps =
-      new ResultSyntax.CompanionObjectOps(t)
+    implicit def bmcResultReferenceOps[T](value: Result[T]): ReferenceOps[T] =
+      new ReferenceOps(value)
 
-    implicit def bmcResultReferenceOps[T](t: Result[T]): ResultSyntax.ReferenceOps[T] =
-      new ResultSyntax.ReferenceOps(t)
+    implicit def bmcResultNestedOptionOps[T](nopt: Result[Option[T]]): NestedOptionOps[T] =
+      new NestedOptionOps(nopt)
 
-    implicit def bmcResultNestedOptionOps[T](ropt: Result[Option[T]]): ResultSyntax.NestedOptionOps[T] =
-      new ResultSyntax.NestedOptionOps(ropt)
+    implicit def bmcResultBooleanOps(test: Boolean): BooleanOps =
+      new BooleanOps(test)
 
-    @scala.deprecated("Create an EitherEffect file, where all this stuff goes", "now")
-    implicit def bmcResultEitherOps[L, R](eit: Either[L, R]): ResultSyntax.EitherOps[L, R] =
-      new ResultSyntax.EitherOps(eit)
-
-    implicit def bmcResultBooleanOps(b: Boolean): ResultSyntax.BooleanOps =
-      new ResultSyntax.BooleanOps(b)
-
-    implicit def bmcResultNestedBooleanOps(b: Result[Boolean]): ResultSyntax.NestedBooleanOps =
-      new ResultSyntax.NestedBooleanOps(b)
+    implicit def bmcResultNestedBooleanOps(test: Result[Boolean]): NestedBooleanOps =
+      new NestedBooleanOps(test)
   }
 
   /**
     *
     */
-  final class CompanionObjectOps(val r: Result.type) extends AnyVal {
+  final class CompationObjectOps(val obj: Result.type) {
+
     //===========================================================================
     //========================== Primary constructors ===========================
     //===========================================================================
 
-    def pure[T](t: T): Result[T] = ResultOps.pure(t)
+    def pure[T](value: T): Result[T] =
+      ResultOps.pure(value)
 
-    def correct[T](t: T): Result[T] = ResultOps.correct(t)
-
-    def fail[T](a: Anomaly): Result[T] = ResultOps.fail(a)
-
-    def incorrect[T](a: Anomaly): Result[T] = ResultOps.incorrect(a)
+    def fail[T](bad: Anomaly): Result[T] =
+      ResultOps.fail(bad)
 
     def unit: Result[Unit] = ResultOps.unit
+
+    def correct[T](t: T): Result[T] =
+      ResultOps.correct(t)
+
+    def incorrect[T](a: Anomaly): Result[T] =
+      ResultOps.incorrect(a)
 
     def apply[T](thunk: => T): Result[T] =
       ResultOps.apply(thunk)
@@ -71,172 +71,169 @@ object ResultSyntax {
     //==================== Result from various other effects ====================
     //===========================================================================
 
-    def fromEither[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] =
-      ResultOps.fromEither(elr)
-
-    def fromEither[L, R](elr: Either[L, R], transformLeft: L => Anomaly): Result[R] =
-      ResultOps.fromEither(elr, transformLeft)
-
-    def fromTry[T](t: Try[T]): Result[T] = ResultOps.fromTry(t)
-
     def fromOption[T](opt: Option[T], ifNone: => Anomaly): Result[T] =
       ResultOps.fromOption(opt, ifNone)
 
-    //===========================================================================
-    //==================== Result from special cased Result =====================
-    //===========================================================================
+    def fromTry[T](value: Try[T]) =
+      ResultOps.fromTry(value)
 
-    def cond[T](test: Boolean, correct: => T, anomaly: => Anomaly): Result[T] =
-      ResultOps.cond(test, correct, anomaly)
+    def fromEither[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Result[R] =
+      ResultOps.fromEither(either)(ev)
 
-    def failOnTrue(test: Boolean, anomaly: => Anomaly): Result[Unit] =
-      ResultOps.failOnTrue(test, anomaly)
+    def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Result[R] =
+      ResultOps.fromEither(either, transformLeft)
 
-    def failOnFalse(test: Boolean, anomaly: => Anomaly): Result[Unit] =
-      ResultOps.failOnFalse(test, anomaly)
+    def cond[T](test: Boolean, good: => T, bad: => Anomaly): Result[T] =
+      ResultOps.cond(test, good, bad)
 
-    def flatCond[T](test: Result[Boolean], correct: => T, anomaly: => Anomaly): Result[T] =
-      ResultOps.flatCond(test, correct, anomaly)
+    def condWith[T](test: Boolean, good: => Result[T], bad: => Anomaly): Result[T] =
+      ResultOps.condWith(test, good, bad)
 
-    def flatFailOnTrue(test: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
-      ResultOps.flatFailOnTrue(test, anomaly)
+    def flatCond[T](test: Result[Boolean], good: => T, bad: => Anomaly): Result[T] =
+      ResultOps.flatCond(test, good, bad)
 
-    def flatFailOnFalse(test: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
-      ResultOps.flatFailOnFalse(test, anomaly)
+    def flatCondWith[T](test: Result[Boolean], good: => Result[T], bad: => Anomaly): Result[T] =
+      ResultOps.flatCondWith(test, good, bad)
 
-    //===========================================================================
-    //===================== Result to various (pseudo)monads ====================
-    //===========================================================================
+    def failOnTrue(test: Boolean, bad: => Anomaly): Result[Unit] =
+      ResultOps.failOnTrue(test, bad)
 
-    def unsafeAsOption[T](r: Result[T]): Option[T] =
-      ResultOps.unsafeAsOption(r)
+    def failOnFalse(test: Boolean, bad: => Anomaly): Result[Unit] =
+      ResultOps.failOnFalse(test, bad)
 
-    def unsafeAsList[T](r: Result[T]): List[T] =
-      ResultOps.unsafeAsList(r)
+    def flatFailOnTrue(test: Result[Boolean], bad: => Anomaly): Result[Unit] =
+      ResultOps.flatFailOnTrue(test, bad)
 
-    def asTry[T](r: Result[T]): Try[T] =
-      ResultOps.asTry(r)
+    def flatFailOnFalse(test: Result[Boolean], bad: => Anomaly): Result[Unit] =
+      ResultOps.flatFailOnFalse(test, bad)
 
-    def unsafeGet[T](r: Result[T]): T =
-      ResultOps.unsafeGet(r)
+    def flattenOption[T](nopt: Result[Option[T]], ifNone: => Anomaly): Result[T] =
+      ResultOps.flattenOption(nopt, ifNone)
+
+    def flattenResult[T](value: Result[Result[T]]): Result[T] =
+      ResultOps.flattenResult(value)
+
+    def asOptionUnsafe[T](value: Result[T]): Option[T] =
+      ResultOps.asOptionUnsafe(value)
+
+    def asListUnsafe[T](value: Result[T]): List[T] =
+      ResultOps.asListUnsafe(value)
+
+    def asTry[T](value: Result[T]): Try[T] =
+      ResultOps.asTry(value)
+
+    def unsafeGet[T](value: Result[T]): T =
+      ResultOps.unsafeGet(value)
 
     //===========================================================================
     //============================== Transformers ===============================
     //===========================================================================
 
-    def bimap[T, R](r: Result[T], good: T => R, bad: Anomaly => Anomaly): Result[R] =
-      ResultOps.bimap(r, good, bad)
+    def bimap[T, R](value: Result[T], good: T => R, bad: Anomaly => Anomaly): Result[R] =
+      ResultOps.bimap(value, good, bad)
 
-    def morph[T, R](r: Result[T], good: T => R, bad: Anomaly => R): Result[R] =
-      ResultOps.morph(r, good, bad)
+    def morph[T, R](value: Result[T], good: T => R, bad: Anomaly => R): Result[R] =
+      ResultOps.morph(value, good, bad)
 
-    def recover[T, R >: T](r: Result[T], pf: PartialFunction[Anomaly, R]): Result[R] =
-      ResultOps.recover(r, pf)
-
-    def recoverWith[T, R >: T](r: Result[T], pf: PartialFunction[Anomaly, Result[R]]): Result[R] =
-      ResultOps.recoverWith(r, pf)
-
-    def discardContent[T](r: Result[T]): Result[Unit] =
-      ResultOps.discardContent(r)
+    def discardContent[T](value: Result[T]) =
+      ResultOps.discardContent(value)
   }
 
   /**
     *
     */
-  final class ReferenceOps[T](val r: Result[T]) extends AnyVal {
+  final class ReferenceOps[T](private[this] val value: Result[T]) {
 
-    def bimap[R](good: T => R, bad: Anomaly => Anomaly): Result[R] = ResultOps.bimap(r, good, bad)
+    def asOptionUnsafe(): Option[T] =
+      ResultOps.asOptionUnsafe(value)
 
-    def morph[R](good: T => R, bad: Anomaly => R): Result[R] = ResultOps.morph(r, good, bad)
+    def asListUnsafe(): List[T] =
+      ResultOps.asListUnsafe(value)
 
-    def recover[R >: T](pf: PartialFunction[Anomaly, R]): Result[R] = ResultOps.recover(r, pf)
+    def asTry: Try[T] =
+      ResultOps.asTry(value)
 
-    def recoverWith[R >: T](pf: PartialFunction[Anomaly, Result[R]]): Result[R] = ResultOps.recoverWith(r, pf)
+    def unsafeGet(): T =
+      ResultOps.unsafeGet(value)
 
-    def discardContent: Result[Unit] = ResultOps.discardContent(r)
+    def bimap[R](good: T => R, bad: Anomaly => Anomaly): Result[R] =
+      ResultOps.bimap(value, good, bad)
 
-    //===========================================================================
-    //===================== Result to various (pseudo)monads ====================
-    //===========================================================================
+    def morph[R](good: T => R, bad: Anomaly => R): Result[R] =
+      ResultOps.morph(value, good, bad)
 
-    def unsafeAsOption: Option[T] = ResultOps.unsafeAsOption(r)
-
-    def unsafeAsList: List[T] = ResultOps.unsafeAsList(r)
-
-    def asTry: Try[T] = ResultOps.asTry(r)
-
-    def unsafeGet: T = ResultOps.unsafeGet(r)
-  }
-
-  /**
-    *
-    */
-  final class NestedOptionOps[T](val ropt: Result[Option[T]]) extends AnyVal {
-
-    def flattenOption(ifNone: => Anomaly): Result[T] = ResultOps.flattenOption(ropt, ifNone)
-
-  }
-
-  /**
-    *
-    */
-  @scala.deprecated("Create an EitherEffect file, where all this stuff goes", "now")
-  final class EitherOps[L, R](private[this] val eit: Either[L, R]) {
-
-    @scala.deprecated("Create an EitherEffect file, where all this stuff goes", "now")
-    def asResult(implicit ev: L <:< Throwable): Result[R] = ResultOps.fromEither(eit)
-
-    @scala.deprecated("Create an EitherEffect file, where all this stuff goes", "now")
-    def asResult(transformLeft: L => Anomaly): Result[R] = ResultOps.fromEither(eit, transformLeft)
+    def discardContent: Result[Unit] =
+      ResultOps.discardContent(value)
   }
 
   /**
     *
     *
     */
-  final class BooleanOps(private[this] val b: Boolean) {
-
-    def cond[T](correct: => T, anomaly: => Anomaly): Result[T] = ResultOps.cond(b, correct, anomaly)
-
-    def failOnTrue(anomaly: => Anomaly): Result[Unit] = ResultOps.failOnTrue(b, anomaly)
-
-    def failOnFalse(anomaly: => Anomaly): Result[Unit] = ResultOps.failOnFalse(b, anomaly)
+  final class NestedOptionOps[T](private[this] val nopt: Result[Option[T]]) {
+    def flattenOption(ifNone: => Anomaly): Result[T] = ResultOps.flattenOption(nopt, ifNone)
   }
 
   /**
     *
     *
     */
-  final class NestedBooleanOps(private[this] val br: Result[Boolean]) {
+  final class BooleanOps(private[this] val test: Boolean) {
 
-    def cond[T](correct: => T, anomaly: => Anomaly): Result[T] = ResultOps.flatCond(br, correct, anomaly)
+    def condResult[T](good: => T, bad: => Anomaly): Result[T] =
+      ResultOps.cond(test, good, bad)
 
-    def failOnTrue(anomaly: => Anomaly): Result[Unit] = ResultOps.flatFailOnTrue(br, anomaly)
+    def condWithResult[T](good: => Result[T], bad: => Anomaly): Result[T] =
+      ResultOps.condWith(test, good, bad)
 
-    def failOnFalse(anomaly: => Anomaly): Result[Unit] = ResultOps.flatFailOnFalse(br, anomaly)
+    def failOnTrueResult(bad: => Anomaly): Result[Unit] =
+      ResultOps.failOnTrue(test, bad)
+
+    def failOnFalseResult(bad: => Anomaly): Result[Unit] =
+      ResultOps.failOnFalse(test, bad)
+
   }
 
+  /**
+    *
+    *
+    */
+  final class NestedBooleanOps(private[this] val test: Result[Boolean]) {
+
+    def cond[T](good: => T, bad: => Anomaly): Result[T] =
+      ResultOps.flatCond(test, good, bad)
+
+    def condWith[T](good: => Result[T], bad: => Anomaly): Result[T] =
+      ResultOps.flatCondWith(test, good, bad)
+
+    def failOnTrue(bad: => Anomaly): Result[Unit] =
+      ResultOps.flatFailOnTrue(test, bad)
+
+    def failOnFalse(bad: => Anomaly): Result[Unit] =
+      ResultOps.flatFailOnFalse(test, bad)
+
+  }
 }
 
 //=============================================================================
 //=============================================================================
 //=============================================================================
 //=============================================================================
-//=============================================================================
-//=============================================================================
-//=============================================================================
-//=============================================================================
 
+/**
+  *
+  */
 object ResultOps {
+
   //===========================================================================
   //========================== Primary constructors ===========================
   //===========================================================================
 
-  def pure[T](t:    T): Result[T] = Correct(t)
-  def correct[T](t: T): Result[T] = Correct(t)
+  def pure[T](t:   T):       Result[T] = Correct(t)
+  def fail[T](bad: Anomaly): Result[T] = Incorrect(bad)
 
-  def fail[T](a:      Anomaly): Result[T] = Incorrect(a)
-  def incorrect[T](a: Anomaly): Result[T] = Incorrect(a)
+  def correct[T](t:     T):       Result[T] = Correct(t)
+  def incorrect[T](bad: Anomaly): Result[T] = Incorrect(bad)
 
   val unit: Result[Unit] = Correct(())
 
@@ -250,25 +247,12 @@ object ResultOps {
   }
 
   //===========================================================================
-  //==================== Result from various (pseudo)monads ===================
+  //==================== Result from various other effects =======================
   //===========================================================================
 
-  def fromEither[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = {
-    elr match {
-      case Left(left) =>
-        ev(left) match {
-          case a: Anomaly => ResultOps.incorrect(a)
-          case NonFatal(t) => ResultOps.incorrect(CatastrophicError(t))
-        }
-      case Right(value) => ResultOps.pure(value)
-    }
-  }
-
-  def fromEither[L, R](elr: Either[L, R], transformLeft: L => Anomaly): Result[R] = {
-    elr match {
-      case Left(left)   => ResultOps.incorrect(transformLeft(left))
-      case Right(value) => ResultOps.pure(value)
-    }
+  def fromOption[T](opt: Option[T], ifNone: => Anomaly): Result[T] = opt match {
+    case None    => ResultOps.incorrect(ifNone)
+    case Some(v) => ResultOps.pure(v)
   }
 
   def fromTry[T](t: Try[T]): Result[T] = t match {
@@ -277,58 +261,73 @@ object ResultOps {
     case Success(value)       => ResultOps.pure(value)
   }
 
-  def fromOption[T](opt: Option[T], ifNone: => Anomaly): Result[T] = {
-    opt match {
-      case None    => ResultOps.incorrect(ifNone)
-      case Some(v) => ResultOps.pure(v)
-    }
+  def fromEither[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = elr match {
+    case Left(left) =>
+      ev(left) match {
+        case a: Anomaly => ResultOps.incorrect(a)
+        case NonFatal(t) => ResultOps.incorrect(CatastrophicError(t))
+      }
+    case Right(value) => ResultOps.pure(value)
+  }
+
+  def fromEither[L, R](elr: Either[L, R], transformLeft: L => Anomaly): Result[R] = elr match {
+    case Left(left)   => ResultOps.incorrect(transformLeft(left))
+    case Right(value) => ResultOps.pure(value)
   }
 
   //===========================================================================
-  //==================== Result from special cased Result =====================
+  //======================== Result from special cased Result =======================
   //===========================================================================
 
-  def cond[T](test: Boolean, correct: => T, anomaly: => Anomaly): Result[T] =
-    Either.cond[Anomaly, T](test, correct, anomaly)
+  def cond[T](test: Boolean, good: => T, bad: => Anomaly): Result[T] =
+    if (test) ResultOps.pure(good) else ResultOps.fail(bad)
 
-  def failOnTrue(test: Boolean, anomaly: => Anomaly): Result[Unit] =
-    if (test) ResultOps.incorrect(anomaly) else ResultOps.unit
+  def condWith[T](test: Boolean, good: => Result[T], bad: => Anomaly): Result[T] =
+    if (test) good else ResultOps.fail(bad)
 
-  def failOnFalse(test: Boolean, anomaly: => Anomaly): Result[Unit] =
-    if (!test) ResultOps.incorrect(anomaly) else ResultOps.unit
+  def failOnTrue(test: Boolean, bad: => Anomaly): Result[Unit] =
+    if (test) ResultOps.fail(bad) else ResultOps.unit
 
-  def flatCond[T](test: Result[Boolean], correct: => T, anomaly: => Anomaly): Result[T] =
-    test flatMap (b => ResultOps.cond(b, correct, anomaly))
+  def failOnFalse(test: Boolean, bad: => Anomaly): Result[Unit] =
+    if (!test) ResultOps.fail(bad) else ResultOps.unit
 
-  def flatFailOnTrue(test: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
-    test flatMap (b => if (b) ResultOps.incorrect(anomaly) else ResultOps.unit)
+  def flatCond[T](test: Result[Boolean], good: => T, bad: => Anomaly): Result[T] =
+    test.flatMap(b => ResultOps.cond(b, good, bad))
 
-  def flatFailOnFalse(test: Result[Boolean], anomaly: => Anomaly): Result[Unit] =
-    test flatMap (b => if (!b) ResultOps.incorrect(anomaly) else ResultOps.unit)
+  def flatCondWith[T](test: Result[Boolean], good: => Result[T], bad: => Anomaly): Result[T] =
+    test.flatMap(b => ResultOps.condWith(b, good, bad))
 
-  def flattenOption[T](fopt: Result[Option[T]], ifNone: => Anomaly): Result[T] =
-    fopt flatMap (opt => ResultOps.fromOption(opt, ifNone))
+  def flatFailOnTrue(test: Result[Boolean], bad: => Anomaly): Result[Unit] =
+    test.flatMap(b => if (b) ResultOps.fail(bad) else ResultOps.unit)
+
+  def flatFailOnFalse(test: Result[Boolean], bad: => Anomaly): Result[Unit] =
+    test.flatMap(b => if (!b) ResultOps.fail(bad) else ResultOps.unit)
+
+  def flattenOption[T](nopt: Result[Option[T]], ifNone: => Anomaly): Result[T] =
+    nopt.flatMap(opt => ResultOps.fromOption(opt, ifNone))
+
+  def flattenResult[T](result: Result[Result[T]]): Result[T] = result.flatMap(identity)
 
   //===========================================================================
-  //===================== Result to various (pseudo)monads ====================
+  //======================= Result to various (pseudo)monads ======================
   //===========================================================================
 
-  def unsafeAsOption[T](r: Result[T]): Option[T] = r match {
+  def asOptionUnsafe[T](value: Result[T]): Option[T] = value match {
     case Left(value)  => throw value.asThrowable
     case Right(value) => Option(value)
   }
 
-  def unsafeAsList[T](r: Result[T]): List[T] = r match {
+  def asListUnsafe[T](value: Result[T]): List[T] = value match {
     case Left(value)  => throw value.asThrowable
     case Right(value) => List(value)
   }
 
-  def asTry[T](r: Result[T]): Try[T] = r match {
+  def asTry[T](value: Result[T]): Try[T] = value match {
     case Left(value)  => scala.util.Failure(value.asThrowable)
     case Right(value) => scala.util.Success(value)
   }
 
-  def unsafeGet[T](r: Result[T]): T = r match {
+  def unsafeGet[T](value: Result[T]): T = value match {
     case Left(value)  => throw value.asThrowable
     case Right(value) => value
   }
@@ -337,27 +336,28 @@ object ResultOps {
   //============================== Transformers ===============================
   //===========================================================================
 
-  def bimap[T, R](r: Result[T], good: T => R, bad: Anomaly => Anomaly): Result[R] = {
-    r.right.map(good).left.map(bad)
-  }
+  def bimap[T, R](value: Result[T], good: T => R, bad: Anomaly => Anomaly): Result[R] =
+    value.right.map(good).left.map(bad)
 
-  def morph[T, R](r: Result[T], good: T => R, bad: Anomaly => R): Result[R] = r match {
+  def morph[T, R](value: Result[T], good: T => R, bad: Anomaly => R): Result[R] = value match {
     case Left(value)  => ResultOps.pure(bad(value))
     case Right(value) => ResultOps.pure(good(value))
   }
 
-  def recover[T, R >: T](r: Result[T], pf: PartialFunction[Anomaly, R]): Result[R] = r match {
+  def recover[T, R >: T](value: Result[T], pf: PartialFunction[Anomaly, R]): Result[R] = value match {
     case Left(a: Anomaly) if pf.isDefinedAt(a) => ResultOps.pure(pf(a))
-    case _ => r
+    case _ => value
   }
 
-  def recoverWith[T, R >: T](r: Result[T], pf: PartialFunction[Anomaly, Result[R]]): Result[R] = r match {
+  def recoverWith[T, R >: T](value: Result[T], pf: PartialFunction[Anomaly, Result[R]]): Result[R] = value match {
     case Left(a: Anomaly) if pf.isDefinedAt(a) => pf(a)
-    case _ => r
+    case _ => value
   }
 
   private val UnitFunction: Any => Unit = _ => ()
-  def discardContent[T](r: Result[T]): Result[Unit] = r.map(UnitFunction)
+
+  def discardContent[T](value: Result[T]): Result[Unit] =
+    value.map(UnitFunction)
 }
 
 /**
