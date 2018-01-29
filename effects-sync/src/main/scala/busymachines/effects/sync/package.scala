@@ -7,4 +7,5 @@ package busymachines.effects
   *
   */
 package object sync
-    extends TryTypeDefinitons with ResultTypeDefinitions with ResultSyntax.Implicits with TrySyntax.Implicits
+    extends TryTypeDefinitons with ResultTypeDefinitions with OptionSyntax.Implicits with ResultSyntax.Implicits
+    with TrySyntax.Implicits
