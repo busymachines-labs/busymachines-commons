@@ -22,8 +22,8 @@ object TrySyntax {
     *
     */
   trait Implicits {
-    implicit def bmcTryCompanionObjectOps(obj: Try.type): CompationObjectOps =
-      new CompationObjectOps(obj)
+    implicit def bmcTryCompanionObjectOps(obj: Try.type): CompanionObjectOps =
+      new CompanionObjectOps(obj)
 
     implicit def bmcTryReferenceOps[T](value: Try[T]): ReferenceOps[T] =
       new ReferenceOps(value)
@@ -44,7 +44,7 @@ object TrySyntax {
   /**
     *
     */
-  final class CompationObjectOps(val obj: Try.type) {
+  final class CompanionObjectOps(val obj: Try.type) {
 
     def pure[T](value: T): Try[T] =
       TryOps.pure(value)
