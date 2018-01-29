@@ -10,7 +10,7 @@ import org.scalatest._
   * @since 28 Jan 2018
   *
   */
-final class TryEffectsTest extends FunSpec with Matchers {
+final class TryEffectsTest extends FunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 
@@ -60,11 +60,11 @@ final class TryEffectsTest extends FunSpec with Matchers {
       }
 
       test("fail") {
-        the[InvalidInputFailure] thrownBy (Try.fail(ano).r)
-        the[RuntimeException] thrownBy (Try.failWeak(thr).r)
+        assertThrows[InvalidInputFailure](Try.fail(ano).r)
+        assertThrows[RuntimeException](Try.failWeak(thr).r)
 
-        the[InvalidInputFailure] thrownBy (Try.failure(ano).r)
-        the[RuntimeException] thrownBy (Try.failureWeak(thr).r)
+        assertThrows[InvalidInputFailure](Try.failure(ano).r)
+        assertThrows[RuntimeException](Try.failureWeak(thr).r)
       }
 
       test("unit") {
@@ -73,7 +73,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
 
       describe("fromOption") {
         test("none") {
-          the[InvalidInputFailure] thrownBy (Try.fromOption(none, ano).r)
+          assertThrows[InvalidInputFailure](Try.fromOption(none, ano).r)
         }
 
         test("some") {
@@ -83,7 +83,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
 
       describe("fromOptionWeak") {
         test("none") {
-          the[RuntimeException] thrownBy (Try.fromOptionWeak(none, thr).r)
+          assertThrows[RuntimeException](Try.fromOptionWeak(none, thr).r)
         }
 
         test("some") {
@@ -93,11 +93,11 @@ final class TryEffectsTest extends FunSpec with Matchers {
 
       describe("fromEither") {
         test("left") {
-          the[RuntimeException] thrownBy (Try.fromEither(left).r)
+          assertThrows[RuntimeException](Try.fromEither(left).r)
         }
 
         test("left — transform") {
-          the[ForbiddenFailure] thrownBy (Try.fromEither(left, thr2ano).r)
+          assertThrows[ForbiddenFailure](Try.fromEither(left, thr2ano).r)
         }
 
         test("right") {
@@ -111,7 +111,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
 
       describe("fromEitherWeak") {
         test("left — transform") {
-          the[IllegalArgumentException] thrownBy (Try.fromEitherWeak(left, (t: Throwable) => iae).r)
+          assertThrows[IllegalArgumentException](Try.fromEitherWeak(left, (t: Throwable) => iae).r)
         }
 
         test("right") {
@@ -121,7 +121,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
 
       describe("fromResult") {
         test("incorrect") {
-          the[InvalidInputFailure] thrownBy (Try.fromResult(incorrect).r)
+          assertThrows[InvalidInputFailure](Try.fromResult(incorrect).r)
         }
 
         test("correct") {
@@ -140,7 +140,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true") {
@@ -160,7 +160,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true") {
@@ -180,7 +180,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true — pure") {
@@ -198,7 +198,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true — fail") {
@@ -207,7 +207,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
       }
 
@@ -218,7 +218,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true — pure") {
@@ -236,7 +236,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true — fail") {
@@ -245,7 +245,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             thr
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
       }
 
@@ -256,7 +256,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true") {
@@ -274,7 +274,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             ano
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
       }
 
@@ -285,7 +285,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true") {
@@ -303,7 +303,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             thr
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
       }
 
@@ -314,7 +314,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("false — fail") {
@@ -323,7 +323,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true — pure") {
@@ -341,7 +341,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("fail — pure") {
@@ -350,7 +350,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             ano
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
 
         test("fail — fail") {
@@ -359,7 +359,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
       }
 
@@ -370,7 +370,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("false — fail") {
@@ -379,7 +379,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true — pure") {
@@ -397,7 +397,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             thr
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("fail — pure") {
@@ -406,7 +406,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             thr
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
 
         test("fail — fail") {
@@ -415,7 +415,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             thr
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
       }
 
@@ -433,7 +433,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             true,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
       }
 
@@ -451,7 +451,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             true,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
       }
 
@@ -461,7 +461,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             false,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true") {
@@ -479,7 +479,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             false,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true") {
@@ -822,7 +822,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true") {
@@ -841,7 +841,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
               42,
               thr
             )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true") {
@@ -859,7 +859,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true — pure") {
@@ -875,7 +875,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true — fail") {
@@ -883,7 +883,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
       }
 
@@ -893,7 +893,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true — pure") {
@@ -910,7 +910,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
               failV,
               thr
             )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true — fail") {
@@ -918,7 +918,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             thr
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
       }
 
@@ -928,7 +928,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true") {
@@ -944,7 +944,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             ano
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
       }
 
@@ -954,7 +954,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true") {
@@ -970,7 +970,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             42,
             thr
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
       }
 
@@ -980,7 +980,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("false — fail") {
@@ -988,7 +988,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true — pure") {
@@ -1004,7 +1004,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("fail — pure") {
@@ -1012,7 +1012,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             ano
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
 
         test("fail — fail") {
@@ -1020,7 +1020,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             ano
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
       }
 
@@ -1030,7 +1030,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("false — fail") {
@@ -1038,7 +1038,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             thr
           )
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true — pure") {
@@ -1054,7 +1054,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             thr
           )
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("fail — pure") {
@@ -1062,7 +1062,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             pureV,
             thr
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
 
         test("fail — fail") {
@@ -1070,7 +1070,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
             failV,
             thr
           )
-          the[IllegalArgumentException] thrownBy (value.r)
+          assertThrows[IllegalArgumentException](value.r)
         }
       }
 
@@ -1082,7 +1082,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
 
         test("true") {
           val value = true.failOnTrueTry(ano)
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
       }
 
@@ -1094,14 +1094,14 @@ final class TryEffectsTest extends FunSpec with Matchers {
 
         test("true") {
           val value = true.failOnTrueTryWeak(thr)
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
       }
 
       describe("failOnFalse") {
         test("false") {
           val value = false.failOnFalseTry(ano)
-          the[InvalidInputFailure] thrownBy (value.r)
+          assertThrows[InvalidInputFailure](value.r)
         }
 
         test("true") {
@@ -1113,7 +1113,7 @@ final class TryEffectsTest extends FunSpec with Matchers {
       describe("failOnFalseWeak") {
         test("false") {
           val value = false.failOnFalseTryWeak(thr)
-          the[RuntimeException] thrownBy (value.r)
+          assertThrows[RuntimeException](value.r)
         }
 
         test("true") {
