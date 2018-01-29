@@ -184,17 +184,17 @@ object Result {
     case Success(value)       => Result.pure(value)
   }
 
-  def fromEither[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = elr match {
+  def fromEither[L, R](elr: Either[L, R], transformLeft: L => Anomaly): Result[R] = elr match {
+    case Left(left)   => Result.incorrect(transformLeft(left))
+    case Right(value) => Result.pure(value)
+  }
+
+  def fromEitherWeak[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = elr match {
     case Left(left) =>
       ev(left) match {
         case a: Anomaly => Result.incorrect(a)
         case NonFatal(t) => Result.incorrect(CatastrophicError(t))
       }
-    case Right(value) => Result.pure(value)
-  }
-
-  def fromEither[L, R](elr: Either[L, R], transformLeft: L => Anomaly): Result[R] = elr match {
-    case Left(left)   => Result.incorrect(transformLeft(left))
     case Right(value) => Result.pure(value)
   }
 

@@ -423,7 +423,7 @@ object TaskEffectsUtil {
     * Similar to [[Task#attempt]], but gives you a result instead of an Either
     */
   def asResult[T](r: Task[T]): Task[Result[T]] = {
-    r.attempt.map(e => Result.fromEither(e))
+    r.attempt.map(e => Result.fromEitherWeak(e))
   }
 
   /**

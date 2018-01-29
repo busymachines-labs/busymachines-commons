@@ -72,11 +72,11 @@ object TrySyntax {
     def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): Try[T] =
       TryOps.fromOptionWeak(opt, ifNone)
 
-    def fromEither[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
-      TryOps.fromEither(either)(ev)
-
     def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] =
       TryOps.fromEither(either, transformLeft)
+
+    def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
+      TryOps.fromEitherWeak(either)(ev)
 
     def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] =
       TryOps.fromEitherWeak(either, transformLeft)
@@ -333,7 +333,7 @@ object TryOps {
     case Some(value) => TryOps.pure(value)
   }
 
-  def fromEither[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
+  def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
     either.toTry(ev)
 
   def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] = either match {

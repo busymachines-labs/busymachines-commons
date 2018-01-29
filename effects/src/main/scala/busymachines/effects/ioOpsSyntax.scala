@@ -425,7 +425,7 @@ object IOEffectsUtil {
     * Similar to [[IO#attempt]], but gives you a result instead of an Either
     */
   def asResult[T](r: IO[T]): IO[Result[T]] = {
-    r.attempt.map(e => Result.fromEither(e))
+    r.attempt.map(e => Result.fromEitherWeak(e))
   }
 
   /**

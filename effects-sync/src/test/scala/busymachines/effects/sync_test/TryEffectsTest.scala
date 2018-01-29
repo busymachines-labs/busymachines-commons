@@ -93,7 +93,7 @@ final class TryEffectsTest extends FunSpec {
 
       describe("fromEither") {
         test("left") {
-          assertThrows[RuntimeException](Try.fromEither(left).r)
+          assertThrows[RuntimeException](Try.fromEitherWeak(left).r)
         }
 
         test("left — transform") {
@@ -101,7 +101,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("right") {
-          assert(Try.fromEither(right).r == 42)
+          assert(Try.fromEitherWeak(right).r == 42)
         }
 
         test("right — transform") {

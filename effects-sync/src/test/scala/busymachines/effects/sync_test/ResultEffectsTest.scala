@@ -2,7 +2,7 @@ package busymachines.effects.sync_test
 
 import busymachines.core._
 import busymachines.effects.sync._
-import org.scalatest._
+import org.scalatest.FunSpec
 
 /**
   *
@@ -87,11 +87,11 @@ final class ResultEffectsTest extends FunSpec {
 
       describe("fromEither") {
         test("leftThr") {
-          assertThrows[CatastrophicError](Result.fromEither(leftThr).r)
+          assertThrows[CatastrophicError](Result.fromEitherWeak(leftThr).r)
         }
 
         test("leftAno") {
-          assertThrows[InvalidInputFailure](Result.fromEither(leftAno).r)
+          assertThrows[InvalidInputFailure](Result.fromEitherWeak(leftAno).r)
         }
 
         test("left — transform") {
@@ -99,7 +99,7 @@ final class ResultEffectsTest extends FunSpec {
         }
 
         test("right") {
-          assert(Result.fromEither(right).r == 42)
+          assert(Result.fromEitherWeak(right).r == 42)
         }
 
         test("right — transform") {
