@@ -428,7 +428,7 @@ object TryOps {
 
   // —— asEither —— is aliased to Try#toEither directly in syntax classes
 
-  def asResult[T](value: Try[T]): Result[T] = ResultOps.fromTry(value)
+  def asResult[T](value: Try[T]): Result[T] = Result.fromTry(value)
 
   def unsafeGet[T](value: Try[T]): T = value.get
 

@@ -231,7 +231,7 @@ object OptionOps {
   }
 
   def asResult[T](value: Option[T], ifNone: => Anomaly): Result[T] =
-    ResultOps.fromOption(value, ifNone)
+    Result.fromOption(value, ifNone)
 
   def unsafeGet[T](value: Option[T]): T =
     value.get

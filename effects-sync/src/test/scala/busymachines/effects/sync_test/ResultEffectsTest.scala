@@ -128,7 +128,7 @@ final class ResultEffectsTest extends FunSpec {
 
       describe("cond") {
         test("false") {
-          val value = Result.condResult(
+          val value = Result.cond(
             false,
             42,
             ano
@@ -137,7 +137,7 @@ final class ResultEffectsTest extends FunSpec {
         }
 
         test("true") {
-          val value = Result.condResult(
+          val value = Result.cond(
             true,
             42,
             ano

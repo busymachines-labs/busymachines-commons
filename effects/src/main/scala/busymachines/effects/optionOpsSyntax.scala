@@ -2,7 +2,6 @@ package busymachines.effects
 
 import busymachines.core.Anomaly
 import busymachines.effects.future.FutureUtil
-import busymachines.effects.sync.ResultOps
 
 import scala.util._
 
@@ -44,7 +43,7 @@ final class OptionEffectsSyntax[T](val opt: Option[T]) extends AnyVal {
 
   def asTryWeak(ifNone: => Throwable): Try[T] = OptionEffectsUtil.asTryWeak(opt, ifNone)
 
-  def asResult(ifNone: => Anomaly): Result[T] = ResultOps.fromOption(opt, ifNone)
+  def asResult(ifNone: => Anomaly): Result[T] = Result.fromOption(opt, ifNone)
 
   //asFuture — already provided in the future module — eliding here
 

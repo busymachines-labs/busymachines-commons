@@ -15,6 +15,7 @@ package object effects
     with ResultEffectsSyntaxImplicits with FutureEffectsSyntaxImplicits with IOEffectsSyntaxImplicits
     with TaskEffectsSyntaxImplicits {
 
+  val Result:    busymachines.effects.sync.Result.type    = busymachines.effects.sync.Result
   val Correct:   busymachines.effects.sync.Correct.type   = busymachines.effects.sync.Correct
   val Incorrect: busymachines.effects.sync.Incorrect.type = busymachines.effects.sync.Incorrect
 }
