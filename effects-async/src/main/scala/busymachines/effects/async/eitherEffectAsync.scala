@@ -30,13 +30,13 @@ object EitherSyntaxAsync {
   final class CompanionObjectOps(val obj: Either.type) {
 
     def asFuture[L, R](value: Either[L, R], bad: L => Anomaly): Future[R] =
-      ???
+      FutureOps.fromEither(value, bad)
 
     def asFutureWeak[L, R](value: Either[L, R], bad: L => Throwable): Future[R] =
-      ???
+      FutureOps.fromEitherWeak(value, bad)
 
     def asFutureWeak[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
-      ???
+      FutureOps.fromEitherWeak(value)
 
     def asIO[L, R](value: Either[L, R], bad: L => Anomaly): IO[R] =
       ???
@@ -56,14 +56,19 @@ object EitherSyntaxAsync {
     def asTaskWeak[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
       ???
 
-    def suspendInFuture[L, R](value: => Either[L, R], bad: L => Anomaly): Future[R] =
-      ???
+    def suspendInFuture[L, R](value: => Either[L, R], bad: L => Anomaly)(implicit ec: ExecutionContext): Future[R] =
+      FutureOps.suspendEither(value, bad)
 
-    def suspendInFutureWeak[L, R](value: => Either[L, R], bad: L => Throwable): Future[R] =
-      ???
+    def suspendInFutureWeak[L, R](value: => Either[L, R], bad: L => Throwable)(
+      implicit ec: ExecutionContext
+    ): Future[R] =
+      FutureOps.suspendEitherWeak(value, bad)
 
-    def suspendInFutureWeak[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
-      ???
+    def suspendInFutureWeak[L, R](value: => Either[L, R])(
+      implicit
+      ev: L <:< Throwable,
+      ec: ExecutionContext
+    ): Future[R] = FutureOps.suspendEitherWeak(value)(ev, ec)
 
     def suspendInIO[L, R](value: => Either[L, R], bad: L => Anomaly): IO[R] =
       ???
@@ -90,13 +95,13 @@ object EitherSyntaxAsync {
   final class ReferenceOps[L, R](private[this] val value: Either[L, R]) {
 
     def asFuture(bad: L => Anomaly): Future[R] =
-      ???
+      FutureOps.fromEither(value, bad)
 
     def asFutureWeak(bad: L => Throwable): Future[R] =
-      ???
+      FutureOps.fromEitherWeak(value, bad)
 
     def asFutureWeak(implicit ev: L <:< Throwable): Future[R] =
-      ???
+      FutureOps.fromEitherWeak(value)
 
     def asIO(bad: L => Anomaly): IO[R] =
       ???
@@ -123,14 +128,14 @@ object EitherSyntaxAsync {
     */
   final class SafeReferenceOps[L, R](value: => Either[L, R]) {
 
-    def suspendInFuture(bad: L => Anomaly): Future[R] =
-      ???
+    def suspendInFuture(bad: L => Anomaly)(implicit ec: ExecutionContext): Future[R] =
+      FutureOps.suspendEither(value, bad)
 
-    def suspendInFutureWeak(bad: L => Throwable): Future[R] =
-      ???
+    def suspendInFutureWeak(bad: L => Throwable)(implicit ec: ExecutionContext): Future[R] =
+      FutureOps.suspendEitherWeak(value, bad)
 
-    def suspendInFutureWeak(implicit ev: L <:< Throwable): Future[R] =
-      ???
+    def suspendInFutureWeak(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
+      FutureOps.suspendEitherWeak(value)
 
     def suspendInIO(bad: L => Anomaly): IO[R] =
       ???

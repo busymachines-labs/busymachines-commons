@@ -30,10 +30,10 @@ object OptionSyntaxAsync {
   final class CompanionObjectOps(val obj: Option.type) {
 
     def asFuture[T](value: Option[T], ifNone: => Anomaly): Future[T] =
-      ???
+      FutureOps.fromOption(value, ifNone)
 
     def asFutureWeak[T](value: Option[T], ifNone: => Throwable): Future[T] =
-      ???
+      FutureOps.fromOptionWeak(value, ifNone)
 
     def asIO[T](value: Option[T], ifNone: => Anomaly): IO[T] =
       ???
@@ -47,11 +47,11 @@ object OptionSyntaxAsync {
     def asTaskWeak[T](value: Option[T], ifNone: => Throwable): Task[T] =
       ???
 
-    def suspendInFuture[T](value: => Option[T], ifNone: => Anomaly): Future[T] =
-      ???
+    def suspendInFuture[T](value: => Option[T], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendOption(value, ifNone)
 
-    def suspendInFutureWeak[T](value: => Option[T], ifNone: => Throwable): Future[T] =
-      ???
+    def suspendInFutureWeak[T](value: => Option[T], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendOptionWeak(value, ifNone)
 
     def suspendInIO[T](value: => Option[T], ifNone: => Anomaly): IO[T] =
       ???
@@ -72,10 +72,10 @@ object OptionSyntaxAsync {
   final class ReferenceOps[T](private[this] val value: Option[T]) {
 
     def asFuture(ifNone: => Anomaly): Future[T] =
-      ???
+      FutureOps.fromOption(value, ifNone)
 
     def asFutureWeak(ifNone: => Throwable): Future[T] =
-      ???
+      FutureOps.fromOptionWeak(value, ifNone)
 
     def asIO(ifNone: => Anomaly): IO[T] =
       ???
@@ -93,22 +93,22 @@ object OptionSyntaxAsync {
     //==================== Run side-effects on Option state ===================
     //=========================================================================
 
-    def effectOnFalseFuture[_](effect: => Future[_]): Future[Unit] =
+    def effectOnEmptyFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.effectOnEmpty(value, effect)
+
+    def effectOnSomeFuture[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.effectOnSome(value, effect)
+
+    def effectOnEmptyIO[_](effect: => IO[_]): IO[Unit] =
       ???
 
-    def effectOnTrueFuture[_](effect: => Future[_]): Future[Unit] =
+    def effectOnSomeIO[_](effect: T => IO[_]): IO[Unit] =
       ???
 
-    def effectOnFalseIO[_](effect: => IO[_]): IO[Unit] =
+    def effectOnEmptyTask[_](effect: => Task[_]): Task[Unit] =
       ???
 
-    def effectOnTrueIO[_](effect: => IO[_]): IO[Unit] =
-      ???
-
-    def effectOnFalseTask[_](effect: => Task[_]): Task[Unit] =
-      ???
-
-    def effectOnTrueTask[_](effect: => Task[_]): Task[Unit] =
+    def effectOnSomeTask[_](effect: T => Task[_]): Task[Unit] =
       ???
 
   }
@@ -118,11 +118,11 @@ object OptionSyntaxAsync {
     */
   final class SafeReferenceOps[T](value: => Option[T]) {
 
-    def suspendInFuture(ifNone: => Anomaly): Future[T] =
-      ???
+    def suspendInFuture(ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendOption(value, ifNone)
 
-    def suspendInFutureWeak(ifNone: => Throwable): Future[T] =
-      ???
+    def suspendInFutureWeak(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendOptionWeak(value, ifNone)
 
     def suspendInIO(ifNone: => Anomaly): IO[T] =
       ???

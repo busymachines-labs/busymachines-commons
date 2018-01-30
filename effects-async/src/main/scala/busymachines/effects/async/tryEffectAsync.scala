@@ -38,8 +38,8 @@ object TrySyntaxAsync {
     def asTask[T](value: Try[T]): Task[T] =
       Task.fromTry(value)
 
-    def suspendInFuture[T](value: => Try[T]): Future[T] =
-      ???
+    def suspendInFuture[T](value: => Try[T])(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendTry(value)
 
     def suspendInIO[T](value: => Try[T]): IO[T] =
       ???
@@ -68,8 +68,8 @@ object TrySyntaxAsync {
     */
   final class SafeReferenceOps[T](value: => Try[T]) {
 
-    def suspendInFuture: Future[T] =
-      ???
+    def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendTry(value)
 
     def suspendInIO: IO[T] =
       ???

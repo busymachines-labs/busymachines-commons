@@ -30,7 +30,7 @@ object ResultSyntaxAsync {
   final class CompanionObjectOps(val obj: Result.type) {
 
     def asFuture[T](value: Result[T]): Future[T] =
-      ???
+      FutureOps.fromResult(value)
 
     def asIO[T](value: Result[T]): IO[T] =
       ???
@@ -38,8 +38,8 @@ object ResultSyntaxAsync {
     def asTask[T](value: Result[T]): Task[T] =
       ???
 
-    def suspendInFuture[T](value: => Result[T]): Future[T] =
-      ???
+    def suspendInFuture[T](value: => Result[T])(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendResult(value)
 
     def suspendInIO[T](value: => Result[T]): IO[T] =
       ???
@@ -54,7 +54,7 @@ object ResultSyntaxAsync {
   final class ReferenceOps[T](private[this] val value: Result[T]) {
 
     def asFuture: Future[T] =
-      ???
+      FutureOps.fromResult(value)
 
     def asIO: IO[T] =
       ???
@@ -68,8 +68,8 @@ object ResultSyntaxAsync {
     */
   final class SafeReferenceOps[T](value: => Result[T]) {
 
-    def suspendInFuture: Future[T] =
-      ???
+    def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendResult(value)
 
     def suspendInIO: IO[T] =
       ???
