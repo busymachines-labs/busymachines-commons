@@ -3,6 +3,7 @@ package busymachines.effects.async
 import busymachines.core._
 import busymachines.effects.sync._
 
+import scala.collection.generic.CanBuildFrom
 import scala.{concurrent => sc}
 
 /**
@@ -57,19 +58,10 @@ object FutureSyntax {
     def pure[T](value: T): Future[T] =
       ???
 
-    def successful[T](value: T): Future[T] =
-      ???
-
     def fail[T](bad: Anomaly): Future[T] =
       ???
 
     def failWeak[T](bad: Throwable): Future[T] =
-      ???
-
-    def failure[T](bad: Anomaly): Future[T] =
-      ???
-
-    def failureWeak[T](bad: Throwable): Future[T] =
       ???
 
     // —— def unit: Future[Unit] —— already defined on Future object
@@ -149,7 +141,13 @@ object FutureSyntax {
     def flattenResult[T](value: Future[Result[T]]): Future[T] =
       ???
 
-    def asResult[T](value: Future[T]): Future[Result[T]] =
+    def attemptResult[T](value: Future[T]): Future[Result[T]] =
+      ???
+
+    def asIO[T](value: Future[T]): IO[T] =
+      ???
+
+    def asTask[T](value: Future[T]): Task[T] =
       ???
 
     def suspendInIO[T](value: => Future[T]): IO[T] =
@@ -210,6 +208,16 @@ object FutureSyntax {
 
     def discardContent[_](value: Future[_]): Future[Unit] =
       ???
+
+    //=========================================================================
+    //=============================== Traversals ==============================
+    //=========================================================================
+
+    def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]],
+      ec:  ExecutionContext
+    ): Future[C[B]] = ???
   }
 
   /**
@@ -217,7 +225,13 @@ object FutureSyntax {
     */
   final class ReferenceOps[T](private[this] val value: Future[T]) {
 
-    def asResult: Future[Result[T]] =
+    def attempResult: Future[Result[T]] =
+      ???
+
+    def asIO: IO[T] =
+      ???
+
+    def asTask: Task[T] =
       ???
 
     def unsafeSyncGet(): T =
@@ -311,6 +325,12 @@ object FutureSyntax {
     def failOnFalseFutureWeak(bad: => Throwable): Future[Unit] =
       ???
 
+    def effectOnFalseFuture[_](effect: => Future[_]): Future[_] =
+      ???
+
+    def effectOnTrueFuture[_](effect: => Future[_]): Future[_] =
+      ???
+
   }
 
   /**
@@ -341,6 +361,12 @@ object FutureSyntax {
       ???
 
     def failOnFalseWeak(bad: => Throwable): Future[Unit] =
+      ???
+
+    def effectOnFalse[_](effect: => Future[_]): Future[_] =
+      ???
+
+    def effectOnTrue[_](effect: => Future[_]): Future[_] =
       ???
 
   }
