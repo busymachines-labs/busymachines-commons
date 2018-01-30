@@ -189,6 +189,12 @@ object FutureSyntax {
     def flatEffectOnSome[T, _](value: Future[Option[T]], effect: T => Future[_]): Future[Unit] =
       ???
 
+    def flatEffectOnIncorrect[T, _](value: Future[Result[T]], effect: Anomaly => Future[_]): Future[Unit] =
+      ??? //Future.flatEffectOnFail
+
+    def flatEffectOnCorrect[T, _](value: Future[Result[T]], effect: T => Future[_]): Future[Unit] =
+      ??? //Future.effectOnIncorrect
+
     //=========================================================================
     //============================== Transformers =============================
     //=========================================================================
@@ -202,7 +208,7 @@ object FutureSyntax {
     def morph[T, R](value: Future[T], good: T => R, bad: Throwable => R): Future[R] =
       ???
 
-    def discardContent[T](value: Future[T]): Future[Unit] =
+    def discardContent[_](value: Future[_]): Future[Unit] =
       ???
   }
 
@@ -252,10 +258,10 @@ object FutureSyntax {
     def flattenOptionWeak(ifNone: => Throwable): Future[T] =
       ???
 
-    def effectOnEmpty[R](effect: => Future[R]): Future[Unit] =
+    def effectOnEmpty[_](effect: => Future[_]): Future[Unit] =
       ??? //Future.flatEffectOnEmpty
 
-    def effectOnSome[R](effect: T => Future[R]): Future[Unit] =
+    def effectOnSome[_](effect: T => Future[_]): Future[Unit] =
       ??? //Future.flatEffectOnSome
 
   }
@@ -267,6 +273,12 @@ object FutureSyntax {
 
     def flattenResult: Future[T] =
       ???
+
+    def effectOnIncorrect[_](effect: Anomaly => Future[_]): Future[Unit] =
+      ??? //Future.flatEffectOnFail
+
+    def effectOnCorrect[_](effect: T => Future[_]): Future[Unit] =
+      ??? //Future.effectOnIncorrect
   }
 
   /**
