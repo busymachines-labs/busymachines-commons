@@ -148,8 +148,8 @@ private[semver] trait SemanticVersionOrdering extends Ordered[SemanticVersion] {
       val minorComp = this.minor.compareTo(that.minor)
       val patchComp = this.patch.compareTo(that.patch)
       val labelComp = (this.label, that.label) match {
-        case (None, None) => EQ
-        case (Some(_), None) => LT //basically 1.0.0-RC1 < 1.0.0, regardless of the value of the label
+        case (None,            None) => EQ
+        case (Some(_),         None) => LT //basically 1.0.0-RC1 < 1.0.0, regardless of the value of the label
         case (None,            Some(_)) => GT //same thing as above
         case (Some(thisLabel), Some(thatLabel)) =>
           thisLabel.compareTo(thatLabel)

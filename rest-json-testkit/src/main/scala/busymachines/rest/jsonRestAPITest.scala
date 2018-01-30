@@ -23,7 +23,7 @@ private[rest] trait JsonRequestRunners extends DefaultRequestRunners {
 
   override protected def transformEntityString(entityString: String): String = {
     JsonParsing.parseString(entityString) match {
-      case Left(_) => entityString
+      case Left(_)      => entityString
       case Right(value) => value.spaces2NoNulls
     }
   }

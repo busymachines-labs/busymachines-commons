@@ -33,7 +33,7 @@ object EitherSyntax {
       value.toOption
 
     def asListUnsafe(): List[R] = value match {
-      case Left(_) => Nil
+      case Left(_)     => Nil
       case Right(good) => List(good)
     }
 
