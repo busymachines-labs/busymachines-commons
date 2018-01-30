@@ -152,11 +152,23 @@ object Result {
   //========================== Primary constructors ===========================
   //===========================================================================
 
-  def pure[T](t:   T):       Result[T] = Correct(t)
-  def fail[T](bad: Anomaly): Result[T] = Incorrect(bad)
+  @inline def pure[T](t: T): Result[T] = Correct(t)
 
-  def correct[T](t:     T):       Result[T] = Correct(t)
-  def incorrect[T](bad: Anomaly): Result[T] = Incorrect(bad)
+  @inline def fail[T](bad: Anomaly): Result[T] = Incorrect(bad)
+
+  @inline def failWeak[T](bad: Throwable): Result[T] = bad match {
+    case a: Anomaly => Result.fail(a)
+    case NonFatal(t) => Result.fail(CatastrophicError(t))
+  }
+
+  @inline def correct[T](t: T): Result[T] = Correct(t)
+
+  @inline def incorrect[T](bad: Anomaly): Result[T] = Incorrect(bad)
+
+  @inline def incorrectWeak[T](bad: Throwable): Result[T] = bad match {
+    case a: Anomaly => Result.fail(a)
+    case NonFatal(t) => Result.fail(CatastrophicError(t))
+  }
 
   val unit: Result[Unit] = Correct(())
 
