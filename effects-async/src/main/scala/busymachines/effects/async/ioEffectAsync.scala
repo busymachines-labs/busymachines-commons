@@ -397,7 +397,8 @@ object IOSyntax {
   *
   */
 object IOOps {
-  import cats.implicits._
+  import cats.syntax.applicativeError._
+  import cats.syntax.monadError._
 
   def pure[T](value: T): IO[T] =
     IO.pure(value)
@@ -639,7 +640,10 @@ object IOOps {
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): IO[C[B]] = {
+    import cats.instances.list._
+    import cats.syntax.traverse._
     import scala.collection.mutable
+
     if (col.isEmpty) {
       IO.pure(cbf.apply().result())
     }
