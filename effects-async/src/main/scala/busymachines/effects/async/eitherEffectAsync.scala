@@ -48,13 +48,13 @@ object EitherSyntaxAsync {
       IOOps.fromEitherWeak(value)(ev)
 
     def asTask[L, R](value: Either[L, R], bad: L => Anomaly): Task[R] =
-      ???
+      TaskOps.suspendEither(value, bad)
 
     def asTaskWeak[L, R](value: Either[L, R], bad: L => Throwable): Task[R] =
-      ???
+      TaskOps.suspendEitherWeak(value, bad)
 
     def asTaskWeak[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
-      ???
+      TaskOps.suspendEitherWeak(value)(ev)
 
     def suspendInFuture[L, R](value: => Either[L, R], bad: L => Anomaly)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.suspendEither(value, bad)
@@ -71,22 +71,22 @@ object EitherSyntaxAsync {
     ): Future[R] = FutureOps.suspendEitherWeak(value)(ev, ec)
 
     def suspendInIO[L, R](value: => Either[L, R], bad: L => Anomaly): IO[R] =
-      ???
+      IOOps.suspendEither(value, bad)
 
     def suspendInIOWeak[L, R](value: => Either[L, R], bad: L => Throwable): IO[R] =
-      ???
+      IOOps.suspendEitherWeak(value, bad)
 
     def suspendInIOWeak[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
-      ???
+      IOOps.suspendEitherWeak(value)(ev)
 
     def suspendInTask[L, R](value: => Either[L, R], bad: L => Anomaly): Task[R] =
-      ???
+      TaskOps.suspendEither(value, bad)
 
     def suspendInTaskWeak[L, R](value: => Either[L, R], bad: L => Throwable): Task[R] =
-      ???
+      TaskOps.suspendEitherWeak(value, bad)
 
     def suspendInTaskWeak[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
-      ???
+      TaskOps.suspendEitherWeak(value)(ev)
   }
 
   /**
@@ -113,13 +113,13 @@ object EitherSyntaxAsync {
       IOOps.fromEitherWeak(value)(ev)
 
     def asTask(bad: L => Anomaly): Task[R] =
-      ???
+      TaskOps.fromEither(value, bad)
 
     def asTaskWeak(bad: L => Throwable): Task[R] =
-      ???
+      TaskOps.fromEitherWeak(value, bad)
 
     def asTaskWeak(implicit ev: L <:< Throwable): Task[R] =
-      ???
+      TaskOps.fromEitherWeak(value)(ev)
 
   }
 
@@ -147,13 +147,13 @@ object EitherSyntaxAsync {
       IOOps.suspendEitherWeak(value)(ev)
 
     def suspendInTask(bad: L => Anomaly): Task[R] =
-      ???
+      TaskOps.suspendEither(value, bad)
 
     def suspendInTaskWeak(bad: L => Throwable): Task[R] =
-      ???
+      TaskOps.suspendEitherWeak(value, bad)
 
     def suspendInTaskWeak(implicit ev: L <:< Throwable): Task[R] =
-      ???
+      TaskOps.suspendEitherWeak(value)(ev)
 
   }
 }

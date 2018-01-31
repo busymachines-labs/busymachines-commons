@@ -45,7 +45,7 @@ object TrySyntaxAsync {
       IOOps.suspendTry(value)
 
     def suspendInTask[T](value: => Try[T]): Task[T] =
-      ???
+      TaskOps.suspendTry(value)
   }
 
   /**
@@ -75,6 +75,6 @@ object TrySyntaxAsync {
       IOOps.suspendTry(value)
 
     def suspendInTask: Task[T] =
-      ???
+      TaskOps.suspendTry(value)
   }
 }

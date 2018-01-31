@@ -21,8 +21,6 @@ final class FutureEffectsAsyncTest extends FunSpec {
     def r: T = value.unsafeSyncGet()
   }
 
-  private def sleep(ms: Long = 10): Unit = Thread.sleep(ms)
-
   //--------------------------------------------------------------------------
 
   private val thr: RuntimeException         = new RuntimeException("runtime_exception")
@@ -2547,7 +2545,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        eventualResult.r
+        assert(eventualResult.r == expected)
         assert(sideEffect == 0, "nothing should have happened")
       }
 

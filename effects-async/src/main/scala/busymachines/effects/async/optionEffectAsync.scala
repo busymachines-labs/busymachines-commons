@@ -42,10 +42,10 @@ object OptionSyntaxAsync {
       IOOps.fromOptionWeak(value, ifNone)
 
     def asTask[T](value: Option[T], ifNone: => Anomaly): Task[T] =
-      ???
+      TaskOps.fromOption(value, ifNone)
 
     def asTaskWeak[T](value: Option[T], ifNone: => Throwable): Task[T] =
-      ???
+      TaskOps.fromOptionWeak(value, ifNone)
 
     def suspendInFuture[T](value: => Option[T], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendOption(value, ifNone)
@@ -60,10 +60,10 @@ object OptionSyntaxAsync {
       IOOps.suspendOptionWeak(value, ifNone)
 
     def suspendInTask[T](value: => Option[T], ifNone: => Anomaly): Task[T] =
-      ???
+      TaskOps.suspendOption(value, ifNone)
 
     def suspendInTaskWeak[T](value: => Option[T], ifNone: => Throwable): Task[T] =
-      ???
+      TaskOps.suspendOptionWeak(value, ifNone)
   }
 
   /**
@@ -84,10 +84,10 @@ object OptionSyntaxAsync {
       IOOps.fromOptionWeak(value, ifNone)
 
     def asTask(ifNone: => Anomaly): Task[T] =
-      ???
+      TaskOps.suspendOption(value, ifNone)
 
     def asTaskWeak(ifNone: => Throwable): Task[T] =
-      ???
+      TaskOps.suspendOptionWeak(value, ifNone)
 
     //=========================================================================
     //==================== Run side-effects on Option state ===================
@@ -106,10 +106,10 @@ object OptionSyntaxAsync {
       IOOps.effectOnSome(value, effect)
 
     def effectOnEmptyTask[_](effect: => Task[_]): Task[Unit] =
-      ???
+      TaskOps.effectOnEmpty(value, effect)
 
     def effectOnSomeTask[_](effect: T => Task[_]): Task[Unit] =
-      ???
+      TaskOps.effectOnSome(value, effect)
 
   }
 
@@ -125,15 +125,15 @@ object OptionSyntaxAsync {
       FutureOps.suspendOptionWeak(value, ifNone)
 
     def suspendInIO(ifNone: => Anomaly): IO[T] =
-      ???
+      IOOps.suspendOption(value, ifNone)
 
     def suspendInIOWeak(ifNone: => Throwable): IO[T] =
-      ???
+      IOOps.suspendOptionWeak(value, ifNone)
 
     def suspendInTask(ifNone: => Anomaly): Task[T] =
-      ???
+      TaskOps.suspendOption(value, ifNone)
 
     def suspendInTaskWeak(ifNone: => Throwable): Task[T] =
-      ???
+      TaskOps.suspendOptionWeak(value, ifNone)
   }
 }

@@ -37,7 +37,7 @@ object ResultSyntaxAsync {
       IOOps.fromResult(value)
 
     def asTask[T](value: Result[T]): Task[T] =
-      ???
+      TaskOps.fromResult(value)
 
     def suspendInFuture[T](value: => Result[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendResult(value)
@@ -46,7 +46,7 @@ object ResultSyntaxAsync {
       IOOps.suspendResult(value)
 
     def suspendInTask[T](value: => Result[T]): Task[T] =
-      ???
+      TaskOps.fromResult(value)
   }
 
   /**
@@ -61,7 +61,7 @@ object ResultSyntaxAsync {
       IOOps.fromResult(value)
 
     def asTask: Task[T] =
-      ???
+      TaskOps.fromResult(value)
 
     //=========================================================================
     //==================== Run side-effects on Option state ===================
@@ -80,10 +80,11 @@ object ResultSyntaxAsync {
       IOOps.effectOnCorrect(value, effect)
 
     def effectOnIncorrectTask[_](effect: Anomaly => Task[_]): Task[Unit] =
-      ???
+      TaskOps.effectOnIncorrect(value, effect)
 
     def effectOnCorrectTask[_](effect: T => Task[_]): Task[Unit] =
-      ???
+      TaskOps.effectOnCorrect(value, effect)
+
   }
 
   /**
@@ -98,6 +99,6 @@ object ResultSyntaxAsync {
       IOOps.suspendResult(value)
 
     def suspendInTask: Task[T] =
-      ???
+      TaskOps.suspendResult(value)
   }
 }

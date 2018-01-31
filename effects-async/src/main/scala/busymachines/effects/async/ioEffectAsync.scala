@@ -545,7 +545,7 @@ object IOOps {
     value.unsafeToFuture()
 
   def asTask[T](value: IO[T]): Task[T] =
-    ???
+    TaskOps.fromIO(value)
 
   def unsafeSyncGet[T](value: IO[T]): T =
     value.unsafeRunSync()

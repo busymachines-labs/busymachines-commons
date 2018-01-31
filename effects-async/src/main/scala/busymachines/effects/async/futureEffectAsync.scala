@@ -2,8 +2,7 @@ package busymachines.effects.async
 
 import busymachines.core._
 import busymachines.effects.sync._
-import busymachines.duration
-import duration.FiniteDuration
+import busymachines.duration, duration.FiniteDuration
 
 import scala.collection.generic.CanBuildFrom
 import scala.util.control.NonFatal
@@ -600,13 +599,13 @@ object FutureOps {
     IOOps.fromFuture(value)
 
   def asTask[T](value: Future[T]): Task[T] =
-    ???
+    TaskOps.fromFuture(value)
 
   def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
     IOOps.suspendFuture(value)
 
   def suspendInTask[T](value: => Future[T]): Task[T] =
-    ???
+    TaskOps.suspendFuture(value)
 
   def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = FutureOps.defaultDuration): T =
     Await.result(value, atMost)
