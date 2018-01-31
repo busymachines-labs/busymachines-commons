@@ -188,13 +188,13 @@ object FutureSyntax {
     def attemptResult[T](value: Future[T])(implicit ec: ExecutionContext): Future[Result[T]] =
       FutureOps.attemptResult(value)
 
-    def asIO[T](value: Future[T]): IO[T] =
+    def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
       FutureOps.asIO(value)
 
     def asTask[T](value: Future[T]): Task[T] =
       FutureOps.asTask(value)
 
-    def suspendInIO[T](value: => Future[T]): IO[T] =
+    def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
       FutureOps.suspendInIO(value)
 
     def suspendInTask[T](value: => Future[T]): Task[T] =
@@ -298,7 +298,7 @@ object FutureSyntax {
     def attempResult(implicit ec: ExecutionContext): Future[Result[T]] =
       FutureOps.attemptResult(value)
 
-    def asIO: IO[T] =
+    def asIO(implicit ec: ExecutionContext): IO[T] =
       FutureOps.asIO(value)
 
     def asTask: Task[T] =
@@ -328,7 +328,7 @@ object FutureSyntax {
 
   final class SafeReferenceOps[T](value: => Future[T]) {
 
-    def suspendInIO: IO[T] =
+    def suspendInIO(implicit ec: ExecutionContext): IO[T] =
       FutureOps.suspendInIO(value)
 
     def suspendInTask: Task[T] =
@@ -596,14 +596,14 @@ object FutureOps {
       case NonFatal(t) => Result.failWeak(t)
     }
 
-  def asIO[T](value: Future[T]): IO[T] =
-    ???
+  def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
+    IOOps.fromFuture(value)
 
   def asTask[T](value: Future[T]): Task[T] =
     ???
 
-  def suspendInIO[T](value: => Future[T]): IO[T] =
-    ???
+  def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
+    IOOps.suspendFuture(value)
 
   def suspendInTask[T](value: => Future[T]): Task[T] =
     ???
@@ -696,10 +696,10 @@ object FutureOps {
   def morph[T, R](value: Future[T], result: Result[T] => R)(implicit ec: ExecutionContext): Future[R] =
     FutureOps.attemptResult(value).map(result)
 
-  private val UnitFuture: Any => Unit = _ => ()
+  private val UnitFunction: Any => Unit = _ => ()
 
   def discardContent[_](value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
-    value.map(UnitFuture)
+    value.map(UnitFunction)
 
   //=========================================================================
   //=============================== Traversals ==============================

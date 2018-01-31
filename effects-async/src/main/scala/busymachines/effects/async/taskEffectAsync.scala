@@ -1,8 +1,5 @@
 package busymachines.effects.async
 
-import monix.{execution => mex}
-import monix.{eval      => mev}
-
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
@@ -10,6 +7,9 @@ import monix.{eval      => mev}
   *
   */
 trait TaskTypeDefinitions {
+  import monix.{execution => mex}
+  import monix.{eval      => mev}
+
   type CancellableFuture[T] = mex.CancelableFuture[T]
 
   /**

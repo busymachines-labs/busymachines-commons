@@ -33,7 +33,7 @@ object TrySyntaxAsync {
       Future.fromTry(value)
 
     def asIO[T](value: Try[T]): IO[T] =
-      ???
+      IOOps.fromTry(value)
 
     def asTask[T](value: Try[T]): Task[T] =
       Task.fromTry(value)
@@ -42,7 +42,7 @@ object TrySyntaxAsync {
       FutureOps.suspendTry(value)
 
     def suspendInIO[T](value: => Try[T]): IO[T] =
-      ???
+      IOOps.suspendTry(value)
 
     def suspendInTask[T](value: => Try[T]): Task[T] =
       ???
@@ -57,7 +57,7 @@ object TrySyntaxAsync {
       Future.fromTry(value)
 
     def asIO: IO[T] =
-      ???
+      IOOps.fromTry(value)
 
     def asTask: Task[T] =
       Task.fromTry(value)
@@ -72,7 +72,7 @@ object TrySyntaxAsync {
       FutureOps.suspendTry(value)
 
     def suspendInIO: IO[T] =
-      ???
+      IOOps.suspendTry(value)
 
     def suspendInTask: Task[T] =
       ???

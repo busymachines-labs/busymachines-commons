@@ -34,7 +34,7 @@ object ResultSyntaxAsync {
       FutureOps.fromResult(value)
 
     def asIO[T](value: Result[T]): IO[T] =
-      ???
+      IOOps.fromResult(value)
 
     def asTask[T](value: Result[T]): Task[T] =
       ???
@@ -43,7 +43,7 @@ object ResultSyntaxAsync {
       FutureOps.suspendResult(value)
 
     def suspendInIO[T](value: => Result[T]): IO[T] =
-      ???
+      IOOps.suspendResult(value)
 
     def suspendInTask[T](value: => Result[T]): Task[T] =
       ???
@@ -58,7 +58,7 @@ object ResultSyntaxAsync {
       FutureOps.fromResult(value)
 
     def asIO: IO[T] =
-      ???
+      IOOps.fromResult(value)
 
     def asTask: Task[T] =
       ???
@@ -74,10 +74,10 @@ object ResultSyntaxAsync {
       FutureOps.effectOnCorrect(value, effect)
 
     def effectOnIncorrectIO[_](effect: Anomaly => IO[_]): IO[Unit] =
-      ???
+      IOOps.effectOnIncorrect(value, effect)
 
     def effectOnCorrectIO[_](effect: T => IO[_]): IO[Unit] =
-      ???
+      IOOps.effectOnCorrect(value, effect)
 
     def effectOnIncorrectTask[_](effect: Anomaly => Task[_]): Task[Unit] =
       ???
@@ -95,7 +95,7 @@ object ResultSyntaxAsync {
       FutureOps.suspendResult(value)
 
     def suspendInIO: IO[T] =
-      ???
+      IOOps.suspendResult(value)
 
     def suspendInTask: Task[T] =
       ???

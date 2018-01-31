@@ -36,10 +36,10 @@ object OptionSyntaxAsync {
       FutureOps.fromOptionWeak(value, ifNone)
 
     def asIO[T](value: Option[T], ifNone: => Anomaly): IO[T] =
-      ???
+      IOOps.fromOption(value, ifNone)
 
     def asIOWeak[T](value: Option[T], ifNone: => Throwable): IO[T] =
-      ???
+      IOOps.fromOptionWeak(value, ifNone)
 
     def asTask[T](value: Option[T], ifNone: => Anomaly): Task[T] =
       ???
@@ -54,10 +54,10 @@ object OptionSyntaxAsync {
       FutureOps.suspendOptionWeak(value, ifNone)
 
     def suspendInIO[T](value: => Option[T], ifNone: => Anomaly): IO[T] =
-      ???
+      IOOps.suspendOption(value, ifNone)
 
     def suspendInIOWeak[T](value: => Option[T], ifNone: => Throwable): IO[T] =
-      ???
+      IOOps.suspendOptionWeak(value, ifNone)
 
     def suspendInTask[T](value: => Option[T], ifNone: => Anomaly): Task[T] =
       ???
@@ -78,10 +78,10 @@ object OptionSyntaxAsync {
       FutureOps.fromOptionWeak(value, ifNone)
 
     def asIO(ifNone: => Anomaly): IO[T] =
-      ???
+      IOOps.fromOption(value, ifNone)
 
     def asIOWeak(ifNone: => Throwable): IO[T] =
-      ???
+      IOOps.fromOptionWeak(value, ifNone)
 
     def asTask(ifNone: => Anomaly): Task[T] =
       ???
@@ -100,10 +100,10 @@ object OptionSyntaxAsync {
       FutureOps.effectOnSome(value, effect)
 
     def effectOnEmptyIO[_](effect: => IO[_]): IO[Unit] =
-      ???
+      IOOps.effectOnEmpty(value, effect)
 
     def effectOnSomeIO[_](effect: T => IO[_]): IO[Unit] =
-      ???
+      IOOps.effectOnSome(value, effect)
 
     def effectOnEmptyTask[_](effect: => Task[_]): Task[Unit] =
       ???
