@@ -200,8 +200,8 @@ object FutureSyntax {
     def suspendInTask[T](value: => Future[T]): Task[T] =
       FutureOps.suspendInTask(value)
 
-    def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration): T =
-      FutureOps.unsafeSyncGet(value, atMost: FiniteDuration)
+    def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = FutureOps.defaultDuration): T =
+      FutureOps.unsafeSyncGet(value, atMost)
 
     //=========================================================================
     //================= Run side-effects in varrying scenarios ================
@@ -293,7 +293,7 @@ object FutureSyntax {
   /**
     *
     */
-  final class ReferenceOps[T](private[this] val value: Future[T]) {
+  final class ReferenceOps[T](val value: Future[T]) extends AnyVal {
 
     def attempResult(implicit ec: ExecutionContext): Future[Result[T]] =
       FutureOps.attemptResult(value)
@@ -304,7 +304,7 @@ object FutureSyntax {
     def asTask: Task[T] =
       FutureOps.asTask(value)
 
-    def unsafeSyncGet(atMost: FiniteDuration): T =
+    def unsafeSyncGet(atMost: FiniteDuration = FutureOps.defaultDuration): T =
       FutureOps.unsafeSyncGet(value, atMost)
 
     def bimap[R](good: T => R, bad: Throwable => Anomaly)(implicit ec: ExecutionContext): Future[R] =
@@ -608,7 +608,7 @@ object FutureOps {
   def suspendInTask[T](value: => Future[T]): Task[T] =
     ???
 
-  def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration): T =
+  def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = FutureOps.defaultDuration): T =
     Await.result(value, atMost)
 
   //=========================================================================
@@ -764,4 +764,9 @@ object FutureOps {
     }
   }
 
+  //=========================================================================
+  //=============================== Constants ===============================
+  //=========================================================================
+
+  private[async] val defaultDuration: FiniteDuration = duration.minutes(1)
 }
