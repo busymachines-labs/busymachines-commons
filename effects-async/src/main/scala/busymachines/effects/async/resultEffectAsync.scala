@@ -1,5 +1,6 @@
 package busymachines.effects.async
 
+import busymachines.core.Anomaly
 import busymachines.effects.sync._
 
 /**
@@ -60,6 +61,28 @@ object ResultSyntaxAsync {
       ???
 
     def asTask: Task[T] =
+      ???
+
+    //=========================================================================
+    //==================== Run side-effects on Option state ===================
+    //=========================================================================
+
+    def effectOnIncorrectFuture[_](effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.effectOnIncorrect(value, effect)
+
+    def effectOnCorrectFuture[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.effectOnCorrect(value, effect)
+
+    def effectOnIncorrectIO[_](effect: Anomaly => IO[_]): IO[Unit] =
+      ???
+
+    def effectOnCorrectIO[_](effect: T => IO[_]): IO[Unit] =
+      ???
+
+    def effectOnIncorrectTask[_](effect: Anomaly => Task[_]): Task[Unit] =
+      ???
+
+    def effectOnCorrectTask[_](effect: T => Task[_]): Task[Unit] =
       ???
   }
 

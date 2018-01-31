@@ -11,7 +11,7 @@ import org.scalatest._
   * @since 28 Jan 2018
   *
   */
-final class FutureEffectsSyncTest extends FunSpec {
+final class FutureEffectsAsyncTest extends FunSpec {
   implicit val ec: ExecutionContext = ExecutionContext.global
   //prevents atrocious English
   private def test: ItWord = it
@@ -20,6 +20,8 @@ final class FutureEffectsSyncTest extends FunSpec {
     //short for "run"
     def r: T = value.unsafeSyncGet()
   }
+
+  private def sleep(ms: Long = 10): Unit = Thread.sleep(ms)
 
   //--------------------------------------------------------------------------
 
@@ -1321,6 +1323,26 @@ final class FutureEffectsSyncTest extends FunSpec {
 
         }
 
+        describe("bimap — result") {
+
+          test("fail") {
+            val value = failV.bimap(
+              res2res
+            )
+
+            assertThrows[ForbiddenFailure](value.r)
+          }
+
+          test("pure") {
+            val value = pureV.bimap(
+              res2res
+            )
+
+            assert(value.r == "42")
+          }
+
+        }
+
         describe("bimapWeak") {
 
           test("fail") {
@@ -1362,6 +1384,23 @@ final class FutureEffectsSyncTest extends FunSpec {
           }
         }
 
+        describe("morph — result") {
+
+          test("fail") {
+            val value = failV.morph(
+              res2str
+            )
+            assert(value.r == ano.message)
+          }
+
+          test("pure") {
+            val value = pureV.morph(
+              res2str
+            )
+            assert(value.r == "42")
+          }
+        }
+
         describe("discardContent") {
 
           test("fail") {
@@ -1383,9 +1422,1163 @@ final class FutureEffectsSyncTest extends FunSpec {
   //===========================================================================
 
   describe("async + impure") {
+    test("blocking") {
+      val f = Future {
+        blocking(42)
+      }
+      assert(f.r == 42)
+    }
 
-    describe("Future — companion object syntax") {}
+    describe("Future — companion object syntax") {
 
+      /**
+        * Unlike for Task or IO, with Future we cannot test the full suspension
+        * of side-effects because Futures start executing immediately.
+        * Thus if you use the same trick:
+        * {{{
+        *   var sideEffects: Int = 0
+        *   // set sideEffect withing context
+        *   //test to see it didn't execute
+        * }}}
+        * The sideEffect's mutation depends on timing, not on us calling "unsafeSyncGet()",
+        * so to avoid flaky tests that depend on timing, we test if the failure is captured
+        * within the Future, and not thrown into our face
+        */
+      describe("suspend") {
+
+        test("suspendOption") {
+          val f = Future.suspendOption(
+            Option(throw thr),
+            ano
+          )
+          assertThrows[RuntimeException](f.r)
+
+        }
+
+        test("suspendOptionWeak") {
+          val f = Future.suspendOptionWeak(
+            Option(throw thr),
+            iae
+          )
+          assertThrows[RuntimeException](f.r)
+
+        }
+
+        test("suspendTry") {
+          val f = Future.suspendTry(
+            Try.pure(throw thr)
+          )
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendEither") {
+          val f = Future.suspendEither(
+            Right[Throwable, String](throw thr),
+            thr2ano
+          )
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendEitherWeak") {
+          val f = Future.suspendEitherWeak(
+            Right[Throwable, String](throw thr)
+          )
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendEitherWeak — transform") {
+          val f = Future.suspendEitherWeak(
+            Right[Throwable, String](throw thr),
+            thr2thr
+          )
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendResult") {
+          val f = Future.suspendResult(
+            Result.pure(throw thr)
+          )
+          assertThrows[RuntimeException](f.r)
+        }
+
+      } //end suspend
+
+      describe("effect on boolean") {
+
+        describe("effectOnFalse") {
+
+          test("false") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnFalse(
+              false,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("true") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnFalse(
+              true,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+        }
+
+        describe("effectOnTrue") {
+
+          test("false") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnTrue(
+              false,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("true") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnTrue(
+              true,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+        }
+
+        describe("flatEffectOnFalse") {
+
+          test("false") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnFalse(
+              bfalse,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("true") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnFalse(
+              btrue,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnFalse(
+              bfail,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            assertThrows[IllegalArgumentException](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+        describe("flatEffectOnTrue") {
+
+          test("false") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnTrue(
+              bfalse,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("true") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnTrue(
+              btrue,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnTrue(
+              bfail,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            assertThrows[IllegalArgumentException](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+      }
+
+      describe("effect on option") {
+
+        describe("effectOnEmpty") {
+
+          test("none") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnEmpty(
+              none,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("some") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnEmpty(
+              some,
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+        }
+
+        describe("effectOnSome") {
+
+          test("none") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnSome(
+              none,
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("some") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnSome(
+              some,
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+        }
+
+        describe("flatEffectOnEmpty") {
+
+          test("none") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnEmpty(
+              Future.pure(none),
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+          }
+
+          test("some") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnEmpty(
+              Future.pure(some),
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnEmpty(
+              Future.fail[Option[Int]](ano),
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            assertThrows[InvalidInputFailure](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+        describe("flatEffectOnSome") {
+
+          test("none") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnSome(
+              Future.pure(none),
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+          }
+
+          test("some") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnSome(
+              Future.pure(some),
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnSome(
+              Future.fail[Option[Int]](ano),
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            assertThrows[InvalidInputFailure](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+      }
+
+      describe("effect on result") {
+
+        describe("effectOnIncorrect") {
+
+          test("incorrect") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnIncorrect(
+              incorrect,
+              (a: Anomaly) =>
+                Future {
+                  sideEffect = 42
+                  sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("correct") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnIncorrect(
+              correct,
+              (a: Anomaly) =>
+                Future {
+                  sideEffect = 42
+                  sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+        }
+
+        describe("effectOnCorrect") {
+
+          test("incorrect") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnCorrect(
+              incorrect,
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("correct") {
+            var sideEffect: Int = 0
+            val f = Future.effectOnCorrect(
+              correct,
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+        }
+
+        describe("flatEffectOnIncorrect") {
+
+          test("incorrect") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnIncorrect(
+              Future.pure(incorrect),
+              (a: Anomaly) =>
+                Future {
+                  sideEffect = 42
+                  sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+          }
+
+          test("correct") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnIncorrect(
+              Future.pure(correct),
+              (a: Anomaly) =>
+                Future {
+                  sideEffect = 42
+                  sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnIncorrect(
+              Future.fail[Result[Int]](ano),
+              (a: Anomaly) =>
+                Future {
+                  sideEffect = 42
+                  sideEffect
+              }
+            )
+            assertThrows[InvalidInputFailure](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+        describe("flatEffectOnCorrect") {
+
+          test("incorrect") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnCorrect(
+              Future.pure(incorrect),
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+          }
+
+          test("correct") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnCorrect(
+              Future.pure(correct),
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = Future.flatEffectOnCorrect(
+              Future.fail[Result[Int]](ano),
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            assertThrows[InvalidInputFailure](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+      }
+
+    }
+
+    describe("Future — other effect reference syntax") {
+
+      /**
+        * Unlike for Task or IO, with Future we cannot test the full suspension
+        * of side-effects because Futures start executing immediately.
+        * Thus if you use the same trick:
+        * {{{
+        *   var sideEffects: Int = 0
+        *   // set sideEffect withing context
+        *   //test to see it didn't execute
+        * }}}
+        * The sideEffect's mutation depends on timing, not on us calling "unsafeSyncGet()",
+        * so to avoid flaky tests that depend on timing, we test if the failure is captured
+        * within the Future, and not thrown into our face
+        */
+      describe("suspendInFuture") {
+
+        test("suspendOption") {
+          val f = Option(throw thr).suspendInFuture(ano)
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendOptionWeak") {
+          val f = Option(throw thr).suspendInFuture(ano)
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendTry") {
+          val f = Try.pure(throw thr).suspendInFuture
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendEither") {
+          val f = Right[Throwable, String](throw thr).suspendInFuture(thr2ano)
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendEitherWeak") {
+          val f = Right[Throwable, String](throw thr).suspendInFutureWeak
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendEitherWeak — transform") {
+          val f = Right[Throwable, String](throw thr).suspendInFutureWeak(thr2thr)
+          assertThrows[RuntimeException](f.r)
+        }
+
+        test("suspendResult") {
+          val f = Result.pure(throw thr).suspendInFuture
+          assertThrows[RuntimeException](f.r)
+        }
+
+      } //end suspend
+
+      describe("effect on boolean") {
+
+        describe("effectOnFalse") {
+
+          test("false") {
+            var sideEffect: Int = 0
+            val f = false.effectOnFalseFuture(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("true") {
+            var sideEffect: Int = 0
+            val f = true.effectOnFalseFuture(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+        }
+
+        describe("effectOnTrue") {
+
+          test("false") {
+            var sideEffect: Int = 0
+            val f = false.effectOnTrueFuture(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("true") {
+            var sideEffect: Int = 0
+            val f = true.effectOnTrueFuture(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+        }
+
+        describe("flatEffectOnFalse") {
+
+          test("false") {
+            var sideEffect: Int = 0
+            val f = bfalse.effectOnFalse(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("true") {
+            var sideEffect: Int = 0
+            val f = btrue.effectOnFalse(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = bfail.effectOnFalse(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            assertThrows[IllegalArgumentException](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+        describe("flatEffectOnTrue") {
+
+          test("false") {
+            var sideEffect: Int = 0
+            val f = bfalse.effectOnTrue(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("true") {
+            var sideEffect: Int = 0
+            val f = btrue.effectOnTrue(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = bfail.effectOnTrue(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            assertThrows[IllegalArgumentException](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+      }
+
+      describe("effect on option") {
+
+        describe("effectOnEmpty") {
+
+          test("none") {
+            var sideEffect: Int = 0
+            val f = none.effectOnEmptyFuture(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("some") {
+            var sideEffect: Int = 0
+            val f = some.effectOnEmptyFuture(
+              Future {
+                sideEffect = 42
+                sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+        }
+
+        describe("effectOnSome") {
+
+          test("none") {
+            var sideEffect: Int = 0
+            val f = none.effectOnSomeFuture(
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("some") {
+            var sideEffect: Int = 0
+            val f = some.effectOnSomeFuture(
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+        }
+
+        describe("flatEffectOnEmpty") {
+
+          test("none") {
+            var sideEffect: Int = 0
+            val f =
+              Future
+                .pure(none)
+                .effectOnEmpty(
+                  Future {
+                    sideEffect = 42
+                    sideEffect
+                  }
+                )
+            f.r
+            assert(sideEffect == 42)
+          }
+
+          test("some") {
+            var sideEffect: Int = 0
+            val f =
+              Future
+                .pure(some)
+                .effectOnEmpty(
+                  Future {
+                    sideEffect = 42
+                    sideEffect
+                  }
+                )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f =
+              Future
+                .fail[Option[Int]](ano)
+                .effectOnEmpty(
+                  Future {
+                    sideEffect = 42
+                    sideEffect
+                  }
+                )
+            assertThrows[InvalidInputFailure](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+        describe("flatEffectOnSome") {
+
+          test("none") {
+            var sideEffect: Int = 0
+            val f =
+              Future
+                .pure(none)
+                .effectOnSome(
+                  (x: Int) =>
+                    Future {
+                      sideEffect = x
+                      sideEffect
+                  }
+                )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+          }
+
+          test("some") {
+            var sideEffect: Int = 0
+            val f =
+              Future
+                .pure(some)
+                .effectOnSome(
+                  (x: Int) =>
+                    Future {
+                      sideEffect = x
+                      sideEffect
+                  }
+                )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = Future
+              .fail[Option[Int]](ano)
+              .effectOnSome(
+                (x: Int) =>
+                  Future {
+                    sideEffect = x
+                    sideEffect
+                }
+              )
+            assertThrows[InvalidInputFailure](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+      }
+
+      describe("effect on result") {
+
+        describe("effectOnIncorrect") {
+
+          test("incorrect") {
+            var sideEffect: Int = 0
+            val f = incorrect.effectOnIncorrectFuture(
+              (a: Anomaly) =>
+                Future {
+                  sideEffect = 42
+                  sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("correct") {
+            var sideEffect: Int = 0
+            val f = correct.effectOnIncorrectFuture(
+              (a: Anomaly) =>
+                Future {
+                  sideEffect = 42
+                  sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+        }
+
+        describe("effectOnCorrect") {
+
+          test("incorrect") {
+            var sideEffect: Int = 0
+            val f = incorrect.effectOnCorrectFuture(
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("correct") {
+            var sideEffect: Int = 0
+            val f = correct.effectOnCorrectFuture(
+              (x: Int) =>
+                Future {
+                  sideEffect = x
+                  sideEffect
+              }
+            )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+        }
+
+        describe("flatEffectOnIncorrect") {
+
+          test("incorrect") {
+            var sideEffect: Int = 0
+            val f =
+              Future
+                .pure(incorrect)
+                .effectOnIncorrect(
+                  (a: Anomaly) =>
+                    Future {
+                      sideEffect = 42
+                      sideEffect
+                  }
+                )
+            f.r
+            assert(sideEffect == 42)
+          }
+
+          test("correct") {
+            var sideEffect: Int = 0
+            val f = Future
+              .pure(correct)
+              .effectOnIncorrect(
+                (a: Anomaly) =>
+                  Future {
+                    sideEffect = 42
+                    sideEffect
+                }
+              )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f = Future
+              .fail[Result[Int]](ano)
+              .effectOnIncorrect(
+                (a: Anomaly) =>
+                  Future {
+                    sideEffect = 42
+                    sideEffect
+                }
+              )
+            assertThrows[InvalidInputFailure](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+        describe("flatEffectOnCorrect") {
+
+          test("incorrect") {
+            var sideEffect: Int = 0
+            val f =
+              Future
+                .pure(incorrect)
+                .effectOnCorrect(
+                  (x: Int) =>
+                    Future {
+                      sideEffect = x
+                      sideEffect
+                  }
+                )
+            f.r
+            if (sideEffect == 42) fail("side effect should not have executed on other branch")
+          }
+
+          test("correct") {
+            var sideEffect: Int = 0
+            val f =
+              Future
+                .pure(correct)
+                .effectOnCorrect(
+                  (x: Int) =>
+                    Future {
+                      sideEffect = x
+                      sideEffect
+                  }
+                )
+            f.r
+            assert(sideEffect == 42)
+
+          }
+
+          test("fail") {
+            var sideEffect: Int = 0
+            val f =
+              Future
+                .fail[Result[Int]](ano)
+                .effectOnCorrect(
+                  (x: Int) =>
+                    Future {
+                      sideEffect = x
+                      sideEffect
+                  }
+                )
+            assertThrows[InvalidInputFailure](f.r)
+            assert(sideEffect == 0, "side effect should not have applied on fail")
+
+          }
+
+        }
+
+      }
+    }
+
+    describe("Future.serialize") {
+
+      test("empty list") {
+        val input:    Seq[Int] = List()
+        val expected: Seq[Int] = List()
+
+        var sideEffect: Int = 0
+
+        val eventualResult = Future.serialize(input) { i =>
+          Future {
+            sideEffect = 42
+          }
+        }
+
+        eventualResult.r
+        assert(sideEffect == 0, "nothing should have happened")
+      }
+
+      test("no two futures should run in parallel") {
+        val input: Seq[Int] = (1 to 100).toList
+        val expected = input.map(_.toString)
+
+        var previouslyProcessed: Option[Int] = None
+        var startedFlag:         Option[Int] = None
+
+        val eventualResult: Future[Seq[String]] = Future.serialize(input) { i =>
+          Future {
+            assert(
+              startedFlag.isEmpty,
+              s"started flag should have been empty at the start of each future but was: $startedFlag"
+            )
+            previouslyProcessed foreach { previous =>
+              assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
+                actual = previous
+              )
+            }
+            startedFlag         = Some(i)
+            startedFlag         = None
+            previouslyProcessed = Some(i)
+            i.toString
+          }
+        }
+        assert(expected == eventualResult.r)
+      }
+
+    }
   }
 
 } //end test
