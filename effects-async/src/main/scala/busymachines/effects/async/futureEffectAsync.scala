@@ -39,6 +39,9 @@ object FutureSyntax {
     implicit def bmcFutureReferenceOps[T](value: Future[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
+    implicit def bmcFutureSafeReferenceOps[T](value: => Future[T]): SafeReferenceOps[T] =
+      new SafeReferenceOps(value)
+
     implicit def bmcFutureNestedOptionOps[T](nopt: Future[Option[T]]): NestedOptionOps[T] =
       new NestedOptionOps(nopt)
 

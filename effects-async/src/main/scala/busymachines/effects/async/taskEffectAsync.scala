@@ -654,31 +654,6 @@ object TaskOps {
   //=========================================================================
   //=============================== Traversals ==============================
   //=========================================================================
-
-  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
-    implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
-  ): Task[C[B]] = {
-    import cats.instances.list._
-    import cats.syntax.traverse._
-    import scala.collection.mutable
-
-    if (col.isEmpty) {
-      Task.pure(cbf.apply().result())
-    }
-    else {
-      //OK, super inneficient, need a better implementation
-      val result:  Task[List[B]] = col.toList.traverse(fn)
-      val builder: mutable.Builder[B, C[B]] = cbf.apply()
-      result.map(_.foreach(e => builder.+=(e))).map(_ => builder.result())
-    }
-  }
-
-  def sequence[A, M[X] <: TraversableOnce[X]](in: M[Task[A]])(
-    implicit
-    cbf: CanBuildFrom[M[Task[A]], A, M[A]]
-  ): Task[M[A]] = TaskOps.traverse(in)(identity)
-
   /**
     *
     * Syntactically inspired from [[Future.traverse]].
@@ -704,7 +679,7 @@ object TaskOps {
   def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
-  ): Task[C[B]] = TaskOps.traverse(col)(fn)(cbf)
+  ): Task[C[B]] = Task.traverse(col)(fn)(cbf)
   //=========================================================================
   //=============================== Constants ===============================
   //=========================================================================
