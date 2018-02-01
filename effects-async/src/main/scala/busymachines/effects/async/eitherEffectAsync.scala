@@ -32,61 +32,61 @@ object EitherSyntaxAsync {
     def asFuture[L, R](value: Either[L, R], bad: L => Anomaly): Future[R] =
       FutureOps.fromEither(value, bad)
 
-    def asFutureWeak[L, R](value: Either[L, R], bad: L => Throwable): Future[R] =
-      FutureOps.fromEitherWeak(value, bad)
+    def asFutureThr[L, R](value: Either[L, R], bad: L => Throwable): Future[R] =
+      FutureOps.fromEitherThr(value, bad)
 
-    def asFutureWeak[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
-      FutureOps.fromEitherWeak(value)
+    def asFutureThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
+      FutureOps.fromEitherThr(value)
 
     def asIO[L, R](value: Either[L, R], bad: L => Anomaly): IO[R] =
       IOOps.fromEither(value, bad)
 
-    def asIOWeak[L, R](value: Either[L, R], bad: L => Throwable): IO[R] =
-      IOOps.fromEitherWeak(value, bad)
+    def asIOThr[L, R](value: Either[L, R], bad: L => Throwable): IO[R] =
+      IOOps.fromEitherThr(value, bad)
 
-    def asIOWeak[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
-      IOOps.fromEitherWeak(value)(ev)
+    def asIOThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+      IOOps.fromEitherThr(value)(ev)
 
     def asTask[L, R](value: Either[L, R], bad: L => Anomaly): Task[R] =
       TaskOps.suspendEither(value, bad)
 
-    def asTaskWeak[L, R](value: Either[L, R], bad: L => Throwable): Task[R] =
-      TaskOps.suspendEitherWeak(value, bad)
+    def asTaskThr[L, R](value: Either[L, R], bad: L => Throwable): Task[R] =
+      TaskOps.suspendEitherThr(value, bad)
 
-    def asTaskWeak[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
-      TaskOps.suspendEitherWeak(value)(ev)
+    def asTaskThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+      TaskOps.suspendEitherThr(value)(ev)
 
     def suspendInFuture[L, R](value: => Either[L, R], bad: L => Anomaly)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.suspendEither(value, bad)
 
-    def suspendInFutureWeak[L, R](value: => Either[L, R], bad: L => Throwable)(
+    def suspendInFutureThr[L, R](value: => Either[L, R], bad: L => Throwable)(
       implicit ec: ExecutionContext
     ): Future[R] =
-      FutureOps.suspendEitherWeak(value, bad)
+      FutureOps.suspendEitherThr(value, bad)
 
-    def suspendInFutureWeak[L, R](value: => Either[L, R])(
+    def suspendInFutureThr[L, R](value: => Either[L, R])(
       implicit
       ev: L <:< Throwable,
       ec: ExecutionContext
-    ): Future[R] = FutureOps.suspendEitherWeak(value)(ev, ec)
+    ): Future[R] = FutureOps.suspendEitherThr(value)(ev, ec)
 
     def suspendInIO[L, R](value: => Either[L, R], bad: L => Anomaly): IO[R] =
       IOOps.suspendEither(value, bad)
 
-    def suspendInIOWeak[L, R](value: => Either[L, R], bad: L => Throwable): IO[R] =
-      IOOps.suspendEitherWeak(value, bad)
+    def suspendInIOThr[L, R](value: => Either[L, R], bad: L => Throwable): IO[R] =
+      IOOps.suspendEitherThr(value, bad)
 
-    def suspendInIOWeak[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
-      IOOps.suspendEitherWeak(value)(ev)
+    def suspendInIOThr[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+      IOOps.suspendEitherThr(value)(ev)
 
     def suspendInTask[L, R](value: => Either[L, R], bad: L => Anomaly): Task[R] =
       TaskOps.suspendEither(value, bad)
 
-    def suspendInTaskWeak[L, R](value: => Either[L, R], bad: L => Throwable): Task[R] =
-      TaskOps.suspendEitherWeak(value, bad)
+    def suspendInTaskThr[L, R](value: => Either[L, R], bad: L => Throwable): Task[R] =
+      TaskOps.suspendEitherThr(value, bad)
 
-    def suspendInTaskWeak[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
-      TaskOps.suspendEitherWeak(value)(ev)
+    def suspendInTaskThr[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+      TaskOps.suspendEitherThr(value)(ev)
   }
 
   /**
@@ -97,29 +97,29 @@ object EitherSyntaxAsync {
     def asFuture(bad: L => Anomaly): Future[R] =
       FutureOps.fromEither(value, bad)
 
-    def asFutureWeak(bad: L => Throwable): Future[R] =
-      FutureOps.fromEitherWeak(value, bad)
+    def asFutureThr(bad: L => Throwable): Future[R] =
+      FutureOps.fromEitherThr(value, bad)
 
-    def asFutureWeak(implicit ev: L <:< Throwable): Future[R] =
-      FutureOps.fromEitherWeak(value)
+    def asFutureThr(implicit ev: L <:< Throwable): Future[R] =
+      FutureOps.fromEitherThr(value)
 
     def asIO(bad: L => Anomaly): IO[R] =
       IOOps.fromEither(value, bad)
 
-    def asIOWeak(bad: L => Throwable): IO[R] =
-      IOOps.fromEitherWeak(value, bad)
+    def asIOThr(bad: L => Throwable): IO[R] =
+      IOOps.fromEitherThr(value, bad)
 
-    def asIOWeak(implicit ev: L <:< Throwable): IO[R] =
-      IOOps.fromEitherWeak(value)(ev)
+    def asIOThr(implicit ev: L <:< Throwable): IO[R] =
+      IOOps.fromEitherThr(value)(ev)
 
     def asTask(bad: L => Anomaly): Task[R] =
       TaskOps.fromEither(value, bad)
 
-    def asTaskWeak(bad: L => Throwable): Task[R] =
-      TaskOps.fromEitherWeak(value, bad)
+    def asTaskThr(bad: L => Throwable): Task[R] =
+      TaskOps.fromEitherThr(value, bad)
 
-    def asTaskWeak(implicit ev: L <:< Throwable): Task[R] =
-      TaskOps.fromEitherWeak(value)(ev)
+    def asTaskThr(implicit ev: L <:< Throwable): Task[R] =
+      TaskOps.fromEitherThr(value)(ev)
 
   }
 
@@ -131,29 +131,29 @@ object EitherSyntaxAsync {
     def suspendInFuture(bad: L => Anomaly)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.suspendEither(value, bad)
 
-    def suspendInFutureWeak(bad: L => Throwable)(implicit ec: ExecutionContext): Future[R] =
-      FutureOps.suspendEitherWeak(value, bad)
+    def suspendInFutureThr(bad: L => Throwable)(implicit ec: ExecutionContext): Future[R] =
+      FutureOps.suspendEitherThr(value, bad)
 
-    def suspendInFutureWeak(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
-      FutureOps.suspendEitherWeak(value)
+    def suspendInFutureThr(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
+      FutureOps.suspendEitherThr(value)
 
     def suspendInIO(bad: L => Anomaly): IO[R] =
       IOOps.suspendEither(value, bad)
 
-    def suspendInIOWeak(bad: L => Throwable): IO[R] =
-      IOOps.suspendEitherWeak(value, bad)
+    def suspendInIOThr(bad: L => Throwable): IO[R] =
+      IOOps.suspendEitherThr(value, bad)
 
-    def suspendInIOWeak(implicit ev: L <:< Throwable): IO[R] =
-      IOOps.suspendEitherWeak(value)(ev)
+    def suspendInIOThr(implicit ev: L <:< Throwable): IO[R] =
+      IOOps.suspendEitherThr(value)(ev)
 
     def suspendInTask(bad: L => Anomaly): Task[R] =
       TaskOps.suspendEither(value, bad)
 
-    def suspendInTaskWeak(bad: L => Throwable): Task[R] =
-      TaskOps.suspendEitherWeak(value, bad)
+    def suspendInTaskThr(bad: L => Throwable): Task[R] =
+      TaskOps.suspendEitherThr(value, bad)
 
-    def suspendInTaskWeak(implicit ev: L <:< Throwable): Task[R] =
-      TaskOps.suspendEitherWeak(value)(ev)
+    def suspendInTaskThr(implicit ev: L <:< Throwable): Task[R] =
+      TaskOps.suspendEitherThr(value)(ev)
 
   }
 }

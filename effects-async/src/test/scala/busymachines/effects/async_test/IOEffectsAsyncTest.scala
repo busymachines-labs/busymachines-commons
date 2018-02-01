@@ -64,7 +64,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
   private val btrue:  IO[Boolean] = IO.pure(true)
   private val bfalse: IO[Boolean] = IO.pure(false)
-  private val bfail:  IO[Boolean] = IO.failWeak(iae)
+  private val bfail:  IO[Boolean] = IO.failThr(iae)
 
   //---------------------------------------------------------------------------
   describe("sync + pure") {
@@ -78,7 +78,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](IO.fail(ano).r)
-          assertThrows[RuntimeException](IO.failWeak(thr).r)
+          assertThrows[RuntimeException](IO.failThr(thr).r)
         }
 
         test("unit") {
@@ -95,13 +95,13 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("fromOptionWeak") {
+        describe("fromOptionThr") {
           test("none") {
-            assertThrows[RuntimeException](IO.fromOptionWeak(none, thr).r)
+            assertThrows[RuntimeException](IO.fromOptionThr(none, thr).r)
           }
 
           test("some") {
-            assert(IO.fromOptionWeak(some, thr).r == 42)
+            assert(IO.fromOptionThr(some, thr).r == 42)
           }
         }
 
@@ -118,7 +118,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         describe("fromEither") {
           test("left") {
-            assertThrows[RuntimeException](IO.fromEitherWeak(left).r)
+            assertThrows[RuntimeException](IO.fromEitherThr(left).r)
           }
 
           test("left — transform") {
@@ -126,7 +126,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("right") {
-            assert(IO.fromEitherWeak(right).r == 42)
+            assert(IO.fromEitherThr(right).r == 42)
           }
 
           test("right — transform") {
@@ -134,13 +134,13 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("fromEitherWeak") {
+        describe("fromEitherThr") {
           test("left — transform") {
-            assertThrows[IllegalArgumentException](IO.fromEitherWeak(left, (t: Throwable) => iae).r)
+            assertThrows[IllegalArgumentException](IO.fromEitherThr(left, (t: Throwable) => iae).r)
           }
 
           test("right") {
-            assert(IO.fromEitherWeak(right, (t: Throwable) => iae).r == 42)
+            assert(IO.fromEitherThr(right, (t: Throwable) => iae).r == 42)
           }
         }
 
@@ -198,9 +198,9 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWeak") {
+        describe("condThr") {
           test("false") {
-            val value = IO.condWeak(
+            val value = IO.condThr(
               false,
               42,
               thr
@@ -209,7 +209,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = IO.condWeak(
+            val value = IO.condThr(
               true,
               42,
               thr
@@ -256,9 +256,9 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWithWeak") {
+        describe("condWithThr") {
           test("false — pure") {
-            val value = IO.condWithWeak(
+            val value = IO.condWithThr(
               false,
               pureV,
               thr
@@ -267,7 +267,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = IO.condWithWeak(
+            val value = IO.condWithThr(
               true,
               pureV,
               thr
@@ -276,7 +276,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("false — fail") {
-            val value = IO.condWithWeak(
+            val value = IO.condWithThr(
               false,
               failV,
               thr
@@ -285,7 +285,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = IO.condWithWeak(
+            val value = IO.condWithThr(
               true,
               failV,
               thr
@@ -323,9 +323,9 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWeak") {
+        describe("flatCondThr") {
           test("false") {
-            val value = IO.flatCondWeak(
+            val value = IO.flatCondThr(
               bfalse,
               42,
               thr
@@ -334,7 +334,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = IO.flatCondWeak(
+            val value = IO.flatCondThr(
               btrue,
               42,
               thr
@@ -343,7 +343,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = IO.flatCondWeak(
+            val value = IO.flatCondThr(
               bfail,
               42,
               thr
@@ -408,9 +408,9 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWithWeak") {
+        describe("flatCondWithThr") {
           test("false — pure") {
-            val value = IO.flatCondWithWeak(
+            val value = IO.flatCondWithThr(
               bfalse,
               pureV,
               thr
@@ -419,7 +419,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("false — fail") {
-            val value = IO.flatCondWithWeak(
+            val value = IO.flatCondWithThr(
               bfalse,
               failV,
               thr
@@ -428,7 +428,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = IO.flatCondWithWeak(
+            val value = IO.flatCondWithThr(
               btrue,
               pureV,
               thr
@@ -437,7 +437,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = IO.flatCondWithWeak(
+            val value = IO.flatCondWithThr(
               btrue,
               failV,
               thr
@@ -446,7 +446,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — pure") {
-            val value = IO.flatCondWithWeak(
+            val value = IO.flatCondWithThr(
               bfail,
               pureV,
               thr
@@ -455,7 +455,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — fail") {
-            val value = IO.flatCondWithWeak(
+            val value = IO.flatCondWithThr(
               bfail,
               failV,
               thr
@@ -482,9 +482,9 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnTrueWeak") {
+        describe("failOnTrueThr") {
           test("false") {
-            val value = IO.failOnTrueWeak(
+            val value = IO.failOnTrueThr(
               false,
               thr
             )
@@ -492,7 +492,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = IO.failOnTrueWeak(
+            val value = IO.failOnTrueThr(
               true,
               thr
             )
@@ -518,9 +518,9 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnFalseWeak") {
+        describe("failOnFalseThr") {
           test("false") {
-            val value = IO.failOnFalseWeak(
+            val value = IO.failOnFalseThr(
               false,
               thr
             )
@@ -528,7 +528,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = IO.failOnFalseWeak(
+            val value = IO.failOnFalseThr(
               true,
               thr
             )
@@ -563,9 +563,9 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnTrueWeak") {
+        describe("flatFailOnTrueThr") {
           test("false") {
-            val value = IO.flatFailOnTrueWeak(
+            val value = IO.flatFailOnTrueThr(
               bfalse,
               thr
             )
@@ -573,7 +573,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = IO.flatFailOnTrueWeak(
+            val value = IO.flatFailOnTrueThr(
               btrue,
               thr
             )
@@ -581,7 +581,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = IO.flatFailOnTrueWeak(
+            val value = IO.flatFailOnTrueThr(
               bfail,
               thr
             )
@@ -617,9 +617,9 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnFalseWeak") {
+        describe("flatFailOnFalseThr") {
           test("false") {
-            val value = IO.flatFailOnFalseWeak(
+            val value = IO.flatFailOnFalseThr(
               bfalse,
               thr
             )
@@ -627,7 +627,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = IO.flatFailOnFalseWeak(
+            val value = IO.flatFailOnFalseThr(
               btrue,
               thr
             )
@@ -635,7 +635,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = IO.flatFailOnFalseWeak(
+            val value = IO.flatFailOnFalseThr(
               bfail,
               thr
             )
@@ -661,26 +661,26 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             assertThrows[RuntimeException] {
-              IO.flattenOption(IO.failWeak[Option[Int]](thr), ano).r
+              IO.flattenOption(IO.failThr[Option[Int]](thr), ano).r
             }
           }
         }
 
-        describe("flattenOptionWeak") {
+        describe("flattenOptionThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              IO.flattenOptionWeak(IO.pure(none), thr).r
+              IO.flattenOptionThr(IO.pure(none), thr).r
             }
           }
 
           test("pure — some") {
-            assert(IO.flattenOptionWeak(IO.pure(some), thr).r == 42)
+            assert(IO.flattenOptionThr(IO.pure(some), thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              IO.flattenOptionWeak(IO.fail[Option[Int]](ano), thr).r
+              IO.flattenOptionThr(IO.fail[Option[Int]](ano), thr).r
             }
           }
         }
@@ -738,13 +738,13 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("option asIOWeak") {
+        describe("option asIOThr") {
           test("fail") {
-            assertThrows[IllegalArgumentException](Option.asIOWeak(none, iae).r)
+            assertThrows[IllegalArgumentException](Option.asIOThr(none, iae).r)
           }
 
           test("pure") {
-            assert(Option.asIOWeak(some, iae).r == 42)
+            assert(Option.asIOThr(some, iae).r == 42)
           }
         }
 
@@ -768,23 +768,23 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asIOWeak — transform") {
+        describe("either asIOThr — transform") {
           test("fail") {
-            assertThrows[RuntimeException](Either.asIOWeak(left, thr2thr).r)
+            assertThrows[RuntimeException](Either.asIOThr(left, thr2thr).r)
           }
 
           test("pure") {
-            assert(Either.asIOWeak(right, thr2thr).r == 42)
+            assert(Either.asIOThr(right, thr2thr).r == 42)
           }
         }
 
-        describe("either asIOWeak") {
+        describe("either asIOThr") {
           test("fail") {
-            assertThrows[RuntimeException](Either.asIOWeak(left).r)
+            assertThrows[RuntimeException](Either.asIOThr(left).r)
           }
 
           test("pure") {
-            assert(Either.asIOWeak(right).r == 42)
+            assert(Either.asIOThr(right).r == 42)
           }
         }
 
@@ -869,10 +869,10 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("bimapWeak") {
+        describe("bimapThr") {
 
           test("fail") {
-            val value = IO.bimapWeak(
+            val value = IO.bimapThr(
               failV,
               int2str,
               thr2thr
@@ -882,7 +882,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("pure") {
-            val value = IO.bimapWeak(
+            val value = IO.bimapThr(
               pureV,
               int2str,
               thr2thr
@@ -974,10 +974,10 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWeak") {
+        describe("condThr") {
           test("false") {
             val value =
-              false.condIOWeak(
+              false.condIOThr(
                 42,
                 thr
               )
@@ -985,7 +985,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = true.condIOWeak(
+            val value = true.condIOThr(
               42,
               thr
             )
@@ -1027,9 +1027,9 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWithWeak") {
+        describe("condWithThr") {
           test("false — pure") {
-            val value = false.condWithIOWeak(
+            val value = false.condWithIOThr(
               pureV,
               thr
             )
@@ -1037,7 +1037,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = true.condWithIOWeak(
+            val value = true.condWithIOThr(
               pureV,
               thr
             )
@@ -1046,7 +1046,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("false — fail") {
             val value =
-              false.condWithIOWeak(
+              false.condWithIOThr(
                 failV,
                 thr
               )
@@ -1054,7 +1054,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = true.condWithIOWeak(
+            val value = true.condWithIOThr(
               failV,
               thr
             )
@@ -1088,9 +1088,9 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWeak") {
+        describe("flatCondThr") {
           test("false") {
-            val value = bfalse.condWeak(
+            val value = bfalse.condThr(
               42,
               thr
             )
@@ -1098,7 +1098,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = btrue.condWeak(
+            val value = btrue.condThr(
               42,
               thr
             )
@@ -1106,7 +1106,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = bfail.condWeak(
+            val value = bfail.condThr(
               42,
               thr
             )
@@ -1164,9 +1164,9 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWithWeak") {
+        describe("flatCondWithThr") {
           test("false — pure") {
-            val value = bfalse.condWithWeak(
+            val value = bfalse.condWithThr(
               pureV,
               thr
             )
@@ -1174,7 +1174,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("false — fail") {
-            val value = bfalse.condWithWeak(
+            val value = bfalse.condWithThr(
               failV,
               thr
             )
@@ -1182,7 +1182,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = btrue.condWithWeak(
+            val value = btrue.condWithThr(
               pureV,
               thr
             )
@@ -1190,7 +1190,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = btrue.condWithWeak(
+            val value = btrue.condWithThr(
               failV,
               thr
             )
@@ -1198,7 +1198,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — pure") {
-            val value = bfail.condWithWeak(
+            val value = bfail.condWithThr(
               pureV,
               thr
             )
@@ -1206,7 +1206,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — fail") {
-            val value = bfail.condWithWeak(
+            val value = bfail.condWithThr(
               failV,
               thr
             )
@@ -1226,14 +1226,14 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnTrueWeak") {
+        describe("failOnTrueThr") {
           test("false") {
-            val value = false.failOnTrueIOWeak(thr)
+            val value = false.failOnTrueIOThr(thr)
             value.r
           }
 
           test("true") {
-            val value = true.failOnTrueIOWeak(thr)
+            val value = true.failOnTrueIOThr(thr)
             assertThrows[RuntimeException](value.r)
           }
         }
@@ -1250,14 +1250,14 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnFalseWeak") {
+        describe("failOnFalseThr") {
           test("false") {
-            val value = false.failOnFalseIOWeak(thr)
+            val value = false.failOnFalseIOThr(thr)
             assertThrows[RuntimeException](value.r)
           }
 
           test("true") {
-            val value = true.failOnFalseIOWeak(thr)
+            val value = true.failOnFalseIOThr(thr)
             value.r
           }
         }
@@ -1280,19 +1280,19 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnTrueWeak") {
+        describe("flatFailOnTrueThr") {
           test("false") {
-            val value = bfalse.failOnTrueWeak(thr)
+            val value = bfalse.failOnTrueThr(thr)
             value.r
           }
 
           test("true") {
-            val value = btrue.failOnTrueWeak(thr)
+            val value = btrue.failOnTrueThr(thr)
             assertThrows[RuntimeException](value.r)
           }
 
           test("fail") {
-            val value = bfail.failOnTrueWeak(thr)
+            val value = bfail.failOnTrueThr(thr)
             assertThrows[IllegalArgumentException](value.r)
           }
 
@@ -1316,19 +1316,19 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnFalseWeak") {
+        describe("flatFailOnFalseThr") {
           test("false") {
-            val value = bfalse.failOnFalseWeak(thr)
+            val value = bfalse.failOnFalseThr(thr)
             assertThrows[RuntimeException](value.r)
           }
 
           test("true") {
-            val value = btrue.failOnFalseWeak(thr)
+            val value = btrue.failOnFalseThr(thr)
             value.r
           }
 
           test("fail") {
-            val value = bfail.failOnFalseWeak(thr)
+            val value = bfail.failOnFalseThr(thr)
             assertThrows[IllegalArgumentException](value.r)
           }
 
@@ -1351,26 +1351,26 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             assertThrows[RuntimeException] {
-              IO.failWeak[Option[Int]](thr).flattenOption(ano).r
+              IO.failThr[Option[Int]](thr).flattenOption(ano).r
             }
           }
         }
 
-        describe("flattenOptionWeak") {
+        describe("flattenOptionThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              IO.pure(none).flattenOptionWeak(thr).r
+              IO.pure(none).flattenOptionThr(thr).r
             }
           }
 
           test("pure — some") {
-            assert(IO.pure(some).flattenOptionWeak(thr).r == 42)
+            assert(IO.pure(some).flattenOptionThr(thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              IO.fail[Option[Int]](ano).flattenOptionWeak(thr).r
+              IO.fail[Option[Int]](ano).flattenOptionThr(thr).r
             }
           }
         }
@@ -1429,13 +1429,13 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("option asIOWeak") {
+        describe("option asIOThr") {
           test("fail") {
-            assertThrows[IllegalArgumentException](none.asIOWeak(iae).r)
+            assertThrows[IllegalArgumentException](none.asIOThr(iae).r)
           }
 
           test("pure") {
-            assert(some.asIOWeak(iae).r == 42)
+            assert(some.asIOThr(iae).r == 42)
           }
         }
 
@@ -1459,23 +1459,23 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asIOWeak — transform") {
+        describe("either asIOThr — transform") {
           test("fail") {
-            assertThrows[RuntimeException](left.asIOWeak(thr2thr).r)
+            assertThrows[RuntimeException](left.asIOThr(thr2thr).r)
           }
 
           test("pure") {
-            assert(right.asIOWeak(thr2thr).r == 42)
+            assert(right.asIOThr(thr2thr).r == 42)
           }
         }
 
-        describe("either asIOWeak") {
+        describe("either asIOThr") {
           test("fail") {
-            assertThrows[RuntimeException](left.asIOWeak.r)
+            assertThrows[RuntimeException](left.asIOThr.r)
           }
 
           test("pure") {
-            assert(right.asIOWeak.r == 42)
+            assert(right.asIOThr.r == 42)
           }
         }
 
@@ -1556,10 +1556,10 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("bimapWeak") {
+        describe("bimapThr") {
 
           test("fail") {
-            val value = failV.bimapWeak(
+            val value = failV.bimapThr(
               int2str,
               thr2thr
             )
@@ -1568,7 +1568,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
 
           test("pure") {
-            val value = pureV.bimapWeak(
+            val value = pureV.bimapThr(
               int2str,
               thr2thr
             )
@@ -1649,8 +1649,8 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         }
 
-        test("suspendOptionWeak") {
-          val f = IO.suspendOptionWeak(
+        test("suspendOptionThr") {
+          val f = IO.suspendOptionThr(
             Option(throw thr),
             iae
           )
@@ -1673,15 +1673,15 @@ final class IOEffectsAsyncTest extends FunSpec {
           assertThrows[RuntimeException](f.r)
         }
 
-        test("suspendEitherWeak") {
-          val f = IO.suspendEitherWeak(
+        test("suspendEitherThr") {
+          val f = IO.suspendEitherThr(
             Right[Throwable, String](throw thr)
           )
           assertThrows[RuntimeException](f.r)
         }
 
-        test("suspendEitherWeak — transform") {
-          val f = IO.suspendEitherWeak(
+        test("suspendEitherThr — transform") {
+          val f = IO.suspendEitherThr(
             Right[Throwable, String](throw thr),
             thr2thr
           )
@@ -2220,8 +2220,8 @@ final class IOEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendOptionWeak") {
-            val f = Option(throw thr).suspendInIOWeak(thr)
+          test("suspendOptionThr") {
+            val f = Option(throw thr).suspendInIOThr(thr)
             assertThrows[RuntimeException](f.r)
           }
 
@@ -2235,13 +2235,13 @@ final class IOEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak") {
-            val f = Right[Throwable, String](throw thr).suspendInIOWeak
+          test("suspendEitherThr") {
+            val f = Right[Throwable, String](throw thr).suspendInIOThr
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak — transform") {
-            val f = Right[Throwable, String](throw thr).suspendInIOWeak(thr2thr)
+          test("suspendEitherThr — transform") {
+            val f = Right[Throwable, String](throw thr).suspendInIOThr(thr2thr)
             assertThrows[RuntimeException](f.r)
           }
 
@@ -2270,8 +2270,8 @@ final class IOEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendOptionWeak") {
-            val f = Option.suspendInIOWeak(Option(throw thr), thr)
+          test("suspendOptionThr") {
+            val f = Option.suspendInIOThr(Option(throw thr), thr)
             assertThrows[RuntimeException](f.r)
           }
 
@@ -2285,13 +2285,13 @@ final class IOEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak") {
-            val f = Either.suspendInIOWeak(Right[Throwable, String](throw thr))
+          test("suspendEitherThr") {
+            val f = Either.suspendInIOThr(Right[Throwable, String](throw thr))
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak — transform") {
-            val f = Either.suspendInIOWeak(Right[Throwable, String](throw thr), thr2thr)
+          test("suspendEitherThr — transform") {
+            val f = Either.suspendInIOThr(Right[Throwable, String](throw thr), thr2thr)
             assertThrows[RuntimeException](f.r)
           }
 

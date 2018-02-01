@@ -46,7 +46,7 @@ final class TryEffectsTest extends FunSpec {
 
   private val btrue:  Try[Boolean] = Try.pure(true)
   private val bfalse: Try[Boolean] = Try.pure(false)
-  private val bfail:  Try[Boolean] = Try.failWeak(iae)
+  private val bfail:  Try[Boolean] = Try.failThr(iae)
 
   //---------------------------------------------------------------------------
 
@@ -61,10 +61,10 @@ final class TryEffectsTest extends FunSpec {
 
       test("fail") {
         assertThrows[InvalidInputFailure](Try.fail(ano).r)
-        assertThrows[RuntimeException](Try.failWeak(thr).r)
+        assertThrows[RuntimeException](Try.failThr(thr).r)
 
         assertThrows[InvalidInputFailure](Try.failure(ano).r)
-        assertThrows[RuntimeException](Try.failureWeak(thr).r)
+        assertThrows[RuntimeException](Try.failureThr(thr).r)
       }
 
       test("unit") {
@@ -81,19 +81,19 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("fromOptionWeak") {
+      describe("fromOptionThr") {
         test("none") {
-          assertThrows[RuntimeException](Try.fromOptionWeak(none, thr).r)
+          assertThrows[RuntimeException](Try.fromOptionThr(none, thr).r)
         }
 
         test("some") {
-          assert(Try.fromOptionWeak(some, thr).r == 42)
+          assert(Try.fromOptionThr(some, thr).r == 42)
         }
       }
 
       describe("fromEither") {
         test("left") {
-          assertThrows[RuntimeException](Try.fromEitherWeak(left).r)
+          assertThrows[RuntimeException](Try.fromEitherThr(left).r)
         }
 
         test("left — transform") {
@@ -101,7 +101,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("right") {
-          assert(Try.fromEitherWeak(right).r == 42)
+          assert(Try.fromEitherThr(right).r == 42)
         }
 
         test("right — transform") {
@@ -109,13 +109,13 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("fromEitherWeak") {
+      describe("fromEitherThr") {
         test("left — transform") {
-          assertThrows[IllegalArgumentException](Try.fromEitherWeak(left, (t: Throwable) => iae).r)
+          assertThrows[IllegalArgumentException](Try.fromEitherThr(left, (t: Throwable) => iae).r)
         }
 
         test("right") {
-          assert(Try.fromEitherWeak(right, (t: Throwable) => iae).r == 42)
+          assert(Try.fromEitherThr(right, (t: Throwable) => iae).r == 42)
         }
       }
 
@@ -153,9 +153,9 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("condWeak") {
+      describe("condThr") {
         test("false") {
-          val value = Try.condWeak(
+          val value = Try.condThr(
             false,
             42,
             thr
@@ -164,7 +164,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true") {
-          val value = Try.condWeak(
+          val value = Try.condThr(
             true,
             42,
             thr
@@ -211,9 +211,9 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("condWithWeak") {
+      describe("condWithThr") {
         test("false — pure") {
-          val value = Try.condWithWeak(
+          val value = Try.condWithThr(
             false,
             pureV,
             thr
@@ -222,7 +222,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true — pure") {
-          val value = Try.condWithWeak(
+          val value = Try.condWithThr(
             true,
             pureV,
             thr
@@ -231,7 +231,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("false — fail") {
-          val value = Try.condWithWeak(
+          val value = Try.condWithThr(
             false,
             failV,
             thr
@@ -240,7 +240,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true — fail") {
-          val value = Try.condWithWeak(
+          val value = Try.condWithThr(
             true,
             failV,
             thr
@@ -278,9 +278,9 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("flatCondWeak") {
+      describe("flatCondThr") {
         test("false") {
-          val value = Try.flatCondWeak(
+          val value = Try.flatCondThr(
             bfalse,
             42,
             thr
@@ -289,7 +289,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true") {
-          val value = Try.flatCondWeak(
+          val value = Try.flatCondThr(
             btrue,
             42,
             thr
@@ -298,7 +298,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("fail") {
-          val value = Try.flatCondWeak(
+          val value = Try.flatCondThr(
             bfail,
             42,
             thr
@@ -363,9 +363,9 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("flatCondWithWeak") {
+      describe("flatCondWithThr") {
         test("false — pure") {
-          val value = Try.flatCondWithWeak(
+          val value = Try.flatCondWithThr(
             bfalse,
             pureV,
             thr
@@ -374,7 +374,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("false — fail") {
-          val value = Try.flatCondWithWeak(
+          val value = Try.flatCondWithThr(
             bfalse,
             failV,
             thr
@@ -383,7 +383,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true — pure") {
-          val value = Try.flatCondWithWeak(
+          val value = Try.flatCondWithThr(
             btrue,
             pureV,
             thr
@@ -392,7 +392,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true — fail") {
-          val value = Try.flatCondWithWeak(
+          val value = Try.flatCondWithThr(
             btrue,
             failV,
             thr
@@ -401,7 +401,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("fail — pure") {
-          val value = Try.flatCondWithWeak(
+          val value = Try.flatCondWithThr(
             bfail,
             pureV,
             thr
@@ -410,7 +410,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("fail — fail") {
-          val value = Try.flatCondWithWeak(
+          val value = Try.flatCondWithThr(
             bfail,
             failV,
             thr
@@ -437,9 +437,9 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("failOnTrueWeak") {
+      describe("failOnTrueThr") {
         test("false") {
-          val value = Try.failOnTrueWeak(
+          val value = Try.failOnTrueThr(
             false,
             thr
           )
@@ -447,7 +447,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true") {
-          val value = Try.failOnTrueWeak(
+          val value = Try.failOnTrueThr(
             true,
             thr
           )
@@ -473,9 +473,9 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("failOnFalseWeak") {
+      describe("failOnFalseThr") {
         test("false") {
-          val value = Try.failOnFalseWeak(
+          val value = Try.failOnFalseThr(
             false,
             thr
           )
@@ -483,7 +483,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true") {
-          val value = Try.failOnFalseWeak(
+          val value = Try.failOnFalseThr(
             true,
             thr
           )
@@ -518,9 +518,9 @@ final class TryEffectsTest extends FunSpec {
 
       }
 
-      describe("flatFailOnTrueWeak") {
+      describe("flatFailOnTrueThr") {
         test("false") {
-          val value = Try.flatFailOnTrueWeak(
+          val value = Try.flatFailOnTrueThr(
             bfalse,
             thr
           )
@@ -528,7 +528,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true") {
-          val value = Try.flatFailOnTrueWeak(
+          val value = Try.flatFailOnTrueThr(
             btrue,
             thr
           )
@@ -536,7 +536,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("fail") {
-          val value = Try.flatFailOnTrueWeak(
+          val value = Try.flatFailOnTrueThr(
             bfail,
             thr
           )
@@ -572,9 +572,9 @@ final class TryEffectsTest extends FunSpec {
 
       }
 
-      describe("flatFailOnFalseWeak") {
+      describe("flatFailOnFalseThr") {
         test("false") {
-          val value = Try.flatFailOnFalseWeak(
+          val value = Try.flatFailOnFalseThr(
             bfalse,
             thr
           )
@@ -582,7 +582,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true") {
-          val value = Try.flatFailOnFalseWeak(
+          val value = Try.flatFailOnFalseThr(
             btrue,
             thr
           )
@@ -590,7 +590,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("fail") {
-          val value = Try.flatFailOnFalseWeak(
+          val value = Try.flatFailOnFalseThr(
             bfail,
             thr
           )
@@ -616,26 +616,26 @@ final class TryEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[RuntimeException] {
-            Try.flattenOption(Try.failureWeak[Option[Int]](thr), ano).r
+            Try.flattenOption(Try.failureThr[Option[Int]](thr), ano).r
           }
         }
       }
 
-      describe("flattenOptionWeak") {
+      describe("flattenOptionThr") {
 
         test("pure — none") {
           assertThrows[RuntimeException] {
-            Try.flattenOptionWeak(Try.pure(none), thr).r
+            Try.flattenOptionThr(Try.pure(none), thr).r
           }
         }
 
         test("pure — some") {
-          assert(Try.flattenOptionWeak(Try.pure(some), thr).r == 42)
+          assert(Try.flattenOptionThr(Try.pure(some), thr).r == 42)
         }
 
         test("fail") {
           assertThrows[InvalidInputFailure] {
-            Try.flattenOptionWeak(Try.failure[Option[Int]](ano), thr).r
+            Try.flattenOptionThr(Try.failure[Option[Int]](ano), thr).r
           }
         }
       }
@@ -748,10 +748,10 @@ final class TryEffectsTest extends FunSpec {
 
       }
 
-      describe("bimapWeak") {
+      describe("bimapThr") {
 
         test("fail") {
-          val value = Try.bimapWeak(
+          val value = Try.bimapThr(
             failV,
             int2str,
             thr2thr
@@ -761,7 +761,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("pure") {
-          val value = Try.bimapWeak(
+          val value = Try.bimapThr(
             pureV,
             int2str,
             thr2thr
@@ -834,10 +834,10 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("condWeak") {
+      describe("condThr") {
         test("false") {
           val value =
-            false.condTryWeak(
+            false.condTryThr(
               42,
               thr
             )
@@ -845,7 +845,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true") {
-          val value = true.condTryWeak(
+          val value = true.condTryThr(
             42,
             thr
           )
@@ -887,9 +887,9 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("condWithWeak") {
+      describe("condWithThr") {
         test("false — pure") {
-          val value = false.condWithTryWeak(
+          val value = false.condWithTryThr(
             pureV,
             thr
           )
@@ -897,7 +897,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true — pure") {
-          val value = true.condWithTryWeak(
+          val value = true.condWithTryThr(
             pureV,
             thr
           )
@@ -906,7 +906,7 @@ final class TryEffectsTest extends FunSpec {
 
         test("false — fail") {
           val value =
-            false.condWithTryWeak(
+            false.condWithTryThr(
               failV,
               thr
             )
@@ -914,7 +914,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true — fail") {
-          val value = true.condWithTryWeak(
+          val value = true.condWithTryThr(
             failV,
             thr
           )
@@ -948,9 +948,9 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("flatCondWeak") {
+      describe("flatCondThr") {
         test("false") {
-          val value = bfalse.condWeak(
+          val value = bfalse.condThr(
             42,
             thr
           )
@@ -958,7 +958,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true") {
-          val value = btrue.condWeak(
+          val value = btrue.condThr(
             42,
             thr
           )
@@ -966,7 +966,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("fail") {
-          val value = bfail.condWeak(
+          val value = bfail.condThr(
             42,
             thr
           )
@@ -1024,9 +1024,9 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("flatCondWithWeak") {
+      describe("flatCondWithThr") {
         test("false — pure") {
-          val value = bfalse.condWithWeak(
+          val value = bfalse.condWithThr(
             pureV,
             thr
           )
@@ -1034,7 +1034,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("false — fail") {
-          val value = bfalse.condWithWeak(
+          val value = bfalse.condWithThr(
             failV,
             thr
           )
@@ -1042,7 +1042,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true — pure") {
-          val value = btrue.condWithWeak(
+          val value = btrue.condWithThr(
             pureV,
             thr
           )
@@ -1050,7 +1050,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("true — fail") {
-          val value = btrue.condWithWeak(
+          val value = btrue.condWithThr(
             failV,
             thr
           )
@@ -1058,7 +1058,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("fail — pure") {
-          val value = bfail.condWithWeak(
+          val value = bfail.condWithThr(
             pureV,
             thr
           )
@@ -1066,7 +1066,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("fail — fail") {
-          val value = bfail.condWithWeak(
+          val value = bfail.condWithThr(
             failV,
             thr
           )
@@ -1086,14 +1086,14 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("failOnTrueWeak") {
+      describe("failOnTrueThr") {
         test("false") {
-          val value = false.failOnTrueTryWeak(thr)
+          val value = false.failOnTrueTryThr(thr)
           value.r
         }
 
         test("true") {
-          val value = true.failOnTrueTryWeak(thr)
+          val value = true.failOnTrueTryThr(thr)
           assertThrows[RuntimeException](value.r)
         }
       }
@@ -1110,14 +1110,14 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("failOnFalseWeak") {
+      describe("failOnFalseThr") {
         test("false") {
-          val value = false.failOnFalseTryWeak(thr)
+          val value = false.failOnFalseTryThr(thr)
           assertThrows[RuntimeException](value.r)
         }
 
         test("true") {
-          val value = true.failOnFalseTryWeak(thr)
+          val value = true.failOnFalseTryThr(thr)
           value.r
         }
       }
@@ -1140,19 +1140,19 @@ final class TryEffectsTest extends FunSpec {
 
       }
 
-      describe("flatFailOnTrueWeak") {
+      describe("flatFailOnTrueThr") {
         test("false") {
-          val value = bfalse.failOnTrueWeak(thr)
+          val value = bfalse.failOnTrueThr(thr)
           value.r
         }
 
         test("true") {
-          val value = btrue.failOnTrueWeak(thr)
+          val value = btrue.failOnTrueThr(thr)
           assertThrows[RuntimeException](value.r)
         }
 
         test("fail") {
-          val value = bfail.failOnTrueWeak(thr)
+          val value = bfail.failOnTrueThr(thr)
           assertThrows[IllegalArgumentException](value.r)
         }
 
@@ -1176,19 +1176,19 @@ final class TryEffectsTest extends FunSpec {
 
       }
 
-      describe("flatFailOnFalseWeak") {
+      describe("flatFailOnFalseThr") {
         test("false") {
-          val value = bfalse.failOnFalseWeak(thr)
+          val value = bfalse.failOnFalseThr(thr)
           assertThrows[RuntimeException](value.r)
         }
 
         test("true") {
-          val value = btrue.failOnFalseWeak(thr)
+          val value = btrue.failOnFalseThr(thr)
           value.r
         }
 
         test("fail") {
-          val value = bfail.failOnFalseWeak(thr)
+          val value = bfail.failOnFalseThr(thr)
           assertThrows[IllegalArgumentException](value.r)
         }
 
@@ -1211,26 +1211,26 @@ final class TryEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[RuntimeException] {
-            Try.failureWeak[Option[Int]](thr).flattenOption(ano).r
+            Try.failureThr[Option[Int]](thr).flattenOption(ano).r
           }
         }
       }
 
-      describe("flattenOptionWeak") {
+      describe("flattenOptionThr") {
 
         test("pure — none") {
           assertThrows[RuntimeException] {
-            Try.pure(none).flattenOptionWeak(thr).r
+            Try.pure(none).flattenOptionThr(thr).r
           }
         }
 
         test("pure — some") {
-          assert(Try.pure(some).flattenOptionWeak(thr).r == 42)
+          assert(Try.pure(some).flattenOptionThr(thr).r == 42)
         }
 
         test("fail") {
           assertThrows[InvalidInputFailure] {
-            Try.failure[Option[Int]](ano).flattenOptionWeak(thr).r
+            Try.failure[Option[Int]](ano).flattenOptionThr(thr).r
           }
         }
       }
@@ -1341,10 +1341,10 @@ final class TryEffectsTest extends FunSpec {
 
       }
 
-      describe("bimapWeak") {
+      describe("bimapThr") {
 
         test("fail") {
-          val value = failV.bimapWeak(
+          val value = failV.bimapThr(
             int2str,
             thr2thr
           )
@@ -1353,7 +1353,7 @@ final class TryEffectsTest extends FunSpec {
         }
 
         test("pure") {
-          val value = pureV.bimapWeak(
+          val value = pureV.bimapThr(
             int2str,
             thr2thr
           )

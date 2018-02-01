@@ -59,7 +59,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
   private val btrue:  Future[Boolean] = Future.pure(true)
   private val bfalse: Future[Boolean] = Future.pure(false)
-  private val bfail:  Future[Boolean] = Future.failWeak(iae)
+  private val bfail:  Future[Boolean] = Future.failThr(iae)
 
   //---------------------------------------------------------------------------
   describe("sync + pure") {
@@ -73,7 +73,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](Future.fail(ano).r)
-          assertThrows[RuntimeException](Future.failWeak(thr).r)
+          assertThrows[RuntimeException](Future.failThr(thr).r)
         }
 
         test("unit") {
@@ -90,13 +90,13 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("fromOptionWeak") {
+        describe("fromOptionThr") {
           test("none") {
-            assertThrows[RuntimeException](Future.fromOptionWeak(none, thr).r)
+            assertThrows[RuntimeException](Future.fromOptionThr(none, thr).r)
           }
 
           test("some") {
-            assert(Future.fromOptionWeak(some, thr).r == 42)
+            assert(Future.fromOptionThr(some, thr).r == 42)
           }
         }
 
@@ -113,7 +113,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         describe("fromEither") {
           test("left") {
-            assertThrows[RuntimeException](Future.fromEitherWeak(left).r)
+            assertThrows[RuntimeException](Future.fromEitherThr(left).r)
           }
 
           test("left — transform") {
@@ -121,7 +121,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("right") {
-            assert(Future.fromEitherWeak(right).r == 42)
+            assert(Future.fromEitherThr(right).r == 42)
           }
 
           test("right — transform") {
@@ -129,13 +129,13 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("fromEitherWeak") {
+        describe("fromEitherThr") {
           test("left — transform") {
-            assertThrows[IllegalArgumentException](Future.fromEitherWeak(left, (t: Throwable) => iae).r)
+            assertThrows[IllegalArgumentException](Future.fromEitherThr(left, (t: Throwable) => iae).r)
           }
 
           test("right") {
-            assert(Future.fromEitherWeak(right, (t: Throwable) => iae).r == 42)
+            assert(Future.fromEitherThr(right, (t: Throwable) => iae).r == 42)
           }
         }
 
@@ -173,9 +173,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWeak") {
+        describe("condThr") {
           test("false") {
-            val value = Future.condWeak(
+            val value = Future.condThr(
               false,
               42,
               thr
@@ -184,7 +184,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Future.condWeak(
+            val value = Future.condThr(
               true,
               42,
               thr
@@ -231,9 +231,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWithWeak") {
+        describe("condWithThr") {
           test("false — pure") {
-            val value = Future.condWithWeak(
+            val value = Future.condWithThr(
               false,
               pureV,
               thr
@@ -242,7 +242,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = Future.condWithWeak(
+            val value = Future.condWithThr(
               true,
               pureV,
               thr
@@ -251,7 +251,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("false — fail") {
-            val value = Future.condWithWeak(
+            val value = Future.condWithThr(
               false,
               failV,
               thr
@@ -260,7 +260,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = Future.condWithWeak(
+            val value = Future.condWithThr(
               true,
               failV,
               thr
@@ -298,9 +298,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWeak") {
+        describe("flatCondThr") {
           test("false") {
-            val value = Future.flatCondWeak(
+            val value = Future.flatCondThr(
               bfalse,
               42,
               thr
@@ -309,7 +309,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Future.flatCondWeak(
+            val value = Future.flatCondThr(
               btrue,
               42,
               thr
@@ -318,7 +318,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = Future.flatCondWeak(
+            val value = Future.flatCondThr(
               bfail,
               42,
               thr
@@ -383,9 +383,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWithWeak") {
+        describe("flatCondWithThr") {
           test("false — pure") {
-            val value = Future.flatCondWithWeak(
+            val value = Future.flatCondWithThr(
               bfalse,
               pureV,
               thr
@@ -394,7 +394,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("false — fail") {
-            val value = Future.flatCondWithWeak(
+            val value = Future.flatCondWithThr(
               bfalse,
               failV,
               thr
@@ -403,7 +403,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = Future.flatCondWithWeak(
+            val value = Future.flatCondWithThr(
               btrue,
               pureV,
               thr
@@ -412,7 +412,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = Future.flatCondWithWeak(
+            val value = Future.flatCondWithThr(
               btrue,
               failV,
               thr
@@ -421,7 +421,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — pure") {
-            val value = Future.flatCondWithWeak(
+            val value = Future.flatCondWithThr(
               bfail,
               pureV,
               thr
@@ -430,7 +430,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — fail") {
-            val value = Future.flatCondWithWeak(
+            val value = Future.flatCondWithThr(
               bfail,
               failV,
               thr
@@ -457,9 +457,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnTrueWeak") {
+        describe("failOnTrueThr") {
           test("false") {
-            val value = Future.failOnTrueWeak(
+            val value = Future.failOnTrueThr(
               false,
               thr
             )
@@ -467,7 +467,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Future.failOnTrueWeak(
+            val value = Future.failOnTrueThr(
               true,
               thr
             )
@@ -493,9 +493,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnFalseWeak") {
+        describe("failOnFalseThr") {
           test("false") {
-            val value = Future.failOnFalseWeak(
+            val value = Future.failOnFalseThr(
               false,
               thr
             )
@@ -503,7 +503,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Future.failOnFalseWeak(
+            val value = Future.failOnFalseThr(
               true,
               thr
             )
@@ -538,9 +538,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnTrueWeak") {
+        describe("flatFailOnTrueThr") {
           test("false") {
-            val value = Future.flatFailOnTrueWeak(
+            val value = Future.flatFailOnTrueThr(
               bfalse,
               thr
             )
@@ -548,7 +548,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Future.flatFailOnTrueWeak(
+            val value = Future.flatFailOnTrueThr(
               btrue,
               thr
             )
@@ -556,7 +556,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = Future.flatFailOnTrueWeak(
+            val value = Future.flatFailOnTrueThr(
               bfail,
               thr
             )
@@ -592,9 +592,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnFalseWeak") {
+        describe("flatFailOnFalseThr") {
           test("false") {
-            val value = Future.flatFailOnFalseWeak(
+            val value = Future.flatFailOnFalseThr(
               bfalse,
               thr
             )
@@ -602,7 +602,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Future.flatFailOnFalseWeak(
+            val value = Future.flatFailOnFalseThr(
               btrue,
               thr
             )
@@ -610,7 +610,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = Future.flatFailOnFalseWeak(
+            val value = Future.flatFailOnFalseThr(
               bfail,
               thr
             )
@@ -636,26 +636,26 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             assertThrows[RuntimeException] {
-              Future.flattenOption(Future.failWeak[Option[Int]](thr), ano).r
+              Future.flattenOption(Future.failThr[Option[Int]](thr), ano).r
             }
           }
         }
 
-        describe("flattenOptionWeak") {
+        describe("flattenOptionThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              Future.flattenOptionWeak(Future.pure(none), thr).r
+              Future.flattenOptionThr(Future.pure(none), thr).r
             }
           }
 
           test("pure — some") {
-            assert(Future.flattenOptionWeak(Future.pure(some), thr).r == 42)
+            assert(Future.flattenOptionThr(Future.pure(some), thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              Future.flattenOptionWeak(Future.fail[Option[Int]](ano), thr).r
+              Future.flattenOptionThr(Future.fail[Option[Int]](ano), thr).r
             }
           }
         }
@@ -713,13 +713,13 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("option asFutureWeak") {
+        describe("option asFutureThr") {
           test("fail") {
-            assertThrows[IllegalArgumentException](Option.asFutureWeak(none, iae).r)
+            assertThrows[IllegalArgumentException](Option.asFutureThr(none, iae).r)
           }
 
           test("pure") {
-            assert(Option.asFutureWeak(some, iae).r == 42)
+            assert(Option.asFutureThr(some, iae).r == 42)
           }
         }
 
@@ -743,23 +743,23 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asFutureWeak — transform") {
+        describe("either asFutureThr — transform") {
           test("fail") {
-            assertThrows[IllegalArgumentException](Either.asFutureWeak(left, thr2thr).r)
+            assertThrows[IllegalArgumentException](Either.asFutureThr(left, thr2thr).r)
           }
 
           test("pure") {
-            assert(Either.asFutureWeak(right, thr2thr).r == 42)
+            assert(Either.asFutureThr(right, thr2thr).r == 42)
           }
         }
 
-        describe("either asFutureWeak") {
+        describe("either asFutureThr") {
           test("fail") {
-            assertThrows[RuntimeException](Either.asFutureWeak(left).r)
+            assertThrows[RuntimeException](Either.asFutureThr(left).r)
           }
 
           test("pure") {
-            assert(Either.asFutureWeak(right).r == 42)
+            assert(Either.asFutureThr(right).r == 42)
           }
         }
 
@@ -844,10 +844,10 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("bimapWeak") {
+        describe("bimapThr") {
 
           test("fail") {
-            val value = Future.bimapWeak(
+            val value = Future.bimapThr(
               failV,
               int2str,
               thr2thr
@@ -857,7 +857,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("pure") {
-            val value = Future.bimapWeak(
+            val value = Future.bimapThr(
               pureV,
               int2str,
               thr2thr
@@ -949,10 +949,10 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWeak") {
+        describe("condThr") {
           test("false") {
             val value =
-              false.condFutureWeak(
+              false.condFutureThr(
                 42,
                 thr
               )
@@ -960,7 +960,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = true.condFutureWeak(
+            val value = true.condFutureThr(
               42,
               thr
             )
@@ -1002,9 +1002,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWithWeak") {
+        describe("condWithThr") {
           test("false — pure") {
-            val value = false.condWithFutureWeak(
+            val value = false.condWithFutureThr(
               pureV,
               thr
             )
@@ -1012,7 +1012,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = true.condWithFutureWeak(
+            val value = true.condWithFutureThr(
               pureV,
               thr
             )
@@ -1021,7 +1021,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("false — fail") {
             val value =
-              false.condWithFutureWeak(
+              false.condWithFutureThr(
                 failV,
                 thr
               )
@@ -1029,7 +1029,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = true.condWithFutureWeak(
+            val value = true.condWithFutureThr(
               failV,
               thr
             )
@@ -1063,9 +1063,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWeak") {
+        describe("flatCondThr") {
           test("false") {
-            val value = bfalse.condWeak(
+            val value = bfalse.condThr(
               42,
               thr
             )
@@ -1073,7 +1073,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = btrue.condWeak(
+            val value = btrue.condThr(
               42,
               thr
             )
@@ -1081,7 +1081,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = bfail.condWeak(
+            val value = bfail.condThr(
               42,
               thr
             )
@@ -1139,9 +1139,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWithWeak") {
+        describe("flatCondWithThr") {
           test("false — pure") {
-            val value = bfalse.condWithWeak(
+            val value = bfalse.condWithThr(
               pureV,
               thr
             )
@@ -1149,7 +1149,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("false — fail") {
-            val value = bfalse.condWithWeak(
+            val value = bfalse.condWithThr(
               failV,
               thr
             )
@@ -1157,7 +1157,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = btrue.condWithWeak(
+            val value = btrue.condWithThr(
               pureV,
               thr
             )
@@ -1165,7 +1165,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = btrue.condWithWeak(
+            val value = btrue.condWithThr(
               failV,
               thr
             )
@@ -1173,7 +1173,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — pure") {
-            val value = bfail.condWithWeak(
+            val value = bfail.condWithThr(
               pureV,
               thr
             )
@@ -1181,7 +1181,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — fail") {
-            val value = bfail.condWithWeak(
+            val value = bfail.condWithThr(
               failV,
               thr
             )
@@ -1201,14 +1201,14 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnTrueWeak") {
+        describe("failOnTrueThr") {
           test("false") {
-            val value = false.failOnTrueFutureWeak(thr)
+            val value = false.failOnTrueFutureThr(thr)
             value.r
           }
 
           test("true") {
-            val value = true.failOnTrueFutureWeak(thr)
+            val value = true.failOnTrueFutureThr(thr)
             assertThrows[RuntimeException](value.r)
           }
         }
@@ -1225,14 +1225,14 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnFalseWeak") {
+        describe("failOnFalseThr") {
           test("false") {
-            val value = false.failOnFalseFutureWeak(thr)
+            val value = false.failOnFalseFutureThr(thr)
             assertThrows[RuntimeException](value.r)
           }
 
           test("true") {
-            val value = true.failOnFalseFutureWeak(thr)
+            val value = true.failOnFalseFutureThr(thr)
             value.r
           }
         }
@@ -1255,19 +1255,19 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnTrueWeak") {
+        describe("flatFailOnTrueThr") {
           test("false") {
-            val value = bfalse.failOnTrueWeak(thr)
+            val value = bfalse.failOnTrueThr(thr)
             value.r
           }
 
           test("true") {
-            val value = btrue.failOnTrueWeak(thr)
+            val value = btrue.failOnTrueThr(thr)
             assertThrows[RuntimeException](value.r)
           }
 
           test("fail") {
-            val value = bfail.failOnTrueWeak(thr)
+            val value = bfail.failOnTrueThr(thr)
             assertThrows[IllegalArgumentException](value.r)
           }
 
@@ -1291,19 +1291,19 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnFalseWeak") {
+        describe("flatFailOnFalseThr") {
           test("false") {
-            val value = bfalse.failOnFalseWeak(thr)
+            val value = bfalse.failOnFalseThr(thr)
             assertThrows[RuntimeException](value.r)
           }
 
           test("true") {
-            val value = btrue.failOnFalseWeak(thr)
+            val value = btrue.failOnFalseThr(thr)
             value.r
           }
 
           test("fail") {
-            val value = bfail.failOnFalseWeak(thr)
+            val value = bfail.failOnFalseThr(thr)
             assertThrows[IllegalArgumentException](value.r)
           }
 
@@ -1326,26 +1326,26 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             assertThrows[RuntimeException] {
-              Future.failWeak[Option[Int]](thr).flattenOption(ano).r
+              Future.failThr[Option[Int]](thr).flattenOption(ano).r
             }
           }
         }
 
-        describe("flattenOptionWeak") {
+        describe("flattenOptionThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              Future.pure(none).flattenOptionWeak(thr).r
+              Future.pure(none).flattenOptionThr(thr).r
             }
           }
 
           test("pure — some") {
-            assert(Future.pure(some).flattenOptionWeak(thr).r == 42)
+            assert(Future.pure(some).flattenOptionThr(thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              Future.fail[Option[Int]](ano).flattenOptionWeak(thr).r
+              Future.fail[Option[Int]](ano).flattenOptionThr(thr).r
             }
           }
         }
@@ -1404,13 +1404,13 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("option asFutureWeak") {
+        describe("option asFutureThr") {
           test("fail") {
-            assertThrows[IllegalArgumentException](none.asFutureWeak(iae).r)
+            assertThrows[IllegalArgumentException](none.asFutureThr(iae).r)
           }
 
           test("pure") {
-            assert(some.asFutureWeak(iae).r == 42)
+            assert(some.asFutureThr(iae).r == 42)
           }
         }
 
@@ -1434,23 +1434,23 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asFutureWeak — transform") {
+        describe("either asFutureThr — transform") {
           test("fail") {
-            assertThrows[IllegalArgumentException](left.asFutureWeak(thr2thr).r)
+            assertThrows[IllegalArgumentException](left.asFutureThr(thr2thr).r)
           }
 
           test("pure") {
-            assert(right.asFutureWeak(thr2thr).r == 42)
+            assert(right.asFutureThr(thr2thr).r == 42)
           }
         }
 
-        describe("either asFutureWeak") {
+        describe("either asFutureThr") {
           test("fail") {
-            assertThrows[RuntimeException](left.asFutureWeak.r)
+            assertThrows[RuntimeException](left.asFutureThr.r)
           }
 
           test("pure") {
-            assert(right.asFutureWeak.r == 42)
+            assert(right.asFutureThr.r == 42)
           }
         }
 
@@ -1531,10 +1531,10 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("bimapWeak") {
+        describe("bimapThr") {
 
           test("fail") {
-            val value = failV.bimapWeak(
+            val value = failV.bimapThr(
               int2str,
               thr2thr
             )
@@ -1543,7 +1543,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
 
           test("pure") {
-            val value = pureV.bimapWeak(
+            val value = pureV.bimapThr(
               int2str,
               thr2thr
             )
@@ -1643,8 +1643,8 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         }
 
-        test("suspendOptionWeak") {
-          val f = Future.suspendOptionWeak(
+        test("suspendOptionThr") {
+          val f = Future.suspendOptionThr(
             Option(throw thr),
             iae
           )
@@ -1667,15 +1667,15 @@ final class FutureEffectsAsyncTest extends FunSpec {
           assertThrows[RuntimeException](f.r)
         }
 
-        test("suspendEitherWeak") {
-          val f = Future.suspendEitherWeak(
+        test("suspendEitherThr") {
+          val f = Future.suspendEitherThr(
             Right[Throwable, String](throw thr)
           )
           assertThrows[RuntimeException](f.r)
         }
 
-        test("suspendEitherWeak — transform") {
-          val f = Future.suspendEitherWeak(
+        test("suspendEitherThr — transform") {
+          val f = Future.suspendEitherThr(
             Right[Throwable, String](throw thr),
             thr2thr
           )
@@ -2202,8 +2202,8 @@ final class FutureEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendOptionWeak") {
-            val f = Option(throw thr).suspendInFutureWeak(thr)
+          test("suspendOptionThr") {
+            val f = Option(throw thr).suspendInFutureThr(thr)
             assertThrows[RuntimeException](f.r)
           }
 
@@ -2217,13 +2217,13 @@ final class FutureEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak") {
-            val f = Right[Throwable, String](throw thr).suspendInFutureWeak
+          test("suspendEitherThr") {
+            val f = Right[Throwable, String](throw thr).suspendInFutureThr
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak — transform") {
-            val f = Right[Throwable, String](throw thr).suspendInFutureWeak(thr2thr)
+          test("suspendEitherThr — transform") {
+            val f = Right[Throwable, String](throw thr).suspendInFutureThr(thr2thr)
             assertThrows[RuntimeException](f.r)
           }
 
@@ -2240,8 +2240,8 @@ final class FutureEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendOptionWeak") {
-            val f = Option.suspendInFutureWeak(Option(throw thr), thr)
+          test("suspendOptionThr") {
+            val f = Option.suspendInFutureThr(Option(throw thr), thr)
             assertThrows[RuntimeException](f.r)
           }
 
@@ -2255,13 +2255,13 @@ final class FutureEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak") {
-            val f = Either.suspendInFutureWeak(Right[Throwable, String](throw thr))
+          test("suspendEitherThr") {
+            val f = Either.suspendInFutureThr(Right[Throwable, String](throw thr))
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak — transform") {
-            val f = Either.suspendInFutureWeak(Right[Throwable, String](throw thr), thr2thr)
+          test("suspendEitherThr — transform") {
+            val f = Either.suspendInFutureThr(Right[Throwable, String](throw thr), thr2thr)
             assertThrows[RuntimeException](f.r)
           }
 

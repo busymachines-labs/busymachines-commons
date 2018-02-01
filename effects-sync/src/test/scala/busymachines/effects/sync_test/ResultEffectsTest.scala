@@ -64,12 +64,12 @@ final class ResultEffectsTest extends FunSpec {
         assertThrows[InvalidInputFailure](Result.incorrect(ano).r)
       }
 
-      test("failWeak") {
-        assertThrows[CatastrophicError](Result.failWeak(thr).r)
-        assertThrows[InvalidInputFailure](Result.failWeak(ano.asThrowable).r)
+      test("failThr") {
+        assertThrows[CatastrophicError](Result.failThr(thr).r)
+        assertThrows[InvalidInputFailure](Result.failThr(ano.asThrowable).r)
 
-        assertThrows[CatastrophicError](Result.incorrectWeak(thr).r)
-        assertThrows[InvalidInputFailure](Result.incorrectWeak(ano.asThrowable).r)
+        assertThrows[CatastrophicError](Result.incorrectThr(thr).r)
+        assertThrows[InvalidInputFailure](Result.incorrectThr(ano.asThrowable).r)
       }
 
       test("apply") {
@@ -95,11 +95,11 @@ final class ResultEffectsTest extends FunSpec {
 
       describe("fromEither") {
         test("leftThr") {
-          assertThrows[CatastrophicError](Result.fromEitherWeak(leftThr).r)
+          assertThrows[CatastrophicError](Result.fromEitherThr(leftThr).r)
         }
 
         test("leftAno") {
-          assertThrows[InvalidInputFailure](Result.fromEitherWeak(leftAno).r)
+          assertThrows[InvalidInputFailure](Result.fromEitherThr(leftAno).r)
         }
 
         test("left — transform") {
@@ -107,7 +107,7 @@ final class ResultEffectsTest extends FunSpec {
         }
 
         test("right") {
-          assert(Result.fromEitherWeak(right).r == 42)
+          assert(Result.fromEitherThr(right).r == 42)
         }
 
         test("right — transform") {
@@ -121,7 +121,7 @@ final class ResultEffectsTest extends FunSpec {
         }
 
         test("failure — exception") {
-          assertThrows[CatastrophicError](Result.fromTry(Try.failureWeak(thr)).r)
+          assertThrows[CatastrophicError](Result.fromTry(Try.failureThr(thr)).r)
         }
 
         test("success") {

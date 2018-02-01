@@ -68,8 +68,8 @@ object TaskSyntax {
     def fail[T](bad: Anomaly): Task[T] =
       TaskOps.fail(bad)
 
-    def failWeak[T](bad: Throwable): Task[T] =
-      TaskOps.failWeak(bad)
+    def failThr[T](bad: Throwable): Task[T] =
+      TaskOps.failThr(bad)
 
     // —— def unit: Task[Unit] —— already defined on Task object
 
@@ -79,11 +79,11 @@ object TaskSyntax {
     def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(opt, ifNone)
 
-    def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): Task[T] =
-      TaskOps.fromOptionWeak(opt, ifNone)
+    def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Task[T] =
+      TaskOps.fromOptionThr(opt, ifNone)
 
-    def suspendOptionWeak[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
-      TaskOps.suspendOptionWeak(opt, ifNone)
+    def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
+      TaskOps.suspendOptionThr(opt, ifNone)
 
     // def fromTry[T](tr: Try[T]): Task[T] —— already defined on Task object
 
@@ -96,17 +96,17 @@ object TaskSyntax {
     def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): Task[R] =
       TaskOps.suspendEither(either, transformLeft)
 
-    def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
-      TaskOps.fromEitherWeak(either)(ev)
+    def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+      TaskOps.fromEitherThr(either)(ev)
 
-    def suspendEitherWeak[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
-      TaskOps.suspendEitherWeak(either)(ev)
+    def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+      TaskOps.suspendEitherThr(either)(ev)
 
-    def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] =
-      TaskOps.fromEitherWeak(either, transformLeft)
+    def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] =
+      TaskOps.fromEitherThr(either, transformLeft)
 
-    def suspendEitherWeak[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
-      TaskOps.suspendEitherWeak(either, transformLeft)
+    def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
+      TaskOps.suspendEitherThr(either, transformLeft)
 
     def fromResult[T](result: Result[T]): Task[T] =
       TaskOps.fromResult(result)
@@ -123,56 +123,56 @@ object TaskSyntax {
     def cond[T](test: Boolean, good: => T, bad: => Anomaly): Task[T] =
       TaskOps.cond(test, good, bad)
 
-    def condWeak[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
-      TaskOps.condWeak(test, good, bad)
+    def condThr[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
+      TaskOps.condThr(test, good, bad)
 
     def condWith[T](test: Boolean, good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.condWith(test, good, bad)
 
-    def condWithWeak[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
-      TaskOps.condWithWeak(test, good, bad)
+    def condWithThr[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
+      TaskOps.condWithThr(test, good, bad)
 
     def flatCond[T](test: Task[Boolean], good: => T, bad: => Anomaly): Task[T] =
       TaskOps.flatCond(test, good, bad)
 
-    def flatCondWeak[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
-      TaskOps.flatCondWeak(test, good, bad)
+    def flatCondThr[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
+      TaskOps.flatCondThr(test, good, bad)
 
     def flatCondWith[T](test: Task[Boolean], good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.flatCondWith(test, good, bad)
 
-    def flatCondWithWeak[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
-      TaskOps.flatCondWithWeak(test, good, bad)
+    def flatCondWithThr[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
+      TaskOps.flatCondWithThr(test, good, bad)
 
     def failOnTrue(test: Boolean, bad: => Anomaly): Task[Unit] =
       TaskOps.failOnTrue(test, bad)
 
-    def failOnTrueWeak(test: Boolean, bad: => Throwable): Task[Unit] =
-      TaskOps.failOnTrueWeak(test, bad)
+    def failOnTrueThr(test: Boolean, bad: => Throwable): Task[Unit] =
+      TaskOps.failOnTrueThr(test, bad)
 
     def failOnFalse(test: Boolean, bad: => Anomaly): Task[Unit] =
       TaskOps.failOnFalse(test, bad)
 
-    def failOnFalseWeak(test: Boolean, bad: => Throwable): Task[Unit] =
-      TaskOps.failOnFalseWeak(test, bad)
+    def failOnFalseThr(test: Boolean, bad: => Throwable): Task[Unit] =
+      TaskOps.failOnFalseThr(test, bad)
 
     def flatFailOnTrue(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
       TaskOps.flatFailOnTrue(test, bad)
 
-    def flatFailOnTrueWeak(test: Task[Boolean], bad: => Throwable): Task[Unit] =
-      TaskOps.flatFailOnTrueWeak(test, bad)
+    def flatFailOnTrueThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
+      TaskOps.flatFailOnTrueThr(test, bad)
 
     def flatFailOnFalse(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
       TaskOps.flatFailOnFalse(test, bad)
 
-    def flatFailOnFalseWeak(test: Task[Boolean], bad: => Throwable): Task[Unit] =
-      TaskOps.flatFailOnFalseWeak(test, bad)
+    def flatFailOnFalseThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
+      TaskOps.flatFailOnFalseThr(test, bad)
 
     def flattenOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
       TaskOps.flattenOption(nopt, ifNone)
 
-    def flattenOptionWeak[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
-      TaskOps.flattenOptionWeak(nopt, ifNone)
+    def flattenOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
+      TaskOps.flattenOptionThr(nopt, ifNone)
 
     def flattenResult[T](value: Task[Result[T]]): Task[T] =
       TaskOps.flattenResult(value)
@@ -239,8 +239,8 @@ object TaskSyntax {
     def bimap[T, R](value: Task[T], result: Result[T] => Result[R]): Task[R] =
       TaskOps.bimap(value, result)
 
-    def bimapWeak[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
-      TaskOps.bimapWeak(value, good, bad)
+    def bimapThr[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
+      TaskOps.bimapThr(value, good, bad)
 
     def morph[T, R](value: Task[T], good: T => R, bad: Throwable => R): Task[R] =
       TaskOps.morph(value, good, bad)
@@ -284,8 +284,8 @@ object TaskSyntax {
     def bimap[R](result: Result[T] => Result[R]): Task[R] =
       TaskOps.bimap(value, result)
 
-    def bimapWeak[R](good: T => R, bad: Throwable => Throwable): Task[R] =
-      TaskOps.bimapWeak(value, good, bad)
+    def bimapThr[R](good: T => R, bad: Throwable => Throwable): Task[R] =
+      TaskOps.bimapThr(value, good, bad)
 
     def morph[R](good: T => R, bad: Throwable => R): Task[R] =
       TaskOps.morph(value, good, bad)
@@ -306,8 +306,8 @@ object TaskSyntax {
     def flattenOption(ifNone: => Anomaly): Task[T] =
       TaskOps.flattenOption(nopt, ifNone)
 
-    def flattenOptionWeak(ifNone: => Throwable): Task[T] =
-      TaskOps.flattenOptionWeak(nopt, ifNone)
+    def flattenOptionThr(ifNone: => Throwable): Task[T] =
+      TaskOps.flattenOptionThr(nopt, ifNone)
 
     def effectOnEmpty[_](effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnEmpty(nopt, effect)
@@ -341,26 +341,26 @@ object TaskSyntax {
     def condTask[T](good: => T, bad: => Anomaly): Task[T] =
       TaskOps.cond(test, good, bad)
 
-    def condTaskWeak[T](good: => T, bad: => Throwable): Task[T] =
-      TaskOps.condWeak(test, good, bad)
+    def condTaskThr[T](good: => T, bad: => Throwable): Task[T] =
+      TaskOps.condThr(test, good, bad)
 
     def condWithTask[T](good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.condWith(test, good, bad)
 
-    def condWithTaskWeak[T](good: => Task[T], bad: => Throwable): Task[T] =
-      TaskOps.condWithWeak(test, good, bad)
+    def condWithTaskThr[T](good: => Task[T], bad: => Throwable): Task[T] =
+      TaskOps.condWithThr(test, good, bad)
 
     def failOnTrueTask(bad: => Anomaly): Task[Unit] =
       TaskOps.failOnTrue(test, bad)
 
-    def failOnTrueTaskWeak(bad: => Throwable): Task[Unit] =
-      TaskOps.failOnTrueWeak(test, bad)
+    def failOnTrueTaskThr(bad: => Throwable): Task[Unit] =
+      TaskOps.failOnTrueThr(test, bad)
 
     def failOnFalseTask(bad: => Anomaly): Task[Unit] =
       TaskOps.failOnFalse(test, bad)
 
-    def failOnFalseTaskWeak(bad: => Throwable): Task[Unit] =
-      TaskOps.failOnFalseWeak(test, bad)
+    def failOnFalseTaskThr(bad: => Throwable): Task[Unit] =
+      TaskOps.failOnFalseThr(test, bad)
 
     def effectOnFalseTask[_](effect: => Task[_]): Task[_] =
       TaskOps.effectOnFalse(test, effect)
@@ -379,26 +379,26 @@ object TaskSyntax {
     def cond[T](good: => T, bad: => Anomaly): Task[T] =
       TaskOps.flatCond(test, good, bad)
 
-    def condWeak[T](good: => T, bad: => Throwable): Task[T] =
-      TaskOps.flatCondWeak(test, good, bad)
+    def condThr[T](good: => T, bad: => Throwable): Task[T] =
+      TaskOps.flatCondThr(test, good, bad)
 
     def condWith[T](good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.flatCondWith(test, good, bad)
 
-    def condWithWeak[T](good: => Task[T], bad: => Throwable): Task[T] =
-      TaskOps.flatCondWithWeak(test, good, bad)
+    def condWithThr[T](good: => Task[T], bad: => Throwable): Task[T] =
+      TaskOps.flatCondWithThr(test, good, bad)
 
     def failOnTrue(bad: => Anomaly): Task[Unit] =
       TaskOps.flatFailOnTrue(test, bad)
 
-    def failOnTrueWeak(bad: => Throwable): Task[Unit] =
-      TaskOps.flatFailOnTrueWeak(test, bad)
+    def failOnTrueThr(bad: => Throwable): Task[Unit] =
+      TaskOps.flatFailOnTrueThr(test, bad)
 
     def failOnFalse(bad: => Anomaly): Task[Unit] =
       TaskOps.flatFailOnFalse(test, bad)
 
-    def failOnFalseWeak(bad: => Throwable): Task[Unit] =
-      TaskOps.flatFailOnFalseWeak(test, bad)
+    def failOnFalseThr(bad: => Throwable): Task[Unit] =
+      TaskOps.flatFailOnFalseThr(test, bad)
 
     def effectOnFalse[_](effect: => Task[_]): Task[_] =
       TaskOps.flatEffectOnFalse(test, effect)
@@ -422,7 +422,7 @@ object TaskOps {
   def fail[T](bad: Anomaly): Task[T] =
     Task.raiseError(bad.asThrowable)
 
-  def failWeak[T](bad: Throwable): Task[T] =
+  def failThr[T](bad: Throwable): Task[T] =
     Task.raiseError(bad)
 
   // —— def unit: Task[Unit] —— already defined on Task object
@@ -435,13 +435,13 @@ object TaskOps {
   def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): Task[T] =
     Task.suspend(TaskOps.fromOption(opt, ifNone))
 
-  def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): Task[T] = opt match {
-    case None        => TaskOps.failWeak(ifNone)
+  def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Task[T] = opt match {
+    case None        => TaskOps.failThr(ifNone)
     case Some(value) => TaskOps.pure(value)
   }
 
-  def suspendOptionWeak[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
-    Task.suspend(TaskOps.fromOptionWeak(opt, ifNone))
+  def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
+    Task.suspend(TaskOps.fromOptionThr(opt, ifNone))
 
   // def fromTry[T](tr: Try[T]): Task[T] —— already defined on Task object
 
@@ -456,21 +456,21 @@ object TaskOps {
   def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): Task[R] =
     Task.suspend(TaskOps.fromEither(either, transformLeft))
 
-  def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] = either match {
-    case Left(value)  => TaskOps.failWeak(ev(value))
+  def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] = either match {
+    case Left(value)  => TaskOps.failThr(ev(value))
     case Right(value) => TaskOps.pure(value)
   }
 
-  def suspendEitherWeak[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
-    Task.suspend(TaskOps.fromEitherWeak(either)(ev))
+  def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+    Task.suspend(TaskOps.fromEitherThr(either)(ev))
 
-  def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] = either match {
-    case Left(value)  => TaskOps.failWeak(transformLeft(value))
+  def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] = either match {
+    case Left(value)  => TaskOps.failThr(transformLeft(value))
     case Right(value) => TaskOps.pure(value)
   }
 
-  def suspendEitherWeak[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
-    Task.suspend(TaskOps.fromEitherWeak(either, transformLeft))
+  def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
+    Task.suspend(TaskOps.fromEitherThr(either, transformLeft))
 
   def fromResult[T](result: Result[T]): Task[T] = result match {
     case Left(value)  => TaskOps.fail(value)
@@ -492,50 +492,50 @@ object TaskOps {
   def cond[T](test: Boolean, good: => T, bad: => Anomaly): Task[T] =
     if (test) TaskOps.pure(good) else TaskOps.fail(bad)
 
-  def condWeak[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
-    if (test) TaskOps.pure(good) else TaskOps.failWeak(bad)
+  def condThr[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
+    if (test) TaskOps.pure(good) else TaskOps.failThr(bad)
 
   def condWith[T](test: Boolean, good: => Task[T], bad: => Anomaly): Task[T] =
     if (test) good else TaskOps.fail(bad)
 
-  def condWithWeak[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
-    if (test) good else TaskOps.failWeak(bad)
+  def condWithThr[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
+    if (test) good else TaskOps.failThr(bad)
 
   def flatCond[T](test: Task[Boolean], good: => T, bad: => Anomaly): Task[T] =
     test.flatMap(t => TaskOps.cond(t, good, bad))
 
-  def flatCondWeak[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
-    test.flatMap(t => TaskOps.condWeak(t, good, bad))
+  def flatCondThr[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
+    test.flatMap(t => TaskOps.condThr(t, good, bad))
 
   def flatCondWith[T](test: Task[Boolean], good: => Task[T], bad: => Anomaly): Task[T] =
     test.flatMap(t => TaskOps.condWith(t, good, bad))
 
-  def flatCondWithWeak[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
-    test.flatMap(t => TaskOps.condWithWeak(t, good, bad))
+  def flatCondWithThr[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
+    test.flatMap(t => TaskOps.condWithThr(t, good, bad))
 
   def failOnTrue(test: Boolean, bad: => Anomaly): Task[Unit] =
     if (test) TaskOps.fail(bad) else Task.unit
 
-  def failOnTrueWeak(test: Boolean, bad: => Throwable): Task[Unit] =
-    if (test) TaskOps.failWeak(bad) else Task.unit
+  def failOnTrueThr(test: Boolean, bad: => Throwable): Task[Unit] =
+    if (test) TaskOps.failThr(bad) else Task.unit
 
   def failOnFalse(test: Boolean, bad: => Anomaly): Task[Unit] =
     if (!test) TaskOps.fail(bad) else Task.unit
 
-  def failOnFalseWeak(test: Boolean, bad: => Throwable): Task[Unit] =
-    if (!test) TaskOps.failWeak(bad) else Task.unit
+  def failOnFalseThr(test: Boolean, bad: => Throwable): Task[Unit] =
+    if (!test) TaskOps.failThr(bad) else Task.unit
 
   def flatFailOnTrue(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
     test.flatMap(t => TaskOps.failOnTrue(t, bad))
 
-  def flatFailOnTrueWeak(test: Task[Boolean], bad: => Throwable): Task[Unit] =
-    test.flatMap(t => TaskOps.failOnTrueWeak(t, bad))
+  def flatFailOnTrueThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
+    test.flatMap(t => TaskOps.failOnTrueThr(t, bad))
 
   def flatFailOnFalse(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
     test.flatMap(t => TaskOps.failOnFalse(t, bad))
 
-  def flatFailOnFalseWeak(test: Task[Boolean], bad: => Throwable): Task[Unit] =
-    test.flatMap(t => TaskOps.failOnFalseWeak(t, bad))
+  def flatFailOnFalseThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
+    test.flatMap(t => TaskOps.failOnFalseThr(t, bad))
 
   def flattenOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
     nopt.flatMap {
@@ -543,9 +543,9 @@ object TaskOps {
       case Some(v) => TaskOps.pure(v)
     }
 
-  def flattenOptionWeak[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
+  def flattenOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
     nopt.flatMap {
-      case None    => TaskOps.failWeak(ifNone)
+      case None    => TaskOps.failThr(ifNone)
       case Some(v) => TaskOps.pure(v)
     }
 
@@ -555,7 +555,7 @@ object TaskOps {
   }
 
   def attemptResult[T](value: Task[T]): Task[Result[T]] =
-    value.attempt.map((e: Either[Throwable, T]) => Result.fromEitherWeak(e))
+    value.attempt.map((e: Either[Throwable, T]) => Result.fromEitherThr(e))
 
   def asFutureUnsafe[T](value: Task[T])(implicit sc: Scheduler): CancellableFuture[T] =
     value.runAsync
@@ -634,7 +634,7 @@ object TaskOps {
       case Incorrect(v) => TaskOps.fail(v)
     }
 
-  def bimapWeak[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
+  def bimapThr[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
     value.map(good).adaptError {
       case NonFatal(t) => bad(t)
     }

@@ -40,17 +40,17 @@ object EitherSyntax {
     def asTry(transformLeft: L => Anomaly): Try[R] =
       TryOps.fromEither(value, transformLeft)
 
-    def asTryWeak(implicit ev: L <:< Throwable): Try[R] =
-      TryOps.fromEitherWeak(value)(ev)
+    def asTryThr(implicit ev: L <:< Throwable): Try[R] =
+      TryOps.fromEitherThr(value)(ev)
 
-    def asTryWeak(transformLeft: L => Throwable): Try[R] =
-      TryOps.fromEitherWeak(value, transformLeft)
+    def asTryThr(transformLeft: L => Throwable): Try[R] =
+      TryOps.fromEitherThr(value, transformLeft)
 
     def asResult(transformLeft: L => Anomaly): Result[R] =
       Result.fromEither(value, transformLeft)
 
-    def asResultWeak(implicit ev: L <:< Throwable): Result[R] =
-      Result.fromEitherWeak(value)(ev)
+    def asResultThr(implicit ev: L <:< Throwable): Result[R] =
+      Result.fromEitherThr(value)(ev)
 
     def unsafeGetLeft(): L = value.left.get
 

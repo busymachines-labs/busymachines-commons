@@ -32,38 +32,38 @@ object OptionSyntaxAsync {
     def asFuture[T](value: Option[T], ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(value, ifNone)
 
-    def asFutureWeak[T](value: Option[T], ifNone: => Throwable): Future[T] =
-      FutureOps.fromOptionWeak(value, ifNone)
+    def asFutureThr[T](value: Option[T], ifNone: => Throwable): Future[T] =
+      FutureOps.fromOptionThr(value, ifNone)
 
     def asIO[T](value: Option[T], ifNone: => Anomaly): IO[T] =
       IOOps.fromOption(value, ifNone)
 
-    def asIOWeak[T](value: Option[T], ifNone: => Throwable): IO[T] =
-      IOOps.fromOptionWeak(value, ifNone)
+    def asIOThr[T](value: Option[T], ifNone: => Throwable): IO[T] =
+      IOOps.fromOptionThr(value, ifNone)
 
     def asTask[T](value: Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.fromOption(value, ifNone)
 
-    def asTaskWeak[T](value: Option[T], ifNone: => Throwable): Task[T] =
-      TaskOps.fromOptionWeak(value, ifNone)
+    def asTaskThr[T](value: Option[T], ifNone: => Throwable): Task[T] =
+      TaskOps.fromOptionThr(value, ifNone)
 
     def suspendInFuture[T](value: => Option[T], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendOption(value, ifNone)
 
-    def suspendInFutureWeak[T](value: => Option[T], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
-      FutureOps.suspendOptionWeak(value, ifNone)
+    def suspendInFutureThr[T](value: => Option[T], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendOptionThr(value, ifNone)
 
     def suspendInIO[T](value: => Option[T], ifNone: => Anomaly): IO[T] =
       IOOps.suspendOption(value, ifNone)
 
-    def suspendInIOWeak[T](value: => Option[T], ifNone: => Throwable): IO[T] =
-      IOOps.suspendOptionWeak(value, ifNone)
+    def suspendInIOThr[T](value: => Option[T], ifNone: => Throwable): IO[T] =
+      IOOps.suspendOptionThr(value, ifNone)
 
     def suspendInTask[T](value: => Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(value, ifNone)
 
-    def suspendInTaskWeak[T](value: => Option[T], ifNone: => Throwable): Task[T] =
-      TaskOps.suspendOptionWeak(value, ifNone)
+    def suspendInTaskThr[T](value: => Option[T], ifNone: => Throwable): Task[T] =
+      TaskOps.suspendOptionThr(value, ifNone)
   }
 
   /**
@@ -74,20 +74,20 @@ object OptionSyntaxAsync {
     def asFuture(ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(value, ifNone)
 
-    def asFutureWeak(ifNone: => Throwable): Future[T] =
-      FutureOps.fromOptionWeak(value, ifNone)
+    def asFutureThr(ifNone: => Throwable): Future[T] =
+      FutureOps.fromOptionThr(value, ifNone)
 
     def asIO(ifNone: => Anomaly): IO[T] =
       IOOps.fromOption(value, ifNone)
 
-    def asIOWeak(ifNone: => Throwable): IO[T] =
-      IOOps.fromOptionWeak(value, ifNone)
+    def asIOThr(ifNone: => Throwable): IO[T] =
+      IOOps.fromOptionThr(value, ifNone)
 
     def asTask(ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(value, ifNone)
 
-    def asTaskWeak(ifNone: => Throwable): Task[T] =
-      TaskOps.suspendOptionWeak(value, ifNone)
+    def asTaskThr(ifNone: => Throwable): Task[T] =
+      TaskOps.suspendOptionThr(value, ifNone)
 
     //=========================================================================
     //==================== Run side-effects on Option state ===================
@@ -121,19 +121,19 @@ object OptionSyntaxAsync {
     def suspendInFuture(ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendOption(value, ifNone)
 
-    def suspendInFutureWeak(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
-      FutureOps.suspendOptionWeak(value, ifNone)
+    def suspendInFutureThr(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendOptionThr(value, ifNone)
 
     def suspendInIO(ifNone: => Anomaly): IO[T] =
       IOOps.suspendOption(value, ifNone)
 
-    def suspendInIOWeak(ifNone: => Throwable): IO[T] =
-      IOOps.suspendOptionWeak(value, ifNone)
+    def suspendInIOThr(ifNone: => Throwable): IO[T] =
+      IOOps.suspendOptionThr(value, ifNone)
 
     def suspendInTask(ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(value, ifNone)
 
-    def suspendInTaskWeak(ifNone: => Throwable): Task[T] =
-      TaskOps.suspendOptionWeak(value, ifNone)
+    def suspendInTaskThr(ifNone: => Throwable): Task[T] =
+      TaskOps.suspendOptionThr(value, ifNone)
   }
 }

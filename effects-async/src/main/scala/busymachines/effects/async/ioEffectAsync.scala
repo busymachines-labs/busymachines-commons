@@ -54,8 +54,8 @@ object IOSyntax {
     def fail[T](bad: Anomaly): IO[T] =
       IOOps.fail(bad)
 
-    def failWeak[T](bad: Throwable): IO[T] =
-      IOOps.failWeak(bad)
+    def failThr[T](bad: Throwable): IO[T] =
+      IOOps.failThr(bad)
 
     // —— def unit: IO[Unit] —— already defined on IO object
 
@@ -65,11 +65,11 @@ object IOSyntax {
     def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): IO[T] =
       IOOps.suspendOption(opt, ifNone)
 
-    def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): IO[T] =
-      IOOps.fromOptionWeak(opt, ifNone)
+    def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): IO[T] =
+      IOOps.fromOptionThr(opt, ifNone)
 
-    def suspendOptionWeak[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
-      IOOps.suspendOptionWeak(opt, ifNone)
+    def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
+      IOOps.suspendOptionThr(opt, ifNone)
 
     def fromTry[T](tr: Try[T]): IO[T] =
       IOOps.fromTry(tr)
@@ -83,17 +83,17 @@ object IOSyntax {
     def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): IO[R] =
       IOOps.suspendEither(either, transformLeft)
 
-    def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
-      IOOps.fromEitherWeak(either)(ev)
+    def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+      IOOps.fromEitherThr(either)(ev)
 
-    def suspendEitherWeak[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
-      IOOps.suspendEitherWeak(either)(ev)
+    def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+      IOOps.suspendEitherThr(either)(ev)
 
-    def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] =
-      IOOps.fromEitherWeak(either, transformLeft)
+    def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] =
+      IOOps.fromEitherThr(either, transformLeft)
 
-    def suspendEitherWeak[L, R](either: => Either[L, R], transformLeft: L => Throwable): IO[R] =
-      IOOps.suspendEitherWeak(either, transformLeft)
+    def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): IO[R] =
+      IOOps.suspendEitherThr(either, transformLeft)
 
     def fromResult[T](result: Result[T]): IO[T] =
       IOOps.fromResult(result)
@@ -113,56 +113,56 @@ object IOSyntax {
     def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
       IOOps.cond(test, good, bad)
 
-    def condWeak[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
-      IOOps.condWeak(test, good, bad)
+    def condThr[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
+      IOOps.condThr(test, good, bad)
 
     def condWith[T](test: Boolean, good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.condWith(test, good, bad)
 
-    def condWithWeak[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
-      IOOps.condWithWeak(test, good, bad)
+    def condWithThr[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
+      IOOps.condWithThr(test, good, bad)
 
     def flatCond[T](test: IO[Boolean], good: => T, bad: => Anomaly): IO[T] =
       IOOps.flatCond(test, good, bad)
 
-    def flatCondWeak[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
-      IOOps.flatCondWeak(test, good, bad)
+    def flatCondThr[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
+      IOOps.flatCondThr(test, good, bad)
 
     def flatCondWith[T](test: IO[Boolean], good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.flatCondWith(test, good, bad)
 
-    def flatCondWithWeak[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
-      IOOps.flatCondWithWeak(test, good, bad)
+    def flatCondWithThr[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
+      IOOps.flatCondWithThr(test, good, bad)
 
     def failOnTrue(test: Boolean, bad: => Anomaly): IO[Unit] =
       IOOps.failOnTrue(test, bad)
 
-    def failOnTrueWeak(test: Boolean, bad: => Throwable): IO[Unit] =
-      IOOps.failOnTrueWeak(test, bad)
+    def failOnTrueThr(test: Boolean, bad: => Throwable): IO[Unit] =
+      IOOps.failOnTrueThr(test, bad)
 
     def failOnFalse(test: Boolean, bad: => Anomaly): IO[Unit] =
       IOOps.failOnFalse(test, bad)
 
-    def failOnFalseWeak(test: Boolean, bad: => Throwable): IO[Unit] =
-      IOOps.failOnFalseWeak(test, bad)
+    def failOnFalseThr(test: Boolean, bad: => Throwable): IO[Unit] =
+      IOOps.failOnFalseThr(test, bad)
 
     def flatFailOnTrue(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
       IOOps.flatFailOnTrue(test, bad)
 
-    def flatFailOnTrueWeak(test: IO[Boolean], bad: => Throwable): IO[Unit] =
-      IOOps.flatFailOnTrueWeak(test, bad)
+    def flatFailOnTrueThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
+      IOOps.flatFailOnTrueThr(test, bad)
 
     def flatFailOnFalse(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
       IOOps.flatFailOnFalse(test, bad)
 
-    def flatFailOnFalseWeak(test: IO[Boolean], bad: => Throwable): IO[Unit] =
-      IOOps.flatFailOnFalseWeak(test, bad)
+    def flatFailOnFalseThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
+      IOOps.flatFailOnFalseThr(test, bad)
 
     def flattenOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
       IOOps.flattenOption(nopt, ifNone)
 
-    def flattenOptionWeak[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
-      IOOps.flattenOptionWeak(nopt, ifNone)
+    def flattenOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
+      IOOps.flattenOptionThr(nopt, ifNone)
 
     def flattenResult[T](value: IO[Result[T]]): IO[T] =
       IOOps.flattenResult(value)
@@ -229,8 +229,8 @@ object IOSyntax {
     def bimap[T, R](value: IO[T], result: Result[T] => Result[R]): IO[R] =
       IOOps.bimap(value, result)
 
-    def bimapWeak[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
-      IOOps.bimapWeak(value, good, bad)
+    def bimapThr[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
+      IOOps.bimapThr(value, good, bad)
 
     def morph[T, R](value: IO[T], good: T => R, bad: Throwable => R): IO[R] =
       IOOps.morph(value, good, bad)
@@ -285,8 +285,8 @@ object IOSyntax {
     def bimap[R](result: Result[T] => Result[R]): IO[R] =
       IOOps.bimap(value, result)
 
-    def bimapWeak[R](good: T => R, bad: Throwable => Throwable): IO[R] =
-      IOOps.bimapWeak(value, good, bad)
+    def bimapThr[R](good: T => R, bad: Throwable => Throwable): IO[R] =
+      IOOps.bimapThr(value, good, bad)
 
     def morph[R](good: T => R, bad: Throwable => R): IO[R] =
       IOOps.morph(value, good, bad)
@@ -307,8 +307,8 @@ object IOSyntax {
     def flattenOption(ifNone: => Anomaly): IO[T] =
       IOOps.flattenOption(nopt, ifNone)
 
-    def flattenOptionWeak(ifNone: => Throwable): IO[T] =
-      IOOps.flattenOptionWeak(nopt, ifNone)
+    def flattenOptionThr(ifNone: => Throwable): IO[T] =
+      IOOps.flattenOptionThr(nopt, ifNone)
 
     def effectOnEmpty[_](effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnEmpty(nopt, effect)
@@ -342,26 +342,26 @@ object IOSyntax {
     def condIO[T](good: => T, bad: => Anomaly): IO[T] =
       IOOps.cond(test, good, bad)
 
-    def condIOWeak[T](good: => T, bad: => Throwable): IO[T] =
-      IOOps.condWeak(test, good, bad)
+    def condIOThr[T](good: => T, bad: => Throwable): IO[T] =
+      IOOps.condThr(test, good, bad)
 
     def condWithIO[T](good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.condWith(test, good, bad)
 
-    def condWithIOWeak[T](good: => IO[T], bad: => Throwable): IO[T] =
-      IOOps.condWithWeak(test, good, bad)
+    def condWithIOThr[T](good: => IO[T], bad: => Throwable): IO[T] =
+      IOOps.condWithThr(test, good, bad)
 
     def failOnTrueIO(bad: => Anomaly): IO[Unit] =
       IOOps.failOnTrue(test, bad)
 
-    def failOnTrueIOWeak(bad: => Throwable): IO[Unit] =
-      IOOps.failOnTrueWeak(test, bad)
+    def failOnTrueIOThr(bad: => Throwable): IO[Unit] =
+      IOOps.failOnTrueThr(test, bad)
 
     def failOnFalseIO(bad: => Anomaly): IO[Unit] =
       IOOps.failOnFalse(test, bad)
 
-    def failOnFalseIOWeak(bad: => Throwable): IO[Unit] =
-      IOOps.failOnFalseWeak(test, bad)
+    def failOnFalseIOThr(bad: => Throwable): IO[Unit] =
+      IOOps.failOnFalseThr(test, bad)
 
     def effectOnFalseIO[_](effect: => IO[_]): IO[_] =
       IOOps.effectOnFalse(test, effect)
@@ -380,26 +380,26 @@ object IOSyntax {
     def cond[T](good: => T, bad: => Anomaly): IO[T] =
       IOOps.flatCond(test, good, bad)
 
-    def condWeak[T](good: => T, bad: => Throwable): IO[T] =
-      IOOps.flatCondWeak(test, good, bad)
+    def condThr[T](good: => T, bad: => Throwable): IO[T] =
+      IOOps.flatCondThr(test, good, bad)
 
     def condWith[T](good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.flatCondWith(test, good, bad)
 
-    def condWithWeak[T](good: => IO[T], bad: => Throwable): IO[T] =
-      IOOps.flatCondWithWeak(test, good, bad)
+    def condWithThr[T](good: => IO[T], bad: => Throwable): IO[T] =
+      IOOps.flatCondWithThr(test, good, bad)
 
     def failOnTrue(bad: => Anomaly): IO[Unit] =
       IOOps.flatFailOnTrue(test, bad)
 
-    def failOnTrueWeak(bad: => Throwable): IO[Unit] =
-      IOOps.flatFailOnTrueWeak(test, bad)
+    def failOnTrueThr(bad: => Throwable): IO[Unit] =
+      IOOps.flatFailOnTrueThr(test, bad)
 
     def failOnFalse(bad: => Anomaly): IO[Unit] =
       IOOps.flatFailOnFalse(test, bad)
 
-    def failOnFalseWeak(bad: => Throwable): IO[Unit] =
-      IOOps.flatFailOnFalseWeak(test, bad)
+    def failOnFalseThr(bad: => Throwable): IO[Unit] =
+      IOOps.flatFailOnFalseThr(test, bad)
 
     def effectOnFalse[_](effect: => IO[_]): IO[_] =
       IOOps.flatEffectOnFalse(test, effect)
@@ -423,7 +423,7 @@ object IOOps {
   def fail[T](bad: Anomaly): IO[T] =
     IO.raiseError(bad.asThrowable)
 
-  def failWeak[T](bad: Throwable): IO[T] =
+  def failThr[T](bad: Throwable): IO[T] =
     IO.raiseError(bad)
 
   // —— def unit: IO[Unit] —— already defined on IO object
@@ -436,13 +436,13 @@ object IOOps {
   def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): IO[T] =
     IO.suspend(IOOps.fromOption(opt, ifNone))
 
-  def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): IO[T] = opt match {
-    case None        => IOOps.failWeak(ifNone)
+  def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): IO[T] = opt match {
+    case None        => IOOps.failThr(ifNone)
     case Some(value) => IOOps.pure(value)
   }
 
-  def suspendOptionWeak[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
-    IO.suspend(IOOps.fromOptionWeak(opt, ifNone))
+  def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
+    IO.suspend(IOOps.fromOptionThr(opt, ifNone))
 
   def fromTry[T](tr: Try[T]): IO[T] = tr match {
     case scala.util.Success(v) => IO.pure(v)
@@ -460,21 +460,21 @@ object IOOps {
   def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): IO[R] =
     IO.suspend(IOOps.fromEither(either, transformLeft))
 
-  def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] = either match {
-    case Left(value)  => IOOps.failWeak(ev(value))
+  def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] = either match {
+    case Left(value)  => IOOps.failThr(ev(value))
     case Right(value) => IOOps.pure(value)
   }
 
-  def suspendEitherWeak[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
-    IO.suspend(IOOps.fromEitherWeak(either)(ev))
+  def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+    IO.suspend(IOOps.fromEitherThr(either)(ev))
 
-  def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] = either match {
-    case Left(value)  => IOOps.failWeak(transformLeft(value))
+  def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] = either match {
+    case Left(value)  => IOOps.failThr(transformLeft(value))
     case Right(value) => IOOps.pure(value)
   }
 
-  def suspendEitherWeak[L, R](either: => Either[L, R], transformLeft: L => Throwable): IO[R] =
-    IO.suspend(IOOps.fromEitherWeak(either, transformLeft))
+  def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): IO[R] =
+    IO.suspend(IOOps.fromEitherThr(either, transformLeft))
 
   def fromResult[T](result: Result[T]): IO[T] = result match {
     case Left(value)  => IOOps.fail(value)
@@ -496,50 +496,50 @@ object IOOps {
   def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
     if (test) IOOps.pure(good) else IOOps.fail(bad)
 
-  def condWeak[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
-    if (test) IOOps.pure(good) else IOOps.failWeak(bad)
+  def condThr[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
+    if (test) IOOps.pure(good) else IOOps.failThr(bad)
 
   def condWith[T](test: Boolean, good: => IO[T], bad: => Anomaly): IO[T] =
     if (test) good else IOOps.fail(bad)
 
-  def condWithWeak[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
-    if (test) good else IOOps.failWeak(bad)
+  def condWithThr[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
+    if (test) good else IOOps.failThr(bad)
 
   def flatCond[T](test: IO[Boolean], good: => T, bad: => Anomaly): IO[T] =
     test.flatMap(t => IOOps.cond(t, good, bad))
 
-  def flatCondWeak[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
-    test.flatMap(t => IOOps.condWeak(t, good, bad))
+  def flatCondThr[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
+    test.flatMap(t => IOOps.condThr(t, good, bad))
 
   def flatCondWith[T](test: IO[Boolean], good: => IO[T], bad: => Anomaly): IO[T] =
     test.flatMap(t => IOOps.condWith(t, good, bad))
 
-  def flatCondWithWeak[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
-    test.flatMap(t => IOOps.condWithWeak(t, good, bad))
+  def flatCondWithThr[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
+    test.flatMap(t => IOOps.condWithThr(t, good, bad))
 
   def failOnTrue(test: Boolean, bad: => Anomaly): IO[Unit] =
     if (test) IOOps.fail(bad) else IO.unit
 
-  def failOnTrueWeak(test: Boolean, bad: => Throwable): IO[Unit] =
-    if (test) IOOps.failWeak(bad) else IO.unit
+  def failOnTrueThr(test: Boolean, bad: => Throwable): IO[Unit] =
+    if (test) IOOps.failThr(bad) else IO.unit
 
   def failOnFalse(test: Boolean, bad: => Anomaly): IO[Unit] =
     if (!test) IOOps.fail(bad) else IO.unit
 
-  def failOnFalseWeak(test: Boolean, bad: => Throwable): IO[Unit] =
-    if (!test) IOOps.failWeak(bad) else IO.unit
+  def failOnFalseThr(test: Boolean, bad: => Throwable): IO[Unit] =
+    if (!test) IOOps.failThr(bad) else IO.unit
 
   def flatFailOnTrue(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
     test.flatMap(t => IOOps.failOnTrue(t, bad))
 
-  def flatFailOnTrueWeak(test: IO[Boolean], bad: => Throwable): IO[Unit] =
-    test.flatMap(t => IOOps.failOnTrueWeak(t, bad))
+  def flatFailOnTrueThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
+    test.flatMap(t => IOOps.failOnTrueThr(t, bad))
 
   def flatFailOnFalse(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
     test.flatMap(t => IOOps.failOnFalse(t, bad))
 
-  def flatFailOnFalseWeak(test: IO[Boolean], bad: => Throwable): IO[Unit] =
-    test.flatMap(t => IOOps.failOnFalseWeak(t, bad))
+  def flatFailOnFalseThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
+    test.flatMap(t => IOOps.failOnFalseThr(t, bad))
 
   def flattenOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
     nopt.flatMap {
@@ -547,9 +547,9 @@ object IOOps {
       case Some(v) => IOOps.pure(v)
     }
 
-  def flattenOptionWeak[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
+  def flattenOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
     nopt.flatMap {
-      case None    => IOOps.failWeak(ifNone)
+      case None    => IOOps.failThr(ifNone)
       case Some(v) => IOOps.pure(v)
     }
 
@@ -559,7 +559,7 @@ object IOOps {
   }
 
   def attemptResult[T](value: IO[T]): IO[Result[T]] =
-    value.attempt.map((e: Either[Throwable, T]) => Result.fromEitherWeak(e))
+    value.attempt.map((e: Either[Throwable, T]) => Result.fromEitherThr(e))
 
   def asFutureUnsafe[T](value: IO[T]): Future[T] =
     value.unsafeToFuture()
@@ -634,7 +634,7 @@ object IOOps {
       case Incorrect(v) => IOOps.fail(v)
     }
 
-  def bimapWeak[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
+  def bimapThr[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
     value.map(good).adaptError {
       case NonFatal(t) => bad(t)
     }
@@ -706,6 +706,7 @@ object IOOps {
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): IO[C[B]] = IOOps.traverse(col)(fn)(cbf)
+
   //=========================================================================
   //=============================== Constants ===============================
   //=========================================================================

@@ -66,8 +66,8 @@ object FutureSyntax {
     def fail[T](bad: Anomaly): Future[T] =
       FutureOps.fail(bad)
 
-    def failWeak[T](bad: Throwable): Future[T] =
-      FutureOps.failWeak(bad)
+    def failThr[T](bad: Throwable): Future[T] =
+      FutureOps.failThr(bad)
 
     // —— def unit: Future[Unit] —— already defined on Future object
 
@@ -79,12 +79,12 @@ object FutureSyntax {
     ): Future[T] =
       FutureOps.suspendOption(opt, ifNone)
 
-    def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): Future[T] =
-      FutureOps.fromOptionWeak(opt, ifNone)
+    def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Future[T] =
+      FutureOps.fromOptionThr(opt, ifNone)
 
-    def suspendOptionWeak[T](opt: => Option[T], ifNone: => Throwable)(
-      implicit executionContext:  ExecutionContext
-    ): Future[T] = FutureOps.suspendOptionWeak(opt, ifNone)
+    def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(
+      implicit executionContext: ExecutionContext
+    ): Future[T] = FutureOps.suspendOptionThr(opt, ifNone)
 
     // —— def fromTry —— already defined on Future object
 
@@ -98,21 +98,21 @@ object FutureSyntax {
       implicit ec: ExecutionContext
     ): Future[R] = FutureOps.suspendEither(either, transformLeft)
 
-    def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
-      FutureOps.fromEitherWeak(either)(ev)
+    def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
+      FutureOps.fromEitherThr(either)(ev)
 
-    def suspendEitherWeak[L, R](either: => Either[L, R])(
+    def suspendEitherThr[L, R](either: => Either[L, R])(
       implicit
       ev: L <:< Throwable,
       ec: ExecutionContext
-    ): Future[R] = FutureOps.suspendEitherWeak(either)(ev, ec)
+    ): Future[R] = FutureOps.suspendEitherThr(either)(ev, ec)
 
-    def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] =
-      FutureOps.fromEitherWeak(either, transformLeft)
+    def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] =
+      FutureOps.fromEitherThr(either, transformLeft)
 
-    def suspendEitherWeak[L, R](either: => Either[L, R], transformLeft: L => Throwable)(
+    def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable)(
       implicit ec: ExecutionContext
-    ): Future[R] = FutureOps.suspendEitherWeak(either, transformLeft)
+    ): Future[R] = FutureOps.suspendEitherThr(either, transformLeft)
 
     def fromResult[T](result: Result[T]): Future[T] =
       FutureOps.fromResult(result)
@@ -123,66 +123,66 @@ object FutureSyntax {
     def cond[T](test: Boolean, good: => T, bad: => Anomaly): Future[T] =
       FutureOps.cond(test, good, bad)
 
-    def condWeak[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
-      FutureOps.condWeak(test, good, bad)
+    def condThr[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
+      FutureOps.condThr(test, good, bad)
 
     def condWith[T](test: Boolean, good: => Future[T], bad: => Anomaly): Future[T] =
       FutureOps.condWith(test, good, bad)
 
-    def condWithWeak[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
-      FutureOps.condWithWeak(test, good, bad)
+    def condWithThr[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
+      FutureOps.condWithThr(test, good, bad)
 
     def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flatCond(test, good, bad)
 
-    def flatCondWeak[T](test: Future[Boolean], good: => T, bad: => Throwable)(
-      implicit ec:            ExecutionContext
+    def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(
+      implicit ec:           ExecutionContext
     ): Future[T] =
-      FutureOps.flatCondWeak(test, good, bad)
+      FutureOps.flatCondThr(test, good, bad)
 
     def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
       implicit ec:            ExecutionContext
     ): Future[T] =
       FutureOps.flatCondWith(test, good, bad)
 
-    def flatCondWithWeak[T](
+    def flatCondWithThr[T](
       test: Future[Boolean],
       good: => Future[T],
       bad:  => Throwable
     )(
       implicit ec: ExecutionContext
     ): Future[T] =
-      FutureOps.flatCondWithWeak(test, good, bad)
+      FutureOps.flatCondWithThr(test, good, bad)
 
     def failOnTrue(test: Boolean, bad: => Anomaly): Future[Unit] =
       FutureOps.failOnTrue(test, bad)
 
-    def failOnTrueWeak(test: Boolean, bad: => Throwable): Future[Unit] =
-      FutureOps.failOnTrueWeak(test, bad)
+    def failOnTrueThr(test: Boolean, bad: => Throwable): Future[Unit] =
+      FutureOps.failOnTrueThr(test, bad)
 
     def failOnFalse(test: Boolean, bad: => Anomaly): Future[Unit] =
       FutureOps.failOnFalse(test, bad)
 
-    def failOnFalseWeak(test: Boolean, bad: => Throwable): Future[Unit] =
-      FutureOps.failOnFalseWeak(test, bad)
+    def failOnFalseThr(test: Boolean, bad: => Throwable): Future[Unit] =
+      FutureOps.failOnFalseThr(test, bad)
 
     def flatFailOnTrue(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnTrue(test, bad)
 
-    def flatFailOnTrueWeak(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
-      FutureOps.flatFailOnTrueWeak(test, bad)
+    def flatFailOnTrueThr(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.flatFailOnTrueThr(test, bad)
 
     def flatFailOnFalse(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnFalse(test, bad)
 
-    def flatFailOnFalseWeak(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
-      FutureOps.flatFailOnFalseWeak(test, bad)
+    def flatFailOnFalseThr(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.flatFailOnFalseThr(test, bad)
 
     def flattenOption[T](nopt: Future[Option[T]], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flattenOption(nopt, ifNone)
 
-    def flattenOptionWeak[T](nopt: Future[Option[T]], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
-      FutureOps.flattenOptionWeak(nopt, ifNone)
+    def flattenOptionThr[T](nopt: Future[Option[T]], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.flattenOptionThr(nopt, ifNone)
 
     def flattenResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flattenResult(value)
@@ -267,10 +267,10 @@ object FutureSyntax {
     def bimap[T, R](value: Future[T], result: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
       FutureOps.bimap(value, result)
 
-    def bimapWeak[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
+    def bimapThr[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
       implicit ec: ExecutionContext
     ): Future[R] =
-      FutureOps.bimapWeak(value, good, bad)
+      FutureOps.bimapThr(value, good, bad)
 
     def morph[T, R](value: Future[T], good: T => R, bad: Throwable => R)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.morph(value, good, bad)
@@ -315,8 +315,8 @@ object FutureSyntax {
     def bimap[R](result: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
       FutureOps.bimap(value, result)
 
-    def bimapWeak[R](good: T => R, bad: Throwable => Throwable)(implicit ec: ExecutionContext): Future[R] =
-      FutureOps.bimapWeak(value, good, bad)
+    def bimapThr[R](good: T => R, bad: Throwable => Throwable)(implicit ec: ExecutionContext): Future[R] =
+      FutureOps.bimapThr(value, good, bad)
 
     def morph[R](good: T => R, bad: Throwable => R)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.morph(value, good, bad)
@@ -347,8 +347,8 @@ object FutureSyntax {
     def flattenOption(ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flattenOption(nopt, ifNone)
 
-    def flattenOptionWeak(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
-      FutureOps.flattenOptionWeak(nopt, ifNone)
+    def flattenOptionThr(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.flattenOptionThr(nopt, ifNone)
 
     def effectOnEmpty[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnEmpty(nopt, effect)
@@ -382,26 +382,26 @@ object FutureSyntax {
     def condFuture[T](good: => T, bad: => Anomaly): Future[T] =
       FutureOps.cond(test, good, bad)
 
-    def condFutureWeak[T](good: => T, bad: => Throwable): Future[T] =
-      FutureOps.condWeak(test, good, bad)
+    def condFutureThr[T](good: => T, bad: => Throwable): Future[T] =
+      FutureOps.condThr(test, good, bad)
 
     def condWithFuture[T](good: => Future[T], bad: => Anomaly): Future[T] =
       FutureOps.condWith(test, good, bad)
 
-    def condWithFutureWeak[T](good: => Future[T], bad: => Throwable): Future[T] =
-      FutureOps.condWithWeak(test, good, bad)
+    def condWithFutureThr[T](good: => Future[T], bad: => Throwable): Future[T] =
+      FutureOps.condWithThr(test, good, bad)
 
     def failOnTrueFuture(bad: => Anomaly): Future[Unit] =
       FutureOps.failOnTrue(test, bad)
 
-    def failOnTrueFutureWeak(bad: => Throwable): Future[Unit] =
-      FutureOps.failOnTrueWeak(test, bad)
+    def failOnTrueFutureThr(bad: => Throwable): Future[Unit] =
+      FutureOps.failOnTrueThr(test, bad)
 
     def failOnFalseFuture(bad: => Anomaly): Future[Unit] =
       FutureOps.failOnFalse(test, bad)
 
-    def failOnFalseFutureWeak(bad: => Throwable): Future[Unit] =
-      FutureOps.failOnFalseWeak(test, bad)
+    def failOnFalseFutureThr(bad: => Throwable): Future[Unit] =
+      FutureOps.failOnFalseThr(test, bad)
 
     def effectOnFalseFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
       FutureOps.effectOnFalse(test, effect)
@@ -420,26 +420,26 @@ object FutureSyntax {
     def cond[T](good: => T, bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flatCond(test, good, bad)
 
-    def condWeak[T](good: => T, bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
-      FutureOps.flatCondWeak(test, good, bad)
+    def condThr[T](good: => T, bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.flatCondThr(test, good, bad)
 
     def condWith[T](good: => Future[T], bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flatCondWith(test, good, bad)
 
-    def condWithWeak[T](good: => Future[T], bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
-      FutureOps.flatCondWithWeak(test, good, bad)
+    def condWithThr[T](good: => Future[T], bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.flatCondWithThr(test, good, bad)
 
     def failOnTrue(bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnTrue(test, bad)
 
-    def failOnTrueWeak(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
-      FutureOps.flatFailOnTrueWeak(test, bad)
+    def failOnTrueThr(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.flatFailOnTrueThr(test, bad)
 
     def failOnFalse(bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnFalse(test, bad)
 
-    def failOnFalseWeak(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
-      FutureOps.flatFailOnFalseWeak(test, bad)
+    def failOnFalseThr(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.flatFailOnFalseThr(test, bad)
 
     def effectOnFalse[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
       FutureOps.flatEffectOnFalse(test, effect)
@@ -461,7 +461,7 @@ object FutureOps {
   def fail[T](bad: Anomaly): Future[T] =
     Future.failed(bad.asThrowable)
 
-  def failWeak[T](bad: Throwable): Future[T] =
+  def failThr[T](bad: Throwable): Future[T] =
     Future.failed(bad)
 
   // —— def unit: Future[Unit] —— already defined on Future object
@@ -474,15 +474,15 @@ object FutureOps {
   def suspendOption[T](opt: => Option[T], ifNone: => Anomaly)(implicit executionContext: ExecutionContext): Future[T] =
     Future(opt).flatMap(o => FutureOps.fromOption(o, ifNone))
 
-  def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): Future[T] = opt match {
-    case None        => FutureOps.failWeak(ifNone)
+  def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Future[T] = opt match {
+    case None        => FutureOps.failThr(ifNone)
     case Some(value) => FutureOps.pure(value)
   }
 
-  def suspendOptionWeak[T](opt: => Option[T], ifNone: => Throwable)(
-    implicit executionContext:  ExecutionContext
+  def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(
+    implicit executionContext: ExecutionContext
   ): Future[T] =
-    Future(opt).flatMap(o => FutureOps.fromOptionWeak(o, ifNone))
+    Future(opt).flatMap(o => FutureOps.fromOptionThr(o, ifNone))
 
   // —— def fromTry[T](tr: Try[T]): Future[T] —— already exists on Future
 
@@ -499,22 +499,22 @@ object FutureOps {
   ): Future[R] =
     Future(either).flatMap(eit => FutureOps.fromEither(eit, transformLeft))
 
-  def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] = either match {
-    case Left(value)  => FutureOps.failWeak(ev(value))
+  def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] = either match {
+    case Left(value)  => FutureOps.failThr(ev(value))
     case Right(value) => FutureOps.pure(value)
   }
 
-  def suspendEitherWeak[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
-    Future(either).flatMap(eit => FutureOps.fromEitherWeak(eit)(ev))
+  def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
+    Future(either).flatMap(eit => FutureOps.fromEitherThr(eit)(ev))
 
-  def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] = either match {
-    case Left(value)  => FutureOps.failWeak(transformLeft(value))
+  def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] = either match {
+    case Left(value)  => FutureOps.failThr(transformLeft(value))
     case Right(value) => FutureOps.pure(value)
   }
 
-  def suspendEitherWeak[L, R](either: => Either[L, R], transformLeft: L => Throwable)(
+  def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable)(
     implicit ec: ExecutionContext
-  ): Future[R] = Future(either).flatMap(eit => FutureOps.fromEitherWeak(eit, transformLeft))
+  ): Future[R] = Future(either).flatMap(eit => FutureOps.fromEitherThr(eit, transformLeft))
 
   def fromResult[T](result: Result[T]): Future[T] = result match {
     case Left(value)  => FutureOps.fail(value)
@@ -527,54 +527,54 @@ object FutureOps {
   def cond[T](test: Boolean, good: => T, bad: => Anomaly): Future[T] =
     if (test) FutureOps.pure(good) else FutureOps.fail(bad)
 
-  def condWeak[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
-    if (test) FutureOps.pure(good) else FutureOps.failWeak(bad)
+  def condThr[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
+    if (test) FutureOps.pure(good) else FutureOps.failThr(bad)
 
   def condWith[T](test: Boolean, good: => Future[T], bad: => Anomaly): Future[T] =
     if (test) good else FutureOps.fail(bad)
 
-  def condWithWeak[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
-    if (test) good else FutureOps.failWeak(bad)
+  def condWithThr[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
+    if (test) good else FutureOps.failThr(bad)
 
   def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
     test.flatMap(t => FutureOps.cond(t, good, bad))
 
-  def flatCondWeak[T](test: Future[Boolean], good: => T, bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
-    test.flatMap(t => FutureOps.condWeak(t, good, bad))
+  def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+    test.flatMap(t => FutureOps.condThr(t, good, bad))
 
   def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
     implicit ec:            ExecutionContext
   ): Future[T] =
     test.flatMap(t => FutureOps.condWith(t, good, bad))
 
-  def flatCondWithWeak[T](test: Future[Boolean], good: => Future[T], bad: => Throwable)(
-    implicit ec:                ExecutionContext
+  def flatCondWithThr[T](test: Future[Boolean], good: => Future[T], bad: => Throwable)(
+    implicit ec:               ExecutionContext
   ): Future[T] =
-    test.flatMap(t => FutureOps.condWithWeak(t, good, bad))
+    test.flatMap(t => FutureOps.condWithThr(t, good, bad))
 
   def failOnTrue(test: Boolean, bad: => Anomaly): Future[Unit] =
     if (test) FutureOps.fail(bad) else Future.unit
 
-  def failOnTrueWeak(test: Boolean, bad: => Throwable): Future[Unit] =
-    if (test) FutureOps.failWeak(bad) else Future.unit
+  def failOnTrueThr(test: Boolean, bad: => Throwable): Future[Unit] =
+    if (test) FutureOps.failThr(bad) else Future.unit
 
   def failOnFalse(test: Boolean, bad: => Anomaly): Future[Unit] =
     if (!test) FutureOps.fail(bad) else Future.unit
 
-  def failOnFalseWeak(test: Boolean, bad: => Throwable): Future[Unit] =
-    if (!test) FutureOps.failWeak(bad) else Future.unit
+  def failOnFalseThr(test: Boolean, bad: => Throwable): Future[Unit] =
+    if (!test) FutureOps.failThr(bad) else Future.unit
 
   def flatFailOnTrue(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
     test.flatMap(t => FutureOps.failOnTrue(t, bad))
 
-  def flatFailOnTrueWeak(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
-    test.flatMap(t => FutureOps.failOnTrueWeak(t, bad))
+  def flatFailOnTrueThr(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+    test.flatMap(t => FutureOps.failOnTrueThr(t, bad))
 
   def flatFailOnFalse(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
     test.flatMap(t => FutureOps.failOnFalse(t, bad))
 
-  def flatFailOnFalseWeak(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
-    test.flatMap(t => FutureOps.failOnFalseWeak(t, bad))
+  def flatFailOnFalseThr(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+    test.flatMap(t => FutureOps.failOnFalseThr(t, bad))
 
   def flattenOption[T](nopt: Future[Option[T]], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
     nopt.flatMap {
@@ -582,9 +582,9 @@ object FutureOps {
       case Some(v) => FutureOps.pure(v)
     }
 
-  def flattenOptionWeak[T](nopt: Future[Option[T]], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+  def flattenOptionThr[T](nopt: Future[Option[T]], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
     nopt.flatMap {
-      case None    => FutureOps.failWeak(ifNone)
+      case None    => FutureOps.failThr(ifNone)
       case Some(v) => FutureOps.pure(v)
     }
 
@@ -595,7 +595,7 @@ object FutureOps {
 
   def attemptResult[T](value: Future[T])(implicit ec: ExecutionContext): Future[Result[T]] =
     value.map(Result.pure).recover {
-      case NonFatal(t) => Result.failWeak(t)
+      case NonFatal(t) => Result.failThr(t)
     }
 
   def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
@@ -685,10 +685,10 @@ object FutureOps {
       case Incorrect(v) => FutureOps.fail(v)
     }
 
-  def bimapWeak[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
+  def bimapThr[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
     implicit ec: ExecutionContext
   ): Future[R] =
-    value.transform(tr => tr.bimapWeak(good, bad))
+    value.transform(tr => tr.bimapThr(good, bad))
 
   def morph[T, R](value: Future[T], good: T => R, bad: Throwable => R)(implicit ec: ExecutionContext): Future[R] =
     value.map(good).recover {

@@ -156,7 +156,7 @@ object Result {
 
   @inline def fail[T](bad: Anomaly): Result[T] = Incorrect(bad)
 
-  @inline def failWeak[T](bad: Throwable): Result[T] = bad match {
+  @inline def failThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))
   }
@@ -165,7 +165,7 @@ object Result {
 
   @inline def incorrect[T](bad: Anomaly): Result[T] = Incorrect(bad)
 
-  @inline def incorrectWeak[T](bad: Throwable): Result[T] = bad match {
+  @inline def incorrectThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))
   }
@@ -201,7 +201,7 @@ object Result {
     case Right(value) => Result.pure(value)
   }
 
-  def fromEitherWeak[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = elr match {
+  def fromEitherThr[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = elr match {
     case Left(left) =>
       ev(left) match {
         case a: Anomaly => Result.incorrect(a)

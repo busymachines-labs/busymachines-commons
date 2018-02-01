@@ -64,7 +64,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
   private val btrue:  Task[Boolean] = Task.pure(true)
   private val bfalse: Task[Boolean] = Task.pure(false)
-  private val bfail:  Task[Boolean] = Task.failWeak(iae)
+  private val bfail:  Task[Boolean] = Task.failThr(iae)
 
   //---------------------------------------------------------------------------
   describe("sync + pure") {
@@ -78,7 +78,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](Task.fail(ano).r)
-          assertThrows[RuntimeException](Task.failWeak(thr).r)
+          assertThrows[RuntimeException](Task.failThr(thr).r)
         }
 
         test("unit") {
@@ -95,13 +95,13 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("fromOptionWeak") {
+        describe("fromOptionThr") {
           test("none") {
-            assertThrows[RuntimeException](Task.fromOptionWeak(none, thr).r)
+            assertThrows[RuntimeException](Task.fromOptionThr(none, thr).r)
           }
 
           test("some") {
-            assert(Task.fromOptionWeak(some, thr).r == 42)
+            assert(Task.fromOptionThr(some, thr).r == 42)
           }
         }
 
@@ -118,7 +118,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         describe("fromEither") {
           test("left") {
-            assertThrows[RuntimeException](Task.fromEitherWeak(left).r)
+            assertThrows[RuntimeException](Task.fromEitherThr(left).r)
           }
 
           test("left — transform") {
@@ -126,7 +126,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("right") {
-            assert(Task.fromEitherWeak(right).r == 42)
+            assert(Task.fromEitherThr(right).r == 42)
           }
 
           test("right — transform") {
@@ -134,13 +134,13 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("fromEitherWeak") {
+        describe("fromEitherThr") {
           test("left — transform") {
-            assertThrows[IllegalArgumentException](Task.fromEitherWeak(left, (t: Throwable) => iae).r)
+            assertThrows[IllegalArgumentException](Task.fromEitherThr(left, (t: Throwable) => iae).r)
           }
 
           test("right") {
-            assert(Task.fromEitherWeak(right, (t: Throwable) => iae).r == 42)
+            assert(Task.fromEitherThr(right, (t: Throwable) => iae).r == 42)
           }
         }
 
@@ -198,9 +198,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWeak") {
+        describe("condThr") {
           test("false") {
-            val value = Task.condWeak(
+            val value = Task.condThr(
               false,
               42,
               thr
@@ -209,7 +209,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Task.condWeak(
+            val value = Task.condThr(
               true,
               42,
               thr
@@ -256,9 +256,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWithWeak") {
+        describe("condWithThr") {
           test("false — pure") {
-            val value = Task.condWithWeak(
+            val value = Task.condWithThr(
               false,
               pureV,
               thr
@@ -267,7 +267,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = Task.condWithWeak(
+            val value = Task.condWithThr(
               true,
               pureV,
               thr
@@ -276,7 +276,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("false — fail") {
-            val value = Task.condWithWeak(
+            val value = Task.condWithThr(
               false,
               failV,
               thr
@@ -285,7 +285,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = Task.condWithWeak(
+            val value = Task.condWithThr(
               true,
               failV,
               thr
@@ -323,9 +323,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWeak") {
+        describe("flatCondThr") {
           test("false") {
-            val value = Task.flatCondWeak(
+            val value = Task.flatCondThr(
               bfalse,
               42,
               thr
@@ -334,7 +334,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Task.flatCondWeak(
+            val value = Task.flatCondThr(
               btrue,
               42,
               thr
@@ -343,7 +343,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = Task.flatCondWeak(
+            val value = Task.flatCondThr(
               bfail,
               42,
               thr
@@ -408,9 +408,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWithWeak") {
+        describe("flatCondWithThr") {
           test("false — pure") {
-            val value = Task.flatCondWithWeak(
+            val value = Task.flatCondWithThr(
               bfalse,
               pureV,
               thr
@@ -419,7 +419,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("false — fail") {
-            val value = Task.flatCondWithWeak(
+            val value = Task.flatCondWithThr(
               bfalse,
               failV,
               thr
@@ -428,7 +428,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = Task.flatCondWithWeak(
+            val value = Task.flatCondWithThr(
               btrue,
               pureV,
               thr
@@ -437,7 +437,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = Task.flatCondWithWeak(
+            val value = Task.flatCondWithThr(
               btrue,
               failV,
               thr
@@ -446,7 +446,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — pure") {
-            val value = Task.flatCondWithWeak(
+            val value = Task.flatCondWithThr(
               bfail,
               pureV,
               thr
@@ -455,7 +455,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — fail") {
-            val value = Task.flatCondWithWeak(
+            val value = Task.flatCondWithThr(
               bfail,
               failV,
               thr
@@ -482,9 +482,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnTrueWeak") {
+        describe("failOnTrueThr") {
           test("false") {
-            val value = Task.failOnTrueWeak(
+            val value = Task.failOnTrueThr(
               false,
               thr
             )
@@ -492,7 +492,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Task.failOnTrueWeak(
+            val value = Task.failOnTrueThr(
               true,
               thr
             )
@@ -518,9 +518,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnFalseWeak") {
+        describe("failOnFalseThr") {
           test("false") {
-            val value = Task.failOnFalseWeak(
+            val value = Task.failOnFalseThr(
               false,
               thr
             )
@@ -528,7 +528,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Task.failOnFalseWeak(
+            val value = Task.failOnFalseThr(
               true,
               thr
             )
@@ -563,9 +563,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnTrueWeak") {
+        describe("flatFailOnTrueThr") {
           test("false") {
-            val value = Task.flatFailOnTrueWeak(
+            val value = Task.flatFailOnTrueThr(
               bfalse,
               thr
             )
@@ -573,7 +573,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Task.flatFailOnTrueWeak(
+            val value = Task.flatFailOnTrueThr(
               btrue,
               thr
             )
@@ -581,7 +581,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = Task.flatFailOnTrueWeak(
+            val value = Task.flatFailOnTrueThr(
               bfail,
               thr
             )
@@ -617,9 +617,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnFalseWeak") {
+        describe("flatFailOnFalseThr") {
           test("false") {
-            val value = Task.flatFailOnFalseWeak(
+            val value = Task.flatFailOnFalseThr(
               bfalse,
               thr
             )
@@ -627,7 +627,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = Task.flatFailOnFalseWeak(
+            val value = Task.flatFailOnFalseThr(
               btrue,
               thr
             )
@@ -635,7 +635,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = Task.flatFailOnFalseWeak(
+            val value = Task.flatFailOnFalseThr(
               bfail,
               thr
             )
@@ -661,26 +661,26 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             assertThrows[RuntimeException] {
-              Task.flattenOption(Task.failWeak[Option[Int]](thr), ano).r
+              Task.flattenOption(Task.failThr[Option[Int]](thr), ano).r
             }
           }
         }
 
-        describe("flattenOptionWeak") {
+        describe("flattenOptionThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              Task.flattenOptionWeak(Task.pure(none), thr).r
+              Task.flattenOptionThr(Task.pure(none), thr).r
             }
           }
 
           test("pure — some") {
-            assert(Task.flattenOptionWeak(Task.pure(some), thr).r == 42)
+            assert(Task.flattenOptionThr(Task.pure(some), thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              Task.flattenOptionWeak(Task.fail[Option[Int]](ano), thr).r
+              Task.flattenOptionThr(Task.fail[Option[Int]](ano), thr).r
             }
           }
         }
@@ -738,13 +738,13 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("option asTaskWeak") {
+        describe("option asTaskThr") {
           test("fail") {
-            assertThrows[IllegalArgumentException](Option.asTaskWeak(none, iae).r)
+            assertThrows[IllegalArgumentException](Option.asTaskThr(none, iae).r)
           }
 
           test("pure") {
-            assert(Option.asTaskWeak(some, iae).r == 42)
+            assert(Option.asTaskThr(some, iae).r == 42)
           }
         }
 
@@ -768,23 +768,23 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asTaskWeak — transform") {
+        describe("either asTaskThr — transform") {
           test("fail") {
-            assertThrows[RuntimeException](Either.asTaskWeak(left, thr2thr).r)
+            assertThrows[RuntimeException](Either.asTaskThr(left, thr2thr).r)
           }
 
           test("pure") {
-            assert(Either.asTaskWeak(right, thr2thr).r == 42)
+            assert(Either.asTaskThr(right, thr2thr).r == 42)
           }
         }
 
-        describe("either asIOWeak") {
+        describe("either asIOThr") {
           test("fail") {
-            assertThrows[RuntimeException](Either.asTaskWeak(left).r)
+            assertThrows[RuntimeException](Either.asTaskThr(left).r)
           }
 
           test("pure") {
-            assert(Either.asTaskWeak(right).r == 42)
+            assert(Either.asTaskThr(right).r == 42)
           }
         }
 
@@ -869,10 +869,10 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("bimapWeak") {
+        describe("bimapThr") {
 
           test("fail") {
-            val value = Task.bimapWeak(
+            val value = Task.bimapThr(
               failV,
               int2str,
               thr2thr
@@ -882,7 +882,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("pure") {
-            val value = Task.bimapWeak(
+            val value = Task.bimapThr(
               pureV,
               int2str,
               thr2thr
@@ -974,10 +974,10 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWeak") {
+        describe("condThr") {
           test("false") {
             val value =
-              false.condTaskWeak(
+              false.condTaskThr(
                 42,
                 thr
               )
@@ -985,7 +985,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = true.condTaskWeak(
+            val value = true.condTaskThr(
               42,
               thr
             )
@@ -1027,9 +1027,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("condWithWeak") {
+        describe("condWithThr") {
           test("false — pure") {
-            val value = false.condWithTaskWeak(
+            val value = false.condWithTaskThr(
               pureV,
               thr
             )
@@ -1037,7 +1037,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = true.condWithTaskWeak(
+            val value = true.condWithTaskThr(
               pureV,
               thr
             )
@@ -1046,7 +1046,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("false — fail") {
             val value =
-              false.condWithTaskWeak(
+              false.condWithTaskThr(
                 failV,
                 thr
               )
@@ -1054,7 +1054,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = true.condWithTaskWeak(
+            val value = true.condWithTaskThr(
               failV,
               thr
             )
@@ -1088,9 +1088,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWeak") {
+        describe("flatCondThr") {
           test("false") {
-            val value = bfalse.condWeak(
+            val value = bfalse.condThr(
               42,
               thr
             )
@@ -1098,7 +1098,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true") {
-            val value = btrue.condWeak(
+            val value = btrue.condThr(
               42,
               thr
             )
@@ -1106,7 +1106,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("fail") {
-            val value = bfail.condWeak(
+            val value = bfail.condThr(
               42,
               thr
             )
@@ -1164,9 +1164,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatCondWithWeak") {
+        describe("flatCondWithThr") {
           test("false — pure") {
-            val value = bfalse.condWithWeak(
+            val value = bfalse.condWithThr(
               pureV,
               thr
             )
@@ -1174,7 +1174,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("false — fail") {
-            val value = bfalse.condWithWeak(
+            val value = bfalse.condWithThr(
               failV,
               thr
             )
@@ -1182,7 +1182,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true — pure") {
-            val value = btrue.condWithWeak(
+            val value = btrue.condWithThr(
               pureV,
               thr
             )
@@ -1190,7 +1190,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("true — fail") {
-            val value = btrue.condWithWeak(
+            val value = btrue.condWithThr(
               failV,
               thr
             )
@@ -1198,7 +1198,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — pure") {
-            val value = bfail.condWithWeak(
+            val value = bfail.condWithThr(
               pureV,
               thr
             )
@@ -1206,7 +1206,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("fail — fail") {
-            val value = bfail.condWithWeak(
+            val value = bfail.condWithThr(
               failV,
               thr
             )
@@ -1226,14 +1226,14 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnTrueWeak") {
+        describe("failOnTrueThr") {
           test("false") {
-            val value = false.failOnTrueTaskWeak(thr)
+            val value = false.failOnTrueTaskThr(thr)
             value.r
           }
 
           test("true") {
-            val value = true.failOnTrueTaskWeak(thr)
+            val value = true.failOnTrueTaskThr(thr)
             assertThrows[RuntimeException](value.r)
           }
         }
@@ -1250,14 +1250,14 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("failOnFalseWeak") {
+        describe("failOnFalseThr") {
           test("false") {
-            val value = false.failOnFalseTaskWeak(thr)
+            val value = false.failOnFalseTaskThr(thr)
             assertThrows[RuntimeException](value.r)
           }
 
           test("true") {
-            val value = true.failOnFalseTaskWeak(thr)
+            val value = true.failOnFalseTaskThr(thr)
             value.r
           }
         }
@@ -1280,19 +1280,19 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnTrueWeak") {
+        describe("flatFailOnTrueThr") {
           test("false") {
-            val value = bfalse.failOnTrueWeak(thr)
+            val value = bfalse.failOnTrueThr(thr)
             value.r
           }
 
           test("true") {
-            val value = btrue.failOnTrueWeak(thr)
+            val value = btrue.failOnTrueThr(thr)
             assertThrows[RuntimeException](value.r)
           }
 
           test("fail") {
-            val value = bfail.failOnTrueWeak(thr)
+            val value = bfail.failOnTrueThr(thr)
             assertThrows[IllegalArgumentException](value.r)
           }
 
@@ -1316,19 +1316,19 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("flatFailOnFalseWeak") {
+        describe("flatFailOnFalseThr") {
           test("false") {
-            val value = bfalse.failOnFalseWeak(thr)
+            val value = bfalse.failOnFalseThr(thr)
             assertThrows[RuntimeException](value.r)
           }
 
           test("true") {
-            val value = btrue.failOnFalseWeak(thr)
+            val value = btrue.failOnFalseThr(thr)
             value.r
           }
 
           test("fail") {
-            val value = bfail.failOnFalseWeak(thr)
+            val value = bfail.failOnFalseThr(thr)
             assertThrows[IllegalArgumentException](value.r)
           }
 
@@ -1351,26 +1351,26 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             assertThrows[RuntimeException] {
-              Task.failWeak[Option[Int]](thr).flattenOption(ano).r
+              Task.failThr[Option[Int]](thr).flattenOption(ano).r
             }
           }
         }
 
-        describe("flattenOptionWeak") {
+        describe("flattenOptionThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              Task.pure(none).flattenOptionWeak(thr).r
+              Task.pure(none).flattenOptionThr(thr).r
             }
           }
 
           test("pure — some") {
-            assert(Task.pure(some).flattenOptionWeak(thr).r == 42)
+            assert(Task.pure(some).flattenOptionThr(thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              Task.fail[Option[Int]](ano).flattenOptionWeak(thr).r
+              Task.fail[Option[Int]](ano).flattenOptionThr(thr).r
             }
           }
         }
@@ -1429,13 +1429,13 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("option asTaskWeak") {
+        describe("option asTaskThr") {
           test("fail") {
-            assertThrows[IllegalArgumentException](none.asTaskWeak(iae).r)
+            assertThrows[IllegalArgumentException](none.asTaskThr(iae).r)
           }
 
           test("pure") {
-            assert(some.asTaskWeak(iae).r == 42)
+            assert(some.asTaskThr(iae).r == 42)
           }
         }
 
@@ -1459,23 +1459,23 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asTaskWeak — transform") {
+        describe("either asTaskThr — transform") {
           test("fail") {
-            assertThrows[RuntimeException](left.asTaskWeak(thr2thr).r)
+            assertThrows[RuntimeException](left.asTaskThr(thr2thr).r)
           }
 
           test("pure") {
-            assert(right.asTaskWeak(thr2thr).r == 42)
+            assert(right.asTaskThr(thr2thr).r == 42)
           }
         }
 
-        describe("either asIOWeak") {
+        describe("either asIOThr") {
           test("fail") {
-            assertThrows[RuntimeException](left.asTaskWeak.r)
+            assertThrows[RuntimeException](left.asTaskThr.r)
           }
 
           test("pure") {
-            assert(right.asTaskWeak.r == 42)
+            assert(right.asTaskThr.r == 42)
           }
         }
 
@@ -1556,10 +1556,10 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         }
 
-        describe("bimapWeak") {
+        describe("bimapThr") {
 
           test("fail") {
-            val value = failV.bimapWeak(
+            val value = failV.bimapThr(
               int2str,
               thr2thr
             )
@@ -1568,7 +1568,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
 
           test("pure") {
-            val value = pureV.bimapWeak(
+            val value = pureV.bimapThr(
               int2str,
               thr2thr
             )
@@ -1649,8 +1649,8 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         }
 
-        test("suspendOptionWeak") {
-          val f = Task.suspendOptionWeak(
+        test("suspendOptionThr") {
+          val f = Task.suspendOptionThr(
             Option(throw thr),
             iae
           )
@@ -1673,15 +1673,15 @@ final class TaskEffectsAsyncTest extends FunSpec {
           assertThrows[RuntimeException](f.r)
         }
 
-        test("suspendEitherWeak") {
-          val f = Task.suspendEitherWeak(
+        test("suspendEitherThr") {
+          val f = Task.suspendEitherThr(
             Right[Throwable, String](throw thr)
           )
           assertThrows[RuntimeException](f.r)
         }
 
-        test("suspendEitherWeak — transform") {
-          val f = Task.suspendEitherWeak(
+        test("suspendEitherThr — transform") {
+          val f = Task.suspendEitherThr(
             Right[Throwable, String](throw thr),
             thr2thr
           )
@@ -2221,8 +2221,8 @@ final class TaskEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendOptionWeak") {
-            val f = Option(throw thr).suspendInTaskWeak(thr)
+          test("suspendOptionThr") {
+            val f = Option(throw thr).suspendInTaskThr(thr)
             assertThrows[RuntimeException](f.r)
           }
 
@@ -2236,13 +2236,13 @@ final class TaskEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak") {
-            val f = Right[Throwable, String](throw thr).suspendInTaskWeak
+          test("suspendEitherThr") {
+            val f = Right[Throwable, String](throw thr).suspendInTaskThr
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak — transform") {
-            val f = Right[Throwable, String](throw thr).suspendInTaskWeak(thr2thr)
+          test("suspendEitherThr — transform") {
+            val f = Right[Throwable, String](throw thr).suspendInTaskThr(thr2thr)
             assertThrows[RuntimeException](f.r)
           }
 
@@ -2271,8 +2271,8 @@ final class TaskEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendOptionWeak") {
-            val f = Option.suspendInTaskWeak(Option(throw thr), thr)
+          test("suspendOptionThr") {
+            val f = Option.suspendInTaskThr(Option(throw thr), thr)
             assertThrows[RuntimeException](f.r)
           }
 
@@ -2286,13 +2286,13 @@ final class TaskEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak") {
-            val f = Either.suspendInTaskWeak(Right[Throwable, String](throw thr))
+          test("suspendEitherThr") {
+            val f = Either.suspendInTaskThr(Right[Throwable, String](throw thr))
             assertThrows[RuntimeException](f.r)
           }
 
-          test("suspendEitherWeak — transform") {
-            val f = Either.suspendInTaskWeak(Right[Throwable, String](throw thr), thr2thr)
+          test("suspendEitherThr — transform") {
+            val f = Either.suspendInTaskThr(Right[Throwable, String](throw thr), thr2thr)
             assertThrows[RuntimeException](f.r)
           }
 

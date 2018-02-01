@@ -55,31 +55,31 @@ object TrySyntax {
     def fail[T](bad: Anomaly): Try[T] =
       TryOps.fail(bad)
 
-    def failWeak[T](bad: Throwable): Try[T] =
-      TryOps.failWeak(bad)
+    def failThr[T](bad: Throwable): Try[T] =
+      TryOps.failThr(bad)
 
     def failure[T](bad: Anomaly): Try[T] =
       TryOps.failure(bad)
 
-    def failureWeak[T](bad: Throwable): Try[T] =
-      TryOps.failureWeak(bad)
+    def failureThr[T](bad: Throwable): Try[T] =
+      TryOps.failureThr(bad)
 
     def unit: Try[Unit] = TryOps.unit
 
     def fromOption[T](opt: Option[T], ifNone: => Anomaly): Try[T] =
       TryOps.fromOption(opt, ifNone)
 
-    def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): Try[T] =
-      TryOps.fromOptionWeak(opt, ifNone)
+    def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Try[T] =
+      TryOps.fromOptionThr(opt, ifNone)
 
     def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] =
       TryOps.fromEither(either, transformLeft)
 
-    def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
-      TryOps.fromEitherWeak(either)(ev)
+    def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
+      TryOps.fromEitherThr(either)(ev)
 
-    def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] =
-      TryOps.fromEitherWeak(either, transformLeft)
+    def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] =
+      TryOps.fromEitherThr(either, transformLeft)
 
     def fromResult[T](result: Result[T]) =
       TryOps.fromResult(result)
@@ -87,56 +87,56 @@ object TrySyntax {
     def cond[T](test: Boolean, good: => T, bad: => Anomaly): Try[T] =
       TryOps.cond(test, good, bad)
 
-    def condWeak[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
-      TryOps.condWeak(test, good, bad)
+    def condThr[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
+      TryOps.condThr(test, good, bad)
 
     def condWith[T](test: Boolean, good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.condWith(test, good, bad)
 
-    def condWithWeak[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
-      TryOps.condWithWeak(test, good, bad)
+    def condWithThr[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
+      TryOps.condWithThr(test, good, bad)
 
     def flatCond[T](test: Try[Boolean], good: => T, bad: => Anomaly): Try[T] =
       TryOps.flatCond(test, good, bad)
 
-    def flatCondWeak[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
-      TryOps.flatCondWeak(test, good, bad)
+    def flatCondThr[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
+      TryOps.flatCondThr(test, good, bad)
 
     def flatCondWith[T](test: Try[Boolean], good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.flatCondWith(test, good, bad)
 
-    def flatCondWithWeak[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
-      TryOps.flatCondWithWeak(test, good, bad)
+    def flatCondWithThr[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
+      TryOps.flatCondWithThr(test, good, bad)
 
     def failOnTrue(test: Boolean, bad: => Anomaly): Try[Unit] =
       TryOps.failOnTrue(test, bad)
 
-    def failOnTrueWeak(test: Boolean, bad: => Throwable): Try[Unit] =
-      TryOps.failOnTrueWeak(test, bad)
+    def failOnTrueThr(test: Boolean, bad: => Throwable): Try[Unit] =
+      TryOps.failOnTrueThr(test, bad)
 
     def failOnFalse(test: Boolean, bad: => Anomaly): Try[Unit] =
       TryOps.failOnFalse(test, bad)
 
-    def failOnFalseWeak(test: Boolean, bad: => Throwable): Try[Unit] =
-      TryOps.failOnFalseWeak(test, bad)
+    def failOnFalseThr(test: Boolean, bad: => Throwable): Try[Unit] =
+      TryOps.failOnFalseThr(test, bad)
 
     def flatFailOnTrue(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
       TryOps.flatFailOnTrue(test, bad)
 
-    def flatFailOnTrueWeak(test: Try[Boolean], bad: => Throwable): Try[Unit] =
-      TryOps.flatFailOnTrueWeak(test, bad)
+    def flatFailOnTrueThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
+      TryOps.flatFailOnTrueThr(test, bad)
 
     def flatFailOnFalse(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
       TryOps.flatFailOnFalse(test, bad)
 
-    def flatFailOnFalseWeak(test: Try[Boolean], bad: => Throwable): Try[Unit] =
-      TryOps.flatFailOnFalseWeak(test, bad)
+    def flatFailOnFalseThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
+      TryOps.flatFailOnFalseThr(test, bad)
 
     def flattenOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
       TryOps.flattenOption(nopt, ifNone)
 
-    def flattenOptionWeak[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
-      TryOps.flattenOptionWeak(nopt, ifNone)
+    def flattenOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
+      TryOps.flattenOptionThr(nopt, ifNone)
 
     def flattenResult[T](value: Try[Result[T]]): Try[T] =
       TryOps.flattenResult(value)
@@ -163,8 +163,8 @@ object TrySyntax {
     def bimap[T, R](value: Try[T], good: T => R, bad: Throwable => Anomaly): Try[R] =
       TryOps.bimap(value, good, bad)
 
-    def bimapWeak[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] =
-      TryOps.bimapWeak(value, good, bad)
+    def bimapThr[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] =
+      TryOps.bimapThr(value, good, bad)
 
     def morph[T, R](value: Try[T], good: T => R, bad: Throwable => R): Try[R] =
       TryOps.morph(value, good, bad)
@@ -196,8 +196,8 @@ object TrySyntax {
     def bimap[R](good: T => R, bad: Throwable => Anomaly): Try[R] =
       TryOps.bimap(value, good, bad)
 
-    def bimapWeak[R](good: T => R, bad: Throwable => Throwable): Try[R] =
-      TryOps.bimapWeak(value, good, bad)
+    def bimapThr[R](good: T => R, bad: Throwable => Throwable): Try[R] =
+      TryOps.bimapThr(value, good, bad)
 
     def morph[R](good: T => R, bad: Throwable => R): Try[R] =
       TryOps.morph(value, good, bad)
@@ -213,7 +213,7 @@ object TrySyntax {
   final class NestedOptionOps[T](private[this] val nopt: Try[Option[T]]) {
     def flattenOption(ifNone: => Anomaly): Try[T] = TryOps.flattenOption(nopt, ifNone)
 
-    def flattenOptionWeak(ifNone: => Throwable): Try[T] = TryOps.flattenOptionWeak(nopt, ifNone)
+    def flattenOptionThr(ifNone: => Throwable): Try[T] = TryOps.flattenOptionThr(nopt, ifNone)
   }
 
   /**
@@ -232,26 +232,26 @@ object TrySyntax {
     def condTry[T](good: => T, bad: => Anomaly): Try[T] =
       TryOps.cond(test, good, bad)
 
-    def condTryWeak[T](good: => T, bad: => Throwable): Try[T] =
-      TryOps.condWeak(test, good, bad)
+    def condTryThr[T](good: => T, bad: => Throwable): Try[T] =
+      TryOps.condThr(test, good, bad)
 
     def condWithTry[T](good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.condWith(test, good, bad)
 
-    def condWithTryWeak[T](good: => Try[T], bad: => Throwable): Try[T] =
-      TryOps.condWithWeak(test, good, bad)
+    def condWithTryThr[T](good: => Try[T], bad: => Throwable): Try[T] =
+      TryOps.condWithThr(test, good, bad)
 
     def failOnTrueTry(bad: => Anomaly): Try[Unit] =
       TryOps.failOnTrue(test, bad)
 
-    def failOnTrueTryWeak(bad: => Throwable): Try[Unit] =
-      TryOps.failOnTrueWeak(test, bad)
+    def failOnTrueTryThr(bad: => Throwable): Try[Unit] =
+      TryOps.failOnTrueThr(test, bad)
 
     def failOnFalseTry(bad: => Anomaly): Try[Unit] =
       TryOps.failOnFalse(test, bad)
 
-    def failOnFalseTryWeak(bad: => Throwable): Try[Unit] =
-      TryOps.failOnFalseWeak(test, bad)
+    def failOnFalseTryThr(bad: => Throwable): Try[Unit] =
+      TryOps.failOnFalseThr(test, bad)
 
   }
 
@@ -264,26 +264,26 @@ object TrySyntax {
     def cond[T](good: => T, bad: => Anomaly): Try[T] =
       TryOps.flatCond(test, good, bad)
 
-    def condWeak[T](good: => T, bad: => Throwable): Try[T] =
-      TryOps.flatCondWeak(test, good, bad)
+    def condThr[T](good: => T, bad: => Throwable): Try[T] =
+      TryOps.flatCondThr(test, good, bad)
 
     def condWith[T](good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.flatCondWith(test, good, bad)
 
-    def condWithWeak[T](good: => Try[T], bad: => Throwable): Try[T] =
-      TryOps.flatCondWithWeak(test, good, bad)
+    def condWithThr[T](good: => Try[T], bad: => Throwable): Try[T] =
+      TryOps.flatCondWithThr(test, good, bad)
 
     def failOnTrue(bad: => Anomaly): Try[Unit] =
       TryOps.flatFailOnTrue(test, bad)
 
-    def failOnTrueWeak(bad: => Throwable): Try[Unit] =
-      TryOps.flatFailOnTrueWeak(test, bad)
+    def failOnTrueThr(bad: => Throwable): Try[Unit] =
+      TryOps.flatFailOnTrueThr(test, bad)
 
     def failOnFalse(bad: => Anomaly): Try[Unit] =
       TryOps.flatFailOnFalse(test, bad)
 
-    def failOnFalseWeak(bad: => Throwable): Try[Unit] =
-      TryOps.flatFailOnFalseWeak(test, bad)
+    def failOnFalseThr(bad: => Throwable): Try[Unit] =
+      TryOps.flatFailOnFalseThr(test, bad)
 
   }
 }
@@ -308,10 +308,10 @@ object TryOps {
   def failure[T](bad: Anomaly): Try[T] =
     Failure(bad.asThrowable)
 
-  def failWeak[T](thr: Throwable): Try[T] =
+  def failThr[T](thr: Throwable): Try[T] =
     Failure(thr)
 
-  def failureWeak[T](thr: Throwable): Try[T] =
+  def failureThr[T](thr: Throwable): Try[T] =
     Failure(thr)
 
   val unit: Try[Unit] =
@@ -328,12 +328,12 @@ object TryOps {
     case Some(value) => TryOps.pure(value)
   }
 
-  def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): Try[T] = opt match {
-    case None        => TryOps.failWeak(ifNone)
+  def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Try[T] = opt match {
+    case None        => TryOps.failThr(ifNone)
     case Some(value) => TryOps.pure(value)
   }
 
-  def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
+  def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
     either.toTry(ev)
 
   def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] = either match {
@@ -341,8 +341,8 @@ object TryOps {
     case Right(value) => TryOps.pure(value)
   }
 
-  def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] = either match {
-    case Left(left)   => TryOps.failWeak(transformLeft(left))
+  def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] = either match {
+    case Left(left)   => TryOps.failThr(transformLeft(left))
     case Right(value) => TryOps.pure(value)
   }
 
@@ -358,56 +358,56 @@ object TryOps {
   def cond[T](test: Boolean, good: => T, bad: => Anomaly): Try[T] =
     if (test) TryOps.pure(good) else TryOps.fail(bad)
 
-  def condWeak[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
-    if (test) TryOps.pure(good) else TryOps.failWeak(bad)
+  def condThr[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
+    if (test) TryOps.pure(good) else TryOps.failThr(bad)
 
   def condWith[T](test: Boolean, good: => Try[T], bad: => Anomaly): Try[T] =
     if (test) good else TryOps.fail(bad)
 
-  def condWithWeak[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
-    if (test) good else TryOps.failWeak(bad)
+  def condWithThr[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
+    if (test) good else TryOps.failThr(bad)
 
   def failOnTrue(test: Boolean, bad: => Anomaly): Try[Unit] =
     if (test) TryOps.fail(bad) else TryOps.unit
 
-  def failOnTrueWeak(test: Boolean, bad: => Throwable): Try[Unit] =
-    if (test) TryOps.failWeak(bad) else TryOps.unit
+  def failOnTrueThr(test: Boolean, bad: => Throwable): Try[Unit] =
+    if (test) TryOps.failThr(bad) else TryOps.unit
 
   def failOnFalse(test: Boolean, bad: => Anomaly): Try[Unit] =
     if (!test) TryOps.fail(bad) else TryOps.unit
 
-  def failOnFalseWeak(test: Boolean, bad: => Throwable): Try[Unit] =
-    if (!test) TryOps.failWeak(bad) else TryOps.unit
+  def failOnFalseThr(test: Boolean, bad: => Throwable): Try[Unit] =
+    if (!test) TryOps.failThr(bad) else TryOps.unit
 
   def flatCond[T](test: Try[Boolean], good: => T, bad: => Anomaly): Try[T] =
     test.flatMap(b => TryOps.cond(b, good, bad))
 
-  def flatCondWeak[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
-    test.flatMap(b => TryOps.condWeak(b, good, bad))
+  def flatCondThr[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
+    test.flatMap(b => TryOps.condThr(b, good, bad))
 
   def flatCondWith[T](test: Try[Boolean], good: => Try[T], bad: => Anomaly): Try[T] =
     test.flatMap(b => TryOps.condWith(b, good, bad))
 
-  def flatCondWithWeak[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
-    test.flatMap(b => TryOps.condWithWeak(b, good, bad))
+  def flatCondWithThr[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
+    test.flatMap(b => TryOps.condWithThr(b, good, bad))
 
   def flatFailOnTrue(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
     test.flatMap(b => if (b) TryOps.fail(bad) else TryOps.unit)
 
-  def flatFailOnTrueWeak(test: Try[Boolean], bad: => Throwable): Try[Unit] =
-    test.flatMap(b => if (b) TryOps.failWeak(bad) else TryOps.unit)
+  def flatFailOnTrueThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
+    test.flatMap(b => if (b) TryOps.failThr(bad) else TryOps.unit)
 
   def flatFailOnFalse(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
     test.flatMap(b => if (!b) TryOps.fail(bad) else TryOps.unit)
 
-  def flatFailOnFalseWeak(test: Try[Boolean], bad: => Throwable): Try[Unit] =
-    test.flatMap(b => if (!b) TryOps.failWeak(bad) else TryOps.unit)
+  def flatFailOnFalseThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
+    test.flatMap(b => if (!b) TryOps.failThr(bad) else TryOps.unit)
 
   def flattenOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
     nopt.flatMap(opt => TryOps.fromOption(opt, ifNone))
 
-  def flattenOptionWeak[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
-    nopt.flatMap(opt => TryOps.fromOptionWeak(opt, ifNone))
+  def flattenOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
+    nopt.flatMap(opt => TryOps.fromOptionThr(opt, ifNone))
 
   def flattenResult[T](result: Try[Result[T]]): Try[T] =
     result.flatMap(r => TryOps.fromResult(r))
@@ -441,8 +441,8 @@ object TryOps {
     case Success(v) => TryOps.pure(good(v))
   }
 
-  def bimapWeak[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] = value match {
-    case Failure(t) => TryOps.failWeak(bad(t))
+  def bimapThr[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] = value match {
+    case Failure(t) => TryOps.failThr(bad(t))
     case Success(v) => TryOps.pure(good(v))
   }
 

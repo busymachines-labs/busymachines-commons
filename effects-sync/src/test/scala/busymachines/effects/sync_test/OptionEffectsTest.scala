@@ -241,16 +241,16 @@ final class OptionEffectsTest extends FunSpec {
 
       }
 
-      describe("asTryWeak") {
+      describe("asTryThr") {
 
         test("fail") {
           assertThrows[RuntimeException](
-            Option.asTryWeak(failV, thr).get
+            Option.asTryThr(failV, thr).get
           )
         }
 
         test("pure") {
-          assert(Option.asTryWeak(pureV, thr) == Try(42))
+          assert(Option.asTryThr(pureV, thr) == Try(42))
         }
 
       }
@@ -472,16 +472,16 @@ final class OptionEffectsTest extends FunSpec {
 
       }
 
-      describe("asTryWeak") {
+      describe("asTryThr") {
 
         test("fail") {
           assertThrows[RuntimeException](
-            failV.asTryWeak(thr).get
+            failV.asTryThr(thr).get
           )
         }
 
         test("pure") {
-          assert(pureV.asTryWeak(thr) == Try(42))
+          assert(pureV.asTryThr(thr) == Try(42))
         }
 
       }

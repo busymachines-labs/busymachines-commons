@@ -82,8 +82,8 @@ object OptionSyntax {
     def asTry[T](value: Option[T], ifNone: => Anomaly): Try[T] =
       OptionOps.asTry(value, ifNone)
 
-    def asTryWeak[T](value: Option[T], ifNone: => Throwable): Try[T] =
-      OptionOps.asTryWeak(value, ifNone)
+    def asTryThr[T](value: Option[T], ifNone: => Throwable): Try[T] =
+      OptionOps.asTryThr(value, ifNone)
 
     def asEither[T](value: Option[T], ifNone: => Throwable): Either[Throwable, T] =
       OptionOps.asEither(value, ifNone)
@@ -120,8 +120,8 @@ object OptionSyntax {
     def asTry(ifNone: => Anomaly): Try[T] =
       OptionOps.asTry(value, ifNone)
 
-    def asTryWeak(ifNone: => Throwable): Try[T] =
-      OptionOps.asTryWeak(value, ifNone)
+    def asTryThr(ifNone: => Throwable): Try[T] =
+      OptionOps.asTryThr(value, ifNone)
 
     def asEither(ifNone: => Throwable): Either[Throwable, T] =
       OptionOps.asEither(value, ifNone)
@@ -222,8 +222,8 @@ object OptionOps {
   def asTry[T](value: Option[T], ifNone: => Anomaly): Try[T] =
     TryOps.fromOption(value, ifNone)
 
-  def asTryWeak[T](value: Option[T], ifNone: => Throwable): Try[T] =
-    TryOps.fromOptionWeak(value, ifNone)
+  def asTryThr[T](value: Option[T], ifNone: => Throwable): Try[T] =
+    TryOps.fromOptionThr(value, ifNone)
 
   def asEither[T](value: Option[T], ifNone: => Throwable): Either[Throwable, T] = value match {
     case Some(v) => Right(v)

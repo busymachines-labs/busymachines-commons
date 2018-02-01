@@ -71,31 +71,31 @@ class EitherEffectsTest extends FunSpec {
       }
     }
 
-    describe("asTryWeak — ev") {
+    describe("asTryThr — ev") {
       test("left — throwable") {
-        assertThrows[RuntimeException](failThr.asTryWeak.unsafeGet())
+        assertThrows[RuntimeException](failThr.asTryThr.unsafeGet())
       }
 
       test("left — anomaly") {
-        assertThrows[InvalidInputFailure](failAno.asTryWeak.unsafeGet())
+        assertThrows[InvalidInputFailure](failAno.asTryThr.unsafeGet())
       }
 
       test("right") {
-        assert(pureV.asTryWeak.unsafeGet() == 42)
+        assert(pureV.asTryThr.unsafeGet() == 42)
       }
     }
 
-    describe("asTryWeak — transform") {
+    describe("asTryThr — transform") {
       test("left — throwable") {
-        assertThrows[IllegalArgumentException](failThr.asTryWeak(t => iae).unsafeGet())
+        assertThrows[IllegalArgumentException](failThr.asTryThr(t => iae).unsafeGet())
       }
 
       test("left — anomaly") {
-        assertThrows[IllegalArgumentException](failAno.asTryWeak(t => iae).unsafeGet())
+        assertThrows[IllegalArgumentException](failAno.asTryThr(t => iae).unsafeGet())
       }
 
       test("right") {
-        assert(pureV.asTryWeak(t => iae).unsafeGet() == 42)
+        assert(pureV.asTryThr(t => iae).unsafeGet() == 42)
       }
     }
 
@@ -113,17 +113,17 @@ class EitherEffectsTest extends FunSpec {
       }
     }
 
-    describe("asResultWeak") {
+    describe("asResultThr") {
       test("left — throwable") {
-        assertThrows[CatastrophicError](failThr.asResultWeak.unsafeGet())
+        assertThrows[CatastrophicError](failThr.asResultThr.unsafeGet())
       }
 
       test("left — anomaly") {
-        assertThrows[InvalidInputFailure](failAno.asResultWeak.unsafeGet())
+        assertThrows[InvalidInputFailure](failAno.asResultThr.unsafeGet())
       }
 
       test("right") {
-        assert(pureV.asResultWeak.unsafeGet() == 42)
+        assert(pureV.asResultThr.unsafeGet() == 42)
       }
     }
 
