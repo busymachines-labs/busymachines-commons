@@ -64,6 +64,14 @@ final class ResultEffectsTest extends FunSpec {
         assertThrows[InvalidInputFailure](Result.incorrect(ano).r)
       }
 
+      test("failWeak") {
+        assertThrows[CatastrophicError](Result.failWeak(thr).r)
+        assertThrows[InvalidInputFailure](Result.failWeak(ano.asThrowable).r)
+
+        assertThrows[CatastrophicError](Result.incorrectWeak(thr).r)
+        assertThrows[InvalidInputFailure](Result.incorrectWeak(ano.asThrowable).r)
+      }
+
       test("apply") {
         assert(Result(42).unsafeGet() == 42)
 

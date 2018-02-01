@@ -85,8 +85,7 @@ object TaskSyntax {
     def suspendOptionWeak[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
       TaskOps.suspendOptionWeak(opt, ifNone)
 
-    def fromTry[T](tr: Try[T]): Task[T] =
-      TaskOps.fromTry(tr)
+    // def fromTry[T](tr: Try[T]): Task[T] —— already defined on Task object
 
     def suspendTry[T](tr: => Try[T]): Task[T] =
       TaskOps.suspendTry(tr)
@@ -267,7 +266,7 @@ object TaskSyntax {
     def attempResult: Task[Result[T]] =
       TaskOps.attemptResult(value)
 
-    def asFutureUnsafe(implicit sc: Scheduler): Future[T] =
+    def asFutureUnsafe()(implicit sc: Scheduler): Future[T] =
       TaskOps.asFutureUnsafe(value)
 
     def asIO(implicit sc: Scheduler): IO[T] =
@@ -431,7 +430,7 @@ object TaskOps {
   }
 
   def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): Task[T] =
-    Task(opt).flatMap(o => TaskOps.fromOption(o, ifNone))
+    Task.suspend(TaskOps.fromOption(opt, ifNone))
 
   def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): Task[T] = opt match {
     case None        => TaskOps.failWeak(ifNone)
@@ -439,13 +438,12 @@ object TaskOps {
   }
 
   def suspendOptionWeak[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
-    Task(opt).flatMap(o => TaskOps.fromOptionWeak(o, ifNone))
+    Task.suspend(TaskOps.fromOptionWeak(opt, ifNone))
 
-  def fromTry[T](tr: Try[T]): Task[T] =
-    Task.fromTry(tr)
+  // def fromTry[T](tr: Try[T]): Task[T] —— already defined on Task object
 
   def suspendTry[T](tr: => Try[T]): Task[T] =
-    Task(tr).flatMap(TaskOps.fromTry)
+    Task.suspend(Task.fromTry(tr))
 
   def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Task[R] = either match {
     case Left(value)  => TaskOps.fail(transformLeft(value))
@@ -453,7 +451,7 @@ object TaskOps {
   }
 
   def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): Task[R] =
-    Task(either).flatMap(eit => TaskOps.fromEither(eit, transformLeft))
+    Task.suspend(TaskOps.fromEither(either, transformLeft))
 
   def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] = either match {
     case Left(value)  => TaskOps.failWeak(ev(value))
@@ -461,7 +459,7 @@ object TaskOps {
   }
 
   def suspendEitherWeak[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
-    Task(either).flatMap(eit => TaskOps.fromEitherWeak(eit)(ev))
+    Task.suspend(TaskOps.fromEitherWeak(either)(ev))
 
   def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] = either match {
     case Left(value)  => TaskOps.failWeak(transformLeft(value))
@@ -469,7 +467,7 @@ object TaskOps {
   }
 
   def suspendEitherWeak[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
-    Task(either).flatMap(eit => TaskOps.fromEitherWeak(eit, transformLeft))
+    Task.suspend(TaskOps.fromEitherWeak(either, transformLeft))
 
   def fromResult[T](result: Result[T]): Task[T] = result match {
     case Left(value)  => TaskOps.fail(value)
@@ -477,7 +475,7 @@ object TaskOps {
   }
 
   def suspendResult[T](result: => Result[T]): Task[T] =
-    Task(result).flatMap(TaskOps.fromResult)
+    Task.suspend(TaskOps.fromResult(result))
 
   def fromFuture[T](value: Future[T]): Task[T] =
     Task.fromFuture(value)

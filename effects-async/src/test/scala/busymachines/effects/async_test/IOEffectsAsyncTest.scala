@@ -728,40 +728,98 @@ final class IOEffectsAsyncTest extends FunSpec {
 
       describe("as{Effect} — reverse") {
 
-        describe("future as IO") {
+        describe("option asIO") {
           test("fail") {
-            assertThrows[InvalidInputFailure](failedF.asIO.r)
+            assertThrows[InvalidInputFailure](Option.asIO(none, ano).r)
           }
 
           test("pure") {
-            assert(successF.asIO.r == 42)
+            assert(Option.asIO(some, ano).r == 42)
           }
         }
 
-        describe("task as IO") {
+        describe("option asIOWeak") {
           test("fail") {
-            assertThrows[InvalidInputFailure](Task.fail(ano).asIO.r)
+            assertThrows[IllegalArgumentException](Option.asIOWeak(none, iae).r)
           }
 
           test("pure") {
-            assert(Task.pure(42).asIO.r == 42)
+            assert(Option.asIOWeak(some, iae).r == 42)
           }
-
         }
 
-        describe("unsafeGet") {
-
+        describe("try asIO") {
           test("fail") {
-            assertThrows[InvalidInputFailure](IO.unsafeSyncGet(failV))
+            assertThrows[InvalidInputFailure](Try.asIO(failure).r)
           }
 
           test("pure") {
-            assert(IO.unsafeSyncGet(pureV) == 42)
+            assert(Try.asIO(success).r == 42)
+          }
+        }
+
+        describe("either asIO") {
+          test("fail") {
+            assertThrows[ForbiddenFailure](Either.asIO(left, thr2ano).r)
+          }
+
+          test("pure") {
+            assert(Either.asIO(right, thr2ano).r == 42)
+          }
+        }
+
+        describe("either asIOWeak — transform") {
+          test("fail") {
+            assertThrows[RuntimeException](Either.asIOWeak(left, thr2thr).r)
+          }
+
+          test("pure") {
+            assert(Either.asIOWeak(right, thr2thr).r == 42)
+          }
+        }
+
+        describe("either asIOWeak") {
+          test("fail") {
+            assertThrows[RuntimeException](Either.asIOWeak(left).r)
+          }
+
+          test("pure") {
+            assert(Either.asIOWeak(right).r == 42)
+          }
+        }
+
+        describe("result asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Result.asIO(incorrect).r)
+          }
+
+          test("pure") {
+            assert(Result.asIO(correct).r == 42)
+          }
+        }
+
+        describe("future asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Future.asIO(failedF).r)
+          }
+
+          test("pure") {
+            assert(Future.asIO(successF).r == 42)
+          }
+        }
+
+        describe("task asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Task.asIO(Task.fail(ano)).r)
+          }
+
+          test("pure") {
+            assert(Task.asIO(Task.pure(42)).r == 42)
           }
 
         }
 
-      } //end as{Effect}
+      } //end as{Effect} — reverse
 
       describe("transformers") {
 
@@ -1358,6 +1416,101 @@ final class IOEffectsAsyncTest extends FunSpec {
         }
 
       } //end as{Effect}
+
+      describe("as{Effect} — reverse") {
+
+        describe("option asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](none.asIO(ano).r)
+          }
+
+          test("pure") {
+            assert(some.asIO(ano).r == 42)
+          }
+        }
+
+        describe("option asIOWeak") {
+          test("fail") {
+            assertThrows[IllegalArgumentException](none.asIOWeak(iae).r)
+          }
+
+          test("pure") {
+            assert(some.asIOWeak(iae).r == 42)
+          }
+        }
+
+        describe("try asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](failure.asIO.r)
+          }
+
+          test("pure") {
+            assert(success.asIO.r == 42)
+          }
+        }
+
+        describe("either asIO") {
+          test("fail") {
+            assertThrows[ForbiddenFailure](left.asIO(thr2ano).r)
+          }
+
+          test("pure") {
+            assert(right.asIO(thr2ano).r == 42)
+          }
+        }
+
+        describe("either asIOWeak — transform") {
+          test("fail") {
+            assertThrows[RuntimeException](left.asIOWeak(thr2thr).r)
+          }
+
+          test("pure") {
+            assert(right.asIOWeak(thr2thr).r == 42)
+          }
+        }
+
+        describe("either asIOWeak") {
+          test("fail") {
+            assertThrows[RuntimeException](left.asIOWeak.r)
+          }
+
+          test("pure") {
+            assert(right.asIOWeak.r == 42)
+          }
+        }
+
+        describe("result asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](incorrect.asIO.r)
+          }
+
+          test("pure") {
+            assert(correct.asIO.r == 42)
+          }
+        }
+
+        describe("future asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](failedF.asIO.r)
+          }
+
+          test("pure") {
+            assert(successF.asIO.r == 42)
+          }
+        }
+
+        describe("task asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Task.fail(ano).asIO.r)
+          }
+
+          test("pure") {
+            assert(Task.pure(42).asIO.r == 42)
+          }
+
+        }
+
+      } //end as{Effect} — reverse
 
       describe("transformers") {
 
@@ -2061,51 +2214,105 @@ final class IOEffectsAsyncTest extends FunSpec {
 
       describe("suspendInIO") {
 
-        test("suspendOption") {
-          val f = Option(throw thr).suspendInIO(ano)
-          assertThrows[RuntimeException](f.r)
+        describe("reference") {
+          test("suspendOption") {
+            val f = Option(throw thr).suspendInIO(ano)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendOptionWeak") {
+            val f = Option(throw thr).suspendInIOWeak(thr)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendTry") {
+            val f = Try.pure(throw thr).suspendInIO
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEither") {
+            val f = Right[Throwable, String](throw thr).suspendInIO(thr2ano)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEitherWeak") {
+            val f = Right[Throwable, String](throw thr).suspendInIOWeak
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEitherWeak — transform") {
+            val f = Right[Throwable, String](throw thr).suspendInIOWeak(thr2thr)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendResult") {
+            val f = Result.pure(throw thr).suspendInIO
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendFuture") {
+            var sideEffect: Int = 0
+            val f = Future[Int] {
+              sideEffect = 42
+              sideEffect
+            }.suspendInIO
+            sleep()
+            if (sideEffect == 42) fail("side effect should not have been applied yet")
+            f.r
+            assert(sideEffect == 42)
+          }
         }
 
-        test("suspendOptionWeak") {
-          val f = Option(throw thr).suspendInIO(ano)
-          assertThrows[RuntimeException](f.r)
-        }
+        describe("companion") {
 
-        test("suspendTry") {
-          val f = Try.pure(throw thr).suspendInIO
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendOption") {
+            val f = Option.suspendInIO(Option(throw thr), ano)
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendEither") {
-          val f = Right[Throwable, String](throw thr).suspendInIO(thr2ano)
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendOptionWeak") {
+            val f = Option.suspendInIOWeak(Option(throw thr), thr)
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendEitherWeak") {
-          val f = Right[Throwable, String](throw thr).suspendInIOWeak
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendTry") {
+            val f = Try.suspendInIO(Try.pure(throw thr))
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendEitherWeak — transform") {
-          val f = Right[Throwable, String](throw thr).suspendInIOWeak(thr2thr)
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendEither") {
+            val f = Either.suspendInIO(Right[Throwable, String](throw thr), thr2ano)
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendResult") {
-          val f = Result.pure(throw thr).suspendInIO
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendEitherWeak") {
+            val f = Either.suspendInIOWeak(Right[Throwable, String](throw thr))
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendFuture") {
-          var sideEffect: Int = 0
-          val f = Future[Int] {
-            sideEffect = 42
-            sideEffect
-          }.suspendInIO
-          sleep()
-          if (sideEffect == 42) fail("side effect should not have been applied yet")
-          f.r
-          assert(sideEffect == 42)
+          test("suspendEitherWeak — transform") {
+            val f = Either.suspendInIOWeak(Right[Throwable, String](throw thr), thr2thr)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendResult") {
+            val f = Result.suspendInIO(Result.pure(throw thr))
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendFuture") {
+            var sideEffect: Int = 0
+            val f = Future.suspendInIO {
+              Future[Int] {
+                sideEffect = 42
+                sideEffect
+              }
+            }
+            sleep()
+            if (sideEffect == 42) fail("side effect should not have been applied yet")
+            f.r
+            assert(sideEffect == 42)
+          }
         }
 
       } //end suspend
@@ -2600,6 +2807,93 @@ final class IOEffectsAsyncTest extends FunSpec {
         }
 
       }
+    }
+
+    describe("IO.traverse") {
+
+      test("empty list") {
+        val input:    Seq[Int] = List()
+        val expected: Seq[Int] = List()
+
+        var sideEffect: Int = 0
+
+        val eventualResult = IO.traverse(input) { i =>
+          IO {
+            sideEffect = 42
+          }
+        }
+
+        assert(eventualResult.r == expected)
+        assert(sideEffect == 0, "nothing should have happened")
+      }
+
+      test("no two tasks should run in parallel") {
+        val input: Seq[Int] = (1 to 100).toList
+        val expected = input.map(_.toString)
+
+        var previouslyProcessed: Option[Int] = None
+        var startedFlag:         Option[Int] = None
+
+        val eventualResult: IO[Seq[String]] = IO.traverse(input) { i =>
+          IO {
+            assert(
+              startedFlag.isEmpty,
+              s"started flag should have been empty at the start of each tasks but was: $startedFlag"
+            )
+            previouslyProcessed foreach { previous =>
+              assertResult(expected = i - 1, "... the task were not executed in the correct order.")(
+                actual = previous
+              )
+            }
+            startedFlag         = Some(i)
+            startedFlag         = None
+            previouslyProcessed = Some(i)
+            i.toString
+          }
+        }
+        assert(expected == eventualResult.r)
+      }
+
+    }
+
+    describe("IO.sequence") {
+
+      test("empty list") {
+        val input:    Seq[IO[Int]] = List()
+        val expected: Seq[Int]     = List()
+
+        val eventualResult = IO.sequence(input)
+        assert(eventualResult.r == expected)
+      }
+
+      test("no two IOs should run in parallel") {
+        val nrs = (1 to 100).toList
+        val input: Seq[IO[Int]] = (1 to 100).toList.map(IO.pure)
+        val expected = nrs.map(_.toString)
+
+        var previouslyProcessed: Option[Int] = None
+        var startedFlag:         Option[Int] = None
+
+        val eventualResult: IO[Seq[String]] = IO.sequence(input map { io =>
+          io.map { i =>
+            assert(
+              startedFlag.isEmpty,
+              s"started flag should have been empty at the start of each tasks but was: $startedFlag"
+            )
+            previouslyProcessed foreach { previous =>
+              assertResult(expected = i - 1, "... the task were not executed in the correct order.")(
+                actual = previous
+              )
+            }
+            startedFlag         = Some(i)
+            startedFlag         = None
+            previouslyProcessed = Some(i)
+            i.toString
+          }
+        })
+        assert(expected == eventualResult.r)
+      }
+
     }
 
     describe("IO.serialize") {

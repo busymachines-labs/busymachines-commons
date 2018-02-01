@@ -46,7 +46,7 @@ object ResultSyntaxAsync {
       IOOps.suspendResult(value)
 
     def suspendInTask[T](value: => Result[T]): Task[T] =
-      TaskOps.fromResult(value)
+      TaskOps.suspendResult(value)
   }
 
   /**

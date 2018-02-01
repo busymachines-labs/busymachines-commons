@@ -245,10 +245,21 @@ object IOSyntax {
     //=============================== Traversals ==============================
     //=========================================================================
 
+    def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): IO[C[B]] = IOOps.traverse(col)(fn)
+
+    def sequence[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+      implicit
+      cbf: CanBuildFrom[M[IO[A]], A, M[A]]
+    ): IO[M[A]] = IOOps.sequence(in)
+
     def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
     ): IO[C[B]] = IOOps.serialize(col)(fn)
+
   }
 
   /**
@@ -259,7 +270,7 @@ object IOSyntax {
     def attempResult: IO[Result[T]] =
       IOOps.attemptResult(value)
 
-    def asFutureUnsafe: Future[T] =
+    def asFutureUnsafe(): Future[T] =
       IOOps.asFutureUnsafe(value)
 
     def asTask: Task[T] =
@@ -423,7 +434,7 @@ object IOOps {
   }
 
   def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): IO[T] =
-    IO(opt).flatMap(o => IOOps.fromOption(o, ifNone))
+    IO.suspend(IOOps.fromOption(opt, ifNone))
 
   def fromOptionWeak[T](opt: Option[T], ifNone: => Throwable): IO[T] = opt match {
     case None        => IOOps.failWeak(ifNone)
@@ -431,7 +442,7 @@ object IOOps {
   }
 
   def suspendOptionWeak[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
-    IO(opt).flatMap(o => IOOps.fromOptionWeak(o, ifNone))
+    IO.suspend(IOOps.fromOptionWeak(opt, ifNone))
 
   def fromTry[T](tr: Try[T]): IO[T] = tr match {
     case scala.util.Success(v) => IO.pure(v)
@@ -439,7 +450,7 @@ object IOOps {
   }
 
   def suspendTry[T](tr: => Try[T]): IO[T] =
-    IO(tr).flatMap(IOOps.fromTry)
+    IO.suspend(IOOps.fromTry(tr))
 
   def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] = either match {
     case Left(value)  => IOOps.fail(transformLeft(value))
@@ -447,7 +458,7 @@ object IOOps {
   }
 
   def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): IO[R] =
-    IO(either).flatMap(eit => IOOps.fromEither(eit, transformLeft))
+    IO.suspend(IOOps.fromEither(either, transformLeft))
 
   def fromEitherWeak[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] = either match {
     case Left(value)  => IOOps.failWeak(ev(value))
@@ -455,7 +466,7 @@ object IOOps {
   }
 
   def suspendEitherWeak[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
-    IO(either).flatMap(eit => IOOps.fromEitherWeak(eit)(ev))
+    IO.suspend(IOOps.fromEitherWeak(either)(ev))
 
   def fromEitherWeak[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] = either match {
     case Left(value)  => IOOps.failWeak(transformLeft(value))
@@ -463,7 +474,7 @@ object IOOps {
   }
 
   def suspendEitherWeak[L, R](either: => Either[L, R], transformLeft: L => Throwable): IO[R] =
-    IO(either).flatMap(eit => IOOps.fromEitherWeak(eit, transformLeft))
+    IO.suspend(IOOps.fromEitherWeak(either, transformLeft))
 
   def fromResult[T](result: Result[T]): IO[T] = result match {
     case Left(value)  => IOOps.fail(value)
@@ -471,7 +482,7 @@ object IOOps {
   }
 
   def suspendResult[T](result: => Result[T]): IO[T] =
-    IO(result).flatMap(IOOps.fromResult)
+    IO.suspend(IOOps.fromResult(result))
 
   def fromFuturePure[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
     IO.fromFuture(IO(value))

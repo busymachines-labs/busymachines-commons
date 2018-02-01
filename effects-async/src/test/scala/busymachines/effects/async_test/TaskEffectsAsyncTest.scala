@@ -728,40 +728,98 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       describe("as{Effect} — reverse") {
 
-        describe("future as Task") {
+        describe("option asTask") {
           test("fail") {
-            assertThrows[InvalidInputFailure](failedF.asTask.r)
+            assertThrows[InvalidInputFailure](Option.asTask(none, ano).r)
           }
 
           test("pure") {
-            assert(successF.asTask.r == 42)
+            assert(Option.asTask(some, ano).r == 42)
+          }
+        }
+
+        describe("option asTaskWeak") {
+          test("fail") {
+            assertThrows[IllegalArgumentException](Option.asTaskWeak(none, iae).r)
+          }
+
+          test("pure") {
+            assert(Option.asTaskWeak(some, iae).r == 42)
+          }
+        }
+
+        describe("try asTask") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Try.asTask(failure).r)
+          }
+
+          test("pure") {
+            assert(Try.asTask(success).r == 42)
+          }
+        }
+
+        describe("either asTask") {
+          test("fail") {
+            assertThrows[ForbiddenFailure](Either.asTask(left, thr2ano).r)
+          }
+
+          test("pure") {
+            assert(Either.asTask(right, thr2ano).r == 42)
+          }
+        }
+
+        describe("either asTaskWeak — transform") {
+          test("fail") {
+            assertThrows[RuntimeException](Either.asTaskWeak(left, thr2thr).r)
+          }
+
+          test("pure") {
+            assert(Either.asTaskWeak(right, thr2thr).r == 42)
+          }
+        }
+
+        describe("either asIOWeak") {
+          test("fail") {
+            assertThrows[RuntimeException](Either.asTaskWeak(left).r)
+          }
+
+          test("pure") {
+            assert(Either.asTaskWeak(right).r == 42)
+          }
+        }
+
+        describe("result asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Result.asTask(incorrect).r)
+          }
+
+          test("pure") {
+            assert(Result.asTask(correct).r == 42)
+          }
+        }
+
+        describe("future as Task") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Future.asTask(failedF).r)
+          }
+
+          test("pure") {
+            assert(Future.asTask(successF).r == 42)
           }
         }
 
         describe("io as Task") {
           test("fail") {
-            assertThrows[InvalidInputFailure](IO.fail(ano).asTask.r)
+            assertThrows[InvalidInputFailure](IO.asTask(IO.fail(ano)).r)
           }
 
           test("pure") {
-            assert(IO.pure(42).asTask.r == 42)
+            assert(IO.asTask(IO.pure(42)).r == 42)
           }
 
         }
 
-        describe("unsafeGet") {
-
-          test("fail") {
-            assertThrows[InvalidInputFailure](Task.unsafeSyncGet(failV))
-          }
-
-          test("pure") {
-            assert(Task.unsafeSyncGet(pureV) == 42)
-          }
-
-        }
-
-      } //end as{Effect}
+      } //end as{Effect} reverse
 
       describe("transformers") {
 
@@ -1358,6 +1416,101 @@ final class TaskEffectsAsyncTest extends FunSpec {
         }
 
       } //end as{Effect}
+
+      describe("as{Effect} — reverse") {
+
+        describe("option asTask") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](none.asTask(ano).r)
+          }
+
+          test("pure") {
+            assert(some.asTask(ano).r == 42)
+          }
+        }
+
+        describe("option asTaskWeak") {
+          test("fail") {
+            assertThrows[IllegalArgumentException](none.asTaskWeak(iae).r)
+          }
+
+          test("pure") {
+            assert(some.asTaskWeak(iae).r == 42)
+          }
+        }
+
+        describe("try asTask") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](failure.asTask.r)
+          }
+
+          test("pure") {
+            assert(success.asTask.r == 42)
+          }
+        }
+
+        describe("either asTask") {
+          test("fail") {
+            assertThrows[ForbiddenFailure](left.asTask(thr2ano).r)
+          }
+
+          test("pure") {
+            assert(right.asTask(thr2ano).r == 42)
+          }
+        }
+
+        describe("either asTaskWeak — transform") {
+          test("fail") {
+            assertThrows[RuntimeException](left.asTaskWeak(thr2thr).r)
+          }
+
+          test("pure") {
+            assert(right.asTaskWeak(thr2thr).r == 42)
+          }
+        }
+
+        describe("either asIOWeak") {
+          test("fail") {
+            assertThrows[RuntimeException](left.asTaskWeak.r)
+          }
+
+          test("pure") {
+            assert(right.asTaskWeak.r == 42)
+          }
+        }
+
+        describe("result asIO") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](incorrect.asTask.r)
+          }
+
+          test("pure") {
+            assert(correct.asTask.r == 42)
+          }
+        }
+
+        describe("future as Task") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](failedF.asTask.r)
+          }
+
+          test("pure") {
+            assert(successF.asTask.r == 42)
+          }
+        }
+
+        describe("io as Task") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](IO.fail(ano).asTask.r)
+          }
+
+          test("pure") {
+            assert(IO.pure(42).asTask.r == 42)
+          }
+
+        }
+
+      } //end as{Effect} reverse
 
       describe("transformers") {
 
@@ -2061,51 +2214,106 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       describe("suspendInTask") {
 
-        test("suspendOption") {
-          val f = Option(throw thr).suspendInTask(ano)
-          assertThrows[RuntimeException](f.r)
+        describe("reference") {
+
+          test("suspendOption") {
+            val f = Option(throw thr).suspendInTask(ano)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendOptionWeak") {
+            val f = Option(throw thr).suspendInTaskWeak(thr)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendTry") {
+            val f = Try.pure(throw thr).suspendInTask
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEither") {
+            val f = Right[Throwable, String](throw thr).suspendInTask(thr2ano)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEitherWeak") {
+            val f = Right[Throwable, String](throw thr).suspendInTaskWeak
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEitherWeak — transform") {
+            val f = Right[Throwable, String](throw thr).suspendInTaskWeak(thr2thr)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendResult") {
+            val f = Result.pure(throw thr).suspendInTask
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendFuture") {
+            var sideEffect: Int = 0
+            val f = Future[Int] {
+              sideEffect = 42
+              sideEffect
+            }.suspendInTask
+            sleep()
+            if (sideEffect == 42) fail("side effect should not have been applied yet")
+            f.r
+            assert(sideEffect == 42)
+          }
         }
 
-        test("suspendOptionWeak") {
-          val f = Option(throw thr).suspendInTask(ano)
-          assertThrows[RuntimeException](f.r)
-        }
+        describe("companion") {
 
-        test("suspendTry") {
-          val f = Try.pure(throw thr).suspendInTask
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendOption") {
+            val f = Option.suspendInTask(Option(throw thr), ano)
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendEither") {
-          val f = Right[Throwable, String](throw thr).suspendInTask(thr2ano)
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendOptionWeak") {
+            val f = Option.suspendInTaskWeak(Option(throw thr), thr)
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendEitherWeak") {
-          val f = Right[Throwable, String](throw thr).suspendInTaskWeak
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendTry") {
+            val f = Try.suspendInTask(Try.pure(throw thr))
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendEitherWeak — transform") {
-          val f = Right[Throwable, String](throw thr).suspendInTaskWeak(thr2thr)
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendEither") {
+            val f = Either.suspendInTask(Right[Throwable, String](throw thr), thr2ano)
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendResult") {
-          val f = Result.pure(throw thr).suspendInTask
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendEitherWeak") {
+            val f = Either.suspendInTaskWeak(Right[Throwable, String](throw thr))
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendFuture") {
-          var sideEffect: Int = 0
-          val f = Future[Int] {
-            sideEffect = 42
-            sideEffect
-          }.suspendInTask
-          sleep()
-          if (sideEffect == 42) fail("side effect should not have been applied yet")
-          f.r
-          assert(sideEffect == 42)
+          test("suspendEitherWeak — transform") {
+            val f = Either.suspendInTaskWeak(Right[Throwable, String](throw thr), thr2thr)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendResult") {
+            val f = Result.suspendInTask(Result.pure(throw thr))
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendFuture") {
+            var sideEffect: Int = 0
+            val f = Future.suspendInTask {
+              Future[Int] {
+                sideEffect = 42
+                sideEffect
+              }
+            }
+            sleep()
+            if (sideEffect == 42) fail("side effect should not have been applied yet")
+            f.r
+            assert(sideEffect == 42)
+          }
         }
 
       } //end suspend

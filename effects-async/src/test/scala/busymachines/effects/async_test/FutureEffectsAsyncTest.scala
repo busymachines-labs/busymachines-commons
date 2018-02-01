@@ -701,6 +701,101 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
       } //end as{Effect}
 
+      describe("as{Effect} — reverse") {
+
+        describe("option asFuture") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Option.asFuture(none, ano).r)
+          }
+
+          test("pure") {
+            assert(Option.asFuture(some, ano).r == 42)
+          }
+        }
+
+        describe("option asFutureWeak") {
+          test("fail") {
+            assertThrows[IllegalArgumentException](Option.asFutureWeak(none, iae).r)
+          }
+
+          test("pure") {
+            assert(Option.asFutureWeak(some, iae).r == 42)
+          }
+        }
+
+        describe("try asFuture") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Try.asFuture(failure).r)
+          }
+
+          test("pure") {
+            assert(Try.asFuture(success).r == 42)
+          }
+        }
+
+        describe("either asFuture — transform") {
+          test("fail") {
+            assertThrows[ForbiddenFailure](Either.asFuture(left, thr2ano).r)
+          }
+
+          test("pure") {
+            assert(Either.asFuture(right, thr2ano).r == 42)
+          }
+        }
+
+        describe("either asFutureWeak — transform") {
+          test("fail") {
+            assertThrows[IllegalArgumentException](Either.asFutureWeak(left, thr2thr).r)
+          }
+
+          test("pure") {
+            assert(Either.asFutureWeak(right, thr2thr).r == 42)
+          }
+        }
+
+        describe("either asFutureWeak") {
+          test("fail") {
+            assertThrows[RuntimeException](Either.asFutureWeak(left).r)
+          }
+
+          test("pure") {
+            assert(Either.asFutureWeak(right).r == 42)
+          }
+        }
+
+        describe("result asFuture") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Result.asFuture(incorrect).r)
+          }
+
+          test("pure") {
+            assert(Result.asFuture(correct).r == 42)
+          }
+        }
+
+        describe("io asFutureUnsafe()") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](IO.asFutureUnsafe(IO.fail(ano)).r)
+          }
+
+          test("pure") {
+            assert(IO.asFutureUnsafe(IO.pure(42)).r == 42)
+          }
+        }
+
+        describe("task asFutureUnsafe()") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Task.asFutureUnsafe(Task.fail(ano))(Scheduler.global).r)
+          }
+
+          test("pure") {
+            assert(Task.asFutureUnsafe(Task.pure(42))(Scheduler.global).r == 42)
+          }
+
+        }
+
+      } //end as{Effect} — reverse
+
       describe("transformers") {
 
         describe("bimap") {
@@ -1296,6 +1391,101 @@ final class FutureEffectsAsyncTest extends FunSpec {
         }
 
       } //end as{Effect}
+
+      describe("as{Effect} — reverse") {
+
+        describe("option asFuture") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](none.asFuture(ano).r)
+          }
+
+          test("pure") {
+            assert(some.asFuture(ano).r == 42)
+          }
+        }
+
+        describe("option asFutureWeak") {
+          test("fail") {
+            assertThrows[IllegalArgumentException](none.asFutureWeak(iae).r)
+          }
+
+          test("pure") {
+            assert(some.asFutureWeak(iae).r == 42)
+          }
+        }
+
+        describe("try asFuture") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](failure.asFuture.r)
+          }
+
+          test("pure") {
+            assert(success.asFuture.r == 42)
+          }
+        }
+
+        describe("either asFuture — transform") {
+          test("fail") {
+            assertThrows[ForbiddenFailure](left.asFuture(thr2ano).r)
+          }
+
+          test("pure") {
+            assert(right.asFuture(thr2ano).r == 42)
+          }
+        }
+
+        describe("either asFutureWeak — transform") {
+          test("fail") {
+            assertThrows[IllegalArgumentException](left.asFutureWeak(thr2thr).r)
+          }
+
+          test("pure") {
+            assert(right.asFutureWeak(thr2thr).r == 42)
+          }
+        }
+
+        describe("either asFutureWeak") {
+          test("fail") {
+            assertThrows[RuntimeException](left.asFutureWeak.r)
+          }
+
+          test("pure") {
+            assert(right.asFutureWeak.r == 42)
+          }
+        }
+
+        describe("result asFuture") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](incorrect.asFuture.r)
+          }
+
+          test("pure") {
+            assert(correct.asFuture.r == 42)
+          }
+        }
+
+        describe("io asFutureUnsafe()") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](IO.fail(ano).asFutureUnsafe().r)
+          }
+
+          test("pure") {
+            assert(IO.pure(42).asFutureUnsafe().r == 42)
+          }
+        }
+
+        describe("task asFutureUnsafe()") {
+          test("fail") {
+            assertThrows[InvalidInputFailure](Task.fail(ano).asFutureUnsafe()(Scheduler.global).r)
+          }
+
+          test("pure") {
+            assert(Task.pure(42).asFutureUnsafe()(Scheduler.global).r == 42)
+          }
+
+        }
+
+      } //end as{Effect} — reverse
 
       describe("transformers") {
 
@@ -2005,39 +2195,80 @@ final class FutureEffectsAsyncTest extends FunSpec {
         */
       describe("suspendInFuture") {
 
-        test("suspendOption") {
-          val f = Option(throw thr).suspendInFuture(ano)
-          assertThrows[RuntimeException](f.r)
+        describe("reference") {
+
+          test("suspendOption") {
+            val f = Option(throw thr).suspendInFuture(ano)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendOptionWeak") {
+            val f = Option(throw thr).suspendInFutureWeak(thr)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendTry") {
+            val f = Try.pure(throw thr).suspendInFuture
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEither") {
+            val f = Right[Throwable, String](throw thr).suspendInFuture(thr2ano)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEitherWeak") {
+            val f = Right[Throwable, String](throw thr).suspendInFutureWeak
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEitherWeak — transform") {
+            val f = Right[Throwable, String](throw thr).suspendInFutureWeak(thr2thr)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendResult") {
+            val f = Result.pure(throw thr).suspendInFuture
+            assertThrows[RuntimeException](f.r)
+          }
         }
 
-        test("suspendOptionWeak") {
-          val f = Option(throw thr).suspendInFuture(ano)
-          assertThrows[RuntimeException](f.r)
-        }
+        describe("companion") {
 
-        test("suspendTry") {
-          val f = Try.pure(throw thr).suspendInFuture
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendOption") {
+            val f = Option.suspendInFuture(Option(throw thr), ano)
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendEither") {
-          val f = Right[Throwable, String](throw thr).suspendInFuture(thr2ano)
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendOptionWeak") {
+            val f = Option.suspendInFutureWeak(Option(throw thr), thr)
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendEitherWeak") {
-          val f = Right[Throwable, String](throw thr).suspendInFutureWeak
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendTry") {
+            val f = Try.suspendInFuture(Try.pure(throw thr))
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendEitherWeak — transform") {
-          val f = Right[Throwable, String](throw thr).suspendInFutureWeak(thr2thr)
-          assertThrows[RuntimeException](f.r)
-        }
+          test("suspendEither") {
+            val f = Either.suspendInFuture(Right[Throwable, String](throw thr), thr2ano)
+            assertThrows[RuntimeException](f.r)
+          }
 
-        test("suspendResult") {
-          val f = Result.pure(throw thr).suspendInFuture
-          assertThrows[RuntimeException](f.r)
+          test("suspendEitherWeak") {
+            val f = Either.suspendInFutureWeak(Right[Throwable, String](throw thr))
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendEitherWeak — transform") {
+            val f = Either.suspendInFutureWeak(Right[Throwable, String](throw thr), thr2thr)
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("suspendResult") {
+            val f = Result.suspendInFuture(Result.pure(throw thr))
+            assertThrows[RuntimeException](f.r)
+          }
         }
 
       } //end suspend
