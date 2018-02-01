@@ -77,7 +77,7 @@ object IOSyntax {
     def suspendTry[T](tr: => Try[T]): IO[T] =
       IOOps.suspendTry(tr)
 
-    def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] =
+    def fromEitherAnomaly[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] =
       IOOps.fromEither(either, transformLeft)
 
     def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): IO[R] =
@@ -101,8 +101,14 @@ object IOSyntax {
     def suspendResult[T](result: => Result[T]): IO[T] =
       IOOps.suspendResult(result)
 
+    def fromFuturePure[T](future: Future[T])(implicit ec: ExecutionContext): IO[T] =
+      IOOps.fromFuturePure(future)
+
     def suspendFuture[T](result: => Future[T])(implicit ec: ExecutionContext): IO[T] =
       IOOps.suspendFuture(result)
+
+    def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
+      IOOps.fromTask(task)
 
     def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
       IOOps.cond(test, good, bad)
@@ -467,11 +473,14 @@ object IOOps {
   def suspendResult[T](result: => Result[T]): IO[T] =
     IO(result).flatMap(IOOps.fromResult)
 
-  def fromFuture[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
+  def fromFuturePure[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
     IO.fromFuture(IO(value))
 
   def suspendFuture[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
     IO.fromFuture(IO(value))
+
+  def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
+    TaskOps.asIO(task)
 
   def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
     if (test) IOOps.pure(good) else IOOps.fail(bad)

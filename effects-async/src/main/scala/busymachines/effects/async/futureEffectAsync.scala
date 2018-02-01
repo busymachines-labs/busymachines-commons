@@ -599,7 +599,7 @@ object FutureOps {
     }
 
   def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
-    IOOps.fromFuture(value)
+    IOOps.fromFuturePure(value)
 
   def asTask[T](value: Future[T]): Task[T] =
     TaskOps.fromFuture(value)
