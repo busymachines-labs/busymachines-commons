@@ -602,7 +602,7 @@ object FutureOps {
     IOOps.fromFuturePure(value)
 
   def asTask[T](value: Future[T]): Task[T] =
-    TaskOps.fromFuture(value)
+    TaskOps.fromFuturePure(value)
 
   def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
     IOOps.suspendFuture(value)

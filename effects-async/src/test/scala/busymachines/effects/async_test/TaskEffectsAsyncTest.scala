@@ -154,13 +154,13 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("fromFuture") {
+        describe("fromFuturePure") {
           test("failed") {
-            assertThrows[InvalidInputFailure](Task.fromFuture(failedF).r)
+            assertThrows[InvalidInputFailure](Task.fromFuturePure(failedF).r)
           }
 
           test("success") {
-            assert(Task.fromFuture(successF).r == 42)
+            assert(Task.fromFuturePure(successF).r == 42)
           }
         }
 

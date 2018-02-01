@@ -154,7 +154,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("fromFuture") {
+        describe("fromFuturePure") {
           test("failed") {
             assertThrows[InvalidInputFailure](IO.fromFuturePure(failedF).r)
           }

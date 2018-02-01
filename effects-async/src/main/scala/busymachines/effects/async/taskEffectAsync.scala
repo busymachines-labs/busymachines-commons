@@ -114,6 +114,9 @@ object TaskSyntax {
     def suspendResult[T](result: => Result[T]): Task[T] =
       TaskOps.suspendResult(result)
 
+    def fromFuturePure[T](value: Future[T]): Task[T] =
+      Task.fromFuture(value)
+
     def suspendFuture[T](result: => Future[T]): Task[T] =
       TaskOps.suspendFuture(result)
 
@@ -477,7 +480,7 @@ object TaskOps {
   def suspendResult[T](result: => Result[T]): Task[T] =
     Task.suspend(TaskOps.fromResult(result))
 
-  def fromFuture[T](value: Future[T]): Task[T] =
+  def fromFuturePure[T](value: Future[T]): Task[T] =
     Task.fromFuture(value)
 
   def suspendFuture[T](value: => Future[T]): Task[T] =
