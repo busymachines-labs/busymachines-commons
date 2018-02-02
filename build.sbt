@@ -1,3 +1,20 @@
+/**
+  * Copyright (c) 2017-2018 BusyMachines
+  *
+  * See company homepage at: https://www.busymachines.com/
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 import sbt._
 import Keys._
 
@@ -6,16 +23,16 @@ addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentS
 
 addCommandAlias("build",           ";compile;Test/compile")
 addCommandAlias("rebuild",         ";clean;update;compile;Test/compile")
-addCommandAlias("ci",              ";rebuild;test")
-addCommandAlias("ci-quick",        ";build;test")
+addCommandAlias("ci",              ";scalafmtCheck;coverageOff;rebuild;test")
+addCommandAlias("ci-quick",        ";scalafmtCheck;build;test")
 addCommandAlias("doLocal",         ";rebuild;publishLocal")
 addCommandAlias("doSnapshotLocal", ";rebuild;setSnapshotVersion;publishLocal")
 
 addCommandAlias("mkSite",      ";docs/makeMicrosite")
 addCommandAlias("publishSite", ";docs/publishMicrosite")
 
-addCommandAlias("coverageTest",       ";rebuild;coverage;test;coverageReport")
-addCommandAlias("coverageTest-quick", ";build;coverage;test;coverageReport")
+addCommandAlias("doCoverage",       ";rebuild;coverage;test;coverageReport;coverageOff")
+addCommandAlias("doCoverage-quick", ";build;coverage;test;coverageReport;coverageOff")
 
 /**
   * Use with care. Releases a snapshot to sonatype repository.
@@ -47,8 +64,9 @@ lazy val root = Project(id = "busymachines-commons", base = file("."))
   .settings(Settings.commonSettings)
   .aggregate(
     core,
-    result,
-    future,
+    `effects-sync`,
+    `effects-async`,
+    effects,
     json,
     `rest-core`,
     `rest-core-testkit`,
@@ -67,35 +85,54 @@ lazy val core = project
       Dependencies.scalaTest % Test withSources ()
   )
 
-lazy val result = project
+lazy val `effects-sync` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
-    name in ThisProject := "busymachines-commons-result",
+    name in ThisProject := "busymachines-commons-effects-sync",
     libraryDependencies ++= Seq(
-      Dependencies.catsCore   withSources (),
-      Dependencies.catsEffect withSources (),
-      Dependencies.scalaTest  % Test withSources ()
+      Dependencies.scalaTest % Test withSources (),
+      /**
+        * only in tests because we want to test if syntax
+        * plays well with import cats._, cats.implicits._
+        */
+      Dependencies.catsCore % Test withSources ()
     )
   )
   .dependsOn(
     core
   )
 
-lazy val future = project
+lazy val `effects-async` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
-    name in ThisProject := "busymachines-commons-future",
+    name in ThisProject := "busymachines-commons-effects-async",
     libraryDependencies ++= Seq(
       Dependencies.catsCore   withSources (),
       Dependencies.catsEffect withSources (),
+      Dependencies.monix      withSources (),
       Dependencies.scalaTest  % Test withSources ()
     )
   )
   .dependsOn(
     core,
-    result
+    `effects-sync`
+  )
+
+lazy val effects = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-effects",
+    libraryDependencies ++= Seq(
+      Dependencies.scalaTest % Test withSources ()
+    )
+  )
+  .dependsOn(
+    core,
+    `effects-sync`,
+    `effects-async`
   )
 
 lazy val json = project
@@ -111,7 +148,8 @@ lazy val json = project
       )
   )
   .dependsOn(
-    core
+    core,
+    `effects-sync`
   )
 
 lazy val `rest-core` = project
@@ -209,12 +247,15 @@ lazy val `semver-parsers` = project
   )
   .dependsOn(
     core,
+    `effects-sync`,
     `semver`
   )
 
 lazy val docs = project
   .enablePlugins(MicrositesPlugin)
   .enablePlugins(TutPlugin)
+  .disablePlugins(ScalafmtPlugin)
+  .disablePlugins(ScalafixPlugin)
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.noPublishSettings)
   .settings(micrositeTasksSettings)
@@ -250,15 +291,4 @@ lazy val docs = project
     micrositePushSiteWith      := GHPagesPlugin,
     micrositeGitHostingService := GitHub
   )
-  .dependsOn(
-    //core,
-    //result,
-    //future,
-    //json,
-    //`rest-core`,
-    //`rest-core-testkit`,
-    //`rest-json`,
-    //`rest-json-testkit`,
-    //`semver`,
-    //`semver-parsers`
-  )
+  .dependsOn()

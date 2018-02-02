@@ -1,4 +1,23 @@
+/**
+  * Copyright (c) 2017-2018 BusyMachines
+  *
+  * See company homepage at: https://www.busymachines.com/
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 package busymachines.semver
+
+import busymachines.effects.sync._
 
 /**
   *
@@ -14,30 +33,32 @@ package busymachines.semver
   */
 object SemanticVersionParsers {
 
-  type SemVerParsingResult[T] = Either[InvalidSemanticVersionParsingFailure, T]
-
   import atto._
   import atto.parser.all._
   import atto.syntax.all._
 
-  def parseSemanticVersion(semver: String): SemVerParsingResult[SemanticVersion] = {
-    Parser.parseOnly(semanticVersionEOI,    semver).either.left.map { parseError =>
-      InvalidSemanticVersionFailure(semver, parseError)
-    }
+  def parseSemanticVersion(semver: String): Result[SemanticVersion] = {
+    Parser
+      .parseOnly(semanticVersionEOI, semver)
+      .either
+      .left
+      .map(parseError => InvalidSemanticVersionFailure(semver, parseError))
   }
 
   def unsafeParseSemanticVersion(semVer: String): SemanticVersion = {
-    parseSemanticVersion(semVer).toTry.get
+    parseSemanticVersion(semVer).unsafeGet
   }
 
-  def parseLabel(label: String): SemVerParsingResult[Label] = {
-    Parser.parseOnly(labelParserEOI,            label).either.left.map { parseError =>
-      InvalidSemanticVersionLabelFailure(label, parseError)
-    }
+  def parseLabel(label: String): Result[Label] = {
+    Parser
+      .parseOnly(labelParserEOI, label)
+      .either
+      .left
+      .map(parseError => InvalidSemanticVersionLabelFailure(label, parseError))
   }
 
   def unsafeParseLabel(label: String): Label = {
-    this.parseLabel(label).toTry.get
+    this.parseLabel(label).unsafeGet
   }
 
   private val dotParser:  Parser[Char] = char('.')

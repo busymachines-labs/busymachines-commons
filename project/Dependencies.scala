@@ -1,3 +1,20 @@
+/**
+  * Copyright (c) 2017-2018 BusyMachines
+  *
+  * See company homepage at: https://www.busymachines.com/
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 import sbt._
 
 object Dependencies {
@@ -12,22 +29,6 @@ object Dependencies {
   //============================================================================================
 
   lazy val scalaReflect: ModuleID = "org.scala-lang" % "scala-reflect" % mainScalaVersion
-
-  //============================================================================================
-  //=================================== http://busymachines.com/ ===============================
-  //========================================  busymachines =====================================
-  //============================================================================================
-  lazy val bmcv: String = "0.2.0"
-
-  lazy val bmcCore:       ModuleID = "com.busymachines" %% "busymachines-commons-core"              % bmcv
-  lazy val bmcJson:       ModuleID = "com.busymachines" %% "busymachines-commons-json"              % bmcv
-  lazy val bmcRestCore:   ModuleID = "com.busymachines" %% "busymachines-commons-rest-core"         % bmcv
-  lazy val bmcRestCoreTK: ModuleID = "com.busymachines" %% "busymachines-commons-rest-core-testkit" % bmcv % Test
-  lazy val bmcRestJson:   ModuleID = "com.busymachines" %% "busymachines-commons-rest-json"         % bmcv
-  lazy val bmcRestJsonTK: ModuleID = "com.busymachines" %% "busymachines-commons-rest-json-testkit" % bmcv % Test
-
-  lazy val bmcSemVer:        ModuleID = "com.busymachines" %% "busymachines-commons-semver"         % bmcv
-  lazy val bmcSemVerParsers: ModuleID = "com.busymachines" %% "busymachines-commons-semver-parsers" % bmcv
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================
@@ -46,7 +47,7 @@ object Dependencies {
 
   lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "0.8"
 
-  lazy val circeVersion: String = "0.9.0"
+  lazy val circeVersion: String = "0.9.1"
 
   lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % circeVersion
   lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeVersion
@@ -62,12 +63,14 @@ object Dependencies {
 
   lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.1"
 
+  lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-M3"
+
   //============================================================================================
   //================================= http://akka.io/docs/ =====================================
   //======================================== akka ==============================================
   //============================================================================================
 
-  lazy val akkaVersion: String = "2.5.8"
+  lazy val akkaVersion: String = "2.5.9"
 
   lazy val akkaActor:  ModuleID = "com.typesafe.akka" %% "akka-actor"  % akkaVersion
   lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion

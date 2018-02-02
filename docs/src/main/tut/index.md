@@ -17,6 +17,7 @@ We strive to bring together everything you need to develop purely functional web
 The vast majority of the credit goes out to the maintainers and contributors of the open-source libraries we depend upon (in no particular order):
 * [cats](https://github.com/typelevel/cats)
 * [cats-effect](https://github.com/typelevel/cats-effect)
+* [monix](https://github.com/monix/monix)
 * [circe](https://github.com/circe/circe)
 * [shapeless](https://github.com/milessabin/shapeless)
 * [atto-parsers](https://github.com/tpolecat/atto)

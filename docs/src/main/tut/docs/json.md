@@ -7,7 +7,7 @@ title: json
 # busymachines-commons-json
 
 * stable: `0.2.0`
-* latest: `0.3.0-M2`
+* latest: `0.3.0-M3`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-json" % "0.2.0"
@@ -22,6 +22,22 @@ You can glean 99% of what's going on here by first understanding `circe`. This m
 - circe 0.9.0 (with all its modules)
 - shapeless 2.3.3
 - cats 1.0.1
+
+## Gotchas!!
+
+If you are trying to `autoderive` codecs for [Result[T]](result.html) then avoid explicitely importing or otherwise having in scope the codec `busymachines.json.AnomalyJsonCodec`.
+
+Having these causes automatic derivation to derive a generic encoder for `Either[Anomaly, T]`, which is quite even without this bug. What will happen is that it will not be able to deserialize `Anomalies`, only simple `Anomaly` object.
+
+Instead, explicitely import (or otherwise have in scope) the implicits defined in `busymachines.json.ResultJsonCodec`. So you ought to have the following in scope when `autoderiving`:
+```scala
+  import busymachines.result.Result
+  import busymachines.json._
+  import busymachines.json.autoderive._
+  import busymachines.json.ResultJsonCodec._
+```
+
+Same applies to `derive` as well. But there it should be more intuitive to import the `ResultJsonCodec`.
 
 ## Recommended usage
 

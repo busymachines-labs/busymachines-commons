@@ -14,11 +14,8 @@ options:
   - title: core
     url: docs/core.html
 
-  - title: result
-    url: docs/result.html
-
-  - title: future
-    url: docs/future.html
+  - title: effects
+    url: docs/effects.html
 
   - title: json
     url: docs/json.html

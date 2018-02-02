@@ -1,3 +1,20 @@
+/**
+  * Copyright (c) 2017-2018 BusyMachines
+  *
+  * See company homepage at: https://www.busymachines.com/
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 package busymachines.json_test.autoderive
 
 import busymachines.json_test._
@@ -9,7 +26,7 @@ import org.scalatest.FlatSpec
   * @since 10 Aug 2017
   *
   */
-class JsonAutoDerivationWithSpecialConfigurationTest extends FlatSpec {
+final class JsonAutoDerivationWithSpecialConfigurationTest1 extends FlatSpec {
 
   import busymachines.json.syntax._
 
@@ -20,15 +37,15 @@ class JsonAutoDerivationWithSpecialConfigurationTest extends FlatSpec {
   import busymachines.json.{defaultDerivationConfiguration => _, _}
   import busymachines.json.autoderive._
 
-  final implicit val _melonManiaDiscriminatorConfig: Configuration =
+  implicit val _melonManiaDiscriminatorConfig: Configuration =
     Configuration.default.withDiscriminator("_melonMania")
 
-  it should "... type discriminator should be _melonMania, and case object hierarchy codec should be string only" in {
+  /**
+    * We explicitly create a codec for the enumeration of case objects, thus, it should not have _melonMania discriminator
+    */
+  implicit val explicitImplicitTasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
 
-    /**
-      * We explicitly create a codec for the enumeration of case objects, thus, it should not have _melonMania discriminator
-      */
-    implicit val explicitImplicitTasteCodec: Codec[Taste] = derive.enumerationCodec[Taste]
+  it should "... type discriminator should be _melonMania, and case object hierarchy codec should be string only" in {
 
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
     val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
@@ -70,6 +87,27 @@ class JsonAutoDerivationWithSpecialConfigurationTest extends FlatSpec {
     val read: List[Melon] = rawJson.unsafeDecodeAs[List[Melon]]
     assertResult(melons)(read)
   }
+
+}
+
+/**
+  * We split the test classes in two, to move the implicit ``explicitImplicitTasteCodec``
+  * from above to the scope of the class to remove false positive "implicit not used",
+  * and it interferes with this test.
+  */
+final class JsonAutoDerivationWithSpecialConfigurationTest2 extends FlatSpec {
+
+  import busymachines.json.syntax._
+
+  /**
+    * unfortunately this exclusion is absolutely necessary if you want to use the non-default _type
+    * discriminator for sealed hierarchies of classes AND auto-derivation at the same time
+    */
+  import busymachines.json.{defaultDerivationConfiguration => _, _}
+  import busymachines.json.autoderive._
+
+  implicit val _melonManiaDiscriminatorConfig: Configuration =
+    Configuration.default.withDiscriminator("_melonMania")
 
   it should "... type discriminator should be _melonMania, and case object hierarchy serialization should also be affected by this new configuration" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)

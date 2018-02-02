@@ -1,7 +1,24 @@
+/**
+  * Copyright (c) 2017-2018 BusyMachines
+  *
+  * See company homepage at: https://www.busymachines.com/
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 package busymachines.json
 
 import busymachines.core._
-import io.circe.Decoder.Result
+import io.circe.Decoder.{Result => DecoderResult}
 import io.circe.DecodingFailure
 
 /**
@@ -15,7 +32,7 @@ object AnomalyJsonCodec extends AnomalyJsonCodec
 trait AnomalyJsonCodec {
 
   private implicit final val AnomalyIDCodec: Codec[AnomalyID] = new Codec[AnomalyID] {
-    override def apply(c: HCursor): Result[AnomalyID] = {
+    override def apply(c: HCursor): DecoderResult[AnomalyID] = {
       c.as[String].right.map(AnomalyID.apply)
     }
 
@@ -30,8 +47,8 @@ trait AnomalyJsonCodec {
       }
     }
 
-    override def apply(c: HCursor): io.circe.Decoder.Result[Anomaly.Parameter] = {
-      val sa: Result[String] = c.as[String]
+    override def apply(c: HCursor): DecoderResult[Anomaly.Parameter] = {
+      val sa: DecoderResult[String] = c.as[String]
       if (sa.isRight) {
         sa.right.map(Anomaly.Parameter)
       }
@@ -43,7 +60,7 @@ trait AnomalyJsonCodec {
 
   private implicit final val AnomalyParamsCodec: Codec[Anomaly.Parameters] =
     new Codec[Anomaly.Parameters] {
-      override def apply(c: HCursor): Result[Anomaly.Parameters] = {
+      override def apply(c: HCursor): DecoderResult[Anomaly.Parameters] = {
         val jsonObj = c.as[JsonObject]
         val m       = jsonObj.right.map(_.toMap)
         val m2: Either[DecodingFailure, Either[DecodingFailure, Anomaly.Parameters]] = m.right.map {
@@ -85,7 +102,7 @@ trait AnomalyJsonCodec {
     }
 
   final implicit val AnomalyCodec: Codec[Anomaly] = new Codec[Anomaly] {
-    override def apply(c: HCursor): io.circe.Decoder.Result[Anomaly] = {
+    override def apply(c: HCursor): DecoderResult[Anomaly] = {
       for {
         id     <- c.get[AnomalyID](CoreJsonConstants.id)
         msg    <- c.get[String](CoreJsonConstants.message)
@@ -121,7 +138,7 @@ trait AnomalyJsonCodec {
       messagesObj.deepMerge(fm)
     }
 
-    override def apply(c: HCursor): Result[Anomalies] = {
+    override def apply(c: HCursor): DecoderResult[Anomalies] = {
       for {
         fm   <- c.as[Anomaly].right
         msgs <- c.get[Seq[Anomaly]](CoreJsonConstants.messages).right
