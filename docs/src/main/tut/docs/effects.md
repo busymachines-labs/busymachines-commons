@@ -97,7 +97,7 @@ And some other, more useful, operations, detailed in the sections bellow.
 
 ##### 4. NOT a monad transformer
 
-This module does not seek to handle cases where all your types look like `IO[Option[T]]`, and you can simply lift those into a `OptionT` and then neatly combine them. If you do have such a scenario than just use monad transformers, it's definitely the best solution out there.
+This module does not seek to handle cases where all your types look like `IO[Option[T]]`, and you can simply lift those into a `OptionT` and then neatly combine them. If you do have such a scenario then just use monad transformers, it's definitely the best solution out there.
 
 Instead, this module seeks to give fairly uniform syntax for converting from one effect to the other (if possible, see the [conversion](effects.html#conversion-between-effects) section). Since in most extremely large systems we have an `Option` coming from one place, a `Result` from another, `Try` from some legacy code, and you need to combine them all into one final `Task`. In this case you want to simply short circuit everything with a specific [anomaly](core.html) and convert the `Option` into a `Task` immediately and then simply combine other `Task` as usual.
 
