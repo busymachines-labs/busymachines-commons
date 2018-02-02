@@ -115,9 +115,6 @@ lazy val effects = project
   .settings(
     name in ThisProject := "busymachines-commons-effects",
     libraryDependencies ++= Seq(
-      Dependencies.catsCore   withSources (),
-      Dependencies.catsEffect withSources (),
-      Dependencies.monix      withSources (),
       Dependencies.scalaTest  % Test withSources ()
     )
   )

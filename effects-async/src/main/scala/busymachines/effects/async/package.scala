@@ -9,4 +9,20 @@ package busymachines.effects
 package object async
     extends AnyRef with FutureTypeDefinitions with IOTypeDefinitions with TaskTypeDefinitions
     with OptionSyntaxAsync.Implcits with TrySyntaxAsync.Implcits with EitherSyntaxAsync.Implcits
-    with ResultSyntaxAsync.Implcits with FutureSyntax.Implicits with IOSyntax.Implicits with TaskSyntax.Implicits {}
+    with ResultSyntaxAsync.Implcits with FutureSyntax.Implicits with IOSyntax.Implicits with TaskSyntax.Implicits {
+
+  object tr extends TrySyntaxAsync.Implcits
+
+  object option extends OptionSyntaxAsync.Implcits
+
+  object either extends EitherSyntaxAsync.Implcits
+
+  object result extends ResultSyntaxAsync.Implcits
+
+  object io extends IOTypeDefinitions with IOSyntax.Implicits
+
+  object future extends FutureTypeDefinitions with FutureSyntax.Implicits
+
+  object task extends TaskTypeDefinitions with TaskSyntax.Implicits
+
+}

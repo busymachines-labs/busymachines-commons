@@ -17,6 +17,12 @@ trait ResultTypeDefinitions {
   type Incorrect[T] = Left[Anomaly,   T]
 }
 
+trait ResultCompanionAliases {
+  val Result:    busymachines.effects.sync.Result.type    = busymachines.effects.sync.Result
+  val Correct:   busymachines.effects.sync.Correct.type   = busymachines.effects.sync.Correct
+  val Incorrect: busymachines.effects.sync.Incorrect.type = busymachines.effects.sync.Incorrect
+}
+
 object ResultSyntax {
 
   /**
