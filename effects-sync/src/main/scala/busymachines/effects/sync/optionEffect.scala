@@ -19,6 +19,8 @@ package busymachines.effects.sync
 
 import busymachines.core.Anomaly
 
+import scala.collection.generic.CanBuildFrom
+
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
@@ -123,6 +125,20 @@ object OptionSyntax {
 
     def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] =
       OptionOps.recoverWith(value, ifNone)
+
+    //=========================================================================
+    //=============================== Traversals ==============================
+    //=========================================================================
+
+    def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): Option[C[B]] = OptionOps.traverse(col)(fn)
+
+    def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+      implicit
+      cbf: CanBuildFrom[M[Option[A]], A, M[A]]
+    ): Option[M[A]] = OptionOps.sequence(in)
 
   }
 
@@ -271,5 +287,51 @@ object OptionOps {
     case Some(v) => Option(v)
     case None    => ifNone
   }
+
+  //=========================================================================
+  //=============================== Traversals ==============================
+  //=========================================================================
+
+  /**
+    *
+    */
+  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Option[C[B]] = {
+    import scala.collection.mutable
+    if (col.isEmpty) {
+      OptionOps.pure(cbf.apply().result())
+    }
+    else {
+      val seq  = col.toSeq
+      val head = seq.head
+      val tail = seq.tail
+      val builder: mutable.Builder[B, C[B]] = cbf.apply()
+      val firstBuilder = fn(head) map { z =>
+        builder.+=(z)
+      }
+      val eventualBuilder: Option[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
+        (serializedBuilder: Option[mutable.Builder[B, C[B]]], element: A) =>
+          serializedBuilder flatMap [mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
+            val f: Option[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
+              result.+=(newElement)
+            }
+            f
+          }
+      }
+      eventualBuilder map { b =>
+        b.result()
+      }
+    }
+  }
+
+  /**
+    *
+    */
+  def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Option[A]], A, M[A]]
+  ): Option[M[A]] = OptionOps.traverse(in)(identity)
 
 }

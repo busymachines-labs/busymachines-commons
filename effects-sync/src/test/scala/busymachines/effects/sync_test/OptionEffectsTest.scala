@@ -378,6 +378,65 @@ final class OptionEffectsTest extends FunSpec {
 
     } //end transformers
 
+    describe("traversals") {
+
+      describe("Option.traverse") {
+
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = Option.traverse(input) { i =>
+            Option {
+              sideEffect = 42
+            }
+          }
+
+          assert(eventualResult.r == expected)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("non empty list") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          val eventualResult: Option[Seq[String]] = Option.traverse(input) { i =>
+            Option.pure(i.toString)
+          }
+          assert(expected == eventualResult.r)
+        }
+
+      }
+
+      describe("Option.sequence") {
+
+        test("empty list") {
+          val input:    Seq[Option[Int]] = List()
+          val expected: Seq[Int]         = List()
+
+          val eventualResult = Option.sequence(input)
+          assert(eventualResult.r == expected)
+        }
+
+        test("non empty list") {
+          val nrs = (1 to 100).toList
+          val input: Seq[Option[Int]] = (1 to 100).toList.map(Option.pure)
+          val expected = nrs.map(_.toString)
+
+          val eventualResult: Option[Seq[String]] = Option.sequence {
+            input map { tr =>
+              tr.map(i => i.toString)
+            }
+          }
+          assert(expected == eventualResult.r)
+        }
+
+      }
+
+    } // end traversals
+
   } //end companion object syntax tests
 
   //===========================================================================
