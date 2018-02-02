@@ -164,8 +164,8 @@ object IOSyntax {
     def unpackOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
       IOOps.unpackOptionThr(nopt, ifNone)
 
-    def flattenResult[T](value: IO[Result[T]]): IO[T] =
-      IOOps.flattenResult(value)
+    def unpackResult[T](value: IO[Result[T]]): IO[T] =
+      IOOps.unpackResult(value)
 
     def attemptResult[T](value: IO[T]): IO[Result[T]] =
       IOOps.attemptResult(value)
@@ -323,8 +323,8 @@ object IOSyntax {
     */
   final class NestedResultOps[T](private[this] val result: IO[Result[T]]) {
 
-    def flattenResult: IO[T] =
-      IOOps.flattenResult(result)
+    def unpack: IO[T] =
+      IOOps.unpackResult(result)
 
     def effectOnFail[_](effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.flatEffectOnIncorrect(result, effect)
@@ -553,7 +553,7 @@ object IOOps {
       case Some(v) => IOOps.pure(v)
     }
 
-  def flattenResult[T](value: IO[Result[T]]): IO[T] = value.flatMap {
+  def unpackResult[T](value: IO[Result[T]]): IO[T] = value.flatMap {
     case Left(a)  => IOOps.fail(a)
     case Right(a) => IOOps.pure(a)
   }

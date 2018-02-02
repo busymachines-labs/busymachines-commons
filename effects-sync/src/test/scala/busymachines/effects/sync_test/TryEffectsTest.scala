@@ -640,15 +640,15 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("flattenResult") {
+      describe("unpack") {
         test("incorrect") {
           assertThrows[InvalidInputFailure](
-            Try.flattenResult(Try.pure(incorrect)).r
+            Try.unpackResult(Try.pure(incorrect)).r
           )
         }
 
         test("correct") {
-          assert(Try.flattenResult(Try.pure(correct)).r == 42)
+          assert(Try.unpackResult(Try.pure(correct)).r == 42)
         }
       }
 
@@ -1235,15 +1235,15 @@ final class TryEffectsTest extends FunSpec {
         }
       }
 
-      describe("flattenResult") {
+      describe("unpack") {
         test("incorrect") {
           assertThrows[InvalidInputFailure](
-            Try.pure(incorrect).flattenResult.r
+            Try.pure(incorrect).unpack.r
           )
         }
 
         test("correct") {
-          assert(Try.pure(correct).flattenResult.r == 42)
+          assert(Try.pure(correct).unpack.r == 42)
         }
       }
 

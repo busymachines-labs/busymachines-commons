@@ -688,12 +688,12 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              IO.flattenResult(IO.pure(incorrect)).r
+              IO.unpackResult(IO.pure(incorrect)).r
             )
           }
 
           test("correct") {
-            assert(IO.flattenResult(IO.pure(correct)).r == 42)
+            assert(IO.unpackResult(IO.pure(correct)).r == 42)
           }
         }
 
@@ -1378,12 +1378,12 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              IO.pure(incorrect).flattenResult.r
+              IO.pure(incorrect).unpack.r
             )
           }
 
           test("correct") {
-            assert(IO.pure(correct).flattenResult.r == 42)
+            assert(IO.pure(correct).unpack.r == 42)
           }
         }
 

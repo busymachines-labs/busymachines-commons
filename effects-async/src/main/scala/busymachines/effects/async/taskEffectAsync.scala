@@ -174,8 +174,8 @@ object TaskSyntax {
     def unpackOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
       TaskOps.unpackOptionThr(nopt, ifNone)
 
-    def flattenResult[T](value: Task[Result[T]]): Task[T] =
-      TaskOps.flattenResult(value)
+    def unpackResult[T](value: Task[Result[T]]): Task[T] =
+      TaskOps.unpackResult(value)
 
     def attemptResult[T](value: Task[T]): Task[Result[T]] =
       TaskOps.attemptResult(value)
@@ -322,8 +322,8 @@ object TaskSyntax {
     */
   final class NestedResultOps[T](private[this] val result: Task[Result[T]]) {
 
-    def flattenResult: Task[T] =
-      TaskOps.flattenResult(result)
+    def unpack: Task[T] =
+      TaskOps.unpackResult(result)
 
     def effectOnFail[_](effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnIncorrect(result, effect)
@@ -549,7 +549,7 @@ object TaskOps {
       case Some(v) => TaskOps.pure(v)
     }
 
-  def flattenResult[T](value: Task[Result[T]]): Task[T] = value.flatMap {
+  def unpackResult[T](value: Task[Result[T]]): Task[T] = value.flatMap {
     case Left(a)  => TaskOps.fail(a)
     case Right(a) => TaskOps.pure(a)
   }

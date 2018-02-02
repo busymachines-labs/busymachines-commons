@@ -184,8 +184,8 @@ object FutureSyntax {
     def unpackOptionThr[T](nopt: Future[Option[T]], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.unpackOptionThr(nopt, ifNone)
 
-    def flattenResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] =
-      FutureOps.flattenResult(value)
+    def unpackResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.unpackResult(value)
 
     def attemptResult[T](value: Future[T])(implicit ec: ExecutionContext): Future[Result[T]] =
       FutureOps.attemptResult(value)
@@ -364,7 +364,7 @@ object FutureSyntax {
   final class NestedResultOps[T](private[this] val result: Future[Result[T]]) {
 
     def unpack(implicit ec: ExecutionContext): Future[T] =
-      FutureOps.flattenResult(result)
+      FutureOps.unpackResult(result)
 
     def effectOnFail[_](effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnIncorrect(result, effect)
@@ -588,7 +588,7 @@ object FutureOps {
       case Some(v) => FutureOps.pure(v)
     }
 
-  def flattenResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] = value.flatMap {
+  def unpackResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] = value.flatMap {
     case Left(a)  => FutureOps.fail(a)
     case Right(a) => FutureOps.pure(a)
   }

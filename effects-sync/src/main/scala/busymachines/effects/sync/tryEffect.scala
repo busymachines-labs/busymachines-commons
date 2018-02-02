@@ -138,8 +138,8 @@ object TrySyntax {
     def unpackOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
       TryOps.unpackOptionThr(nopt, ifNone)
 
-    def flattenResult[T](value: Try[Result[T]]): Try[T] =
-      TryOps.flattenResult(value)
+    def unpackResult[T](value: Try[Result[T]]): Try[T] =
+      TryOps.unpackResult(value)
 
     def asOptionUnsafe[T](value: Try[T]): Option[T] =
       TryOps.asOptionUnsafe(value)
@@ -220,7 +220,7 @@ object TrySyntax {
     *
     */
   final class NestedResultOps[T](private[this] val result: Try[Result[T]]) {
-    def flattenResult: Try[T] = TryOps.flattenResult(result)
+    def unpack: Try[T] = TryOps.unpackResult(result)
   }
 
   /**
@@ -409,7 +409,7 @@ object TryOps {
   def unpackOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
     nopt.flatMap(opt => TryOps.fromOptionThr(opt, ifNone))
 
-  def flattenResult[T](result: Try[Result[T]]): Try[T] =
+  def unpackResult[T](result: Try[Result[T]]): Try[T] =
     result.flatMap(r => TryOps.fromResult(r))
 
   //===========================================================================

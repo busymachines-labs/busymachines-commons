@@ -688,12 +688,12 @@ final class TaskEffectsAsyncTest extends FunSpec {
         describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              Task.flattenResult(Task.pure(incorrect)).r
+              Task.unpackResult(Task.pure(incorrect)).r
             )
           }
 
           test("correct") {
-            assert(Task.flattenResult(Task.pure(correct)).r == 42)
+            assert(Task.unpackResult(Task.pure(correct)).r == 42)
           }
         }
 
@@ -1378,12 +1378,12 @@ final class TaskEffectsAsyncTest extends FunSpec {
         describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              Task.pure(incorrect).flattenResult.r
+              Task.pure(incorrect).unpack.r
             )
           }
 
           test("correct") {
-            assert(Task.pure(correct).flattenResult.r == 42)
+            assert(Task.pure(correct).unpack.r == 42)
           }
         }
 

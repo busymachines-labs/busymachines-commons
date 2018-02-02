@@ -663,12 +663,12 @@ final class FutureEffectsAsyncTest extends FunSpec {
         describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              Future.flattenResult(Future.pure(incorrect)).r
+              Future.unpackResult(Future.pure(incorrect)).r
             )
           }
 
           test("correct") {
-            assert(Future.flattenResult(Future.pure(correct)).r == 42)
+            assert(Future.unpackResult(Future.pure(correct)).r == 42)
           }
         }
 
