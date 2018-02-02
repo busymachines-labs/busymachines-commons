@@ -4,24 +4,18 @@ import Keys._
 lazy val currentSnapshotVersion = "0.3.0-SNAPSHOT"
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
-//FIXME: remove this when done writing the effects package
-addCommandAlias(
-  "dev",
-  ";effects/clean;effects/compile;effects/Test/compile;coverage;effects/test;effects/coverageReport"
-)
-
 addCommandAlias("build",           ";compile;Test/compile")
 addCommandAlias("rebuild",         ";clean;update;compile;Test/compile")
-addCommandAlias("ci",              ";scalafmtCheck;rebuild;coverage;test;coverageReport")
-addCommandAlias("ci-quick",        ";scalafmtCheck;build;coverage;test;coverageReport")
+addCommandAlias("ci",              ";scalafmtCheck;coverageOff;rebuild;test")
+addCommandAlias("ci-quick",        ";scalafmtCheck;build;test")
 addCommandAlias("doLocal",         ";rebuild;publishLocal")
 addCommandAlias("doSnapshotLocal", ";rebuild;setSnapshotVersion;publishLocal")
 
 addCommandAlias("mkSite",      ";docs/makeMicrosite")
 addCommandAlias("publishSite", ";docs/publishMicrosite")
 
-addCommandAlias("doCoverage",       ";rebuild;coverage;test;coverageReport")
-addCommandAlias("doCoverage-quick", ";build;coverage;test;coverageReport")
+addCommandAlias("doCoverage",       ";rebuild;coverage;test;coverageReport;coverageOff")
+addCommandAlias("doCoverage-quick", ";build;coverage;test;coverageReport;coverageOff")
 
 /**
   * Use with care. Releases a snapshot to sonatype repository.
@@ -115,7 +109,7 @@ lazy val effects = project
   .settings(
     name in ThisProject := "busymachines-commons-effects",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest  % Test withSources ()
+      Dependencies.scalaTest % Test withSources ()
     )
   )
   .dependsOn(
