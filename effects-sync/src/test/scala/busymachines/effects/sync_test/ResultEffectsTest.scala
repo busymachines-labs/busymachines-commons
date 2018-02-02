@@ -587,6 +587,65 @@ final class ResultEffectsTest extends FunSpec {
 
     } //end transformers
 
+    describe("traversals") {
+
+      describe("Result.traverse") {
+
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = Result.traverse(input) { i =>
+            Result {
+              sideEffect = 42
+            }
+          }
+
+          assert(eventualResult.r == expected)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("non empty list") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          val eventualResult: Result[Seq[String]] = Result.traverse(input) { i =>
+            Result.pure(i.toString)
+          }
+          assert(expected == eventualResult.r)
+        }
+
+      }
+
+      describe("Result.sequence") {
+
+        test("empty list") {
+          val input:    Seq[Result[Int]] = List()
+          val expected: Seq[Int]         = List()
+
+          val eventualResult = Result.sequence(input)
+          assert(eventualResult.r == expected)
+        }
+
+        test("non empty list") {
+          val nrs = (1 to 100).toList
+          val input: Seq[Result[Int]] = (1 to 100).toList.map(Result.pure)
+          val expected = nrs.map(_.toString)
+
+          val eventualResult: Result[Seq[String]] = Result.sequence {
+            input map { tr =>
+              tr.map(i => i.toString)
+            }
+          }
+          assert(expected == eventualResult.r)
+        }
+
+      }
+
+    } // end traversals
+
   } //end companion object syntax tests
 
   //===========================================================================

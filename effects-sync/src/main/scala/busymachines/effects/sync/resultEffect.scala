@@ -19,6 +19,7 @@ package busymachines.effects.sync
 
 import busymachines.core._
 
+import scala.collection.generic.CanBuildFrom
 import scala.util._
 import scala.util.control.NonFatal
 
@@ -314,6 +315,53 @@ object Result {
 
   def discardContent[T](value: Result[T]): Result[Unit] =
     value.map(UnitFunction)
+
+  //=========================================================================
+  //=============================== Traversals ==============================
+  //=========================================================================
+
+  /**
+    *
+    */
+  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Result[C[B]] = {
+    import scala.collection.mutable
+    if (col.isEmpty) {
+      Result.pure(cbf.apply().result())
+    }
+    else {
+      val seq  = col.toSeq
+      val head = seq.head
+      val tail = seq.tail
+      val builder: mutable.Builder[B, C[B]] = cbf.apply()
+      val firstBuilder = fn(head) map { z =>
+        builder.+=(z)
+      }
+      val eventualBuilder: Result[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
+        (serializedBuilder: Result[mutable.Builder[B, C[B]]], element: A) =>
+          serializedBuilder flatMap [Anomaly, mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
+            val f: Result[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
+              result.+=(newElement)
+            }
+            f
+          }
+      }
+      eventualBuilder map { b =>
+        b.result()
+      }
+    }
+  }
+
+  /**
+    *
+    */
+  def sequence[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Result[A]], A, M[A]]
+  ): Result[M[A]] = Result.traverse(in)(identity)
+
 }
 
 /**
