@@ -1,0 +1,479 @@
+<html><head><title>busymachines-commmons: effects</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="com.busymachines" /><meta name="description" content="Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala" /><meta name="og:image" content="/busymachines-commons/img/poster.png" /><meta name="og:title" content="busymachines-commmons: effects" /><meta name="og:site_name" content="busymachines-commmons" /><meta name="og:url" content="http://busymachines.github.io/busymachines-commons/" /><meta name="og:type" content="website" /><meta name="og:description" content="Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala" /><link rel="icon" type="image/png" href="/busymachines-commons/img/favicon.png" /><meta name="twitter:title" content="busymachines-commmons: effects" /><meta name="twitter:image" content="http://busymachines.github.io/busymachines-commons/img/poster.png" /><meta name="twitter:description" content="Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/busymachines-commons/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/busymachines-commons/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/busymachines-commons/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/busymachines-commons/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/busymachines-commons/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/busymachines-commons/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/busymachines-commons/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/busymachines-commons/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/busymachines-commons/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/busymachines-commons/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/busymachines-commons/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/busymachines-commons/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/busymachines-commons/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/busymachines-commons/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/busymachines-commons/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/busymachines-commons/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/busymachines-commons/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/busymachines-commons/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/busymachines-commons/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/busymachines-commons/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/busymachines-commons/highlight/styles/atom-one-light.css" /><link rel="stylesheet" href="/busymachines-commons/css/style.css" /><link rel="stylesheet" href="/busymachines-commons/css/palette.css" /><link rel="stylesheet" href="/busymachines-commons/css/codemirror.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/busymachines-commons/" class="brand"><div class="brand-wrapper"><span>busymachines-commmons</span></div></a></li> <li><a href="/busymachines-commons/docs/index.html" class="">Getting Started</a></li> <li><a href="/busymachines-commons/docs/help.html" class="">Help!</a></li> <li><a href="/busymachines-commons/docs/learning.html" class="">Learning Materials</a></li> <li><a href="/busymachines-commons/docs/developer-guide.html" class="">Developer's Guide</a></li> <li><a href="/busymachines-commons/docs/core.html" class="">core</a></li> <li><a href="/busymachines-commons/docs/effects.html" class=" active ">effects</a></li> <li><a href="/busymachines-commons/docs/json.html" class="">json</a></li> <li><a href="/busymachines-commons/docs/rest.html" class="">rest</a></li> <li><a href="/busymachines-commons/docs/rest-testkit.html" class="">rest-testkit</a></li> <li><a href="/busymachines-commons/docs/semver.html" class="">semver</a></li> <li><a href="/busymachines-commons/docs/semver-parsers.html" class="">semver-parsers</a></li> <li><a href="/busymachines-commons/docs/publishing-artifacts.html" class="">Publishing Artifacts</a></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/busymachines/busymachines-commons"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/busymachines/busymachines-commons"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('busymachines-commmons Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('busymachines-commmons Light-weight, modular eco-system of libraries needed to build HTTP web apps in Scala');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="busymachines" data-github-repo="busymachines-commons"><div class="content-wrapper"><section><p><a href="https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-effects_2.12"><img src="https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-effects_2.12.svg" alt="Maven Central" /></a></p>
+
+<h1 id="busymachines-commons-effects">busymachines-commons-effects</h1>
+
+<ul>
+  <li>stable: <code class="highlighter-rouge">N/A</code></li>
+  <li>latest: <code class="highlighter-rouge">0.3.0-M3</code></li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects"</span>       <span class="o">%</span> <span class="s">"0.3.0-M3"</span>
+<span class="c1">//the above module is actually a composite of the following two modules
+</span><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects-sync"</span>  <span class="o">%</span> <span class="s">"0.3.0-M3"</span>
+<span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects-async"</span> <span class="o">%</span> <span class="s">"0.3.0-M3"</span>
+</code></pre>
+</div>
+
+<h2 id="how-it-works">How it works</h2>
+
+<p>The purpose of this module is to give you all the effects (see section in <a href="learning.html#effects">learning</a>) you need in your daily coding activity, available through a single import:
+<code class="highlighter-rouge">import busymachines.effects._</code>. They <a href="effects.html#syntax">syntax</a> extensions are thought out in such a way that importing <code class="highlighter-rouge">import cats.implicits._</code> causes no conflict, and are thought as complementary to <code class="highlighter-rouge">cats</code>, not a replacement.</p>
+
+<p>The effects are loosely separated into two modules:</p>
+<ul>
+  <li>pure, synchronous effects (<code class="highlighter-rouge">sync</code> module): <code class="highlighter-rouge">Option</code>, <code class="highlighter-rouge">List</code>, <code class="highlighter-rouge">Try</code>, <code class="highlighter-rouge">Either</code>, <code class="highlighter-rouge">Result</code></li>
+  <li>impure, asynchronous effects (<code class="highlighter-rouge">async</code> module): <code class="highlighter-rouge">IO</code>, <code class="highlighter-rouge">Task</code>, <code class="highlighter-rouge">Future</code></li>
+</ul>
+
+<h3 id="gotchas">Gotchas</h3>
+<p>You have to use either:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects.sync._</span>
+<span class="k">import</span> <span class="nn">busymachines.effects.async._</span>
+<span class="c1">//or other even more modular imports like:
+//import busymachines.effects.sync.result._
+</span></code></pre>
+</div>
+
+<p>Or:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects._</span>
+</code></pre>
+</div>
+
+<p>But never combine the latter with any of the former imports. The latter is intended to bring in everything from the former two, and you would be importing certain <code class="highlighter-rouge">val</code>s twice.</p>
+
+<h3 id="what-effect-to-use-and-when-faq">What effect to use and when. FAQ</h3>
+
+<h5 id="1-do-you-want-to-model-absence-of-value-or-value">1. Do you want to model absence of value or value?</h5>
+
+<p>That’s an <code class="highlighter-rouge">Option</code>.</p>
+
+<h5 id="2-do-you-want-to-model-zero-or-more-values">2. Do you want to model zero, or more values?</h5>
+
+<p>That’s a <code class="highlighter-rouge">List</code>.</p>
+
+<h5 id="3-do-you-want-to-model-absence-of-value-or-value-but-with-extra-information">3. Do you want to model absence of value or value but with extra information?</h5>
+
+<p>Or, put bluntly, model “failures”, “exceptions”, or other such things.
+That’s a <code class="highlighter-rouge">Result</code>. This can also be achieved with a <code class="highlighter-rouge">Try</code>, or <code class="highlighter-rouge">Either</code>, but the usage of the former is discouraged, while the latter is not specialized enough.</p>
+
+<h5 id="4-does-your-computation-have-a-side-effect">4. Does your computation have a side-effect?</h5>
+
+<p>All effects in the <code class="highlighter-rouge">sync</code> should be used for pure operations <em>only</em>. Therefore do not, under absolutely any circumstances model “writing a file” as a <code class="highlighter-rouge">Result</code>, <code class="highlighter-rouge">Try</code>. That would be absolutely horrible. Use effects that actually are meant to encapsulate side-effects. You should definitely use one of: <code class="highlighter-rouge">IO</code>, <code class="highlighter-rouge">Task</code>, <code class="highlighter-rouge">Future</code>, or some other effect not in here (e.g. slick’s <a href="http://slick.lightbend.com/doc/3.0.0/api/index.html#slick.dbio.DBIOAction">DBIOAction</a>)</p>
+
+<h5 id="5-do-you-suspect-your-computation-might-have-side-effects-but-dont-know-for-sure">5. Do you suspect your computation might have side-effects but don’t know for sure?</h5>
+
+<p>Then use of of the <code class="highlighter-rouge">suspendIn{Eff}</code> methods to be extra careful.</p>
+
+<h5 id="6-need-concurrency">6. Need concurrency?</h5>
+
+<p>Use <code class="highlighter-rouge">Task</code>. The usage of <code class="highlighter-rouge">Future</code> is discouraged because of it does not let you manage side-effects at all. See the section in <a href="learning.html#referential-transparency">learning</a> about it.</p>
+
+<h3 id="motivation">Motivation</h3>
+<p>The purpose of this module is four-fold.</p>
+
+<h5 id="1-single-import">1. Single import</h5>
+<p><code class="highlighter-rouge">import busymachines.effects._</code>
+You can also import only what you need. See <a href="effects.html#modular-imports">modular imports</a></p>
+
+<h5 id="2-use-appropriate-effect">2. Use appropriate effect</h5>
+
+<p>Encourage properly expressing what your functions do by using the appropriate effect type</p>
+
+<h5 id="3-iron-out-inconsistencies">3. iron out inconsistencies</h5>
+
+<p>Attempts to iron out inconsistencies of the Scala standard library effect type companion objects. E.g. all Effects can be now constructed with a <code class="highlighter-rouge">pure</code> method on the companion object, and so on. This way, it is a complement to <code class="highlighter-rouge">cats.implicits._</code>, which provides syntax for:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="k">val</span> <span class="n">option</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="s">"string"</span><span class="o">.</span><span class="n">pure</span><span class="o">[</span><span class="kt">Option</span><span class="o">]</span>
+</code></pre>
+</div>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects._</span>
+<span class="k">val</span> <span class="n">option</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Option</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="s">"string"</span><span class="o">)</span>
+</code></pre>
+</div>
+
+<p>And some other, more useful, operations, detailed in the sections bellow.</p>
+
+<h5 id="4-not-a-monad-transformer">4. NOT a monad transformer</h5>
+
+<p>This module does not seek to handle cases where all your types look like <code class="highlighter-rouge">IO[Option[T]]</code>, and you can simply lift those into a <code class="highlighter-rouge">OptionT</code> and then neatly combine them. If you do have such a scenario than just use monad transformers, it’s definitely the best solution out there.</p>
+
+<p>Instead, this module seeks to give fairly uniform syntax for converting from one effect to the other (if possible, see the <a href="effects.html#conversion-between-effects">conversion</a> section). Since in most extremely large systems we have an <code class="highlighter-rouge">Option</code> coming from one place, a <code class="highlighter-rouge">Result</code> from another, <code class="highlighter-rouge">Try</code> from some legacy code, and you need to combine them all into one final <code class="highlighter-rouge">Task</code>. In this case you want to simply short circuit everything with a specific <a href="core.html">anomaly</a> and convert the <code class="highlighter-rouge">Option</code> into a <code class="highlighter-rouge">Task</code> immediately and then simply combine other <code class="highlighter-rouge">Task</code> as usual.</p>
+
+<h2 id="busymachines-commons-sync">busymachines-commons-sync</h2>
+
+<p>Written entirely in vanilla Scala, provides integration with <a href="core.html">core</a>, and useful syntax for interop for switching between the effects: <code class="highlighter-rouge">Option</code>, <code class="highlighter-rouge">List</code>, <code class="highlighter-rouge">Try</code>, <code class="highlighter-rouge">Either</code>, <code class="highlighter-rouge">Result</code>.</p>
+
+<p>N.B. <code class="highlighter-rouge">List</code> and <code class="highlighter-rouge">Either</code> have limited support, which will probably be extended in the future.</p>
+
+<h3 id="result">Result</h3>
+
+<p>The single “novel” contribution of the entire <code class="highlighter-rouge">effects</code> module is the datatype <code class="highlighter-rouge">Result</code>, which is defined as:</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Result</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>    <span class="k">=</span> <span class="nc">Either</span><span class="o">[</span><span class="kt">Anomaly</span>, <span class="kt">T</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">Correct</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>   <span class="k">=</span> <span class="nc">Right</span><span class="o">[</span><span class="kt">Anomaly</span>, <span class="kt">T</span><span class="o">]</span>
+<span class="k">type</span> <span class="kt">Incorrect</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Left</span><span class="o">[</span><span class="kt">Anomaly</span>, <span class="kt">T</span><span class="o">]</span>
+</code></pre>
+</div>
+
+<p>Used to model “failure”. Long story short, it’s a specialized <code class="highlighter-rouge">Either</code>, all semantics are the same. And is a pure, referentially transparent substitute for <code class="highlighter-rouge">Try</code>, but it also integrates with <a href="core.html">core</a>. There’s nothing more to it, you should just use it anytime you have pure computation that can sometimes “fail”.</p>
+
+<p>quick-example:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects.sync._</span>
+<span class="c1">//or:
+//import busymachines.effects._
+</span>
+<span class="k">val</span> <span class="n">yay</span><span class="k">:</span> <span class="kt">Result</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+  <span class="n">x</span> <span class="k">&lt;-</span> <span class="nc">Result</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">42</span><span class="o">)</span>
+  <span class="n">y</span> <span class="k">&lt;-</span> <span class="nc">Try</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">42</span><span class="o">).</span><span class="n">asResult</span>
+  <span class="n">z</span> <span class="k">&lt;-</span> <span class="nc">Option</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">42</span><span class="o">).</span><span class="n">asResult</span><span class="o">(</span><span class="n">ifNone</span> <span class="k">=</span> <span class="nc">InvalidInputFailure</span><span class="o">(</span><span class="s">"No such value: 'z'"</span><span class="o">))</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="k">val</span> <span class="n">nay</span><span class="k">:</span> <span class="kt">Result</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+  <span class="n">x</span> <span class="k">&lt;-</span> <span class="nc">Result</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">42</span><span class="o">)</span>
+  <span class="n">y</span> <span class="k">&lt;-</span> <span class="nc">Try</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="mi">42</span><span class="o">).</span><span class="n">asResult</span>
+  <span class="n">z</span> <span class="k">&lt;-</span> <span class="nc">Option</span><span class="o">.</span><span class="n">none</span><span class="o">.</span><span class="n">asResult</span><span class="o">(</span><span class="n">ifNone</span> <span class="k">=</span> <span class="nc">InvalidInputFailure</span><span class="o">(</span><span class="s">"No such value: 'z'"</span><span class="o">))</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span>
+
+<span class="k">val</span> <span class="n">nay2</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+  <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">yay</span>
+  <span class="n">y</span> <span class="k">&lt;-</span> <span class="n">nay</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</code></pre>
+</div>
+
+<p>Standard monadic behavior, leveraging <code class="highlighter-rouge">Either</code>’s <a href="https://typelevel.org/cats/datatypes/either.html">right bias</a>, but with a fixed type for the left-hand side to considerably reduce the boilerplate for 99% percent of the cases.</p>
+
+<h2 id="busymachines-commons-async">busymachines-commons-async</h2>
+
+<p>External dependencies:</p>
+<ul>
+  <li><a href="https://github.com/typelevel/cats-effect">cats-effect</a> — defines <code class="highlighter-rouge">IO</code></li>
+  <li><a href="https://github.com/monix/monix">monix</a> — defines <code class="highlighter-rouge">Task</code></li>
+</ul>
+
+<p>The <code class="highlighter-rouge">IO</code>, <code class="highlighter-rouge">Task</code> and <code class="highlighter-rouge">Future</code> types are only aliased here. With syntax extensions as detailed in the next section. Therefore you can easily substitute the original types, and only having to account for the rather thing syntax extensions.</p>
+
+<h2 id="outline-of-syntax">outline of syntax:</h2>
+
+<p>There is quite a lot of it, and you can browse the tests for everything. But here is a rough outline, and the rules to derive what exists. Will use <code class="highlighter-rouge">$F</code> to denote the corresponding companion object of the effect, e.g. <code class="highlighter-rouge">Result.pure</code>.</p>
+
+<p>All operations on the companion <code class="highlighter-rouge">$F</code> have an equivalent operation that deals directly on values of the certain type.</p>
+
+<p>In order to reduce the boilerplate of the bellow documentation, there are several naming conventions that you have to take in mind:</p>
+<ul>
+  <li>certain constructors might have extra parameters, or missing ones, depending on the specific effect, even if the functions are called the same. It should be quite obvious what, and why.</li>
+  <li>all functions that take an <code class="highlighter-rouge">Anomaly</code> as a parameter have a method suffixed with the word <code class="highlighter-rouge">Thr</code> which take a <code class="highlighter-rouge">Throwable</code> instead. The latter should be used for legacy code that knows nothing about anomalies.</li>
+  <li>all extension methods available on a companion object of the form: <code class="highlighter-rouge">$F.method(value: TF, param2: X*)</code>, have an equivalent on any expression of type <code class="highlighter-rouge">(value: TF).method(param2: X*)</code></li>
+</ul>
+
+<h4 id="1-creating-effects-from-pure-values">1. creating effects from pure values</h4>
+
+<ul>
+  <li><code class="highlighter-rouge">$F.pure(t: T): F[T]</code> — pure function that does not run any side-effects, and lifts your pure value into the corresponding <code class="highlighter-rouge">F</code> effect. DO NOT use if computing your value causes side-effects (e.g. throwing exceptions, mutating some <code class="highlighter-rouge">var</code> or worse: a database write)</li>
+  <li><code class="highlighter-rouge">$F.fail(a: Anomaly): F[T]</code> — represent the failure case of the Effect.</li>
+  <li>besides these, where appropriate, there’s aliases</li>
+  <li><code class="highlighter-rouge">$F.unit</code>, all except <code class="highlighter-rouge">Option</code> and <code class="highlighter-rouge">List</code> have this.</li>
+</ul>
+
+<h4 id="2-creating-effects-from-other-effects">2. creating effects from other effects</h4>
+
+<ul>
+  <li>see section on conversions to see what combinations are possible</li>
+  <li>roughly, every companion object has methods like <code class="highlighter-rouge">.from{Effect}</code>. e.g: <code class="highlighter-rouge">$F.fromOption(opt: Option[T], ifNone: =&gt; Anomaly): F[T]</code></li>
+  <li>and there is infix notation in the for of <code class="highlighter-rouge">$F.as{$G}(...)</code>
+    <ul>
+      <li><code class="highlighter-rouge">Option.pure(42).asResult(InvalidInputFailure("No such thing as 42"))</code></li>
+      <li>N.B. conversions from <code class="highlighter-rouge">sync</code> effects to <code class="highlighter-rouge">async</code> effects are provided only in the <code class="highlighter-rouge">async</code> module</li>
+    </ul>
+  </li>
+  <li>converting back to <code class="highlighter-rouge">Id</code> using methods <code class="highlighter-rouge">unsafeGet()</code> or <code class="highlighter-rouge">unsafeSyncGet()</code> to get back a value of <code class="highlighter-rouge">T</code> from <code class="highlighter-rouge">F[T]</code>. DO NOT USE in production code, this is provided as convenience for testing. You have to be a genius to know what the hell you are doing in order to use this properly, and without your program becoming yet another Java program. Pro tip: you’re not a genius, be humble.</li>
+</ul>
+
+<h4 id="3-conditional-creation">3. conditional creation</h4>
+<p>Given a <code class="highlighter-rouge">Boolean</code>, decide how to create your effect:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">$F.cond(true, "true branch", InvalidInputFailure("chose the false branch, after all"))</code>, yields <code class="highlighter-rouge">Correct("true branch")</code></li>
+  <li><code class="highlighter-rouge">$F.condWith(true, Result.pure("true branch"), InvalidInputFailure("chose the false branch, after all"))</code>, yields <code class="highlighter-rouge">Correct("true branch")</code></li>
+  <li><code class="highlighter-rouge">false.condResult("true branch", InvalidInputFailure("chose the false branch, after all"))</code> — unfortunately, in this case, you have to specify the name of the effect as a prefix</li>
+  <li><code class="highlighter-rouge">false.condWithResult(...)</code>, semantically equivalent to the</li>
+  <li><code class="highlighter-rouge">$F.failOnTrue(true, InvalidInputFailure("I only fail when true"))</code></li>
+  <li><code class="highlighter-rouge">true.failOnTrueResult(InvalidInputFailure("I only fail when true"))</code></li>
+  <li><code class="highlighter-rouge">$F.failOnFalse(...)</code></li>
+</ul>
+
+<p>Given a <code class="highlighter-rouge">Boolean</code> nested in your effect (<code class="highlighter-rouge">F[Boolean]</code>), combine it with an effect of the same type <code class="highlighter-rouge">F</code>. All operations available above, are also available in this form:</p>
+<ul>
+  <li><code class="highlighter-rouge">$F.pure(true).failOnTrue(InvalidInputFailure("I only fail when true"))</code></li>
+</ul>
+
+<h4 id="4-special-cased-foptiont">4. special cased F[Option[T]]</h4>
+<p>Since Option is an extremely wide-spread effect, you want to sometimes “unpack” it into a more powerful effect to continue your work easily, without too much clutter. So we have:</p>
+<ul>
+  <li><code class="highlighter-rouge">val r: F[Int] = $F.pure(Option(42)).unpack(InvalidInputFailure("this was none"))</code> — fails when the Option is <code class="highlighter-rouge">Some</code></li>
+</ul>
+
+<h4 id="4-special-cased-fresultt">4. special cased F[Result[T]]</h4>
+<p>Since Option is an extremely wide-spread effect, you want to sometimes “unpack” it into a more powerful effect to continue your work easily, without too much clutter. So we have:</p>
+<ul>
+  <li><code class="highlighter-rouge">val r: F[Int] = $F.pure(Result.pure(42)).unpack</code> — fails with same <code class="highlighter-rouge">anomaly</code> as the underlying <code class="highlighter-rouge">Result</code> if it is <code class="highlighter-rouge">Incorrect</code></li>
+</ul>
+
+<h4 id="5-async-specific-syntax">5. <code class="highlighter-rouge">async</code> specific syntax</h4>
+<p>Since asynchrony and side-effecting is more complex of a task, the <code class="highlighter-rouge">async</code> module has the following special operations:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">expr.suspendIn{IO/Future/Task}</code> — the expression <code class="highlighter-rouge">effectValue</code> is passed by name, to ensure that whatever side-effect it has is “suspended” in the specified Effect. This is almost useless when done for <code class="highlighter-rouge">Future</code> since the side-effect is done on a separate thread, but for <code class="highlighter-rouge">IO</code> and <code class="highlighter-rouge">Task</code> it is absolutely invaluable, as it delays side-effects until you explicitely “run” the <code class="highlighter-rouge">IO</code> or <code class="highlighter-rouge">Task</code></li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">writeToDB</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">???</span> <span class="c1">// extremely poor imperative code
+</span>  <span class="k">val</span> <span class="n">io</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="n">writeToDB</span><span class="o">(</span><span class="mi">42</span><span class="o">).</span><span class="n">suspendInIO</span>
+  <span class="c1">//at this point no side-effect has happened!!!
+</span>
+  <span class="n">io</span><span class="o">.</span><span class="n">unsafeSyncGet</span><span class="o">()</span> <span class="c1">//applying side-effect, the world is a horrible place
+</span></code></pre>
+</div>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="c1">// slightly, but only slightly, less poor imperative code,
+</span>  <span class="c1">//see section on referential transparency in "learning materials"
+</span>  <span class="k">def</span> <span class="n">writeToDB</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
+  <span class="k">val</span> <span class="n">io</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="n">writeToDB</span><span class="o">(</span><span class="mi">42</span><span class="o">).</span><span class="n">suspendInTask</span>
+  <span class="c1">//at this point no side-effect has happened!!!
+</span>
+  <span class="n">io</span><span class="o">.</span><span class="n">unsafeSyncGet</span><span class="o">()</span> <span class="c1">//applying side-effect, the world is a horrible place
+</span></code></pre>
+</div>
+
+<p>Apply side-effects in special cases:</p>
+<ul>
+  <li><code class="highlighter-rouge">false.effectOnFalse{$F}: $F[Unit]</code> — applies effect only when boolean is <code class="highlighter-rouge">false</code>, a variant for <code class="highlighter-rouge">true</code> also exists</li>
+  <li><code class="highlighter-rouge">$F.pure(boolean).effectOnFalse</code> — same as above, but for values wrapped in the given effect <code class="highlighter-rouge">$F</code></li>
+  <li><code class="highlighter-rouge">Result.fail(...).effectOnFail{$F}</code> — applies the specified effect, suspended in the specified effect <code class="highlighter-rouge">$F</code>, only when the underlying <code class="highlighter-rouge">Result</code> is <code class="highlighter-rouge">Incorrect</code></li>
+  <li><code class="highlighter-rouge">Result.pure(...).effectOnPure{$F}</code>— the converse of the above</li>
+  <li><code class="highlighter-rouge">Option.fail.effectOnFail{$F}</code> — same principle as with <code class="highlighter-rouge">Result</code></li>
+  <li><code class="highlighter-rouge">Option.pure(...).effectOnPure{$F}</code></li>
+  <li><code class="highlighter-rouge">$F.pure(Result.fail(...)).effectOnFail</code></li>
+  <li><code class="highlighter-rouge">$F.pure(Result.pure(...)).effectOnPure</code></li>
+  <li><code class="highlighter-rouge">$F.pure(Option.fail).effectOnFail</code></li>
+  <li><code class="highlighter-rouge">$F.pure(Option.pure(...)).effectOnPure</code></li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">diagnose</span><span class="o">(</span><span class="n">int</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Defect</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
+  <span class="k">def</span> <span class="n">complexDiagnose</span><span class="o">(</span><span class="n">int</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">Defect</span><span class="o">]]</span> <span class="k">=</span> <span class="o">???</span>
+
+  <span class="k">def</span> <span class="n">repair</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Defect</span><span class="o">)</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
+
+  <span class="k">val</span> <span class="n">repairTask</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+    <span class="c1">//unfortunately we are stuck with this small inconsistency in naming due to
+</span>    <span class="c1">//scala being unable to do proper implicit resolution based on the return type
+</span>    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">diagnose</span><span class="o">(</span><span class="mi">42</span><span class="o">).</span><span class="n">effectOnPureTask</span><span class="o">(</span><span class="n">repair</span><span class="o">)</span>
+    <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">complexDiagnose</span><span class="o">(</span><span class="mi">42</span><span class="o">).</span><span class="n">effectOnPure</span><span class="o">(</span><span class="n">repair</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="o">()</span>
+
+  <span class="c1">//...
+</span>  <span class="n">repairTask</span><span class="o">.</span><span class="n">unsafeSyncGet</span><span class="o">()</span> <span class="c1">// apply repair job
+</span></code></pre>
+</div>
+
+<h2 id="conversion-between-effects">conversion between effects</h2>
+
+<ul>
+  <li><code class="highlighter-rouge">List</code> was elided because no special syntax is provided for it.</li>
+  <li><code class="highlighter-rouge">Either</code> was elided because it is roughly equivalent to <code class="highlighter-rouge">Result</code> (the latter being a type alias of <code class="highlighter-rouge">Either</code>).</li>
+</ul>
+
+<p>Legend:</p>
+<ul>
+  <li><code class="highlighter-rouge">Id</code> stands for <a href="https://typelevel.org/cats/datatypes/id.html">identity</a>, not “identifier”</li>
+  <li>Should be read as: <code class="highlighter-rouge">row element</code> as <code class="highlighter-rouge">column element</code></li>
+  <li><code class="highlighter-rouge">✓</code> — conversion can be done without loss of semantics. Considered possible even if you need to provide more information on conversion, as happens in the conversion of <code class="highlighter-rouge">Option</code> to other effects, you have to specify the <code class="highlighter-rouge">Throwable/Anomaly</code> if the <code class="highlighter-rouge">Option</code> happens to be <code class="highlighter-rouge">None</code>.</li>
+  <li><code class="highlighter-rouge">-</code> — conversion can be done with losing some information. Like <code class="highlighter-rouge">List</code> to <code class="highlighter-rouge">Option</code>, you loose all elements except the head of the <code class="highlighter-rouge">List</code>. In the case of <code class="highlighter-rouge">Future</code> to <code class="highlighter-rouge">IO</code> or to <code class="highlighter-rouge">Task</code> you lose referrential transparency.</li>
+  <li><code class="highlighter-rouge">x</code> — conversion cannot be done safely, at all, and/or is extremely risky. Conversion functions are sometimes provided but they contain the words <code class="highlighter-rouge">unsafe</code> and/or <code class="highlighter-rouge">sync</code>. These functions should never be used outside of testing, and “end of the world” scenarios (once in your <code class="highlighter-rouge">main</code> method, or when responding to an HTTP request).</li>
+</ul>
+
+<h4 id="simplified-table-recommended">simplified table (recommended)</h4>
+
+<p>Notice how conversions cluster in a diagonal if we enumerate the effects from the ones that capture “fewer” semantics to the ones that capture “more”. This is rather intuitive because each of these effects can handle the same basic things (They’re all <code class="highlighter-rouge">Applicative</code> and <code class="highlighter-rouge">Monad</code>), but then each adds new things to the table. So it’s trivial to go from the “weakest” effect (<code class="highlighter-rouge">Id</code>) to the “strongest” effect (<code class="highlighter-rouge">Task</code>), but not the other way around. This involves actually handling all concurrency related machinery and applying all side-effects captured in the <code class="highlighter-rouge">Task</code>; extremely non-trivial things.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Effects</th>
+      <th>Id</th>
+      <th>Option</th>
+      <th>Result</th>
+      <th>IO</th>
+      <th>Task</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Id</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>Option</td>
+      <td>x</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>Result</td>
+      <td>x</td>
+      <td>-</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>IO</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>Task</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="complete-table">complete table</h4>
+
+<p><code class="highlighter-rouge">Try</code> and <code class="highlighter-rouge">Future</code> are added in order to interact with legacy code. Writing new modules using them is highly discouraged though.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Effects</th>
+      <th>Id</th>
+      <th>Option</th>
+      <th>Try</th>
+      <th>Result</th>
+      <th>IO</th>
+      <th>Task</th>
+      <th>Future</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Id</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>Option</td>
+      <td>x</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>Try</td>
+      <td>x</td>
+      <td>-</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>Result</td>
+      <td>x</td>
+      <td>-</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>IO</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Task</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Future</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="modular-imports">modular imports</h2>
+
+<p>Each module exposes effect specific imports:</p>
+
+<h4 id="effects-sync">effects-sync:</h4>
+<ul>
+  <li><code class="highlighter-rouge">import busymachines.effects.sync.option._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.sync.tr._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.sync.either._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.sync.result._</code></li>
+</ul>
+
+<h4 id="effects-async">effects-async:</h4>
+<ul>
+  <li><code class="highlighter-rouge">import busymachines.effects.async.future._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.async.io._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.async.task._</code></li>
+</ul>
+
+<h4 id="effects">effects</h4>
+<ul>
+  <li><code class="highlighter-rouge">import busymachines.effects.option._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.tr._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.either._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.result._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.future._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.io._</code></li>
+  <li><code class="highlighter-rouge">import busymachines.effects.task._</code></li>
+</ul>
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/busymachines-commons/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script>((window.gitter = {}).chat = {}).options = {
+room: 'busymachines/busymachines-commons'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/busymachines-commons/js/main.js"></script></body></html>
