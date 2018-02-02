@@ -67,23 +67,23 @@ object ResultSyntaxAsync {
     //==================== Run side-effects on Option state ===================
     //=========================================================================
 
-    def effectOnIncorrectFuture[_](effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
-      FutureOps.effectOnIncorrect(value, effect)
+    def effectOnFailFuture[_](effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.effectOnFail(value, effect)
 
-    def effectOnCorrectFuture[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
-      FutureOps.effectOnCorrect(value, effect)
+    def effectOnPureFuture[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.effectOnPure(value, effect)
 
-    def effectOnIncorrectIO[_](effect: Anomaly => IO[_]): IO[Unit] =
-      IOOps.effectOnIncorrect(value, effect)
+    def effectOnFailIO[_](effect: Anomaly => IO[_]): IO[Unit] =
+      IOOps.effectOnFail(value, effect)
 
-    def effectOnCorrectIO[_](effect: T => IO[_]): IO[Unit] =
-      IOOps.effectOnCorrect(value, effect)
+    def effectOnPureIO[_](effect: T => IO[_]): IO[Unit] =
+      IOOps.effectOnPure(value, effect)
 
-    def effectOnIncorrectTask[_](effect: Anomaly => Task[_]): Task[Unit] =
-      TaskOps.effectOnIncorrect(value, effect)
+    def effectOnFailTask[_](effect: Anomaly => Task[_]): Task[Unit] =
+      TaskOps.effectOnFail(value, effect)
 
-    def effectOnCorrectTask[_](effect: T => Task[_]): Task[Unit] =
-      TaskOps.effectOnCorrect(value, effect)
+    def effectOnPureTask[_](effect: T => Task[_]): Task[Unit] =
+      TaskOps.effectOnPure(value, effect)
 
   }
 

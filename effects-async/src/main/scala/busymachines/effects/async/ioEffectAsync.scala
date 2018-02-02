@@ -195,20 +195,20 @@ object IOSyntax {
     def flatEffectOnFalse[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnFalse(test, effect)
 
-    def effectOnNone[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
-      IOOps.effectOnNone(value, effect)
+    def effectOnFail[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
+      IOOps.effectOnFail(value, effect)
 
     def flatEffectOnNone[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnNone(value, effect)
 
-    def effectOnSome[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
-      IOOps.effectOnSome(value, effect)
+    def effectOnPure[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
+      IOOps.effectOnPure(value, effect)
 
     def flatEffectOnSome[T, _](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnSome(value, effect)
 
-    def effectOnIncorrect[T, _](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] =
-      IOOps.effectOnIncorrect(value, effect)
+    def effectOnFail[T, _](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] =
+      IOOps.effectOnFail(value, effect)
 
     def flatEffectOnIncorrect[T, _](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.flatEffectOnIncorrect(value, effect)
@@ -216,8 +216,8 @@ object IOSyntax {
     def flatEffectOnCorrect[T, _](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnCorrect(value, effect)
 
-    def effectOnCorrect[T, _](value: Result[T], effect: T => IO[_]): IO[Unit] =
-      IOOps.effectOnCorrect(value, effect)
+    def effectOnPure[T, _](value: Result[T], effect: T => IO[_]): IO[Unit] =
+      IOOps.effectOnPure(value, effect)
 
     //=========================================================================
     //============================== Transformers =============================
@@ -310,10 +310,10 @@ object IOSyntax {
     def flattenOptionThr(ifNone: => Throwable): IO[T] =
       IOOps.flattenOptionThr(nopt, ifNone)
 
-    def effectOnNone[_](effect: => IO[_]): IO[Unit] =
+    def effectOnFail[_](effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnNone(nopt, effect)
 
-    def effectOnSome[_](effect: T => IO[_]): IO[Unit] =
+    def effectOnPure[_](effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnSome(nopt, effect)
 
   }
@@ -326,10 +326,10 @@ object IOSyntax {
     def flattenResult: IO[T] =
       IOOps.flattenResult(result)
 
-    def effectOnIncorrect[_](effect: Anomaly => IO[_]): IO[Unit] =
+    def effectOnFail[_](effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.flatEffectOnIncorrect(result, effect)
 
-    def effectOnCorrect[_](effect: T => IO[_]): IO[Unit] =
+    def effectOnPure[_](effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnCorrect(result, effect)
   }
 
@@ -586,13 +586,13 @@ object IOOps {
   def flatEffectOnFalse[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
     test.flatMap(t => IOOps.effectOnFalse(t, effect))
 
-  def effectOnNone[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
+  def effectOnFail[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
     if (value.isEmpty) IOOps.discardContent(effect) else IO.unit
 
   def flatEffectOnNone[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
-    value.flatMap(opt => IOOps.effectOnNone(opt, effect))
+    value.flatMap(opt => IOOps.effectOnFail(opt, effect))
 
-  def effectOnSome[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
+  def effectOnPure[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
     value match {
       case None    => IO.unit
       case Some(v) => IOOps.discardContent(effect(v))
@@ -600,24 +600,24 @@ object IOOps {
     }
 
   def flatEffectOnSome[T, _](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
-    value.flatMap(opt => IOOps.effectOnSome(opt, effect))
+    value.flatMap(opt => IOOps.effectOnPure(opt, effect))
 
-  def effectOnIncorrect[T, _](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] = value match {
+  def effectOnFail[T, _](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] = value match {
     case Correct(_)         => IO.unit
     case Incorrect(anomaly) => IOOps.discardContent(effect(anomaly))
   }
 
   def flatEffectOnIncorrect[T, _](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
-    value.flatMap(result => IOOps.effectOnIncorrect(result, effect))
+    value.flatMap(result => IOOps.effectOnFail(result, effect))
 
-  def effectOnCorrect[T, _](value: Result[T], effect: T => IO[_]): IO[Unit] =
+  def effectOnPure[T, _](value: Result[T], effect: T => IO[_]): IO[Unit] =
     value match {
       case Incorrect(_) => IO.unit
       case Correct(v)   => IOOps.discardContent(effect(v))
     }
 
   def flatEffectOnCorrect[T, _](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
-    value.flatMap(result => IOOps.effectOnCorrect(result, effect))
+    value.flatMap(result => IOOps.effectOnPure(result, effect))
 
   //=========================================================================
   //============================== Transformers =============================

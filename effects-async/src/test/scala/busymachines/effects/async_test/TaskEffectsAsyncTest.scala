@@ -1876,11 +1876,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       describe("effect on option") {
 
-        describe("effectOnNone") {
+        describe("effectOnFail") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = Task.effectOnNone(
+            val f = Task.effectOnFail(
               none,
               Task {
                 sideEffect = 42
@@ -1895,7 +1895,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = Task.effectOnNone(
+            val f = Task.effectOnFail(
               some,
               Task {
                 sideEffect = 42
@@ -1908,11 +1908,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("effectOnSome") {
+        describe("effectOnPure") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = Task.effectOnSome(
+            val f = Task.effectOnPure(
               none,
               (x: Int) =>
                 Task {
@@ -1927,7 +1927,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = Task.effectOnSome(
+            val f = Task.effectOnPure(
               some,
               (x: Int) =>
                 Task {
@@ -2040,11 +2040,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       describe("effect on result") {
 
-        describe("effectOnIncorrect") {
+        describe("effectOnFail") {
 
           test("incorrect") {
             var sideEffect: Int = 0
-            val f = Task.effectOnIncorrect(
+            val f = Task.effectOnFail(
               incorrect,
               (a: Anomaly) =>
                 Task {
@@ -2060,7 +2060,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("correct") {
             var sideEffect: Int = 0
-            val f = Task.effectOnIncorrect(
+            val f = Task.effectOnFail(
               correct,
               (a: Anomaly) =>
                 Task {
@@ -2074,11 +2074,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("effectOnCorrect") {
+        describe("effectOnPure") {
 
           test("incorrect") {
             var sideEffect: Int = 0
-            val f = Task.effectOnCorrect(
+            val f = Task.effectOnPure(
               incorrect,
               (x: Int) =>
                 Task {
@@ -2093,7 +2093,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("correct") {
             var sideEffect: Int = 0
-            val f = Task.effectOnCorrect(
+            val f = Task.effectOnPure(
               correct,
               (x: Int) =>
                 Task {
@@ -2472,11 +2472,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       describe("effect on option") {
 
-        describe("effectOnNone") {
+        describe("effectOnFail") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = none.effectOnNoneTask(
+            val f = none.effectOnFailTask(
               Task {
                 sideEffect = 42
                 sideEffect
@@ -2490,7 +2490,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = some.effectOnNoneTask(
+            val f = some.effectOnFailTask(
               Task {
                 sideEffect = 42
                 sideEffect
@@ -2502,11 +2502,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("effectOnSome") {
+        describe("effectOnPure") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = none.effectOnSomeTask(
+            val f = none.effectOnPureTask(
               (x: Int) =>
                 Task {
                   sideEffect = x
@@ -2520,7 +2520,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = some.effectOnSomeTask(
+            val f = some.effectOnPureTask(
               (x: Int) =>
                 Task {
                   sideEffect = x
@@ -2540,7 +2540,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .pure(none)
-              .effectOnNone(
+              .effectOnFail(
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2556,7 +2556,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val f =
               Task
                 .pure(some)
-                .effectOnNone(
+                .effectOnFail(
                   Task {
                     sideEffect = 42
                     sideEffect
@@ -2571,7 +2571,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .fail[Option[Int]](ano)
-              .effectOnNone(
+              .effectOnFail(
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2590,7 +2590,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .pure(none)
-              .effectOnSome(
+              .effectOnPure(
                 (x: Int) =>
                   Task {
                     sideEffect = x
@@ -2605,7 +2605,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .pure(some)
-              .effectOnSome(
+              .effectOnPure(
                 (x: Int) =>
                   Task {
                     sideEffect = x
@@ -2622,7 +2622,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .fail[Option[Int]](ano)
-              .effectOnSome(
+              .effectOnPure(
                 (x: Int) =>
                   Task {
                     sideEffect = x
@@ -2640,11 +2640,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       describe("effect on result") {
 
-        describe("effectOnIncorrect") {
+        describe("effectOnFail") {
 
           test("incorrect") {
             var sideEffect: Int = 0
-            val f = incorrect.effectOnIncorrectTask(
+            val f = incorrect.effectOnFailTask(
               (a: Anomaly) =>
                 Task {
                   sideEffect = 42
@@ -2659,7 +2659,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("correct") {
             var sideEffect: Int = 0
-            val f = correct.effectOnIncorrectTask(
+            val f = correct.effectOnFailTask(
               (a: Anomaly) =>
                 Task {
                   sideEffect = 42
@@ -2672,11 +2672,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("effectOnCorrect") {
+        describe("effectOnPure") {
 
           test("incorrect") {
             var sideEffect: Int = 0
-            val f = incorrect.effectOnCorrectTask(
+            val f = incorrect.effectOnPureTask(
               (x: Int) =>
                 Task {
                   sideEffect = x
@@ -2690,7 +2690,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("correct") {
             var sideEffect: Int = 0
-            val f = correct.effectOnCorrectTask(
+            val f = correct.effectOnPureTask(
               (x: Int) =>
                 Task {
                   sideEffect = x
@@ -2710,7 +2710,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .pure(incorrect)
-              .effectOnIncorrect(
+              .effectOnFail(
                 (a: Anomaly) =>
                   Task {
                     sideEffect = 42
@@ -2726,7 +2726,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .pure(correct)
-              .effectOnIncorrect(
+              .effectOnFail(
                 (a: Anomaly) =>
                   Task {
                     sideEffect = 42
@@ -2742,7 +2742,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .fail[Result[Int]](ano)
-              .effectOnIncorrect(
+              .effectOnFail(
                 (a: Anomaly) =>
                   Task {
                     sideEffect = 42
@@ -2763,7 +2763,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val f =
               Task
                 .pure(incorrect)
-                .effectOnCorrect(
+                .effectOnPure(
                   (x: Int) =>
                     Task {
                       sideEffect = x
@@ -2778,7 +2778,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .pure(correct)
-              .effectOnCorrect(
+              .effectOnPure(
                 (x: Int) =>
                   Task {
                     sideEffect = x
@@ -2796,7 +2796,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val f =
               Task
                 .fail[Result[Int]](ano)
-                .effectOnCorrect(
+                .effectOnPure(
                   (x: Int) =>
                     Task {
                       sideEffect = x

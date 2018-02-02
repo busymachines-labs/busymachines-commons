@@ -205,20 +205,20 @@ object TaskSyntax {
     def flatEffectOnFalse[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnFalse(test, effect)
 
-    def effectOnNone[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
-      TaskOps.effectOnNone(value, effect)
+    def effectOnFail[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
+      TaskOps.effectOnFail(value, effect)
 
     def flatEffectOnNone[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnNone(value, effect)
 
-    def effectOnSome[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
-      TaskOps.effectOnSome(value, effect)
+    def effectOnPure[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
+      TaskOps.effectOnPure(value, effect)
 
     def flatEffectOnSome[T, _](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnSome(value, effect)
 
-    def effectOnIncorrect[T, _](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] =
-      TaskOps.effectOnIncorrect(value, effect)
+    def effectOnFail[T, _](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] =
+      TaskOps.effectOnFail(value, effect)
 
     def flatEffectOnIncorrect[T, _](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnIncorrect(value, effect)
@@ -226,8 +226,8 @@ object TaskSyntax {
     def flatEffectOnCorrect[T, _](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnCorrect(value, effect)
 
-    def effectOnCorrect[T, _](value: Result[T], effect: T => Task[_]): Task[Unit] =
-      TaskOps.effectOnCorrect(value, effect)
+    def effectOnPure[T, _](value: Result[T], effect: T => Task[_]): Task[Unit] =
+      TaskOps.effectOnPure(value, effect)
 
     //=========================================================================
     //============================== Transformers =============================
@@ -309,10 +309,10 @@ object TaskSyntax {
     def flattenOptionThr(ifNone: => Throwable): Task[T] =
       TaskOps.flattenOptionThr(nopt, ifNone)
 
-    def effectOnNone[_](effect: => Task[_]): Task[Unit] =
+    def effectOnFail[_](effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnNone(nopt, effect)
 
-    def effectOnSome[_](effect: T => Task[_]): Task[Unit] =
+    def effectOnPure[_](effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnSome(nopt, effect)
 
   }
@@ -325,10 +325,10 @@ object TaskSyntax {
     def flattenResult: Task[T] =
       TaskOps.flattenResult(result)
 
-    def effectOnIncorrect[_](effect: Anomaly => Task[_]): Task[Unit] =
+    def effectOnFail[_](effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnIncorrect(result, effect)
 
-    def effectOnCorrect[_](effect: T => Task[_]): Task[Unit] =
+    def effectOnPure[_](effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnCorrect(result, effect)
   }
 
@@ -586,13 +586,13 @@ object TaskOps {
   def flatEffectOnFalse[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
     test.flatMap(t => TaskOps.effectOnFalse(t, effect))
 
-  def effectOnNone[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
+  def effectOnFail[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
     if (value.isEmpty) TaskOps.discardContent(effect) else Task.unit
 
   def flatEffectOnNone[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
-    value.flatMap(opt => TaskOps.effectOnNone(opt, effect))
+    value.flatMap(opt => TaskOps.effectOnFail(opt, effect))
 
-  def effectOnSome[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
+  def effectOnPure[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
     value match {
       case None    => Task.unit
       case Some(v) => TaskOps.discardContent(effect(v))
@@ -600,24 +600,24 @@ object TaskOps {
     }
 
   def flatEffectOnSome[T, _](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
-    value.flatMap(opt => TaskOps.effectOnSome(opt, effect))
+    value.flatMap(opt => TaskOps.effectOnPure(opt, effect))
 
-  def effectOnIncorrect[T, _](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] = value match {
+  def effectOnFail[T, _](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] = value match {
     case Correct(_)         => Task.unit
     case Incorrect(anomaly) => TaskOps.discardContent(effect(anomaly))
   }
 
   def flatEffectOnIncorrect[T, _](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
-    value.flatMap(result => TaskOps.effectOnIncorrect(result, effect))
+    value.flatMap(result => TaskOps.effectOnFail(result, effect))
 
-  def effectOnCorrect[T, _](value: Result[T], effect: T => Task[_]): Task[Unit] =
+  def effectOnPure[T, _](value: Result[T], effect: T => Task[_]): Task[Unit] =
     value match {
       case Incorrect(_) => Task.unit
       case Correct(v)   => TaskOps.discardContent(effect(v))
     }
 
   def flatEffectOnCorrect[T, _](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
-    value.flatMap(result => TaskOps.effectOnCorrect(result, effect))
+    value.flatMap(result => TaskOps.effectOnPure(result, effect))
 
   //=========================================================================
   //============================== Transformers =============================
