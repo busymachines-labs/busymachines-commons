@@ -19,6 +19,7 @@ package busymachines.effects.sync
 
 import busymachines.core.Anomaly
 
+import scala.collection.generic.CanBuildFrom
 import scala.util.{Failure, Success}
 
 /**
@@ -188,6 +189,21 @@ object TrySyntax {
 
     def discardContent[_](value: Try[_]): Try[Unit] =
       TryOps.discardContent(value)
+
+    //=========================================================================
+    //=============================== Traversals ==============================
+    //=========================================================================
+
+    def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): Try[C[B]] = TryOps.traverse(col)(fn)
+
+    def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+      implicit
+      cbf: CanBuildFrom[M[Try[A]], A, M[A]]
+    ): Try[M[A]] = TryOps.sequence(in)
+
   }
 
   /**
@@ -472,4 +488,51 @@ object TryOps {
 
   def discardContent[T](value: Try[T]): Try[Unit] =
     value.map(UnitFunction)
+
+  //=========================================================================
+  //=============================== Traversals ==============================
+  //=========================================================================
+
+  /**
+    *
+    */
+  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Try[C[B]] = {
+    import scala.collection.mutable
+    if (col.isEmpty) {
+      TryOps.pure(cbf.apply().result())
+    }
+    else {
+      val seq  = col.toSeq
+      val head = seq.head
+      val tail = seq.tail
+      val builder: mutable.Builder[B, C[B]] = cbf.apply()
+      val firstBuilder = fn(head) map { z =>
+        builder.+=(z)
+      }
+      val eventualBuilder: Try[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
+        (serializedBuilder: Try[mutable.Builder[B, C[B]]], element: A) =>
+          serializedBuilder flatMap [mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
+            val f: Try[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
+              result.+=(newElement)
+            }
+            f
+          }
+      }
+      eventualBuilder map { b =>
+        b.result()
+      }
+    }
+  }
+
+  /**
+    *
+    */
+  def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Try[A]], A, M[A]]
+  ): Try[M[A]] = TryOps.traverse(in)(identity)
+
 }

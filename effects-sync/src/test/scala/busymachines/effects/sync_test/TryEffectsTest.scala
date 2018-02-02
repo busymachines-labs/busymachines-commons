@@ -823,6 +823,65 @@ final class TryEffectsTest extends FunSpec {
 
     } //end transformers
 
+    describe("traversals") {
+
+      describe("Try.traverse") {
+
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = Try.traverse(input) { i =>
+            Try {
+              sideEffect = 42
+            }
+          }
+
+          assert(eventualResult.r == expected)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("non empty list") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          val eventualResult: Try[Seq[String]] = Try.traverse(input) { i =>
+            Try.pure(i.toString)
+          }
+          assert(expected == eventualResult.r)
+        }
+
+      }
+
+      describe("Try.sequence") {
+
+        test("empty list") {
+          val input:    Seq[Try[Int]] = List()
+          val expected: Seq[Int]      = List()
+
+          val eventualResult = Try.sequence(input)
+          assert(eventualResult.r == expected)
+        }
+
+        test("non empty list") {
+          val nrs = (1 to 100).toList
+          val input: Seq[Try[Int]] = (1 to 100).toList.map(Try.pure)
+          val expected = nrs.map(_.toString)
+
+          val eventualResult: Try[Seq[String]] = Try.sequence {
+            input map { tr =>
+              tr.map(i => i.toString)
+            }
+          }
+          assert(expected == eventualResult.r)
+        }
+
+      }
+
+    } // end traversals
+
   } //end companion object syntax tests
 
   //===========================================================================
