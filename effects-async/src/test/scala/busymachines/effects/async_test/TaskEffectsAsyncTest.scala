@@ -1876,11 +1876,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       describe("effect on option") {
 
-        describe("effectOnEmpty") {
+        describe("effectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = Task.effectOnEmpty(
+            val f = Task.effectOnNone(
               none,
               Task {
                 sideEffect = 42
@@ -1895,7 +1895,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = Task.effectOnEmpty(
+            val f = Task.effectOnNone(
               some,
               Task {
                 sideEffect = 42
@@ -1941,11 +1941,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatEffectOnEmpty") {
+        describe("flatEffectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = Task.flatEffectOnEmpty(
+            val f = Task.flatEffectOnNone(
               Task.pure(none),
               Task {
                 sideEffect = 42
@@ -1959,7 +1959,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = Task.flatEffectOnEmpty(
+            val f = Task.flatEffectOnNone(
               Task.pure(some),
               Task {
                 sideEffect = 42
@@ -1973,7 +1973,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             var sideEffect: Int = 0
-            val f = Task.flatEffectOnEmpty(
+            val f = Task.flatEffectOnNone(
               Task.fail[Option[Int]](ano),
               Task {
                 sideEffect = 42
@@ -2472,11 +2472,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       describe("effect on option") {
 
-        describe("effectOnEmpty") {
+        describe("effectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = none.effectOnEmptyTask(
+            val f = none.effectOnNoneTask(
               Task {
                 sideEffect = 42
                 sideEffect
@@ -2490,7 +2490,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = some.effectOnEmptyTask(
+            val f = some.effectOnNoneTask(
               Task {
                 sideEffect = 42
                 sideEffect
@@ -2534,13 +2534,13 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatEffectOnEmpty") {
+        describe("flatEffectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
             val f = Task
               .pure(none)
-              .effectOnEmpty(
+              .effectOnNone(
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2556,7 +2556,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val f =
               Task
                 .pure(some)
-                .effectOnEmpty(
+                .effectOnNone(
                   Task {
                     sideEffect = 42
                     sideEffect
@@ -2571,7 +2571,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task
               .fail[Option[Int]](ano)
-              .effectOnEmpty(
+              .effectOnNone(
                 Task {
                   sideEffect = 42
                   sideEffect

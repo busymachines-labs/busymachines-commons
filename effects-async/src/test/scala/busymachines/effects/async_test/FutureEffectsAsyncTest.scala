@@ -1851,11 +1851,11 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
       describe("effect on option") {
 
-        describe("effectOnEmpty") {
+        describe("effectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = Future.effectOnEmpty(
+            val f = Future.effectOnNone(
               none,
               Future {
                 sideEffect = 42
@@ -1869,7 +1869,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = Future.effectOnEmpty(
+            val f = Future.effectOnNone(
               some,
               Future {
                 sideEffect = 42
@@ -1915,11 +1915,11 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatEffectOnEmpty") {
+        describe("flatEffectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = Future.flatEffectOnEmpty(
+            val f = Future.flatEffectOnNone(
               Future.pure(none),
               Future {
                 sideEffect = 42
@@ -1932,7 +1932,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = Future.flatEffectOnEmpty(
+            val f = Future.flatEffectOnNone(
               Future.pure(some),
               Future {
                 sideEffect = 42
@@ -1946,7 +1946,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             var sideEffect: Int = 0
-            val f = Future.flatEffectOnEmpty(
+            val f = Future.flatEffectOnNone(
               Future.fail[Option[Int]](ano),
               Future {
                 sideEffect = 42
@@ -2423,11 +2423,11 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
       describe("effect on option") {
 
-        describe("effectOnEmpty") {
+        describe("effectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = none.effectOnEmptyFuture(
+            val f = none.effectOnNoneFuture(
               Future {
                 sideEffect = 42
                 sideEffect
@@ -2440,7 +2440,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = some.effectOnEmptyFuture(
+            val f = some.effectOnNoneFuture(
               Future {
                 sideEffect = 42
                 sideEffect
@@ -2483,14 +2483,14 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatEffectOnEmpty") {
+        describe("flatEffectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
             val f =
               Future
                 .pure(none)
-                .effectOnEmpty(
+                .effectOnNone(
                   Future {
                     sideEffect = 42
                     sideEffect
@@ -2505,7 +2505,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val f =
               Future
                 .pure(some)
-                .effectOnEmpty(
+                .effectOnNone(
                   Future {
                     sideEffect = 42
                     sideEffect
@@ -2521,7 +2521,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val f =
               Future
                 .fail[Option[Int]](ano)
-                .effectOnEmpty(
+                .effectOnNone(
                   Future {
                     sideEffect = 42
                     sideEffect

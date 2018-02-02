@@ -205,11 +205,11 @@ object TaskSyntax {
     def flatEffectOnFalse[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnFalse(test, effect)
 
-    def effectOnEmpty[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
-      TaskOps.effectOnEmpty(value, effect)
+    def effectOnNone[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
+      TaskOps.effectOnNone(value, effect)
 
-    def flatEffectOnEmpty[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
-      TaskOps.flatEffectOnEmpty(value, effect)
+    def flatEffectOnNone[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
+      TaskOps.flatEffectOnNone(value, effect)
 
     def effectOnSome[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnSome(value, effect)
@@ -309,8 +309,8 @@ object TaskSyntax {
     def flattenOptionThr(ifNone: => Throwable): Task[T] =
       TaskOps.flattenOptionThr(nopt, ifNone)
 
-    def effectOnEmpty[_](effect: => Task[_]): Task[Unit] =
-      TaskOps.flatEffectOnEmpty(nopt, effect)
+    def effectOnNone[_](effect: => Task[_]): Task[Unit] =
+      TaskOps.flatEffectOnNone(nopt, effect)
 
     def effectOnSome[_](effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnSome(nopt, effect)
@@ -586,11 +586,11 @@ object TaskOps {
   def flatEffectOnFalse[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
     test.flatMap(t => TaskOps.effectOnFalse(t, effect))
 
-  def effectOnEmpty[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
+  def effectOnNone[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
     if (value.isEmpty) TaskOps.discardContent(effect) else Task.unit
 
-  def flatEffectOnEmpty[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
-    value.flatMap(opt => TaskOps.effectOnEmpty(opt, effect))
+  def flatEffectOnNone[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
+    value.flatMap(opt => TaskOps.effectOnNone(opt, effect))
 
   def effectOnSome[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
     value match {

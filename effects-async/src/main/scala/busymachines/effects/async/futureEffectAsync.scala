@@ -221,13 +221,13 @@ object FutureSyntax {
     def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnFalse(test, effect)
 
-    def effectOnEmpty[T, _](value: Option[T], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
-      FutureOps.effectOnEmpty(value, effect)
+    def effectOnNone[T, _](value: Option[T], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.effectOnNone(value, effect)
 
-    def flatEffectOnEmpty[T, _](value: Future[Option[T]], effect: => Future[_])(
+    def flatEffectOnNone[T, _](value: Future[Option[T]], effect: => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
-      FutureOps.flatEffectOnEmpty(value, effect)
+      FutureOps.flatEffectOnNone(value, effect)
 
     def effectOnSome[T, _](value: Option[T], effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnSome(value, effect)
@@ -350,8 +350,8 @@ object FutureSyntax {
     def flattenOptionThr(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flattenOptionThr(nopt, ifNone)
 
-    def effectOnEmpty[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
-      FutureOps.flatEffectOnEmpty(nopt, effect)
+    def effectOnNone[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.flatEffectOnNone(nopt, effect)
 
     def effectOnSome[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnSome(nopt, effect)
@@ -629,13 +629,13 @@ object FutureOps {
   def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     test.flatMap(t => FutureOps.effectOnFalse(t, effect))
 
-  def effectOnEmpty[T, _](value: Option[T], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  def effectOnNone[T, _](value: Option[T], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     if (value.isEmpty) FutureOps.discardContent(effect) else Future.unit
 
-  def flatEffectOnEmpty[T, _](value: Future[Option[T]], effect: => Future[_])(
+  def flatEffectOnNone[T, _](value: Future[Option[T]], effect: => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
-    value.flatMap(opt => FutureOps.effectOnEmpty(opt, effect))
+    value.flatMap(opt => FutureOps.effectOnNone(opt, effect))
 
   def effectOnSome[T, _](value: Option[T], effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     value match {

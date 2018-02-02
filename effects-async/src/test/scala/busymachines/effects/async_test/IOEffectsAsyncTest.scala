@@ -1876,11 +1876,11 @@ final class IOEffectsAsyncTest extends FunSpec {
 
       describe("effect on option") {
 
-        describe("effectOnEmpty") {
+        describe("effectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = IO.effectOnEmpty(
+            val f = IO.effectOnNone(
               none,
               IO {
                 sideEffect = 42
@@ -1895,7 +1895,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = IO.effectOnEmpty(
+            val f = IO.effectOnNone(
               some,
               IO {
                 sideEffect = 42
@@ -1941,11 +1941,11 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatEffectOnEmpty") {
+        describe("flatEffectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = IO.flatEffectOnEmpty(
+            val f = IO.flatEffectOnNone(
               IO.pure(none),
               IO {
                 sideEffect = 42
@@ -1959,7 +1959,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = IO.flatEffectOnEmpty(
+            val f = IO.flatEffectOnNone(
               IO.pure(some),
               IO {
                 sideEffect = 42
@@ -1973,7 +1973,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             var sideEffect: Int = 0
-            val f = IO.flatEffectOnEmpty(
+            val f = IO.flatEffectOnNone(
               IO.fail[Option[Int]](ano),
               IO {
                 sideEffect = 42
@@ -2471,11 +2471,11 @@ final class IOEffectsAsyncTest extends FunSpec {
 
       describe("effect on option") {
 
-        describe("effectOnEmpty") {
+        describe("effectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
-            val f = none.effectOnEmptyIO(
+            val f = none.effectOnNoneIO(
               IO {
                 sideEffect = 42
                 sideEffect
@@ -2489,7 +2489,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("some") {
             var sideEffect: Int = 0
-            val f = some.effectOnEmptyIO(
+            val f = some.effectOnNoneIO(
               IO {
                 sideEffect = 42
                 sideEffect
@@ -2533,13 +2533,13 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("flatEffectOnEmpty") {
+        describe("flatEffectOnNone") {
 
           test("none") {
             var sideEffect: Int = 0
             val f = IO
               .pure(none)
-              .effectOnEmpty(
+              .effectOnNone(
                 IO {
                   sideEffect = 42
                   sideEffect
@@ -2554,7 +2554,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f =
               IO.pure(some)
-                .effectOnEmpty(
+                .effectOnNone(
                   IO {
                     sideEffect = 42
                     sideEffect
@@ -2569,7 +2569,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = IO
               .fail[Option[Int]](ano)
-              .effectOnEmpty(
+              .effectOnNone(
                 IO {
                   sideEffect = 42
                   sideEffect

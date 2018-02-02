@@ -93,20 +93,20 @@ object OptionSyntaxAsync {
     //==================== Run side-effects on Option state ===================
     //=========================================================================
 
-    def effectOnEmptyFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
-      FutureOps.effectOnEmpty(value, effect)
+    def effectOnNoneFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+      FutureOps.effectOnNone(value, effect)
 
     def effectOnSomeFuture[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnSome(value, effect)
 
-    def effectOnEmptyIO[_](effect: => IO[_]): IO[Unit] =
-      IOOps.effectOnEmpty(value, effect)
+    def effectOnNoneIO[_](effect: => IO[_]): IO[Unit] =
+      IOOps.effectOnNone(value, effect)
 
     def effectOnSomeIO[_](effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnSome(value, effect)
 
-    def effectOnEmptyTask[_](effect: => Task[_]): Task[Unit] =
-      TaskOps.effectOnEmpty(value, effect)
+    def effectOnNoneTask[_](effect: => Task[_]): Task[Unit] =
+      TaskOps.effectOnNone(value, effect)
 
     def effectOnSomeTask[_](effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnSome(value, effect)

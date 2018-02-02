@@ -195,11 +195,11 @@ object IOSyntax {
     def flatEffectOnFalse[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnFalse(test, effect)
 
-    def effectOnEmpty[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
-      IOOps.effectOnEmpty(value, effect)
+    def effectOnNone[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
+      IOOps.effectOnNone(value, effect)
 
-    def flatEffectOnEmpty[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
-      IOOps.flatEffectOnEmpty(value, effect)
+    def flatEffectOnNone[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
+      IOOps.flatEffectOnNone(value, effect)
 
     def effectOnSome[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnSome(value, effect)
@@ -310,8 +310,8 @@ object IOSyntax {
     def flattenOptionThr(ifNone: => Throwable): IO[T] =
       IOOps.flattenOptionThr(nopt, ifNone)
 
-    def effectOnEmpty[_](effect: => IO[_]): IO[Unit] =
-      IOOps.flatEffectOnEmpty(nopt, effect)
+    def effectOnNone[_](effect: => IO[_]): IO[Unit] =
+      IOOps.flatEffectOnNone(nopt, effect)
 
     def effectOnSome[_](effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnSome(nopt, effect)
@@ -586,11 +586,11 @@ object IOOps {
   def flatEffectOnFalse[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
     test.flatMap(t => IOOps.effectOnFalse(t, effect))
 
-  def effectOnEmpty[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
+  def effectOnNone[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
     if (value.isEmpty) IOOps.discardContent(effect) else IO.unit
 
-  def flatEffectOnEmpty[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
-    value.flatMap(opt => IOOps.effectOnEmpty(opt, effect))
+  def flatEffectOnNone[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
+    value.flatMap(opt => IOOps.effectOnNone(opt, effect))
 
   def effectOnSome[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
     value match {
