@@ -203,7 +203,13 @@ Since Option is an extremely wide-spread effect, you want to sometimes "unpack" 
 Since Option is an extremely wide-spread effect, you want to sometimes "unpack" it into a more powerful effect to continue your work easily, without too much clutter. So we have:
 * `val r: F[Int] = $F.pure(Result.pure(42)).unpack` — fails with same `anomaly` as the underlying `Result` if it is `Incorrect`
 
-#### 5. `async` specific syntax
+#### 5. $F.traverse + $F.sequence
+
+All companion objects now have ways of lifting a `List[T]` into `F[List[R]]` of T with a function `T => F[R]` via `$F.traverse`. `$F.sequence` is a special case of traverse that transforms `List[F[T]]` into `F[List[T]]`.
+
+`Future`, `IO`, `Task` also have a method called `serialize` which has the same signature as `traverse`, but guarantees that no two computations are run in parallel. In case of `Task` and `IO` it does not matter that much, since `traverse` has the same semantics, but for `Future` it is almost imperative that you use it instead of `traverse` and `sequence` because you can easily queue 600 Futures on your execution context and kill it.
+
+#### 6. `async` specific syntax
 Since asynchrony and side-effecting is more complex of a task, the `async` module has the following special operations:
 
 * `expr.suspendIn{IO/Future/Task}` — the expression `effectValue` is passed by name, to ensure that whatever side-effect it has is "suspended" in the specified Effect. This is almost useless when done for `Future` since the side-effect is done on a separate thread, but for `IO` and `Task` it is absolutely invaluable, as it delays side-effects until you explicitely "run" the `IO` or `Task`
