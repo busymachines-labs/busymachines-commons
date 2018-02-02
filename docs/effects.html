@@ -96,7 +96,7 @@ You can also import only what you need. See <a href="effects.html#modular-import
 
 <h5 id="4-not-a-monad-transformer">4. NOT a monad transformer</h5>
 
-<p>This module does not seek to handle cases where all your types look like <code class="highlighter-rouge">IO[Option[T]]</code>, and you can simply lift those into a <code class="highlighter-rouge">OptionT</code> and then neatly combine them. If you do have such a scenario than just use monad transformers, it’s definitely the best solution out there.</p>
+<p>This module does not seek to handle cases where all your types look like <code class="highlighter-rouge">IO[Option[T]]</code>, and you can simply lift those into a <code class="highlighter-rouge">OptionT</code> and then neatly combine them. If you do have such a scenario then just use monad transformers, it’s definitely the best solution out there.</p>
 
 <p>Instead, this module seeks to give fairly uniform syntax for converting from one effect to the other (if possible, see the <a href="effects.html#conversion-between-effects">conversion</a> section). Since in most extremely large systems we have an <code class="highlighter-rouge">Option</code> coming from one place, a <code class="highlighter-rouge">Result</code> from another, <code class="highlighter-rouge">Try</code> from some legacy code, and you need to combine them all into one final <code class="highlighter-rouge">Task</code>. In this case you want to simply short circuit everything with a specific <a href="core.html">anomaly</a> and convert the <code class="highlighter-rouge">Option</code> into a <code class="highlighter-rouge">Task</code> immediately and then simply combine other <code class="highlighter-rouge">Task</code> as usual.</p>
 
@@ -220,7 +220,13 @@ You can also import only what you need. See <a href="effects.html#modular-import
   <li><code class="highlighter-rouge">val r: F[Int] = $F.pure(Result.pure(42)).unpack</code> — fails with same <code class="highlighter-rouge">anomaly</code> as the underlying <code class="highlighter-rouge">Result</code> if it is <code class="highlighter-rouge">Incorrect</code></li>
 </ul>
 
-<h4 id="5-async-specific-syntax">5. <code class="highlighter-rouge">async</code> specific syntax</h4>
+<h4 id="5-ftraverse--fsequence">5. $F.traverse + $F.sequence</h4>
+
+<p>All companion objects now have ways of lifting a <code class="highlighter-rouge">List[T]</code> into <code class="highlighter-rouge">F[List[R]]</code> of T with a function <code class="highlighter-rouge">T =&gt; F[R]</code> via <code class="highlighter-rouge">$F.traverse</code>. <code class="highlighter-rouge">$F.sequence</code> is a special case of traverse that transforms <code class="highlighter-rouge">List[F[T]]</code> into <code class="highlighter-rouge">F[List[T]]</code>.</p>
+
+<p><code class="highlighter-rouge">Future</code>, <code class="highlighter-rouge">IO</code>, <code class="highlighter-rouge">Task</code> also have a method called <code class="highlighter-rouge">serialize</code> which has the same signature as <code class="highlighter-rouge">traverse</code>, but guarantees that no two computations are run in parallel. In case of <code class="highlighter-rouge">Task</code> and <code class="highlighter-rouge">IO</code> it does not matter that much, since <code class="highlighter-rouge">traverse</code> has the same semantics, but for <code class="highlighter-rouge">Future</code> it is almost imperative that you use it instead of <code class="highlighter-rouge">traverse</code> and <code class="highlighter-rouge">sequence</code> because you can easily queue 600 Futures on your execution context and kill it.</p>
+
+<h4 id="6-async-specific-syntax">6. <code class="highlighter-rouge">async</code> specific syntax</h4>
 <p>Since asynchrony and side-effecting is more complex of a task, the <code class="highlighter-rouge">async</code> module has the following special operations:</p>
 
 <ul>
