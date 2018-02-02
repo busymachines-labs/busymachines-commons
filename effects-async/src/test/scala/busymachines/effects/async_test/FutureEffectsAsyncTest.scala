@@ -623,44 +623,44 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
       describe("nested") {
 
-        describe("flattenOption") {
+        describe("unpack") {
           test("pure — none") {
             assertThrows[InvalidInputAnomaly] {
-              Future.flattenOption(Future.pure(none), ano).r
+              Future.unpackOption(Future.pure(none), ano).r
             }
           }
 
           test("pure — some") {
-            assert(Future.flattenOption(Future.pure(some), ano).r == 42)
+            assert(Future.unpackOption(Future.pure(some), ano).r == 42)
           }
 
           test("fail") {
             assertThrows[RuntimeException] {
-              Future.flattenOption(Future.failThr[Option[Int]](thr), ano).r
+              Future.unpackOption(Future.failThr[Option[Int]](thr), ano).r
             }
           }
         }
 
-        describe("flattenOptionThr") {
+        describe("unpackThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              Future.flattenOptionThr(Future.pure(none), thr).r
+              Future.unpackOptionThr(Future.pure(none), thr).r
             }
           }
 
           test("pure — some") {
-            assert(Future.flattenOptionThr(Future.pure(some), thr).r == 42)
+            assert(Future.unpackOptionThr(Future.pure(some), thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              Future.flattenOptionThr(Future.fail[Option[Int]](ano), thr).r
+              Future.unpackOptionThr(Future.fail[Option[Int]](ano), thr).r
             }
           }
         }
 
-        describe("flattenResult") {
+        describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
               Future.flattenResult(Future.pure(incorrect)).r
@@ -1313,52 +1313,52 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
       describe("nested") {
 
-        describe("flattenOption") {
+        describe("unpack") {
           test("pure — none") {
             assertThrows[InvalidInputAnomaly] {
-              Future.pure(none).flattenOption(ano).r
+              Future.pure(none).unpack(ano).r
             }
           }
 
           test("pure — some") {
-            assert(Future.pure(some).flattenOption(ano).r == 42)
+            assert(Future.pure(some).unpack(ano).r == 42)
           }
 
           test("fail") {
             assertThrows[RuntimeException] {
-              Future.failThr[Option[Int]](thr).flattenOption(ano).r
+              Future.failThr[Option[Int]](thr).unpack(ano).r
             }
           }
         }
 
-        describe("flattenOptionThr") {
+        describe("unpackThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              Future.pure(none).flattenOptionThr(thr).r
+              Future.pure(none).unpackThr(thr).r
             }
           }
 
           test("pure — some") {
-            assert(Future.pure(some).flattenOptionThr(thr).r == 42)
+            assert(Future.pure(some).unpackThr(thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              Future.fail[Option[Int]](ano).flattenOptionThr(thr).r
+              Future.fail[Option[Int]](ano).unpackThr(thr).r
             }
           }
         }
 
-        describe("flattenResult") {
+        describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              Future.pure(incorrect).flattenResult.r
+              Future.pure(incorrect).unpack.r
             )
           }
 
           test("correct") {
-            assert(Future.pure(correct).flattenResult.r == 42)
+            assert(Future.pure(correct).unpack.r == 42)
           }
         }
 

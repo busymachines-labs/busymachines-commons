@@ -648,44 +648,44 @@ final class IOEffectsAsyncTest extends FunSpec {
 
       describe("nested") {
 
-        describe("flattenOption") {
+        describe("unpack") {
           test("pure — none") {
             assertThrows[InvalidInputAnomaly] {
-              IO.flattenOption(IO.pure(none), ano).r
+              IO.unpackOption(IO.pure(none), ano).r
             }
           }
 
           test("pure — some") {
-            assert(IO.flattenOption(IO.pure(some), ano).r == 42)
+            assert(IO.unpackOption(IO.pure(some), ano).r == 42)
           }
 
           test("fail") {
             assertThrows[RuntimeException] {
-              IO.flattenOption(IO.failThr[Option[Int]](thr), ano).r
+              IO.unpackOption(IO.failThr[Option[Int]](thr), ano).r
             }
           }
         }
 
-        describe("flattenOptionThr") {
+        describe("unpackThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              IO.flattenOptionThr(IO.pure(none), thr).r
+              IO.unpackOptionThr(IO.pure(none), thr).r
             }
           }
 
           test("pure — some") {
-            assert(IO.flattenOptionThr(IO.pure(some), thr).r == 42)
+            assert(IO.unpackOptionThr(IO.pure(some), thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              IO.flattenOptionThr(IO.fail[Option[Int]](ano), thr).r
+              IO.unpackOptionThr(IO.fail[Option[Int]](ano), thr).r
             }
           }
         }
 
-        describe("flattenResult") {
+        describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
               IO.flattenResult(IO.pure(incorrect)).r
@@ -1338,44 +1338,44 @@ final class IOEffectsAsyncTest extends FunSpec {
 
       describe("nested") {
 
-        describe("flattenOption") {
+        describe("unpack") {
           test("pure — none") {
             assertThrows[InvalidInputAnomaly] {
-              IO.pure(none).flattenOption(ano).r
+              IO.pure(none).unpack(ano).r
             }
           }
 
           test("pure — some") {
-            assert(IO.pure(some).flattenOption(ano).r == 42)
+            assert(IO.pure(some).unpack(ano).r == 42)
           }
 
           test("fail") {
             assertThrows[RuntimeException] {
-              IO.failThr[Option[Int]](thr).flattenOption(ano).r
+              IO.failThr[Option[Int]](thr).unpack(ano).r
             }
           }
         }
 
-        describe("flattenOptionThr") {
+        describe("unpackThr") {
 
           test("pure — none") {
             assertThrows[RuntimeException] {
-              IO.pure(none).flattenOptionThr(thr).r
+              IO.pure(none).unpackThr(thr).r
             }
           }
 
           test("pure — some") {
-            assert(IO.pure(some).flattenOptionThr(thr).r == 42)
+            assert(IO.pure(some).unpackThr(thr).r == 42)
           }
 
           test("fail") {
             assertThrows[InvalidInputFailure] {
-              IO.fail[Option[Int]](ano).flattenOptionThr(thr).r
+              IO.fail[Option[Int]](ano).unpackThr(thr).r
             }
           }
         }
 
-        describe("flattenResult") {
+        describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
               IO.pure(incorrect).flattenResult.r

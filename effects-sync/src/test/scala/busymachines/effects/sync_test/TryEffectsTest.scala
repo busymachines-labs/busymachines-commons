@@ -603,39 +603,39 @@ final class TryEffectsTest extends FunSpec {
 
     describe("nested") {
 
-      describe("flattenOption") {
+      describe("unpack") {
         test("pure — none") {
           assertThrows[InvalidInputAnomaly] {
-            Try.flattenOption(Try.pure(none), ano).r
+            Try.unpackOption(Try.pure(none), ano).r
           }
         }
 
         test("pure — some") {
-          assert(Try.flattenOption(Try.pure(some), ano).r == 42)
+          assert(Try.unpackOption(Try.pure(some), ano).r == 42)
         }
 
         test("fail") {
           assertThrows[RuntimeException] {
-            Try.flattenOption(Try.failureThr[Option[Int]](thr), ano).r
+            Try.unpackOption(Try.failureThr[Option[Int]](thr), ano).r
           }
         }
       }
 
-      describe("flattenOptionThr") {
+      describe("unpackThr") {
 
         test("pure — none") {
           assertThrows[RuntimeException] {
-            Try.flattenOptionThr(Try.pure(none), thr).r
+            Try.unpackOptionThr(Try.pure(none), thr).r
           }
         }
 
         test("pure — some") {
-          assert(Try.flattenOptionThr(Try.pure(some), thr).r == 42)
+          assert(Try.unpackOptionThr(Try.pure(some), thr).r == 42)
         }
 
         test("fail") {
           assertThrows[InvalidInputFailure] {
-            Try.flattenOptionThr(Try.failure[Option[Int]](ano), thr).r
+            Try.unpackOptionThr(Try.failure[Option[Int]](ano), thr).r
           }
         }
       }
@@ -1198,39 +1198,39 @@ final class TryEffectsTest extends FunSpec {
 
     describe("nested") {
 
-      describe("flattenOption") {
+      describe("unpack") {
         test("pure — none") {
           assertThrows[InvalidInputAnomaly] {
-            Try.pure(none).flattenOption(ano).r
+            Try.pure(none).unpack(ano).r
           }
         }
 
         test("pure — some") {
-          assert(Try.pure(some).flattenOption(ano).r == 42)
+          assert(Try.pure(some).unpack(ano).r == 42)
         }
 
         test("fail") {
           assertThrows[RuntimeException] {
-            Try.failureThr[Option[Int]](thr).flattenOption(ano).r
+            Try.failureThr[Option[Int]](thr).unpack(ano).r
           }
         }
       }
 
-      describe("flattenOptionThr") {
+      describe("unpackThr") {
 
         test("pure — none") {
           assertThrows[RuntimeException] {
-            Try.pure(none).flattenOptionThr(thr).r
+            Try.pure(none).unpackThr(thr).r
           }
         }
 
         test("pure — some") {
-          assert(Try.pure(some).flattenOptionThr(thr).r == 42)
+          assert(Try.pure(some).unpackThr(thr).r == 42)
         }
 
         test("fail") {
           assertThrows[InvalidInputFailure] {
-            Try.failure[Option[Int]](ano).flattenOptionThr(thr).r
+            Try.failure[Option[Int]](ano).unpackThr(thr).r
           }
         }
       }

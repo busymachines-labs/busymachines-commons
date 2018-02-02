@@ -371,20 +371,20 @@ final class ResultEffectsTest extends FunSpec {
 
     describe("nested") {
 
-      describe("flattenOption") {
+      describe("unpack") {
         test("pure — none") {
           assertThrows[InvalidInputAnomaly] {
-            Result.flattenOption(Result.pure(none), ano).r
+            Result.unpackOption(Result.pure(none), ano).r
           }
         }
 
         test("pure — some") {
-          assert(Result.flattenOption(Result.pure(some), ano).r == 42)
+          assert(Result.unpackOption(Result.pure(some), ano).r == 42)
         }
 
         test("fail") {
           assertThrows[DeniedFailure] {
-            Result.flattenOption(Result.fail[Option[Int]](DeniedFailure), ano).r
+            Result.unpackOption(Result.fail[Option[Int]](DeniedFailure), ano).r
           }
         }
       }
@@ -772,20 +772,20 @@ final class ResultEffectsTest extends FunSpec {
 
     describe("nested") {
 
-      describe("flattenOption") {
+      describe("unpack") {
         test("pure — none") {
           assertThrows[InvalidInputAnomaly] {
-            Result.pure(none).flattenOption(ano).r
+            Result.pure(none).unpack(ano).r
           }
         }
 
         test("pure — some") {
-          assert(Result.pure(some).flattenOption(ano).r == 42)
+          assert(Result.pure(some).unpack(ano).r == 42)
         }
 
         test("fail") {
           assertThrows[DeniedFailure] {
-            Result.fail[Option[Int]](DeniedFailure).flattenOption(ano).r
+            Result.fail[Option[Int]](DeniedFailure).unpack(ano).r
           }
         }
       }

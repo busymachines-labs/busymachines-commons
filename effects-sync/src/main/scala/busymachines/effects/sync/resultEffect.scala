@@ -78,7 +78,7 @@ object ResultSyntax {
     *
     */
   final class NestedOptionOps[T](private[this] val nopt: Result[Option[T]]) {
-    def flattenOption(ifNone: => Anomaly): Result[T] = Result.flattenOption(nopt, ifNone)
+    def unpack(ifNone: => Anomaly): Result[T] = Result.unpackOption(nopt, ifNone)
   }
 
   /**
@@ -238,7 +238,7 @@ object Result {
   def flatFailOnFalse(test: Result[Boolean], bad: => Anomaly): Result[Unit] =
     test.flatMap(b => if (!b) Result.fail(bad) else Result.unit)
 
-  def flattenOption[T](nopt: Result[Option[T]], ifNone: => Anomaly): Result[T] =
+  def unpackOption[T](nopt: Result[Option[T]], ifNone: => Anomaly): Result[T] =
     nopt.flatMap(opt => Result.fromOption(opt, ifNone))
 
   //===========================================================================

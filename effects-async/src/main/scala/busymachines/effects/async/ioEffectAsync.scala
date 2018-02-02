@@ -158,11 +158,11 @@ object IOSyntax {
     def flatFailOnFalseThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
       IOOps.flatFailOnFalseThr(test, bad)
 
-    def flattenOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
-      IOOps.flattenOption(nopt, ifNone)
+    def unpackOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
+      IOOps.unpackOption(nopt, ifNone)
 
-    def flattenOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
-      IOOps.flattenOptionThr(nopt, ifNone)
+    def unpackOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
+      IOOps.unpackOptionThr(nopt, ifNone)
 
     def flattenResult[T](value: IO[Result[T]]): IO[T] =
       IOOps.flattenResult(value)
@@ -304,11 +304,11 @@ object IOSyntax {
     */
   final class NestedOptionOps[T](private[this] val nopt: IO[Option[T]]) {
 
-    def flattenOption(ifNone: => Anomaly): IO[T] =
-      IOOps.flattenOption(nopt, ifNone)
+    def unpack(ifNone: => Anomaly): IO[T] =
+      IOOps.unpackOption(nopt, ifNone)
 
-    def flattenOptionThr(ifNone: => Throwable): IO[T] =
-      IOOps.flattenOptionThr(nopt, ifNone)
+    def unpackThr(ifNone: => Throwable): IO[T] =
+      IOOps.unpackOptionThr(nopt, ifNone)
 
     def effectOnFail[_](effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnNone(nopt, effect)
@@ -541,13 +541,13 @@ object IOOps {
   def flatFailOnFalseThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
     test.flatMap(t => IOOps.failOnFalseThr(t, bad))
 
-  def flattenOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
+  def unpackOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
     nopt.flatMap {
       case None    => IOOps.fail(ifNone)
       case Some(v) => IOOps.pure(v)
     }
 
-  def flattenOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
+  def unpackOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
     nopt.flatMap {
       case None    => IOOps.failThr(ifNone)
       case Some(v) => IOOps.pure(v)

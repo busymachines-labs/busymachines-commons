@@ -132,11 +132,11 @@ object TrySyntax {
     def flatFailOnFalseThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
       TryOps.flatFailOnFalseThr(test, bad)
 
-    def flattenOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
-      TryOps.flattenOption(nopt, ifNone)
+    def unpackOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
+      TryOps.unpackOption(nopt, ifNone)
 
-    def flattenOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
-      TryOps.flattenOptionThr(nopt, ifNone)
+    def unpackOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
+      TryOps.unpackOptionThr(nopt, ifNone)
 
     def flattenResult[T](value: Try[Result[T]]): Try[T] =
       TryOps.flattenResult(value)
@@ -211,9 +211,9 @@ object TrySyntax {
     *
     */
   final class NestedOptionOps[T](private[this] val nopt: Try[Option[T]]) {
-    def flattenOption(ifNone: => Anomaly): Try[T] = TryOps.flattenOption(nopt, ifNone)
+    def unpack(ifNone: => Anomaly): Try[T] = TryOps.unpackOption(nopt, ifNone)
 
-    def flattenOptionThr(ifNone: => Throwable): Try[T] = TryOps.flattenOptionThr(nopt, ifNone)
+    def unpackThr(ifNone: => Throwable): Try[T] = TryOps.unpackOptionThr(nopt, ifNone)
   }
 
   /**
@@ -403,10 +403,10 @@ object TryOps {
   def flatFailOnFalseThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
     test.flatMap(b => if (!b) TryOps.failThr(bad) else TryOps.unit)
 
-  def flattenOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
+  def unpackOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
     nopt.flatMap(opt => TryOps.fromOption(opt, ifNone))
 
-  def flattenOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
+  def unpackOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
     nopt.flatMap(opt => TryOps.fromOptionThr(opt, ifNone))
 
   def flattenResult[T](result: Try[Result[T]]): Try[T] =

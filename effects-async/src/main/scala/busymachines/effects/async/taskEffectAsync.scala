@@ -168,11 +168,11 @@ object TaskSyntax {
     def flatFailOnFalseThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
       TaskOps.flatFailOnFalseThr(test, bad)
 
-    def flattenOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
-      TaskOps.flattenOption(nopt, ifNone)
+    def unpackOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
+      TaskOps.unpackOption(nopt, ifNone)
 
-    def flattenOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
-      TaskOps.flattenOptionThr(nopt, ifNone)
+    def unpackOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
+      TaskOps.unpackOptionThr(nopt, ifNone)
 
     def flattenResult[T](value: Task[Result[T]]): Task[T] =
       TaskOps.flattenResult(value)
@@ -303,11 +303,11 @@ object TaskSyntax {
     */
   final class NestedOptionOps[T](private[this] val nopt: Task[Option[T]]) {
 
-    def flattenOption(ifNone: => Anomaly): Task[T] =
-      TaskOps.flattenOption(nopt, ifNone)
+    def unpack(ifNone: => Anomaly): Task[T] =
+      TaskOps.unpackOption(nopt, ifNone)
 
-    def flattenOptionThr(ifNone: => Throwable): Task[T] =
-      TaskOps.flattenOptionThr(nopt, ifNone)
+    def unpackThr(ifNone: => Throwable): Task[T] =
+      TaskOps.unpackOptionThr(nopt, ifNone)
 
     def effectOnFail[_](effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnNone(nopt, effect)
@@ -537,13 +537,13 @@ object TaskOps {
   def flatFailOnFalseThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
     test.flatMap(t => TaskOps.failOnFalseThr(t, bad))
 
-  def flattenOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
+  def unpackOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
     nopt.flatMap {
       case None    => TaskOps.fail(ifNone)
       case Some(v) => TaskOps.pure(v)
     }
 
-  def flattenOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
+  def unpackOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
     nopt.flatMap {
       case None    => TaskOps.failThr(ifNone)
       case Some(v) => TaskOps.pure(v)
