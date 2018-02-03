@@ -452,7 +452,7 @@ object IOOps {
     * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-    * You might as well use [[fromOption]]
+    * You might as well use [[IOOps.fromOption]]
     */
   def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): IO[T] =
     IO.suspend(IOOps.fromOption(opt, ifNone))
@@ -471,7 +471,7 @@ object IOOps {
     * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-    * You might as well use [[fromOption]]
+    * You might as well use [[IOOps.fromOption]]
     */
   def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
     IO.suspend(IOOps.fromOptionThr(opt, ifNone))
@@ -492,7 +492,7 @@ object IOOps {
     * Successful Try yields a pure effect
     *
     * N.B. this is useless if the [[Try]] was previously assigned to a "val".
-    * You might as well use [[fromTry]]
+    * You might as well use [[IOOps.fromTry]]
     */
   def suspendTry[T](tr: => Try[T]): IO[T] =
     IO.suspend(IOOps.fromTry(tr))

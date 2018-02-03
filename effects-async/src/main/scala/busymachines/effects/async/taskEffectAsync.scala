@@ -451,7 +451,7 @@ object TaskOps {
     * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-    * You might as well use [[fromOption]]
+    * You might as well use [[TaskOps.fromOption]]
     */
   def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): Task[T] =
     Task.suspend(TaskOps.fromOption(opt, ifNone))
@@ -470,7 +470,7 @@ object TaskOps {
     * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-    * You might as well use [[fromOption]]
+    * You might as well use [[TaskOps.fromOption]]
     */
   def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
     Task.suspend(TaskOps.fromOptionThr(opt, ifNone))
@@ -505,7 +505,7 @@ object TaskOps {
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
-    * You might as well use [[fromEither]]
+    * You might as well use [[TaskOps.fromEither]]
     */
   def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): Task[R] =
     Task.suspend(TaskOps.fromEither(either, transformLeft))
@@ -525,7 +525,7 @@ object TaskOps {
     * And sequence its left-hand-side [[Throwable]] within this effect if it is a [[Throwable]]
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
-    * You might as well use [[fromEither]]
+    * You might as well use [[TaskOps.fromEither]]
     */
   def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
     Task.suspend(TaskOps.fromEitherThr(either)(ev))
@@ -545,7 +545,7 @@ object TaskOps {
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
-    * You might as well use [[fromEither]]
+    * You might as well use [[TaskOps.fromEither]]
     */
   def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
     Task.suspend(TaskOps.fromEitherThr(either, transformLeft))
@@ -564,10 +564,10 @@ object TaskOps {
 
   /**
     * Suspend any side-effects that might happen during the creation of this [[Result]].
-    * Other than that it has the semantics of [[fromResult]]
+    * Other than that it has the semantics of [[TaskOps.fromResult]]
     *
     * N.B. this is useless if the [[Result]] was previously assigned to a "val".
-    * You might as well use [[fromResult]]
+    * You might as well use [[TaskOps.fromResult]]
     */
   def suspendResult[T](result: => Result[T]): Task[T] =
     Task.suspend(TaskOps.fromResult(result))

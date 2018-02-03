@@ -494,7 +494,7 @@ object FutureOps {
     * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-    * You might as well use [[fromOption]]
+    * You might as well use [[FutureOps.fromOption]]
     */
   def suspendOption[T](opt: => Option[T], ifNone: => Anomaly)(implicit executionContext: ExecutionContext): Future[T] =
     Future(opt).flatMap(o => FutureOps.fromOption(o, ifNone))
@@ -517,7 +517,7 @@ object FutureOps {
     * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-    * You might as well use [[fromOption]]
+    * You might as well use [[FutureOps.fromOption]]
     */
   def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(
     implicit executionContext: ExecutionContext
@@ -562,7 +562,7 @@ object FutureOps {
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
-    * You might as well use [[fromEither]]
+    * You might as well use [[FutureOps.fromEither]]
     */
   def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly)(
     implicit ec: ExecutionContext
@@ -588,7 +588,7 @@ object FutureOps {
     * And sequence its left-hand-side [[Throwable]] within this effect if it is a [[Throwable]]
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
-    * You might as well use [[fromEither]]
+    * You might as well use [[FutureOps.fromEither]]
     */
   def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
     Future(either).flatMap(eit => FutureOps.fromEitherThr(eit)(ev))
@@ -613,7 +613,7 @@ object FutureOps {
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
-    * You might as well use [[fromEither]]
+    * You might as well use [[FutureOps.fromEither]]
     */
   def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable)(
     implicit ec: ExecutionContext
@@ -640,7 +640,7 @@ object FutureOps {
     * Suspend any side-effects that might happen during the creation of this [[Result]].
     *
     * N.B. this is useless if the [[Result]] was previously assigned to a "val".
-    * You might as well use [[fromResult]]
+    * You might as well use [[FutureOps.fromResult]]
     */
   def suspendResult[T](result: => Result[T])(implicit ec: ExecutionContext): Future[T] =
     Future(result).flatMap(FutureOps.fromResult)
