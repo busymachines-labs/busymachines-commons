@@ -46,20 +46,44 @@ object EitherSyntax {
     */
   final class ReferenceOps[L, R](val value: Either[L, R]) extends AnyVal {
 
+    /**
+      * !!! USE WITH CARE !!!
+      *
+      * Discards the left value
+      *
+      */
     def asOptionUnsafe(): Option[R] =
       value.toOption
 
+    /**
+      * !!! USE WITH CARE !!!
+      *
+      * Discards the left value
+      *
+      */
     def asListUnsafe(): List[R] = value match {
-      case Left(_)     => Nil
       case Right(good) => List(good)
+      case _           => Nil
     }
 
+    /**
+      * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+      * this effect, yielding a failed effect.
+      */
     def asTry(transformLeft: L => Anomaly): Try[R] =
       TryOps.fromEither(value, transformLeft)
 
+    /**
+      * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
+      * if it is a [[Throwable]].
+      */
     def asTryThr(implicit ev: L <:< Throwable): Try[R] =
       TryOps.fromEitherThr(value)(ev)
 
+    /**
+      * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+      * this effect, yielding a failed effect.
+      */
     def asTryThr(transformLeft: L => Throwable): Try[R] =
       TryOps.fromEitherThr(value, transformLeft)
 
@@ -69,8 +93,20 @@ object EitherSyntax {
     def asResultThr(implicit ev: L <:< Throwable): Result[R] =
       Result.fromEitherThr(value)(ev)
 
-    def unsafeGetLeft(): L = value.left.get
+    /**
+      * Returns the value on the left.
+      *
+      * Throws exception if there isn't one
+      */
+    def unsafeGetLeft(): L =
+      value.left.get
 
-    def unsafeGetRight(): R = value.right.get
+    /**
+      * Returns the value on the right.
+      *
+      * Throws exception if there isn't one
+      */
+    def unsafeGetRight(): R =
+      value.right.get
   }
 }
