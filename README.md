@@ -13,6 +13,10 @@ Currently built only against Scala `2.12.4`.
 
 Latest version of the library is `0.3.0-M3`
 
+## Copyright and License
+
+All code is available to you under the Apache 2.0 license, available at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0) and also in the [LICENSE](./LICENSE) file.
+
 ## Contributors
 
 People who have contributed to the new version are:
