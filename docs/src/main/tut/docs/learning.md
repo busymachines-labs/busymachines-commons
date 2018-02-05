@@ -49,6 +49,12 @@ Going down the pure functional programming rabbit hole is not easy, and cannot b
 * an excellent book on shapeless is Dave Gurnell's book ["The Type Astronaut's Guide to Shapeless"](https://underscore.io/training/courses/advanced-shapeless/)
 * boiler-plate-less derivation is also routinely done via [def macros](https://docs.scala-lang.org/overviews/macros/overview.html). But the future of this language feature is as of yet slightly uncertain, and should be tracked within the [scalameta](http://scalameta.org/) project. The future de-facto way of doing meta-programming in Scala.
 
-
-
+### category theory
+* the abstract theory that was cleverly reified into what we now know as "functional programming" today
+* quite a good intuition about it can be gained from the "Scala with cats" book from the previous section
+* nonetheles, for a better foundation, [Bartosz Milewski's](https://bartoszmilewski.com/) "Category Theory for Programmers" is probably one of the more accessible resources. Available as:
+  * [pdf](https://github.com/hmemcpy/milewski-ctfp-pdf)
+  * [epub](https://github.com/onlurking/category-theory-for-programmers)
+  * [blog posts](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
+  * video lecture series: [part 1](https://www.youtube.com/watch?v=I8LbkfSSR58&list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_), [part 2](https://www.youtube.com/watch?v=3XTQSx1A3x8&list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm)
 
