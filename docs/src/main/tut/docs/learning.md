@@ -22,15 +22,15 @@ Going down the pure functional programming rabbit hole is not easy, and cannot b
 * [purity](https://en.wikipedia.org/wiki/Pure_function#Pure_functions) is sometimesused interchangeably with "referentially transparent" — justifiably so
 * note here is that Scala's standard `Future` is not referentially transparent. Check out [@tpolecat's answer why](https://www.reddit.com/r/scala/comments/3zofjl/why_is_future_totally_unusable/cyns21h/)!
 * while you can build decent applications that are almost pure using `Future`, you sacrifice a lot of composability and control over side-effects by doing it
-* we provide a `future` module just to ease the work with legacy code. scala Futures should be pushed only to the boundaries of your application (e.g. at the end of the HTTP api call, or once in your `main` method)
-* as an alternative to `Future` you should consider something like [monix.eval.Task](https://github.com/monix/monix) or [cats.effect.IO](https://github.com/typelevel/cats-effect). Modules focusing on these two coming soon.
-* `throw new Exception(...)` is an impure operation! Unless it is immediately captured in a `scala.util.Try`, `cats.effect.IO`, or `monix.eval.Task` you should not use it. Prefer using [Result[T]](/docs/result.html) to model "failure"
+* you should use Scala's `Future` only if you have no other choice, and are forced to by circumstance
+* as an alternative to `Future` you should consider something like [monix.eval.Task](https://github.com/monix/monix) or [cats.effect.IO](https://github.com/typelevel/cats-effect). The modules [effects-async](/effects) slightly eases the use of these
+* `throw new Exception(...)` is an impure operation! Unless it is immediately captured in a `scala.util.Try`, `cats.effect.IO`, or `monix.eval.Task` you should not use it, and even then be skeptical of what you wrote. Prefer using [Result[T]](/docs/result.html) to model "failure"
 
 ### effects
 * "effects are good, side-effects are bugs", piece of wisdom from Rob Norris's [scale.bythebay.io 2017 talk](https://www.youtube.com/watch?v=po3wmq4S15A) ~min 17
 
 ### side-effects
-* the very definition of necessary evil. They do not compose, they can quickly degenerate to spaghetti code that is ridiculously hard to reason about, but we need them because otherwise we'd just be using CPU power for nothing
+* the very definition of necessary evil. They do not compose, they can quickly degenerate into spaghetti code that is ridiculously hard to reason about, but we need them because otherwise we'd just be using CPU power for nothing
 * the point is to contain them as much as possible, and rely on the good old trick "create a program that describes the side-effects" and then have an "interpreter" apply them
 * in the context of web-apps with some sort of HTTP api this means that for your entire request you just build up a program representing what to do in said request, and then, only once, interpret the program to yield the result and send it back over the network
 
