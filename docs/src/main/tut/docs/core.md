@@ -13,7 +13,7 @@ Here you find very basic buildings blocks for structuring your exceptions in mea
 This module is vanilla scala _*only*_, compiled with scala version : `2.12.4`.
 
 * stable: `0.2.0`
-* latest: `0.3.0-RC1`
+* latest: `0.3.0-RC2`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-core" % "0.2.0"

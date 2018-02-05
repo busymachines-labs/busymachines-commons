@@ -7,13 +7,13 @@ title: effects
 # busymachines-commons-effects
 
 * stable: `N/A`
-* latest: `0.3.0-RC1`
+* latest: `0.3.0-RC2`
 
 ```scala
-"com.busymachines" %% "busymachines-commons-effects"       % "0.3.0-RC1"
+"com.busymachines" %% "busymachines-commons-effects"       % "0.3.0-RC2"
 //the above module is actually a composite of the following two modules
-"com.busymachines" %% "busymachines-commons-effects-sync"  % "0.3.0-RC1"
-"com.busymachines" %% "busymachines-commons-effects-async" % "0.3.0-RC1"
+"com.busymachines" %% "busymachines-commons-effects-sync"  % "0.3.0-RC2"
+"com.busymachines" %% "busymachines-commons-effects-async" % "0.3.0-RC2"
 ```
 
 ## How it works
