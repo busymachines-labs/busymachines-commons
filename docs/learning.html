@@ -22,9 +22,9 @@
   <li><a href="https://en.wikipedia.org/wiki/Pure_function#Pure_functions">purity</a> is sometimesused interchangeably with “referentially transparent” — justifiably so</li>
   <li>note here is that Scala’s standard <code class="highlighter-rouge">Future</code> is not referentially transparent. Check out <a href="https://www.reddit.com/r/scala/comments/3zofjl/why_is_future_totally_unusable/cyns21h/">@tpolecat’s answer why</a>!</li>
   <li>while you can build decent applications that are almost pure using <code class="highlighter-rouge">Future</code>, you sacrifice a lot of composability and control over side-effects by doing it</li>
-  <li>we provide a <code class="highlighter-rouge">future</code> module just to ease the work with legacy code. scala Futures should be pushed only to the boundaries of your application (e.g. at the end of the HTTP api call, or once in your <code class="highlighter-rouge">main</code> method)</li>
-  <li>as an alternative to <code class="highlighter-rouge">Future</code> you should consider something like <a href="https://github.com/monix/monix">monix.eval.Task</a> or <a href="https://github.com/typelevel/cats-effect">cats.effect.IO</a>. Modules focusing on these two coming soon.</li>
-  <li><code class="highlighter-rouge">throw new Exception(...)</code> is an impure operation! Unless it is immediately captured in a <code class="highlighter-rouge">scala.util.Try</code>, <code class="highlighter-rouge">cats.effect.IO</code>, or <code class="highlighter-rouge">monix.eval.Task</code> you should not use it. Prefer using <a href="/docs/result.html">Result[T]</a> to model “failure”</li>
+  <li>you should use Scala’s <code class="highlighter-rouge">Future</code> only if you have no other choice, and are forced to by circumstance</li>
+  <li>as an alternative to <code class="highlighter-rouge">Future</code> you should consider something like <a href="https://github.com/monix/monix">monix.eval.Task</a> or <a href="https://github.com/typelevel/cats-effect">cats.effect.IO</a>. The modules <a href="/effects">effects-async</a> slightly eases the use of these</li>
+  <li><code class="highlighter-rouge">throw new Exception(...)</code> is an impure operation! Unless it is immediately captured in a <code class="highlighter-rouge">scala.util.Try</code>, <code class="highlighter-rouge">cats.effect.IO</code>, or <code class="highlighter-rouge">monix.eval.Task</code> you should not use it, and even then be skeptical of what you wrote. Prefer using <a href="/docs/result.html">Result[T]</a> to model “failure”</li>
 </ul>
 
 <h3 id="effects">effects</h3>
@@ -34,7 +34,7 @@
 
 <h3 id="side-effects">side-effects</h3>
 <ul>
-  <li>the very definition of necessary evil. They do not compose, they can quickly degenerate to spaghetti code that is ridiculously hard to reason about, but we need them because otherwise we’d just be using CPU power for nothing</li>
+  <li>the very definition of necessary evil. They do not compose, they can quickly degenerate into spaghetti code that is ridiculously hard to reason about, but we need them because otherwise we’d just be using CPU power for nothing</li>
   <li>the point is to contain them as much as possible, and rely on the good old trick “create a program that describes the side-effects” and then have an “interpreter” apply them</li>
   <li>in the context of web-apps with some sort of HTTP api this means that for your entire request you just build up a program representing what to do in said request, and then, only once, interpret the program to yield the result and send it back over the network</li>
 </ul>
