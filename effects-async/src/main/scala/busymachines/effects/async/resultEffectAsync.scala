@@ -28,7 +28,7 @@ object ResultSyntaxAsync {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Result.type) {
+  final class CompanionObjectOps(val obj: Result.type) extends AnyVal {
 
     def asFuture[T](value: Result[T]): Future[T] =
       FutureOps.fromResult(value)
@@ -52,7 +52,7 @@ object ResultSyntaxAsync {
   /**
     *
     */
-  final class ReferenceOps[T](private[this] val value: Result[T]) {
+  final class ReferenceOps[T](val value: Result[T]) extends AnyVal {
 
     /**
       *

@@ -61,19 +61,21 @@ object TaskSyntax {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Task.type) {
+  final class CompanionObjectOps(val obj: Task.type) extends AnyVal {
 
     // —— def pure[T](value: T): Task[T] —— already defined on companion object
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
+    @scala.inline
     def fail[T](bad: Anomaly): Task[T] =
       TaskOps.fail(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
+    @scala.inline
     def failThr[T](bad: Throwable): Task[T] =
       TaskOps.failThr(bad)
 
@@ -797,7 +799,7 @@ object TaskSyntax {
     *
     *
     */
-  final class NestedOptionOps[T](private[this] val nopt: Task[Option[T]]) {
+  final class NestedOptionOps[T](val nopt: Task[Option[T]]) extends AnyVal {
 
     /**
       * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
@@ -848,7 +850,7 @@ object TaskSyntax {
   /**
     *
     */
-  final class NestedResultOps[T](private[this] val result: Task[Result[T]]) {
+  final class NestedResultOps[T](val result: Task[Result[T]]) extends AnyVal {
 
     /**
       * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
@@ -891,7 +893,7 @@ object TaskSyntax {
     *
     *
     */
-  final class BooleanOps(private[this] val test: Boolean) {
+  final class BooleanOps(val test: Boolean) extends AnyVal {
 
     /**
       * @return
@@ -986,7 +988,7 @@ object TaskSyntax {
     *
     *
     */
-  final class NestedBooleanOps(private[this] val test: Task[Boolean]) {
+  final class NestedBooleanOps(val test: Task[Boolean]) extends AnyVal {
 
     /**
       * @return
@@ -1094,18 +1096,21 @@ object TaskOps {
     * N.B. pass only pure values. If you have side effects, then
     * use [[Task.apply]] to suspend them inside this future.
     */
+  @scala.inline
   def pure[T](value: T): Task[T] =
     Task.pure(value)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
+  @scala.inline
   def fail[T](bad: Anomaly): Task[T] =
     Task.raiseError(bad.asThrowable)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
+  @scala.inline
   def failThr[T](bad: Throwable): Task[T] =
     Task.raiseError(bad)
 

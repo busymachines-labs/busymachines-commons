@@ -27,7 +27,7 @@ object OptionSyntaxAsync {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Option.type) {
+  final class CompanionObjectOps(val obj: Option.type) extends AnyVal {
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
@@ -143,7 +143,7 @@ object OptionSyntaxAsync {
   /**
     *
     */
-  final class ReferenceOps[T](private[this] val value: Option[T]) {
+  final class ReferenceOps[T](val value: Option[T]) extends AnyVal {
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
