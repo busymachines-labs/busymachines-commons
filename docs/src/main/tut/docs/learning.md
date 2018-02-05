@@ -7,7 +7,7 @@ title: Learning Materials
 
 While we strive to make this library aggregate in the most user-friendly way possible advanced concepts in Scala this is by no means enough in order to be proficient at it. Therefore, we suggest the following (free) reading materials. Each an everyone is vitally important, and cannot be skipped, skimmed, or otherwise "disregarded".
 
-Going down the pure functional programming rabbit hole is not easy, and cannot be faked. And when is forced to make sacrifices to purity
+Going down the pure functional programming rabbit hole is not easy, and cannot be faked. And when you do have to sacrifice purity, you have to know exactly what you are giving up and why.
 
 ### Scala
 * this most wonderful and intriguing language
