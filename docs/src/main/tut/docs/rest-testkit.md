@@ -15,7 +15,7 @@ This is the joint documentation for of modules:
 ## artifacts
 
 * stable: `0.2.0`
-* latest: `0.3.0-M3`
+* latest: `0.3.0-RC1`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0" % test
