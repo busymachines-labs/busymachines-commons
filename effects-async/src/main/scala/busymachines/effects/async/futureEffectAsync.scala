@@ -58,24 +58,27 @@ object FutureSyntax {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Future.type) {
+  final class CompanionObjectOps(val obj: Future.type) extends AnyVal {
 
     /**
       * N.B. pass only pure values. If you have side effects, then
       * use [[Future.apply]] to suspend them inside this future.
       */
+    @scala.inline
     def pure[T](value: T): Future[T] =
       FutureOps.pure(value)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
+    @scala.inline
     def fail[T](bad: Anomaly): Future[T] =
       FutureOps.fail(bad)
 
     /**
       * Failed effect with a [[Throwable]]
       */
+    @scala.inline
     def failThr[T](bad: Throwable): Future[T] =
       FutureOps.failThr(bad)
 
@@ -84,6 +87,7 @@ object FutureSyntax {
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
+    @scala.inline
     def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(opt, ifNone)
 
@@ -964,7 +968,7 @@ object FutureSyntax {
     *
     *
     */
-  final class NestedOptionOps[T](private[this] val nopt: Future[Option[T]]) {
+  final class NestedOptionOps[T](val nopt: Future[Option[T]]) extends AnyVal {
 
     /**
       * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
@@ -1015,7 +1019,7 @@ object FutureSyntax {
   /**
     *
     */
-  final class NestedResultOps[T](private[this] val result: Future[Result[T]]) {
+  final class NestedResultOps[T](val result: Future[Result[T]]) extends AnyVal {
 
     /**
       * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
@@ -1058,7 +1062,7 @@ object FutureSyntax {
     *
     *
     */
-  final class BooleanOps(private[this] val test: Boolean) {
+  final class BooleanOps(val test: Boolean) extends AnyVal {
 
     /**
       * @return
@@ -1153,7 +1157,7 @@ object FutureSyntax {
     *
     *
     */
-  final class NestedBooleanOps(private[this] val test: Future[Boolean]) {
+  final class NestedBooleanOps(val test: Future[Boolean]) extends AnyVal {
 
     /**
       * @return
@@ -1255,18 +1259,21 @@ object FutureOps {
     * N.B. pass only pure values. If you have side effects, then
     * use [[Future.apply]] to suspend them inside this future.
     */
+  @scala.inline
   def pure[T](value: T): Future[T] =
     Future.successful(value)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
+  @scala.inline
   def fail[T](bad: Anomaly): Future[T] =
     Future.failed(bad.asThrowable)
 
   /**
     * Failed effect with a [[Throwable]]
     */
+  @scala.inline
   def failThr[T](bad: Throwable): Future[T] =
     Future.failed(bad)
 
@@ -1275,6 +1282,7 @@ object FutureOps {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
+  @scala.inline
   def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] = opt match {
     case None        => FutureOps.fail(ifNone)
     case Some(value) => FutureOps.pure(value)

@@ -27,7 +27,7 @@ object EitherSyntaxAsync {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Either.type) {
+  final class CompanionObjectOps(val obj: Either.type) extends AnyVal {
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
@@ -228,7 +228,7 @@ object EitherSyntaxAsync {
   /**
     *
     */
-  final class ReferenceOps[L, R](private[this] val value: Either[L, R]) {
+  final class ReferenceOps[L, R](val value: Either[L, R]) extends AnyVal {
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within

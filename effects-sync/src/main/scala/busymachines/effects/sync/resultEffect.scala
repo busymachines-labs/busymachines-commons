@@ -68,7 +68,7 @@ object ResultSyntax {
   /**
     *
     */
-  final class ReferenceOps[T](private[this] val value: Result[T]) {
+  final class ReferenceOps[T](val value: Result[T]) extends AnyVal {
 
     /**
       * !!! USE WITH CARE !!!
@@ -76,6 +76,7 @@ object ResultSyntax {
       * Throws exceptions into your face
       *
       */
+    @scala.inline
     def asOptionUnsafe(): Option[T] =
       Result.asOptionUnsafe(value)
 
@@ -85,6 +86,7 @@ object ResultSyntax {
       * Throws exceptions into your face
       *
       */
+    @scala.inline
     def asListUnsafe(): List[T] =
       Result.asListUnsafe(value)
 
@@ -93,6 +95,7 @@ object ResultSyntax {
       * hand side is converted into a [[Throwable]] and corresponds to a
       * failed [[Try]]
       */
+    @scala.inline
     def asTry: Try[T] =
       Result.asTry(value)
 
@@ -101,6 +104,7 @@ object ResultSyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
+    @scala.inline
     def unsafeGet(): T =
       Result.unsafeGet(value)
 
@@ -156,6 +160,7 @@ object ResultSyntax {
       * it's just the final value that is discarded
       *
       */
+    @scala.inline
     def discardContent: Result[Unit] =
       Result.discardContent(value)
   }
@@ -164,7 +169,7 @@ object ResultSyntax {
     *
     *
     */
-  final class NestedOptionOps[T](private[this] val nopt: Result[Option[T]]) {
+  final class NestedOptionOps[T](val nopt: Result[Option[T]]) extends AnyVal {
 
     /**
       * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
@@ -179,7 +184,7 @@ object ResultSyntax {
     *
     *
     */
-  final class BooleanOps(private[this] val test: Boolean) {
+  final class BooleanOps(val test: Boolean) extends AnyVal {
 
     /**
       * @return
@@ -217,7 +222,7 @@ object ResultSyntax {
     *
     *
     */
-  final class NestedBooleanOps(private[this] val test: Result[Boolean]) {
+  final class NestedBooleanOps(val test: Result[Boolean]) extends AnyVal {
 
     /**
       * @return
@@ -287,20 +292,23 @@ object Result {
   /**
     * N.B. pass only pure values. Otherwise use [[Result.apply]]
     */
-  @inline def pure[T](t: T): Result[T] =
+  @scala.inline
+  def pure[T](t: T): Result[T] =
     Correct(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @inline def fail[T](bad: Anomaly): Result[T] =
+  @scala.inline
+  def fail[T](bad: Anomaly): Result[T] =
     Incorrect(bad)
 
   /**
     * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
     * if it is not also an [[Anomaly]]
     */
-  @inline def failThr[T](bad: Throwable): Result[T] = bad match {
+  @scala.inline
+  def failThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))
   }
@@ -308,20 +316,23 @@ object Result {
   /**
     * N.B. pass only pure values. Otherwise use [[Result.apply]]
     */
-  @inline def correct[T](t: T): Result[T] =
+  @scala.inline
+  def correct[T](t: T): Result[T] =
     Correct(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @inline def incorrect[T](bad: Anomaly): Result[T] =
+  @scala.inline
+  def incorrect[T](bad: Anomaly): Result[T] =
     Incorrect(bad)
 
   /**
     * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
     * if it is not also an [[Anomaly]]
     */
-  @inline def incorrectThr[T](bad: Throwable): Result[T] = bad match {
+  @scala.inline
+  def incorrectThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))
   }

@@ -27,7 +27,7 @@ object TrySyntaxAsync {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Try.type) {
+  final class CompanionObjectOps(val obj: Try.type) extends AnyVal {
 
     /**
       * [[scala.util.Failure]] is sequenced into this effect
@@ -94,7 +94,7 @@ object TrySyntaxAsync {
   /**
     *
     */
-  final class ReferenceOps[T](private[this] val value: Try[T]) {
+  final class ReferenceOps[T](val value: Try[T]) extends AnyVal {
 
     /**
       * [[scala.util.Failure]] is sequenced into this effect

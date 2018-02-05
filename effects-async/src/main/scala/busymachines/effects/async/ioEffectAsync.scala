@@ -47,19 +47,21 @@ object IOSyntax {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: IO.type) {
+  final class CompanionObjectOps(val obj: IO.type) extends AnyVal {
 
     // —— def pure[T](value: T): IO[T] —— already defined on companion object
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
+    @scala.inline
     def fail[T](bad: Anomaly): IO[T] =
       IOOps.fail(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
+    @scala.inline
     def failThr[T](bad: Throwable): IO[T] =
       IOOps.failThr(bad)
 
@@ -834,7 +836,7 @@ object IOSyntax {
     *
     *
     */
-  final class NestedOptionOps[T](private[this] val nopt: IO[Option[T]]) {
+  final class NestedOptionOps[T](val nopt: IO[Option[T]]) extends AnyVal {
 
     /**
       * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
@@ -885,13 +887,14 @@ object IOSyntax {
   /**
     *
     */
-  final class NestedResultOps[T](private[this] val result: IO[Result[T]]) {
+  final class NestedResultOps[T](val result: IO[Result[T]]) extends AnyVal {
 
     /**
       * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
       *
       * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
       */
+    @scala.inline
     def unpack: IO[T] =
       IOOps.unpackResult(result)
 
@@ -928,7 +931,7 @@ object IOSyntax {
     *
     *
     */
-  final class BooleanOps(private[this] val test: Boolean) {
+  final class BooleanOps(val test: Boolean) extends AnyVal {
 
     /**
       * @return
@@ -1023,7 +1026,7 @@ object IOSyntax {
     *
     *
     */
-  final class NestedBooleanOps(private[this] val test: IO[Boolean]) {
+  final class NestedBooleanOps(val test: IO[Boolean]) extends AnyVal {
 
     /**
       * @return
@@ -1131,18 +1134,21 @@ object IOOps {
     * N.B. pass only pure values. If you have side effects, then
     * use [[IO.apply]] to suspend them inside this future.
     */
+  @scala.inline
   def pure[T](value: T): IO[T] =
     IO.pure(value)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
+  @scala.inline
   def fail[T](bad: Anomaly): IO[T] =
     IO.raiseError(bad.asThrowable)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
+  @scala.inline
   def failThr[T](bad: Throwable): IO[T] =
     IO.raiseError(bad)
 

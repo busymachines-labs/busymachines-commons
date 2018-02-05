@@ -62,44 +62,51 @@ object TrySyntax {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Try.type) {
+  final class CompanionObjectOps(val obj: Try.type) extends AnyVal {
 
     /**
       * N.B. pass only pure values. Otherwise use [[Try.apply]]
       */
+    @scala.inline
     def pure[T](value: T): Try[T] =
       TryOps.pure(value)
 
     /**
       * N.B. pass only pure values. Otherwise use [[Try.apply]]
       */
+    @scala.inline
     def success[T](value: T): Try[T] =
       TryOps.success(value)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
+    @scala.inline
     def fail[T](bad: Anomaly): Try[T] =
       TryOps.fail(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
+    @scala.inline
     def failThr[T](bad: Throwable): Try[T] =
       TryOps.failThr(bad)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
+    @scala.inline
     def failure[T](bad: Anomaly): Try[T] =
       TryOps.failure(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
+    @scala.inline
     def failureThr[T](bad: Throwable): Try[T] =
       TryOps.failureThr(bad)
 
+    @scala.inline
     def unit: Try[Unit] =
       TryOps.unit
 
@@ -437,7 +444,7 @@ object TrySyntax {
   /**
     *
     */
-  final class ReferenceOps[T](private[this] val value: Try[T]) {
+  final class ReferenceOps[T](val value: Try[T]) extends AnyVal {
 
     /**
       * !!! USE WITH CARE !!!
@@ -538,7 +545,7 @@ object TrySyntax {
     *
     *
     */
-  final class NestedOptionOps[T](private[this] val nopt: Try[Option[T]]) {
+  final class NestedOptionOps[T](val nopt: Try[Option[T]]) extends AnyVal {
 
     /**
       * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
@@ -560,7 +567,7 @@ object TrySyntax {
   /**
     *
     */
-  final class NestedResultOps[T](private[this] val result: Try[Result[T]]) {
+  final class NestedResultOps[T](val result: Try[Result[T]]) extends AnyVal {
 
     /**
       * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
@@ -575,7 +582,7 @@ object TrySyntax {
     *
     *
     */
-  final class BooleanOps(private[this] val test: Boolean) {
+  final class BooleanOps(val test: Boolean) extends AnyVal {
 
     /**
       * @return
@@ -643,7 +650,7 @@ object TrySyntax {
     *
     *
     */
-  final class NestedBooleanOps(private[this] val test: Try[Boolean]) {
+  final class NestedBooleanOps(val test: Try[Boolean]) extends AnyVal {
 
     /**
       * @return
@@ -723,36 +730,42 @@ object TryOps {
   /**
     * N.B. pass only pure values. Otherwise use [[Try.apply]]
     */
+  @scala.inline
   def pure[T](t: T): Try[T] =
     Success(t)
 
   /**
     * N.B. pass only pure values. Otherwise use [[Try.apply]]
     */
+  @scala.inline
   def success[T](t: T): Try[T] =
     Success(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
+  @scala.inline
   def fail[T](bad: Anomaly): Try[T] =
     Failure(bad.asThrowable)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
+  @scala.inline
   def failure[T](bad: Anomaly): Try[T] =
     Failure(bad.asThrowable)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
+  @scala.inline
   def failThr[T](thr: Throwable): Try[T] =
     Failure(thr)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
+  @scala.inline
   def failureThr[T](thr: Throwable): Try[T] =
     Failure(thr)
 
@@ -980,6 +993,7 @@ object TryOps {
     * Throws exceptions into your face
     *
     */
+  @scala.inline
   def asOptionUnsafe[T](value: Try[T]): Option[T] = value match {
     case Failure(exception) => throw exception
     case Success(value)     => Option(value)
@@ -991,6 +1005,7 @@ object TryOps {
     * Throws exceptions into your face
     *
     */
+  @scala.inline
   def asListUnsafe[T](value: Try[T]): List[T] = value match {
     case Failure(exception) => throw exception
     case Success(value)     => List(value)
@@ -1009,6 +1024,7 @@ object TryOps {
     * this transformation.
     *
     */
+  @scala.inline
   def asResult[T](value: Try[T]): Result[T] = Result.fromTry(value)
 
   /**
@@ -1016,6 +1032,7 @@ object TryOps {
     *
     * Will throw exceptions in your face if the underlying effect is failed
     */
+  @scala.inline
   def unsafeGet[T](value: Try[T]): T =
     value.get
 

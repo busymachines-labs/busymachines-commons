@@ -52,6 +52,7 @@ object EitherSyntax {
       * Discards the left value
       *
       */
+    @scala.inline
     def asOptionUnsafe(): Option[R] =
       value.toOption
 
