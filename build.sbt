@@ -28,8 +28,8 @@ addCommandAlias("ci-quick",        ";scalafmtCheck;build;test")
 addCommandAlias("doLocal",         ";rebuild;publishLocal")
 addCommandAlias("doSnapshotLocal", ";rebuild;setSnapshotVersion;publishLocal")
 
-addCommandAlias("mkSite",      ";docs/makeMicrosite")
-addCommandAlias("publishSite", ";docs/publishMicrosite")
+addCommandAlias("mkSite",        ";docs/makeMicrosite")
+addCommandAlias("doSitePublish", ";docs/publishMicrosite")
 
 addCommandAlias("doCoverage",       ";rebuild;coverage;test;coverageReport;coverageOff")
 addCommandAlias("doCoverage-quick", ";build;coverage;test;coverageReport;coverageOff")
