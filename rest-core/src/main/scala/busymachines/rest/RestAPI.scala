@@ -176,6 +176,13 @@ object RestAPI {
     ExceptionHandler {
 
       /**
+        * This might be a stretch of an assumption, but usually there's no
+        * reason to accumulate messages, except in cases of input validation
+        */
+      case es: Anomalies =>
+        anomalies(StatusCodes.BadRequest, es)(asm)
+
+      /**
         * Meaning:
         *
         * "you cannot find something; it may or may not exist, and I'm not going
@@ -235,13 +242,6 @@ object RestAPI {
       case e: Anomaly with MeaningfulAnomalies.Conflict =>
         anomaly(StatusCodes.Conflict, e)
 
-      /**
-        * This might be a stretch of an assumption, but usually there's no
-        * reason to accumulate messages, except in cases of input validation
-        */
-      case es: Anomalies =>
-        anomalies(StatusCodes.BadRequest, es)(asm)
-
       case e: Catastrophe =>
         anomaly(StatusCodes.InternalServerError, e)
 
@@ -279,6 +279,16 @@ object RestAPI {
 
       case e: Throwable =>
         anomaly(StatusCodes.InternalServerError, CatastrophicError(e))
+    }
+
+  def defaultExceptionHandlerNoTerminalCase(
+    implicit
+    am:  ToEntityMarshaller[Anomaly],
+    asm: ToEntityMarshaller[Anomalies],
+  ): ExceptionHandler =
+    semanticallyMeaningfulHandler(am, asm) orElse ExceptionHandler {
+      case e: java.util.concurrent.ExecutionException =>
+        boxedErrorHandler.apply(e.getCause)
     }
 
 }

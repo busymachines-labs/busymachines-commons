@@ -33,8 +33,27 @@ import busymachines.json.AnomalyJsonCodec
 trait JsonRestAPI extends RestAPI with jsonrest.JsonSupport {
 
   override protected val anomalyMarshaller: ToEntityMarshaller[Anomaly] =
-    marshaller(AnomalyJsonCodec.AnomalyCodec)
+    JsonRestAPI.anomalyMarshaller
 
   override protected val anomaliesMarshaller: ToEntityMarshaller[Anomalies] =
+    JsonRestAPI.anomaliesMarshaller
+}
+
+object JsonRestAPI extends jsonrest.JsonSupport {
+
+  val anomalyMarshaller: ToEntityMarshaller[Anomaly] =
+    marshaller(AnomalyJsonCodec.AnomalyCodec)
+
+  val anomaliesMarshaller: ToEntityMarshaller[Anomalies] =
     marshaller(AnomalyJsonCodec.AnomaliesCodec)
+
+  def defaultExceptionHandler: ExceptionHandler = RestAPI.defaultExceptionHandler(
+    anomalyMarshaller,
+    anomaliesMarshaller
+  )
+
+  def defaultExceptionHandlerNoTerminalCase: ExceptionHandler = RestAPI.defaultExceptionHandlerNoTerminalCase(
+    anomalyMarshaller,
+    anomaliesMarshaller
+  )
 }
