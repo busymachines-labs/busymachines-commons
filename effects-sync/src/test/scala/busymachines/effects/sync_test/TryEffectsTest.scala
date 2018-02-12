@@ -67,6 +67,22 @@ final class TryEffectsTest extends FunSpec {
 
   //---------------------------------------------------------------------------
 
+  describe("type definition coverage") {
+    import scala.util.{Failure, Success}
+
+    test("TryFailure") {
+      val f1: TryFailure[Nothing] = TryFailure(ano.asThrowable)
+      val f2: TryFailure[Nothing] = Failure(ano.asThrowable)
+      assert(f1 == f2)
+    }
+
+    test("TrySuccess") {
+      val s1: TrySuccess[Int] = TrySuccess(42)
+      val s2: TrySuccess[Int] = Success(42)
+      assert(s1 == s2)
+    }
+  }
+
   describe("Try — companion object syntax") {
 
     describe("constructors") {

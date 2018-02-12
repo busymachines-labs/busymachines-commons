@@ -29,9 +29,13 @@ import scala.util.{Failure, Success}
   *
   */
 trait TryTypeDefinitons {
-  type Try[T] = scala.util.Try[T]
+  type Try[T]        = scala.util.Try[T]
+  type TrySuccess[T] = scala.util.Success[T]
+  type TryFailure[T] = scala.util.Failure[T]
 
-  val Try: scala.util.Try.type = scala.util.Try
+  @inline val Try:        scala.util.Try.type     = scala.util.Try
+  @inline val TrySuccess: scala.util.Success.type = scala.util.Success
+  @inline val TryFailure: scala.util.Failure.type = scala.util.Failure
 }
 
 object TrySyntax {
