@@ -9,7 +9,7 @@ title: semver-parsers
 ## artifacts
 
 * stable: `0.2.0`
-* latest: `0.3.0-RC2`
+* latest: `0.3.0-RC3`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-semver-parsers" % "0.2.0"

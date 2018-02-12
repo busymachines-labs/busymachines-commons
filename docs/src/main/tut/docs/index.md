@@ -10,7 +10,7 @@ Due to the modular nature of the library you can pick and chose modules, if you 
 ## sbt module IDs
 
 ```scala
-val bmCommonsVersion: String = "0.3.0-RC2"
+val bmCommonsVersion: String = "0.3.0-RC3"
 
 def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % bmCommonsVersion
 
@@ -49,7 +49,7 @@ Module                             | Description                                
 
 This is a parallel module hierarchy whose json serialization is handled by `spray-json`. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the `rest` packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the `json` package differs the most.
 
-These modules have been removed starting with version `0.3.0-RC2`. In case any bugs are found, they will be fixed and released as version `0.2.x`. Think parallel scala `2.11`, and `2.12` series.
+These modules have been removed starting with version `0.3.0-RC3`. In case any bugs are found, they will be fixed and released as version `0.2.x`. Think parallel scala `2.11`, and `2.12` series.
 
 Module                                                                                                                                                | Description                                                 | Version
 ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------
