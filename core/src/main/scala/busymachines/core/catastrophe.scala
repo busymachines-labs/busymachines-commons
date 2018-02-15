@@ -25,6 +25,10 @@ import busymachines.core.Anomaly.Parameters
   */
 trait Catastrophe extends Anomaly with Product with Serializable
 
+private[core] case object CatastrophicErrorID extends AnomalyID with Product with Serializable {
+  override val name: String = "CE_0"
+}
+
 /**
   * [[java.lang.Error]] is a reasonable choice for a super-class.
   * It's not caught by NonFatal(_)pattern matches. Which means that
@@ -35,6 +39,8 @@ abstract class CatastrophicError(
   override val message: String,
   causedBy:             Option[Throwable] = None
 ) extends Error(message, causedBy.orNull) with Catastrophe with Product with Serializable {
+  override def id: AnomalyID = CatastrophicErrorID
+
   final override def asThrowable: Throwable = this
 }
 
@@ -87,10 +93,6 @@ object CatastrophicError extends CatastrophicErrorConstructors[CatastrophicError
     CatastrophicErrorImpl(message = message, causedBy = Option(causedBy))
 }
 
-private[core] case object CatastrophicErrorID extends AnomalyID with Product with Serializable {
-  override val name: String = "CE_0"
-}
-
 private[core] final case class CatastrophicErrorImpl(
   override val id:         AnomalyID          = CatastrophicErrorID,
   override val message:    String             = CatastrophicError.CatastrophicErrorMsg,
@@ -106,6 +108,13 @@ trait InconsistentStateCatastrophe extends Catastrophe
 
 private[core] case object InconsistentStateCatastropheID extends AnomalyID with Product with Serializable {
   override val name: String = "IS_0"
+}
+
+abstract class InconsistentStateError(
+  override val message: String,
+  causedBy:             Option[Throwable] = None
+) extends CatastrophicError(message, causedBy) with InconsistentStateCatastrophe with Product with Serializable {
+  override def id: AnomalyID = InconsistentStateCatastropheID
 }
 
 object InconsistentStateError extends CatastrophicErrorConstructors[InconsistentStateError] {
@@ -166,11 +175,6 @@ object InconsistentStateError extends CatastrophicErrorConstructors[Inconsistent
   override def apply(message: String, causedBy: Throwable): InconsistentStateError =
     InconsistentStateErrorImpl(message = message, causedBy = Option(causedBy))
 }
-
-abstract class InconsistentStateError(
-  override val message: String,
-  causedBy:             Option[Throwable] = None
-) extends CatastrophicError(message, causedBy) with InconsistentStateCatastrophe with Product with Serializable
 
 private[core] final case class InconsistentStateErrorImpl(
   override val id:         AnomalyID          = InconsistentStateCatastropheID,
