@@ -1,5 +1,5 @@
-# busymachines-commons-result
+# busymachines-commons-effects-sync
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-result_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-result_2.12)
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-effects-sync_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-result_2.12)
 
-Check out the [docs](http://busymachines.github.io/busymachines-commons/docs/result.html)
+Check out the [docs](http://busymachines.github.io/busymachines-commons/docs/effects.html)
