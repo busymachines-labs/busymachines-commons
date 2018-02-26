@@ -1,6 +1,6 @@
 # busymachines-commons-effects
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-effects_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-result_2.12)
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-effects_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-effects_2.12)
 
 Aggregate of the `effects-sync` and `effects-async` modules.
 
