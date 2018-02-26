@@ -65,6 +65,7 @@ lazy val root = Project(id = "busymachines-commons", base = file("."))
   .aggregate(
     core,
     `effects-sync`,
+    `effects-sync-cats`,
     `effects-async`,
     effects,
     json,
@@ -101,6 +102,21 @@ lazy val `effects-sync` = project
   )
   .dependsOn(
     core
+  )
+
+lazy val `effects-sync-cats` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-effects-sync-cats",
+    libraryDependencies ++= Seq(
+      Dependencies.catsCore withSources (),
+      Dependencies.scalaTest % Test withSources (),
+    )
+  )
+  .dependsOn(
+    core,
+    `effects-sync`
   )
 
 lazy val `effects-async` = project
