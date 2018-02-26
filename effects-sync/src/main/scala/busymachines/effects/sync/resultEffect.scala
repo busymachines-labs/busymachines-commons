@@ -62,7 +62,7 @@ object ResultSyntax {
 
   }
 
-  // —— final class CompationObjectOps(val obj: Result.type) —— is not necessary, because we reference the Result
+  // —— final class CompanionObjectOps(val obj: Result.type) —— is not necessary, because we reference the Result
   // object directly in this case. A clever slight of hand
 
   /**
