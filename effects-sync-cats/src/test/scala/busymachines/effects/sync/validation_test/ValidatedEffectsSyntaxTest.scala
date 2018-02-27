@@ -387,30 +387,30 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
           val input:    Seq[Int] = List()
           val expected: Seq[Int] = List()
 
-          val eventualResult = Validated.traverse(input)(Validated.pure)
+          val result = Validated.traverse(input)(Validated.pure)
 
-          assert(eventualResult.r == expected)
+          assert(result.r == expected)
         }
 
         test("non empty list — all valid") {
           val input: Seq[Int] = (1 to 100).toList
           val expected = input.map(_.toString)
 
-          val eventualResult: Validated[Seq[String]] =
+          val result: Validated[Seq[String]] =
             Validated.traverse(input)(i => Validated.pure(i.toString))
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
         }
 
         test("non empty list — ten invalid") {
           val input: Seq[Int] = (1 to 100).toList
 
-          val eventualResult: Validated[Seq[String]] = Validated.traverse(input) { i =>
+          val result: Validated[Seq[String]] = Validated.traverse(input) { i =>
             if (i % 10 == 0)
               Validated.fail(ano)
             else
               Validated.pure(i.toString)
           }
-          val t = intercept[TVFs](eventualResult.r(TVFs))
+          val t = intercept[TVFs](result.r(TVFs))
           assert(t.messages.length == 10)
         }
 
@@ -421,29 +421,29 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("empty list") {
           val input: Seq[Int] = List()
 
-          val eventualResult = Validated.traverse_(input)(Validated.pure)
+          val result = Validated.traverse_(input)(Validated.pure)
 
-          assert(eventualResult == Validated.unit)
+          assert(result == Validated.unit)
         }
 
         test("non empty list — all valid") {
           val input: Seq[Int] = (1 to 100).toList
 
-          val eventualResult: Validated[Unit] =
+          val result: Validated[Unit] =
             Validated.traverse_(input)(i => Validated.pure(i.toString))
-          assert(eventualResult == Validated.unit)
+          assert(result == Validated.unit)
         }
 
         test("non empty list — ten invalid") {
           val input: Seq[Int] = (1 to 100).toList
 
-          val eventualResult: Validated[Unit] = Validated.traverse_(input) { i =>
+          val result: Validated[Unit] = Validated.traverse_(input) { i =>
             if (i % 10 == 0)
               Validated.fail(ano)
             else
               Validated.pure(i.toString)
           }
-          val t = intercept[TVFs](eventualResult.r(TVFs))
+          val t = intercept[TVFs](result.r(TVFs))
           assert(t.messages.length == 10)
         }
 
@@ -455,24 +455,24 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
           val input:    Seq[Validated[Int]] = List()
           val expected: Seq[Int]            = List()
 
-          val eventualResult = Validated.sequence(input)
+          val result = Validated.sequence(input)
 
-          assert(eventualResult.r == expected)
+          assert(result.r == expected)
         }
 
         test("non empty list — all valid") {
           val input: Seq[Int] = (1 to 100).toList
           val expected = input.map(_.toString)
 
-          val eventualResult: Validated[Seq[String]] =
+          val result: Validated[Seq[String]] =
             Validated.sequence(input.map(i => Validated.pure(i.toString)))
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
         }
 
         test("non empty list — ten invalid") {
           val input: Seq[Int] = (1 to 100).toList
 
-          val eventualResult: Validated[Seq[String]] = Validated.sequence {
+          val result: Validated[Seq[String]] = Validated.sequence {
             input.map { i =>
               if (i % 10 == 0)
                 Validated.fail(ano)
@@ -480,7 +480,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
                 Validated.pure(i.toString)
             }
           }
-          val t = intercept[TVFs](eventualResult.r(TVFs))
+          val t = intercept[TVFs](result.r(TVFs))
           assert(t.messages.length == 10)
         }
 
@@ -491,23 +491,23 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("empty list") {
           val input: Seq[Int] = List()
 
-          val eventualResult = Validated.sequence_(input.map(Validated.pure))
+          val result = Validated.sequence_(input.map(Validated.pure))
 
-          assert(eventualResult == Validated.unit)
+          assert(result == Validated.unit)
         }
 
         test("non empty list — all valid") {
           val input: Seq[Int] = (1 to 100).toList
 
-          val eventualResult: Validated[Unit] =
+          val result: Validated[Unit] =
             Validated.sequence_(input.map(i => Validated.pure(i.toString)))
-          assert(eventualResult == Validated.unit)
+          assert(result == Validated.unit)
         }
 
         test("non empty list — ten invalid") {
           val input: Seq[Int] = (1 to 100).toList
 
-          val eventualResult: Validated[Unit] = Validated.sequence_ {
+          val result: Validated[Unit] = Validated.sequence_ {
             input.map { i =>
               if (i % 10 == 0)
                 Validated.fail(ano)
@@ -515,7 +515,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
                 Validated.pure(i.toString)
             }
           }
-          val t = intercept[TVFs](eventualResult.r(TVFs))
+          val t = intercept[TVFs](result.r(TVFs))
           assert(t.messages.length == 10)
         }
 

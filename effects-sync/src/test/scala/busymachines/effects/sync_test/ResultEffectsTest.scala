@@ -597,13 +597,13 @@ final class ResultEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = Result.traverse(input) { i =>
+          val result = Result.traverse(input) { i =>
             Result {
               sideEffect = 42
             }
           }
 
-          assert(eventualResult.r == expected)
+          assert(result.r == expected)
           assert(sideEffect == 0, "nothing should have happened")
         }
 
@@ -611,10 +611,10 @@ final class ResultEffectsTest extends FunSpec {
           val input: Seq[Int] = (1 to 100).toList
           val expected = input.map(_.toString)
 
-          val eventualResult: Result[Seq[String]] = Result.traverse(input) { i =>
+          val result: Result[Seq[String]] = Result.traverse(input) { i =>
             Result.pure(i.toString)
           }
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
         }
 
       }
@@ -625,8 +625,8 @@ final class ResultEffectsTest extends FunSpec {
           val input:    Seq[Result[Int]] = List()
           val expected: Seq[Int]         = List()
 
-          val eventualResult = Result.sequence(input)
-          assert(eventualResult.r == expected)
+          val result = Result.sequence(input)
+          assert(result.r == expected)
         }
 
         test("non empty list") {
@@ -634,12 +634,12 @@ final class ResultEffectsTest extends FunSpec {
           val input: Seq[Result[Int]] = (1 to 100).toList.map(Result.pure)
           val expected = nrs.map(_.toString)
 
-          val eventualResult: Result[Seq[String]] = Result.sequence {
+          val result: Result[Seq[String]] = Result.sequence {
             input map { tr =>
               tr.map(i => i.toString)
             }
           }
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
         }
 
       }
@@ -652,7 +652,7 @@ final class ResultEffectsTest extends FunSpec {
   //===========================================================================
   //===========================================================================
 
-  describe("Result — reference syntax") {
+  describe("Try — reference syntax") {
 
     describe("boolean") {
 
