@@ -408,6 +408,14 @@ object ValidatedSyntax {
     @scala.inline
     def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
       ValidatedOps.sequence_(in)
+
+    @scala.inline
+    def sequence[A](head: Validated[A], tail: Validated[A]*): Validated[List[A]] =
+      ValidatedOps.sequence(head, tail: _*)
+
+    @scala.inline
+    def sequence_[A](head: Validated[A], tail: Validated[A]*): Validated[Unit] =
+      ValidatedOps.sequence_(head, tail: _*)
   }
 }
 
@@ -699,10 +707,35 @@ object ValidatedOps {
   ): Validated[M[A]] = ValidatedOps.traverse(in)(identity)
 
   /**
+    *
+    * Overload of generic ``sequence``
+    *
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * Specialized case of [[traverse]]
+    *
+    * {{{
+    *   def checkIndex(i: Int): Validated[String] = ???
+    *
+    *   val fileNamesTry: List[Validated[String]] = List(0,1,2,3,4).map(checkIndex)
+    *   val fileNames:    Validated[List[String]] = Validated.sequence(fileNamesTry)
+    * }}}
+    */
+  def sequence[A](head: Validated[A], tail: Validated[A]*): Validated[List[A]] =
+    ValidatedOps.sequence(head :: tail.toList)
+
+  /**
     * Like ``sequence`` but discards the value
     */
   def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
     ValidatedOps.traverse_(in)(identity)
+
+  /**
+    * Like ``sequence`` but discards the value
+    */
+  def sequence_[A](head: Validated[A], tail: Validated[A]*): Validated[Unit] =
+    ValidatedOps.sequence_(head :: tail.toList)
 
   //=========================================================================
   //=============================== Constants ===============================

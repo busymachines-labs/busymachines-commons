@@ -3,10 +3,7 @@ package busymachines.effects.sync.validation_test
 import org.scalatest._
 
 import busymachines.core._
-import busymachines.effects.sync._
 import busymachines.effects.sync.validated._
-
-import cats._, cats.implicits._ //, cats.data._
 
 /**
   *
@@ -17,10 +14,10 @@ import cats._, cats.implicits._ //, cats.data._
 private[validation_test] object PWDValidator {
   private type Password = String
 
-  def apply(s: Password): Validated[Unit] = {
-    val l: List[Validated[Any]] = List(validateSpaces(s), validateSize(s))
-    l.sequence_
-  }
+  def apply(s: Password): Validated[Unit] = Validated.sequence_(
+    validateSpaces(s),
+    validateSize(s)
+  )
 
   private def validateSpaces(s: Password): Validated[Unit] = {
     s.contains(" ").invalidOnTrue(InvSpaces)

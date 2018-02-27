@@ -465,6 +465,14 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
           assert(expected == result.r)
         }
 
+        test("non empty list — all valid — alternate syntax") {
+          val expected = List(42, 42)
+
+          val result: Validated[List[Int]] =
+            Validated.sequence(pureV, pureV)
+          assert(expected == result.r)
+        }
+
         test("non empty list — ten invalid") {
           val input: Seq[Int] = (1 to 100).toList
 
