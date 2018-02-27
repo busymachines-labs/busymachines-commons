@@ -61,10 +61,6 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
   private val incorrectT:  Result[Int] = Result.fail(anoT)
   private val incorrectT2: Result[Int] = Result.fail(anoT2)
 
-  private val thr2ano: Throwable => Anomaly = thr => ForbiddenFailure
-  private val ano2ano: Anomaly   => Anomaly = thr => ForbiddenFailure
-  private val ano2str: Anomaly   => String  = thr => thr.message
-
   private val failV: Validated[Int] = Validated.fail(ano)
   private val pureV: Validated[Int] = Validated.pure(42)
 
@@ -737,5 +733,77 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
     } //end transformers
 
   } //end reference syntax tests
+
+  //===========================================================================
+  //===========================================================================
+  //===========================================================================
+
+  describe("Validated — other effects asValidated") {
+
+    describe("reference") {
+      describe("Option") {
+        test("none") {
+          assertThrows[GenericValidationFailures](none.asValidated(ano).r)
+        }
+
+        test("some") {
+          assert(some.asValidated(ano).r == 42)
+        }
+      } //end Option
+
+      describe("Try") {
+        test("failure") {
+          assertThrows[GenericValidationFailures](failure.asValidated.r)
+        }
+
+        test("success") {
+          assert(success.asValidated.r == 42)
+        }
+      } //end Option
+
+      describe("Result") {
+        test("incorrect") {
+          assertThrows[GenericValidationFailures](incorrect.asValidated.r)
+        }
+
+        test("correct") {
+          assert(correct.asValidated.r == 42)
+        }
+      } //end Option
+    }
+
+    describe("companion") {
+      describe("Option") {
+        test("none") {
+          assertThrows[GenericValidationFailures](Option.asValidated(none, ano).r)
+        }
+
+        test("some") {
+          assert(Option.asValidated(some, ano).r == 42)
+        }
+      } //end Option
+
+      describe("Try") {
+        test("failure") {
+          assertThrows[GenericValidationFailures](Try.asValidated(failure).r)
+        }
+
+        test("success") {
+          assert(Try.asValidated(success).r == 42)
+        }
+      } //end Option
+
+      describe("Result") {
+        test("incorrect") {
+          assertThrows[GenericValidationFailures](Result.asValidated(incorrect).r)
+        }
+
+        test("correct") {
+          assert(Result.asValidated(correct).r == 42)
+        }
+      } //end Option
+    }
+
+  }
 
 } //end test

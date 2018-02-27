@@ -6,4 +6,6 @@ package busymachines.effects.sync
   * @since 26 Feb 2018
   *
   */
-package object validated extends AnyRef with ValidatedTypeDefinitions with ValidatedSyntax.Implicits {}
+package object validated
+    extends AnyRef with ValidatedTypeDefinitions with ValidatedSyntax.Implicits with OptionSyntaxCats.Implicits
+    with TrySyntaxCats.Implicits with ResultSyntaxCats.Implicits {}
