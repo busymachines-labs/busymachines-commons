@@ -365,6 +365,164 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
 
     } //end as{Effect}
 
+    describe("transformers") {
+
+      describe("discardContent") {
+        test("fail") {
+          assertThrows[GenericValidationFailures](Validated.discardContent(failV).r)
+        }
+
+        test("pure") {
+          assert(Validated.discardContent(pureV) == Validated.unit)
+        }
+      }
+
+    } //end transformers
+
+    describe("traversals") {
+
+      describe("Validated.traverse") {
+
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
+
+          val eventualResult = Validated.traverse(input)(Validated.pure)
+
+          assert(eventualResult.r == expected)
+        }
+
+        test("non empty list — all valid") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          val eventualResult: Validated[Seq[String]] =
+            Validated.traverse(input)(i => Validated.pure(i.toString))
+          assert(expected == eventualResult.r)
+        }
+
+        test("non empty list — ten invalid") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val eventualResult: Validated[Seq[String]] = Validated.traverse(input) { i =>
+            if (i % 10 == 0)
+              Validated.fail(ano)
+            else
+              Validated.pure(i.toString)
+          }
+          val t = intercept[TVFs](eventualResult.r(TVFs))
+          assert(t.messages.length == 10)
+        }
+
+      }
+
+      describe("Validated.traverse_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          val eventualResult = Validated.traverse_(input)(Validated.pure)
+
+          assert(eventualResult == Validated.unit)
+        }
+
+        test("non empty list — all valid") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val eventualResult: Validated[Unit] =
+            Validated.traverse_(input)(i => Validated.pure(i.toString))
+          assert(eventualResult == Validated.unit)
+        }
+
+        test("non empty list — ten invalid") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val eventualResult: Validated[Unit] = Validated.traverse_(input) { i =>
+            if (i % 10 == 0)
+              Validated.fail(ano)
+            else
+              Validated.pure(i.toString)
+          }
+          val t = intercept[TVFs](eventualResult.r(TVFs))
+          assert(t.messages.length == 10)
+        }
+
+      }
+
+      describe("Validated.sequence") {
+
+        test("empty list") {
+          val input:    Seq[Validated[Int]] = List()
+          val expected: Seq[Int]            = List()
+
+          val eventualResult = Validated.sequence(input)
+
+          assert(eventualResult.r == expected)
+        }
+
+        test("non empty list — all valid") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          val eventualResult: Validated[Seq[String]] =
+            Validated.sequence(input.map(i => Validated.pure(i.toString)))
+          assert(expected == eventualResult.r)
+        }
+
+        test("non empty list — ten invalid") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val eventualResult: Validated[Seq[String]] = Validated.sequence {
+            input.map { i =>
+              if (i % 10 == 0)
+                Validated.fail(ano)
+              else
+                Validated.pure(i.toString)
+            }
+          }
+          val t = intercept[TVFs](eventualResult.r(TVFs))
+          assert(t.messages.length == 10)
+        }
+
+      }
+
+      describe("Validated.sequence_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          val eventualResult = Validated.sequence_(input.map(Validated.pure))
+
+          assert(eventualResult == Validated.unit)
+        }
+
+        test("non empty list — all valid") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val eventualResult: Validated[Unit] =
+            Validated.sequence_(input.map(i => Validated.pure(i.toString)))
+          assert(eventualResult == Validated.unit)
+        }
+
+        test("non empty list — ten invalid") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val eventualResult: Validated[Unit] = Validated.sequence_ {
+            input.map { i =>
+              if (i % 10 == 0)
+                Validated.fail(ano)
+              else
+                Validated.pure(i.toString)
+            }
+          }
+          val t = intercept[TVFs](eventualResult.r(TVFs))
+          assert(t.messages.length == 10)
+        }
+
+      }
+
+    } // end traversals
+
   } //end companion object syntax tests
 
   //===========================================================================
@@ -563,6 +721,21 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
       }
 
     } //end boolean
+
+    describe("transformers") {
+
+      describe("discardContent") {
+        test("fail") {
+          assertThrows[GenericValidationFailures](failV.discardContent.r)
+        }
+
+        test("pure") {
+          assert(pureV.discardContent == Validated.unit)
+        }
+      }
+
+    } //end transformers
+
   } //end reference syntax tests
 
 } //end test

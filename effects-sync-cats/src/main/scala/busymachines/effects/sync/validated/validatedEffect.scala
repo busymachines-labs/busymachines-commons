@@ -21,6 +21,7 @@ import busymachines.core._
 import busymachines.effects.sync._
 import cats.{data => cd}
 
+import scala.collection.generic.CanBuildFrom
 import scala.util.control.NonFatal
 
 /**
@@ -135,6 +136,10 @@ object ValidatedSyntax {
     @scala.inline
     def unsafeGet(ctor: (Anomaly, List[Anomaly]) => Anomalies): T =
       ValidatedOps.unsafeGet(value, ctor)
+
+    @scala.inline
+    def discardContent: Validated[Unit] =
+      ValidatedOps.discardContent(value)
 
   }
 
@@ -341,6 +346,68 @@ object ValidatedSyntax {
     @scala.inline
     def unsafeGet[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): T =
       ValidatedOps.unsafeGet(value, ctor)
+
+    /**
+      * Explicitely discard the contents of this effect, and return [[Unit]] instead.
+      *
+      * N.B. thecomputation captured within this effect are still executed,
+      * it's just the final value that is discarded
+      */
+    @scala.inline
+    def discardContent[T](value: Validated[T]): Validated[Unit] =
+      ValidatedOps.discardContent(value)
+
+    /**
+      * see:
+      * https://typelevel.org/cats/api/cats/Traverse.html
+      *
+      * {{{
+      *   def checkIndex(i: Int): Validated[String] = ???
+      *
+      *   val fileIndex: List[Int] = List(0,1,2,3,4)
+      *   val fileNames: Validated[List[String]] = Validated.traverse(fileIndex){ i =>
+      *     checkIndex(i)
+      *   }
+      * }}}
+      */
+    @scala.inline
+    def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): Validated[C[B]] = ValidatedOps.traverse(col)(fn)
+
+    /**
+      * Basically like ``traverse`` but discards the value
+      */
+    @scala.inline
+    def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] =
+      ValidatedOps.traverse_(col)(fn)
+
+    /**
+      * see:
+      * https://typelevel.org/cats/api/cats/Traverse.html
+      *
+      * Specialized case of [[traverse]]
+      *
+      * {{{
+      *   def checkIndex(i: Int): Validated[String] = ???
+      *
+      *   val fileNamesTry: List[Validated[String]] = List(0,1,2,3,4).map(checkIndex)
+      *   val fileNames:    Validated[List[String]] = Validated.sequence(fileNamesTry)
+      * }}}
+      */
+    @scala.inline
+    def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
+      implicit
+      cbf: CanBuildFrom[M[Validated[A]], A, M[A]]
+    ): Validated[M[A]] = ValidatedOps.sequence(in)
+
+    /**
+      * Like ``sequence`` but discards the value
+      */
+    @scala.inline
+    def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
+      ValidatedOps.sequence_(in)
   }
 }
 
@@ -549,8 +616,97 @@ object ValidatedOps {
     case Validated.Invalid(e)   => throw ctor(e.head, e.tail).asThrowable
   }
 
+  //===========================================================================
+  //============================== Transformers ===============================
+  //===========================================================================
+
+  /**
+    * Explicitely discard the contents of this effect, and return [[Unit]] instead.
+    *
+    * N.B. thecomputation captured within this effect are still executed,
+    * it's just the final value that is discarded
+    */
+  @scala.inline
+  def discardContent[T](value: Validated[T]): Validated[Unit] =
+    value.map(UnitFunction)
+
   //=========================================================================
   //=============================== Traversals ==============================
   //=========================================================================
 
+  /**
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * {{{
+    *   def checkIndex(i: Int): Validated[String] = ???
+    *
+    *   val fileIndex: List[Int] = List(0,1,2,3,4)
+    *   val fileNames: Validated[List[String]] = Validated.traverse(fileIndex){ i =>
+    *     checkIndex(i)
+    *   }
+    * }}}
+    */
+  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Validated[C[B]] = {
+    import cats.instances.list._
+    import cats.syntax.traverse._
+    import scala.collection.mutable
+
+    if (col.isEmpty) {
+      Validated.pure(cbf.apply().result())
+    }
+    else {
+      //OK, super inneficient, need a better implementation
+      val result:  Validated[List[B]] = col.toList.traverse(fn)
+      val builder: mutable.Builder[B, C[B]] = cbf.apply()
+      result.map(_.foreach(e => builder.+=(e))).map(_ => builder.result())
+    }
+  }
+
+  /**
+    * Like ``traverse`` but discards the value
+    */
+  def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] = {
+    import cats.instances.list._
+    import cats.syntax.foldable._
+    if (col.isEmpty) {
+      Validated.unit
+    }
+    else {
+      col.toList.traverse_(fn)
+    }
+  }
+
+  /**
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * Specialized case of [[traverse]]
+    *
+    * {{{
+    *   def checkIndex(i: Int): Validated[String] = ???
+    *
+    *   val fileNamesTry: List[Validated[String]] = List(0,1,2,3,4).map(checkIndex)
+    *   val fileNames:    Validated[List[String]] = Validated.sequence(fileNamesTry)
+    * }}}
+    */
+  def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Validated[A]], A, M[A]]
+  ): Validated[M[A]] = ValidatedOps.traverse(in)(identity)
+
+  /**
+    * Like ``sequence`` but discards the value
+    */
+  def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
+    ValidatedOps.traverse_(in)(identity)
+
+  //=========================================================================
+  //=============================== Constants ===============================
+  //=========================================================================
+
+  private val UnitFunction: Any => Unit = _ => ()
 }
