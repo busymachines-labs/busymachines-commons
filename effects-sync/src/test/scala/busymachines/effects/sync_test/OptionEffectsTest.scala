@@ -62,7 +62,7 @@ final class OptionEffectsTest extends FunSpec {
 
   //---------------------------------------------------------------------------
 
-  describe("Try — companion object syntax") {
+  describe("Option — companion object syntax") {
 
     describe("constructors") {
       test("pure") {
@@ -443,7 +443,7 @@ final class OptionEffectsTest extends FunSpec {
   //===========================================================================
   //===========================================================================
 
-  describe("Try — reference syntax") {
+  describe("Option — reference syntax") {
 
     describe("boolean") {
 

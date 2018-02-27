@@ -66,7 +66,7 @@ final class ResultEffectsTest extends FunSpec {
 
   //---------------------------------------------------------------------------
 
-  describe("Try — companion object syntax") {
+  describe("Result — companion object syntax") {
 
     describe("constructors") {
       test("pure") {
@@ -652,7 +652,7 @@ final class ResultEffectsTest extends FunSpec {
   //===========================================================================
   //===========================================================================
 
-  describe("Try — reference syntax") {
+  describe("Result — reference syntax") {
 
     describe("boolean") {
 
