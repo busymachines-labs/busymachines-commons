@@ -502,8 +502,12 @@ object TaskSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    @inline def unsafeSyncGet[T](value: Task[T], atMost: FiniteDuration = TaskOps.defaultDuration)(
-      implicit sc:                      Scheduler
+    @inline def unsafeSyncGet[T](
+      value:  Task[T],
+      atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration
+    )(
+      implicit
+      sc: Scheduler
     ): T =
       TaskOps.unsafeSyncGet(value, atMost)
 
@@ -809,7 +813,10 @@ object TaskSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    @inline def unsafeSyncGet(atMost: FiniteDuration = TaskOps.defaultDuration)(implicit sc: Scheduler): T =
+    @inline def unsafeSyncGet(atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration)(
+      implicit
+      sc: Scheduler
+    ): T =
       TaskOps.unsafeSyncGet(value, atMost)
 
     /**
@@ -1649,7 +1656,7 @@ object TaskOps {
     */
   @inline def unsafeSyncGet[T](
     value:  Task[T],
-    atMost: FiniteDuration = defaultDuration
+    atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration
   )(
     implicit sc: Scheduler
   ): T = value.runAsync.unsafeSyncGet(atMost)
@@ -1905,7 +1912,7 @@ object TaskOps {
     *
     */
   @inline def discardContent[_](value: Task[_]): Task[Unit] =
-    value.map(UnitFunction)
+    value.map(ConstantsAsyncEffects.UnitFunction1)
 
   //=========================================================================
   //=============================== Traversals ==============================
@@ -1937,11 +1944,5 @@ object TaskOps {
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): Task[C[B]] = Task.traverse(col)(fn)(cbf)
-  //=========================================================================
-  //=============================== Constants ===============================
-  //=========================================================================
 
-  private val UnitFunction: Any => Unit = _ => ()
-
-  private[async] val defaultDuration: FiniteDuration = duration.minutes(1)
 }

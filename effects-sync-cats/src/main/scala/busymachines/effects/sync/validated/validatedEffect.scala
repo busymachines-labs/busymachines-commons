@@ -344,7 +344,7 @@ object ValidatedSyntax {
     /**
       * Explicitely discard the contents of this effect, and return [[Unit]] instead.
       *
-      * N.B. thecomputation captured within this effect are still executed,
+      * N.B. the computation captured within this effect are still executed,
       * it's just the final value that is discarded
       */
 
@@ -621,12 +621,12 @@ object ValidatedOps {
   /**
     * Explicitely discard the contents of this effect, and return [[Unit]] instead.
     *
-    * N.B. thecomputation captured within this effect are still executed,
+    * N.B. the computation captured within this effect are still executed,
     * it's just the final value that is discarded
     */
 
   @inline def discardContent[T](value: Validated[T]): Validated[Unit] =
-    value.map(UnitFunction)
+    value.map(ConstantsSyncEffects.UnitFunction1)
 
   //=========================================================================
   //=============================== Traversals ==============================
@@ -727,9 +727,4 @@ object ValidatedOps {
   @inline def sequence_[A](head: Validated[A], tail: Validated[A]*): Validated[Unit] =
     ValidatedOps.sequence_(head :: tail.toList)
 
-  //=========================================================================
-  //=============================== Constants ===============================
-  //=========================================================================
-
-  private val UnitFunction: Any => Unit = _ => ()
 }

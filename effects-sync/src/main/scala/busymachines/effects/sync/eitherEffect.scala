@@ -52,7 +52,6 @@ object EitherSyntax {
       * Discards the left value
       *
       */
-
     @inline def asOptionUnsafe(): Option[R] =
       value.toOption
 

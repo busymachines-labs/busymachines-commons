@@ -3,7 +3,7 @@ package busymachines.effects.async
 import busymachines.core._
 import busymachines.effects.sync._
 import busymachines.effects.sync.validated._
-import busymachines.duration, duration.FiniteDuration
+import busymachines.duration.FiniteDuration
 
 import scala.collection.generic.CanBuildFrom
 import scala.util.control.NonFatal
@@ -66,21 +66,18 @@ object FutureSyntax {
       * N.B. pass only pure values. If you have side effects, then
       * use [[Future.apply]] to suspend them inside this future.
       */
-
     @inline def pure[T](value: T): Future[T] =
       FutureOps.pure(value)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
-
     @inline def fail[T](bad: Anomaly): Future[T] =
       FutureOps.fail(bad)
 
     /**
       * Failed effect with a [[Throwable]]
       */
-
     @inline def failThr[T](bad: Throwable): Future[T] =
       FutureOps.failThr(bad)
 
@@ -89,7 +86,6 @@ object FutureSyntax {
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-
     @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(opt, ifNone)
 
@@ -295,7 +291,6 @@ object FutureSyntax {
       * }}}
       *
       */
-
     @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
       FutureOps.fromValidated(value, ctor)
 
@@ -598,7 +593,7 @@ object FutureSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    @inline def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = FutureOps.defaultDuration): T =
+    @inline def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration): T =
       FutureOps.unsafeSyncGet(value, atMost)
 
     //=========================================================================
@@ -948,7 +943,7 @@ object FutureSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    @inline def unsafeSyncGet(atMost: FiniteDuration = FutureOps.defaultDuration): T =
+    @inline def unsafeSyncGet(atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration): T =
       FutureOps.unsafeSyncGet(value, atMost)
 
     /**
@@ -1931,7 +1926,7 @@ object FutureOps {
     * call this in your code. You have libraries that do this for you "at the end of the world"
     * parts of your program: e.g. akka-http when waiting for the response value to a request.
     */
-  @inline def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = FutureOps.defaultDuration): T =
+  @inline def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration): T =
     Await.result(value, atMost)
 
   //=========================================================================
@@ -2207,7 +2202,7 @@ object FutureOps {
     *
     */
   @inline def discardContent[_](value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
-    value.map(UnitFunction)
+    value.map(ConstantsAsyncEffects.UnitFunction1)
 
   //=========================================================================
   //=============================== Traversals ==============================
@@ -2271,12 +2266,4 @@ object FutureOps {
       }
     }
   }
-
-  //=========================================================================
-  //=============================== Constants ===============================
-  //=========================================================================
-
-  private val UnitFunction: Any => Unit = _ => ()
-
-  private[async] val defaultDuration: FiniteDuration = duration.minutes(1)
 }

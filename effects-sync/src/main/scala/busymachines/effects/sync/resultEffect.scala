@@ -152,7 +152,7 @@ object ResultSyntax {
       *
       * Explicitely discard the contents of this effect, and return [[Unit]] instead.
       *
-      * N.B. thecomputation captured within this effect are still executed,
+      * N.B. the computation captured within this effect are still executed,
       * it's just the final value that is discarded
       *
       */
@@ -571,12 +571,12 @@ object Result {
     *
     * Explicitely discard the contents of this effect, and return [[Unit]] instead.
     *
-    * N.B. thecomputation captured within this effect are still executed,
+    * N.B. the computation captured within this effect are still executed,
     * it's just the final value that is discarded
     *
     */
   @inline def discardContent[T](value: Result[T]): Result[Unit] =
-    value.map(UnitFunction)
+    value.map(ConstantsSyncEffects.UnitFunction1)
 
   /**
     * see:
@@ -683,13 +683,6 @@ object Result {
     implicit
     cbf: CanBuildFrom[M[Result[A]], A, M[A]]
   ): Result[Unit] = Result.discardContent(Result.sequence(in))
-
-  //=========================================================================
-  //=============================== Constants ===============================
-  //=========================================================================
-
-  private val UnitFunction: Any => Unit = _ => ()
-
 }
 
 /**

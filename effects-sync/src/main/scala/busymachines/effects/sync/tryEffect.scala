@@ -72,42 +72,36 @@ object TrySyntax {
     /**
       * N.B. pass only pure values. Otherwise use [[Try.apply]]
       */
-
     @inline def pure[T](value: T): Try[T] =
       TryOps.pure(value)
 
     /**
       * N.B. pass only pure values. Otherwise use [[Try.apply]]
       */
-
     @inline def success[T](value: T): Try[T] =
       TryOps.success(value)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
-
     @inline def fail[T](bad: Anomaly): Try[T] =
       TryOps.fail(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
-
     @inline def failThr[T](bad: Throwable): Try[T] =
       TryOps.failThr(bad)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
-
     @inline def failure[T](bad: Anomaly): Try[T] =
       TryOps.failure(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
-
     @inline def failureThr[T](bad: Throwable): Try[T] =
       TryOps.failureThr(bad)
 
@@ -396,7 +390,7 @@ object TrySyntax {
       *
       * Explicitely discard the contents of this effect, and return [[Unit]] instead.
       *
-      * N.B. thecomputation captured within this effect are still executed,
+      * N.B. the computation captured within this effect are still executed,
       * it's just the final value that is discarded
       *
       */
@@ -537,7 +531,7 @@ object TrySyntax {
       *
       * Explicitely discard the contents of this effect, and return [[Unit]] instead.
       *
-      * N.B. thecomputation captured within this effect are still executed,
+      * N.B. the computation captured within this effect are still executed,
       * it's just the final value that is discarded
       *
       */
@@ -1090,12 +1084,12 @@ object TryOps {
     *
     * Explicitely discard the contents of this effect, and return [[Unit]] instead.
     *
-    * N.B. thecomputation captured within this effect are still executed,
+    * N.B. the computation captured within this effect are still executed,
     * it's just the final value that is discarded
     *
     */
   @inline def discardContent[T](value: Try[T]): Try[Unit] =
-    value.map(UnitFunction)
+    value.map(ConstantsSyncEffects.UnitFunction1)
 
   //=========================================================================
   //=============================== Traversals ==============================
@@ -1162,10 +1156,4 @@ object TryOps {
     implicit
     cbf: CanBuildFrom[M[Try[A]], A, M[A]]
   ): Try[M[A]] = TryOps.traverse(in)(identity)
-
-  //=========================================================================
-  //=============================== Constants ===============================
-  //=========================================================================
-
-  private val UnitFunction: Any => Unit = _ => ()
 }

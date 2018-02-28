@@ -232,7 +232,7 @@ object OptionSyntax {
       *
       * Explicitely discard the contents of this effect, and return [[Unit]] instead.
       *
-      * N.B. thecomputation captured within this effect are still executed,
+      * N.B. the computation captured within this effect are still executed,
       * it's just the final value that is discarded
       *
       */
@@ -403,7 +403,7 @@ object OptionSyntax {
       *
       * Explicitely discard the contents of this effect, and return [[Unit]] instead.
       *
-      * N.B. thecomputation captured within this effect are still executed,
+      * N.B. the computation captured within this effect are still executed,
       * it's just the final value that is discarded
       *
       */
@@ -618,7 +618,7 @@ object OptionOps {
     *
     * Explicitely discard the contents of this effect, and return [[Unit]] instead.
     *
-    * N.B. thecomputation captured within this effect are still executed,
+    * N.B. the computation captured within this effect are still executed,
     * it's just the final value that is discarded
     *
     */

@@ -1931,7 +1931,7 @@ object IOOps {
     *
     */
   @inline def discardContent[_](value: IO[_]): IO[Unit] =
-    value.map(UnitFunction)
+    value.map(ConstantsAsyncEffects.UnitFunction1)
 
   //=========================================================================
   //=============================== Traversals ==============================
@@ -2013,10 +2013,4 @@ object IOOps {
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): IO[C[B]] = IOOps.traverse(col)(fn)(cbf)
-
-  //=========================================================================
-  //=============================== Constants ===============================
-  //=========================================================================
-
-  private val UnitFunction: Any => Unit = _ => ()
 }
