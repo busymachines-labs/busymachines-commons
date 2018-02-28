@@ -28,7 +28,8 @@ import org.scalatest.FunSpec
   *
   */
 final class EffectsPackageTest extends FunSpec {
-  private def test:         ItWord            = it
+  private def test: ItWord = it
+
   private implicit val sch: effects.Scheduler = effects.Scheduler.global
 
   describe("effects") {
@@ -63,6 +64,11 @@ final class EffectsPackageTest extends FunSpec {
       assert(Result.pure(1) == Result.pure(1))
       assert(Correct(1) == Correct(1))
       assert(Incorrect(InvalidInputFailure) == Incorrect(InvalidInputFailure))
+    }
+
+    test("validated") {
+      import effects.validated._
+      assert(Validated.pure(1) == Validated.pure(1))
     }
 
     test("io") {
