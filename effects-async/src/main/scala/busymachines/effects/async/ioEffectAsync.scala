@@ -756,6 +756,18 @@ object IOSyntax {
     ): IO[C[B]] = IOOps.traverse(col)(fn)
 
     /**
+      * Similar to [[traverse]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[traverse]]
+      *
+      */
+    @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): IO[Unit] = IOOps.traverse_(col)(fn)
+
+    /**
       * see:
       * https://typelevel.org/cats/api/cats/Traverse.html
       *
@@ -772,6 +784,18 @@ object IOSyntax {
       implicit
       cbf: CanBuildFrom[M[IO[A]], A, M[A]]
     ): IO[M[A]] = IOOps.sequence(in)
+
+    /**
+      * Similar to [[sequence]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[sequence]]
+      *
+      */
+    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+      implicit
+      cbf: CanBuildFrom[M[IO[A]], A, M[A]]
+    ): IO[Unit] = IOOps.sequence_(in)
 
     /**
       *
@@ -799,6 +823,18 @@ object IOSyntax {
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
     ): IO[C[B]] = IOOps.serialize(col)(fn)
+
+    /**
+      * Similar to [[serialize]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[serialize]]
+      *
+      */
+    @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): IO[Unit] = IOOps.serialize_(col)(fn)
 
   }
 
@@ -1970,6 +2006,18 @@ object IOOps {
   }
 
   /**
+    * Similar to [[traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[traverse]]
+    *
+    */
+  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): IO[Unit] = IOOps.discardContent(IOOps.traverse(col)(fn))
+
+  /**
     * see:
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
@@ -1986,6 +2034,18 @@ object IOOps {
     implicit
     cbf: CanBuildFrom[M[IO[A]], A, M[A]]
   ): IO[M[A]] = IOOps.traverse(in)(identity)
+
+  /**
+    * Similar to [[sequence]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[sequence]]
+    *
+    */
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+    implicit
+    cbf: CanBuildFrom[M[IO[A]], A, M[A]]
+  ): IO[Unit] = IOOps.discardContent(IOOps.sequence(in))
 
   /**
     *
@@ -2013,4 +2073,16 @@ object IOOps {
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): IO[C[B]] = IOOps.traverse(col)(fn)(cbf)
+
+  /**
+    * Similar to [[serialize]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[serialize]]
+    *
+    */
+  @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): IO[Unit] = IOOps.discardContent(IOOps.serialize(col)(fn))
 }
