@@ -376,6 +376,17 @@ final class OptionEffectsTest extends FunSpec {
         }
       }
 
+      describe("discardContent") {
+
+        test("fail") {
+          assert(Option.discardContent(failV) == None)
+        }
+
+        test("pure") {
+          assert(Option.discardContent(pureV) == Option.unit)
+        }
+      }
+
     } //end transformers
 
     describe("traversals") {
@@ -708,6 +719,17 @@ final class OptionEffectsTest extends FunSpec {
 
         test("pure — fail") {
           assert(pureV.recoverWith(Option.none) == pureV)
+        }
+      }
+
+      describe("discardContent") {
+
+        test("fail") {
+          assert(failV.discardContent == None)
+        }
+
+        test("pure") {
+          assert(pureV.discardContent == Option.unit)
         }
       }
 

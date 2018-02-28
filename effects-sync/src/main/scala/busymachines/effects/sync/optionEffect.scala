@@ -228,6 +228,17 @@ object OptionSyntax {
     @inline def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] =
       OptionOps.recoverWith(value, ifNone)
 
+    /**
+      *
+      * Explicitely discard the contents of this effect, and return [[Unit]] instead.
+      *
+      * N.B. thecomputation captured within this effect are still executed,
+      * it's just the final value that is discarded
+      *
+      */
+    @inline def discardContent[T](value: Option[T]): Option[Unit] =
+      OptionOps.discardContent(value)
+
     //=========================================================================
     //=============================== Traversals ==============================
     //=========================================================================
@@ -387,6 +398,17 @@ object OptionSyntax {
       */
     @inline def recoverWith(ifNone: => Option[T]): Option[T] =
       OptionOps.recoverWith(value, ifNone)
+
+    /**
+      *
+      * Explicitely discard the contents of this effect, and return [[Unit]] instead.
+      *
+      * N.B. thecomputation captured within this effect are still executed,
+      * it's just the final value that is discarded
+      *
+      */
+    @inline def discardContent: Option[Unit] =
+      OptionOps.discardContent(value)
   }
 
   /**
