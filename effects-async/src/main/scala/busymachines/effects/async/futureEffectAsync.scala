@@ -19,7 +19,10 @@ trait FutureTypeDefinitions {
   final type Future[T] = sc.Future[T]
   @inline final def Future: sc.Future.type = sc.Future
 
+  final type ExCtx            = sc.ExecutionContext
   final type ExecutionContext = sc.ExecutionContext
+
+  @inline final def ExCtx:            sc.ExecutionContext.type = sc.ExecutionContext
   @inline final def ExecutionContext: sc.ExecutionContext.type = sc.ExecutionContext
   @inline final def Await:            sc.Await.type            = sc.Await
   @inline final def blocking[T](body: => T): T = sc.blocking(body)
@@ -102,9 +105,7 @@ object FutureSyntax {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
       */
-    @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly)(
-      implicit executionContext:      ExecutionContext
-    ): Future[T] =
+    @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendOption(opt, ifNone)
 
     /**
@@ -125,9 +126,8 @@ object FutureSyntax {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
       */
-    @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(
-      implicit executionContext:         ExecutionContext
-    ): Future[T] = FutureOps.suspendOptionThr(opt, ifNone)
+    @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendOptionThr(opt, ifNone)
 
     // —— def fromTry —— already defined on Future object
 
@@ -144,7 +144,7 @@ object FutureSyntax {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Future.fromTry]]
       */
-    @inline def suspendTry[T](tr: => Try[T])(implicit executionContext: ExecutionContext): Future[T] =
+    @inline def suspendTry[T](tr: => Try[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendTry(tr)
 
     /**
@@ -1417,9 +1417,7 @@ object FutureOps {
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromOption]]
     */
-  @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly)(
-    implicit executionContext:      ExecutionContext
-  ): Future[T] =
+  @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
     Future(opt).flatMap(o => FutureOps.fromOption(o, ifNone))
 
   /**
@@ -1442,9 +1440,7 @@ object FutureOps {
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromOption]]
     */
-  @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(
-    implicit executionContext:         ExecutionContext
-  ): Future[T] =
+  @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
     Future(opt).flatMap(o => FutureOps.fromOptionThr(o, ifNone))
 
   // —— def fromTry[T](tr: Try[T]): Future[T] —— already exists on Future
@@ -1462,7 +1458,7 @@ object FutureOps {
     * N.B. this is useless if the [[Try]] was previously assigned to a "val".
     * You might as well use [[Future.fromTry]]
     */
-  @inline def suspendTry[T](tr: => Try[T])(implicit executionContext: ExecutionContext): Future[T] =
+  @inline def suspendTry[T](tr: => Try[T])(implicit ec: ExecutionContext): Future[T] =
     Future(tr).flatMap(Future.fromTry)
 
   /**
