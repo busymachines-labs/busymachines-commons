@@ -95,7 +95,7 @@ object Settings {
       //"-Yliteral-types",                   // literals can appear in type position
       //"-Xstrict-patmat-analysis",          // more accurate reporting of failures of match exhaustivity
       //"-Xlint:strict-unsealed-patmat",     // warn on inexhaustive matches against unsealed traits
-      //"-Ykind-polymorphism",           // type and method definitions with type parameters of arbitrary kinds
+      //"-Ykind-polymorphism",               // type and method definitions with type parameters of arbitrary kinds
     )
   )
 }
