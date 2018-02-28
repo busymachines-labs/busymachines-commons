@@ -14,6 +14,9 @@ options:
   - title: core
     url: docs/core.html
 
+  - title: duration
+    url: docs/duration.html
+
   - title: effects
     url: docs/effects.html
 
