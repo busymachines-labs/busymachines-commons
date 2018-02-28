@@ -93,7 +93,8 @@ object OptionSyntaxAsync {
       * You might as well use [[FutureOps.fromOption]]
       */
     @inline def suspendInFutureThr[T](value: => Option[T], ifNone: => Throwable)(
-      implicit ec:                           ExecutionContext
+      implicit
+      ec: ExecutionContext
     ): Future[T] =
       FutureOps.suspendOptionThr(value, ifNone)
 

@@ -368,7 +368,8 @@ object FutureSyntax {
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(
-      implicit ec:                ExecutionContext
+      implicit
+      ec: ExecutionContext
     ): Future[T] =
       FutureOps.flatCond(test, good, bad)
 
@@ -379,7 +380,8 @@ object FutureSyntax {
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(
-      implicit ec:                   ExecutionContext
+      implicit
+      ec: ExecutionContext
     ): Future[T] =
       FutureOps.flatCondThr(test, good, bad)
 
@@ -390,7 +392,8 @@ object FutureSyntax {
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
-      implicit ec:                    ExecutionContext
+      implicit
+      ec: ExecutionContext
     ): Future[T] =
       FutureOps.flatCondWith(test, good, bad)
 
@@ -449,7 +452,8 @@ object FutureSyntax {
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
     @inline def flatFailOnTrueThr(test: Future[Boolean], bad: => Throwable)(
-      implicit ec:                      ExecutionContext
+      implicit
+      ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatFailOnTrueThr(test, bad)
 
@@ -465,7 +469,8 @@ object FutureSyntax {
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
     @inline def flatFailOnFalseThr(test: Future[Boolean], bad: => Throwable)(
-      implicit ec:                       ExecutionContext
+      implicit
+      ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatFailOnFalseThr(test, bad)
 
@@ -483,7 +488,8 @@ object FutureSyntax {
       * The failure of this effect takes precedence over the given failure
       */
     @inline def unpackOptionThr[T](nopt: Future[Option[T]], ifNone: => Throwable)(
-      implicit ec:                       ExecutionContext
+      implicit
+      ec: ExecutionContext
     ): Future[T] =
       FutureOps.unpackOptionThr(nopt, ifNone)
 
@@ -625,7 +631,8 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def flatEffectOnTrue[_](test: Future[Boolean], effect: => Future[_])(
-      implicit ec:                        ExecutionContext
+      implicit
+      ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnTrue(test, effect)
 
@@ -654,7 +661,8 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(
-      implicit ec:                         ExecutionContext
+      implicit
+      ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnFalse(test, effect)
 
@@ -1693,7 +1701,8 @@ object FutureOps {
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(
-    implicit ec:                ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[T] =
     test.flatMap(t => FutureOps.cond(t, good, bad))
 
@@ -1704,7 +1713,8 @@ object FutureOps {
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(
-    implicit ec:                   ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[T] =
     test.flatMap(t => FutureOps.condThr(t, good, bad))
 
@@ -1715,7 +1725,8 @@ object FutureOps {
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
-    implicit ec:                    ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[T] =
     test.flatMap(t => FutureOps.condWith(t, good, bad))
 
@@ -1726,7 +1737,8 @@ object FutureOps {
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWithThr[T](test: Future[Boolean], good: => Future[T], bad: => Throwable)(
-    implicit ec:                       ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[T] =
     test.flatMap(t => FutureOps.condWithThr(t, good, bad))
 
@@ -1784,7 +1796,8 @@ object FutureOps {
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
   @inline def flatFailOnFalseThr(test: Future[Boolean], bad: => Throwable)(
-    implicit ec:                       ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] =
     test.flatMap(t => FutureOps.failOnFalseThr(t, bad))
 
@@ -1805,7 +1818,8 @@ object FutureOps {
     * The failure of this effect takes precedence over the given failure
     */
   @inline def unpackOptionThr[T](nopt: Future[Option[T]], ifNone: => Throwable)(
-    implicit ec:                       ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[T] =
     nopt.flatMap {
       case None    => FutureOps.failThr(ifNone)
@@ -1954,7 +1968,8 @@ object FutureOps {
     *   side-effects to achieve something.
     */
   @inline def flatEffectOnTrue[_](test: Future[Boolean], effect: => Future[_])(
-    implicit ec:                        ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] =
     test.flatMap(t => FutureOps.effectOnTrue(t, effect))
 
@@ -1983,7 +1998,8 @@ object FutureOps {
     *   side-effects to achieve something.
     */
   @inline def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(
-    implicit ec:                         ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] =
     test.flatMap(t => FutureOps.effectOnFalse(t, effect))
 
