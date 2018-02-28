@@ -14,13 +14,13 @@ object OptionSyntaxAsync {
     *
     */
   trait Implcits {
-    implicit def bmcOptionAsyncCompanionObjectOps(obj: Option.type): CompanionObjectOps =
+    implicit final def bmcOptionAsyncCompanionObjectOps(obj: Option.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcOptionAsyncReferenceOps[T](value: Option[T]): ReferenceOps[T] =
+    implicit final def bmcOptionAsyncReferenceOps[T](value: Option[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcOptionAsyncSafeReferenceOps[T](value: => Option[T]): SafeReferenceOps[T] =
+    implicit final def bmcOptionAsyncSafeReferenceOps[T](value: => Option[T]): SafeReferenceOps[T] =
       new SafeReferenceOps(value)
   }
 
@@ -32,37 +32,37 @@ object OptionSyntaxAsync {
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asFuture[T](value: Option[T], ifNone: => Anomaly): Future[T] =
+    @inline def asFuture[T](value: Option[T], ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect, if it is [[None]]
       */
-    def asFutureThr[T](value: Option[T], ifNone: => Throwable): Future[T] =
+    @inline def asFutureThr[T](value: Option[T], ifNone: => Throwable): Future[T] =
       FutureOps.fromOptionThr(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asIO[T](value: Option[T], ifNone: => Anomaly): IO[T] =
+    @inline def asIO[T](value: Option[T], ifNone: => Anomaly): IO[T] =
       IOOps.fromOption(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asIOThr[T](value: Option[T], ifNone: => Throwable): IO[T] =
+    @inline def asIOThr[T](value: Option[T], ifNone: => Throwable): IO[T] =
       IOOps.fromOptionThr(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asTask[T](value: Option[T], ifNone: => Anomaly): Task[T] =
+    @inline def asTask[T](value: Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.fromOption(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asTaskThr[T](value: Option[T], ifNone: => Throwable): Task[T] =
+    @inline def asTaskThr[T](value: Option[T], ifNone: => Throwable): Task[T] =
       TaskOps.fromOptionThr(value, ifNone)
 
     /**

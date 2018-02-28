@@ -29,14 +29,14 @@ import scala.util.{Failure, Success}
   *
   */
 trait TryTypeDefinitons {
-  type Try[T]        = scala.util.Try[T]
-  type TrySuccess[T] = scala.util.Success[T]
-  type TryFailure[T] = scala.util.Failure[T]
+  final type Try[T]        = scala.util.Try[T]
+  final type TrySuccess[T] = scala.util.Success[T]
+  final type TryFailure[T] = scala.util.Failure[T]
 
-  @inline def Try: scala.util.Try.type = scala.util.Try
+  @inline final def Try: scala.util.Try.type = scala.util.Try
   //these two have to be val, because otherwise you can't use them in pattern matches :(((
-  @inline val TrySuccess: scala.util.Success.type = scala.util.Success
-  @inline val TryFailure: scala.util.Failure.type = scala.util.Failure
+  @inline final val TrySuccess: scala.util.Success.type = scala.util.Success
+  @inline final val TryFailure: scala.util.Failure.type = scala.util.Failure
 }
 
 object TrySyntax {
@@ -45,22 +45,22 @@ object TrySyntax {
     *
     */
   trait Implicits {
-    implicit def bmcTryCompanionObjectOps(obj: scala.util.Try.type): CompanionObjectOps =
+    implicit final def bmcTryCompanionObjectOps(obj: scala.util.Try.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcTryReferenceOps[T](value: Try[T]): ReferenceOps[T] =
+    implicit final def bmcTryReferenceOps[T](value: Try[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcTryNestedOptionOps[T](nopt: Try[Option[T]]): NestedOptionOps[T] =
+    implicit final def bmcTryNestedOptionOps[T](nopt: Try[Option[T]]): NestedOptionOps[T] =
       new NestedOptionOps(nopt)
 
-    implicit def bmcTryNestedResultOps[T](result: Try[Result[T]]): NestedResultOps[T] =
+    implicit final def bmcTryNestedResultOps[T](result: Try[Result[T]]): NestedResultOps[T] =
       new NestedResultOps(result)
 
-    implicit def bmcTryBooleanOps(test: Boolean): BooleanOps =
+    implicit final def bmcTryBooleanOps(test: Boolean): BooleanOps =
       new BooleanOps(test)
 
-    implicit def bmcTryNestedBooleanOps(test: Try[Boolean]): NestedBooleanOps =
+    implicit final def bmcTryNestedBooleanOps(test: Try[Boolean]): NestedBooleanOps =
       new NestedBooleanOps(test)
   }
 
@@ -72,46 +72,45 @@ object TrySyntax {
     /**
       * N.B. pass only pure values. Otherwise use [[Try.apply]]
       */
-    @scala.inline
+
     def pure[T](value: T): Try[T] =
       TryOps.pure(value)
 
     /**
       * N.B. pass only pure values. Otherwise use [[Try.apply]]
       */
-    @scala.inline
+
     def success[T](value: T): Try[T] =
       TryOps.success(value)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
-    @scala.inline
+
     def fail[T](bad: Anomaly): Try[T] =
       TryOps.fail(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
-    @scala.inline
+
     def failThr[T](bad: Throwable): Try[T] =
       TryOps.failThr(bad)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
-    @scala.inline
+
     def failure[T](bad: Anomaly): Try[T] =
       TryOps.failure(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
-    @scala.inline
+
     def failureThr[T](bad: Throwable): Try[T] =
       TryOps.failureThr(bad)
 
-    @scala.inline
     def unit: Try[Unit] =
       TryOps.unit
 
@@ -735,42 +734,42 @@ object TryOps {
   /**
     * N.B. pass only pure values. Otherwise use [[Try.apply]]
     */
-  @scala.inline
+
   def pure[T](t: T): Try[T] =
     Success(t)
 
   /**
     * N.B. pass only pure values. Otherwise use [[Try.apply]]
     */
-  @scala.inline
+
   def success[T](t: T): Try[T] =
     Success(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
+
   def fail[T](bad: Anomaly): Try[T] =
     Failure(bad.asThrowable)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
+
   def failure[T](bad: Anomaly): Try[T] =
     Failure(bad.asThrowable)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
-  @scala.inline
+
   def failThr[T](thr: Throwable): Try[T] =
     Failure(thr)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
-  @scala.inline
+
   def failureThr[T](thr: Throwable): Try[T] =
     Failure(thr)
 
@@ -998,7 +997,7 @@ object TryOps {
     * Throws exceptions into your face
     *
     */
-  @scala.inline
+
   def asOptionUnsafe[T](value: Try[T]): Option[T] = value match {
     case Failure(exception) => throw exception
     case Success(value)     => Option(value)
@@ -1010,7 +1009,7 @@ object TryOps {
     * Throws exceptions into your face
     *
     */
-  @scala.inline
+
   def asListUnsafe[T](value: Try[T]): List[T] = value match {
     case Failure(exception) => throw exception
     case Success(value)     => List(value)
@@ -1029,7 +1028,6 @@ object TryOps {
     * this transformation.
     *
     */
-  @scala.inline
   def asResult[T](value: Try[T]): Result[T] = Result.fromTry(value)
 
   /**
@@ -1037,7 +1035,7 @@ object TryOps {
     *
     * Will throw exceptions in your face if the underlying effect is failed
     */
-  @scala.inline
+
   def unsafeGet[T](value: Try[T]): T =
     value.get
 

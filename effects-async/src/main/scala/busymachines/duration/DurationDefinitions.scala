@@ -10,22 +10,22 @@ import java.util.concurrent.TimeUnit
   *
   */
 trait DurationDefinitions {
-  type FiniteDuration = d.FiniteDuration
-  @inline def FiniteDuration: d.FiniteDuration.type = d.FiniteDuration
+  final type FiniteDuration = d.FiniteDuration
+  @inline final def FiniteDuration: d.FiniteDuration.type = d.FiniteDuration
 
-  @inline def Nanos:   TimeUnit = TimeUnit.NANOSECONDS
-  @inline def Micros:  TimeUnit = TimeUnit.MICROSECONDS
-  @inline def Millis:  TimeUnit = TimeUnit.MILLISECONDS
-  @inline def Seconds: TimeUnit = TimeUnit.SECONDS
-  @inline def Minutes: TimeUnit = TimeUnit.MINUTES
-  @inline def Hours:   TimeUnit = TimeUnit.HOURS
-  @inline def Days:    TimeUnit = TimeUnit.DAYS
+  @inline final def Nanos:   TimeUnit = TimeUnit.NANOSECONDS
+  @inline final def Micros:  TimeUnit = TimeUnit.MICROSECONDS
+  @inline final def Millis:  TimeUnit = TimeUnit.MILLISECONDS
+  @inline final def Seconds: TimeUnit = TimeUnit.SECONDS
+  @inline final def Minutes: TimeUnit = TimeUnit.MINUTES
+  @inline final def Hours:   TimeUnit = TimeUnit.HOURS
+  @inline final def Days:    TimeUnit = TimeUnit.DAYS
 
-  @inline def nanos(s:   Long): FiniteDuration = d.FiniteDuration(s, Nanos)
-  @inline def micros(s:  Long): FiniteDuration = d.FiniteDuration(s, Micros)
-  @inline def millis(s:  Long): FiniteDuration = d.FiniteDuration(s, Millis)
-  @inline def seconds(s: Long): FiniteDuration = d.FiniteDuration(s, Seconds)
-  @inline def minutes(s: Long): FiniteDuration = d.FiniteDuration(s, Minutes)
-  @inline def hours(s:   Long): FiniteDuration = d.FiniteDuration(s, Hours)
-  @inline def days(s:    Long): FiniteDuration = d.FiniteDuration(s, Days)
+  @inline final def nanos(s:   Long): FiniteDuration = d.FiniteDuration(s, Nanos)
+  @inline final def micros(s:  Long): FiniteDuration = d.FiniteDuration(s, Micros)
+  @inline final def millis(s:  Long): FiniteDuration = d.FiniteDuration(s, Millis)
+  @inline final def seconds(s: Long): FiniteDuration = d.FiniteDuration(s, Seconds)
+  @inline final def minutes(s: Long): FiniteDuration = d.FiniteDuration(s, Minutes)
+  @inline final def hours(s:   Long): FiniteDuration = d.FiniteDuration(s, Hours)
+  @inline final def days(s:    Long): FiniteDuration = d.FiniteDuration(s, Days)
 }

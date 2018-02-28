@@ -17,13 +17,13 @@ object ValidatedSyntaxAsync {
     *
     */
   trait Implcits {
-    implicit def bmcValidatedAsyncCompanionObjectOps(obj: cd.Validated.type): CompanionObjectOps =
+    implicit final def bmcValidatedAsyncCompanionObjectOps(obj: cd.Validated.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcValidatedAsyncReferenceOps[T](value: Validated[T]): ReferenceOps[T] =
+    implicit final def bmcValidatedAsyncReferenceOps[T](value: Validated[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcValidatedAsyncSafeReferenceOps[T](value: => Validated[T]): SafeReferenceOps[T] =
+    implicit final def bmcValidatedAsyncSafeReferenceOps[T](value: => Validated[T]): SafeReferenceOps[T] =
       new SafeReferenceOps(value)
   }
 
@@ -33,22 +33,22 @@ object ValidatedSyntaxAsync {
   final class CompanionObjectOps(val obj: cd.Validated.type) extends AnyVal {
 
     //
-    def asFuture[T](value: Validated[T]): Future[T] =
+    @inline def asFuture[T](value: Validated[T]): Future[T] =
       FutureOps.fromValidated(value)
 
-    def asFuture[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
+    @inline def asFuture[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
       FutureOps.fromValidated(value, ctor)
 
-    def asIO[T](value: Validated[T]): IO[T] =
+    @inline def asIO[T](value: Validated[T]): IO[T] =
       IOOps.fromValidated(value)
 
-    def asIO[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
+    @inline def asIO[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.fromValidated(value, ctor)
 
-    def asTask[T](value: Validated[T]): Task[T] =
+    @inline def asTask[T](value: Validated[T]): Task[T] =
       TaskOps.fromValidated(value)
 
-    def asTask[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+    @inline def asTask[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.fromValidated(value, ctor)
 
     def suspendInFuture[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
@@ -85,7 +85,7 @@ object ValidatedSyntaxAsync {
       * [[Validated.Valid]] becomes a pure effect
       *
       */
-    def asFuture: Future[T] =
+    @inline def asFuture: Future[T] =
       FutureOps.fromValidated(value)
 
     /**
@@ -95,7 +95,7 @@ object ValidatedSyntaxAsync {
       * [[Validated.Valid]] becomes a pure effect
       *
       */
-    def asFuture(ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
+    @inline def asFuture(ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
       FutureOps.fromValidated(value, ctor)
 
     /**
@@ -105,7 +105,7 @@ object ValidatedSyntaxAsync {
       * [[Validated.Valid]] becomes a pure effect
       *
       */
-    def asIO: IO[T] =
+    @inline def asIO: IO[T] =
       IOOps.fromValidated(value)
 
     /**
@@ -115,7 +115,7 @@ object ValidatedSyntaxAsync {
       * [[Validated.Valid]] becomes a pure effect
       *
       */
-    def asIO(ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
+    @inline def asIO(ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.fromValidated(value, ctor)
 
     /**
@@ -125,7 +125,7 @@ object ValidatedSyntaxAsync {
       * [[Validated.Valid]] becomes a pure effect
       *
       */
-    def asTask: Task[T] =
+    @inline def asTask: Task[T] =
       TaskOps.fromValidated(value)
 
     /**
@@ -135,7 +135,7 @@ object ValidatedSyntaxAsync {
       * [[Validated.Valid]] becomes a pure effect
       *
       */
-    def asTask(ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+    @inline def asTask(ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.fromValidated(value, ctor)
   }
 

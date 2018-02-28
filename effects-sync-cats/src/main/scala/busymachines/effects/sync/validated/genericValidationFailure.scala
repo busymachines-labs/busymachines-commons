@@ -8,7 +8,7 @@ import busymachines.core._
   * @since 26 Feb 2018
   *
   */
-case class GenericValidationFailures(
+final case class GenericValidationFailures(
   bad:  Anomaly,
   bads: List[Anomaly] = Nil
 ) extends AnomalousFailures(

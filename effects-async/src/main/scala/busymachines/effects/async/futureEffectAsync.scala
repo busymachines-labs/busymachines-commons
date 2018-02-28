@@ -16,13 +16,13 @@ import scala.{concurrent => sc}
   *
   */
 trait FutureTypeDefinitions {
-  type Future[T] = sc.Future[T]
-  @inline def Future: sc.Future.type = sc.Future
+  final type Future[T] = sc.Future[T]
+  @inline final def Future: sc.Future.type = sc.Future
 
-  type ExecutionContext = sc.ExecutionContext
-  @inline def ExecutionContext: sc.ExecutionContext.type = sc.ExecutionContext
-  @inline def Await:            sc.Await.type            = sc.Await
-  @inline def blocking[T](body: => T): T = sc.blocking(body)
+  final type ExecutionContext = sc.ExecutionContext
+  @inline final def ExecutionContext: sc.ExecutionContext.type = sc.ExecutionContext
+  @inline final def Await:            sc.Await.type            = sc.Await
+  @inline final def blocking[T](body: => T): T = sc.blocking(body)
 
 }
 
@@ -32,25 +32,25 @@ object FutureSyntax {
     *
     */
   trait Implicits {
-    implicit def bmcFutureCompanionObjectOps(obj: sc.Future.type): CompanionObjectOps =
+    implicit final def bmcFutureCompanionObjectOps(obj: sc.Future.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcFutureReferenceOps[T](value: Future[T]): ReferenceOps[T] =
+    implicit final def bmcFutureReferenceOps[T](value: Future[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcFutureSafeReferenceOps[T](value: => Future[T]): SafeReferenceOps[T] =
+    implicit final def bmcFutureSafeReferenceOps[T](value: => Future[T]): SafeReferenceOps[T] =
       new SafeReferenceOps(value)
 
-    implicit def bmcFutureNestedOptionOps[T](nopt: Future[Option[T]]): NestedOptionOps[T] =
+    implicit final def bmcFutureNestedOptionOps[T](nopt: Future[Option[T]]): NestedOptionOps[T] =
       new NestedOptionOps(nopt)
 
-    implicit def bmcFutureNestedResultOps[T](result: Future[Result[T]]): NestedResultOps[T] =
+    implicit final def bmcFutureNestedResultOps[T](result: Future[Result[T]]): NestedResultOps[T] =
       new NestedResultOps(result)
 
-    implicit def bmcFutureBooleanOps(test: Boolean): BooleanOps =
+    implicit final def bmcFutureBooleanOps(test: Boolean): BooleanOps =
       new BooleanOps(test)
 
-    implicit def bmcFutureNestedBooleanOps(test: Future[Boolean]): NestedBooleanOps =
+    implicit final def bmcFutureNestedBooleanOps(test: Future[Boolean]): NestedBooleanOps =
       new NestedBooleanOps(test)
   }
 
@@ -63,21 +63,21 @@ object FutureSyntax {
       * N.B. pass only pure values. If you have side effects, then
       * use [[Future.apply]] to suspend them inside this future.
       */
-    @scala.inline
+
     def pure[T](value: T): Future[T] =
       FutureOps.pure(value)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
-    @scala.inline
+
     def fail[T](bad: Anomaly): Future[T] =
       FutureOps.fail(bad)
 
     /**
       * Failed effect with a [[Throwable]]
       */
-    @scala.inline
+
     def failThr[T](bad: Throwable): Future[T] =
       FutureOps.failThr(bad)
 
@@ -86,7 +86,7 @@ object FutureSyntax {
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    @scala.inline
+
     def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(opt, ifNone)
 
@@ -295,7 +295,7 @@ object FutureSyntax {
       * }}}
       *
       */
-    @scala.inline
+
     def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
       FutureOps.fromValidated(value, ctor)
 
@@ -986,6 +986,9 @@ object FutureSyntax {
       FutureOps.discardContent(value)
   }
 
+  /**
+    *
+    */
   final class SafeReferenceOps[T](value: => Future[T]) {
 
     /**
@@ -1343,21 +1346,21 @@ object FutureOps {
     * N.B. pass only pure values. If you have side effects, then
     * use [[Future.apply]] to suspend them inside this future.
     */
-  @scala.inline
+
   def pure[T](value: T): Future[T] =
     Future.successful(value)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
+
   def fail[T](bad: Anomaly): Future[T] =
     Future.failed(bad.asThrowable)
 
   /**
     * Failed effect with a [[Throwable]]
     */
-  @scala.inline
+
   def failThr[T](bad: Throwable): Future[T] =
     Future.failed(bad)
 
@@ -1366,7 +1369,7 @@ object FutureOps {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  @scala.inline
+
   def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] = opt match {
     case None        => FutureOps.fail(ifNone)
     case Some(value) => FutureOps.pure(value)
@@ -1544,7 +1547,7 @@ object FutureOps {
     * all failed cases will be wrapped in a:
     * [[busymachines.effects.sync.validated.GenericValidationFailures]]
     */
-  @scala.inline
+
   def fromValidated[T](value: Validated[T]): Future[T] = value match {
     case Validated.Valid(e)   => FutureOps.pure(e)
     case Validated.Invalid(e) => FutureOps.fail(GenericValidationFailures(e.head, e.tail))
@@ -1587,7 +1590,7 @@ object FutureOps {
     * }}}
     *
     */
-  @scala.inline
+
   def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] = value match {
     case Validated.Valid(e)   => FutureOps.pure(e)
     case Validated.Invalid(e) => FutureOps.fail(ctor(e.head, e.tail))

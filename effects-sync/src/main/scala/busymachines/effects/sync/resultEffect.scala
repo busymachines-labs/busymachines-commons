@@ -30,15 +30,15 @@ import scala.util.control.NonFatal
   *
   */
 trait ResultTypeDefinitions {
-  type Result[T]    = Either[Anomaly, T]
-  type Correct[T]   = Right[Anomaly,  T]
-  type Incorrect[T] = Left[Anomaly,   T]
+  final type Result[T]    = Either[Anomaly, T]
+  final type Correct[T]   = Right[Anomaly,  T]
+  final type Incorrect[T] = Left[Anomaly,   T]
 }
 
 trait ResultCompanionAliases {
-  @inline def Result:    busymachines.effects.sync.Result.type    = busymachines.effects.sync.Result
-  @inline def Correct:   busymachines.effects.sync.Correct.type   = busymachines.effects.sync.Correct
-  @inline def Incorrect: busymachines.effects.sync.Incorrect.type = busymachines.effects.sync.Incorrect
+  @inline final def Result:    busymachines.effects.sync.Result.type    = busymachines.effects.sync.Result
+  @inline final def Correct:   busymachines.effects.sync.Correct.type   = busymachines.effects.sync.Correct
+  @inline final def Incorrect: busymachines.effects.sync.Incorrect.type = busymachines.effects.sync.Incorrect
 }
 
 object ResultSyntax {
@@ -48,16 +48,16 @@ object ResultSyntax {
     */
   trait Implicits {
 
-    implicit def bmcResultReferenceOps[T](value: Result[T]): ReferenceOps[T] =
+    implicit final def bmcResultReferenceOps[T](value: Result[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcResultNestedOptionOps[T](nopt: Result[Option[T]]): NestedOptionOps[T] =
+    implicit final def bmcResultNestedOptionOps[T](nopt: Result[Option[T]]): NestedOptionOps[T] =
       new NestedOptionOps(nopt)
 
-    implicit def bmcResultBooleanOps(test: Boolean): BooleanOps =
+    implicit final def bmcResultBooleanOps(test: Boolean): BooleanOps =
       new BooleanOps(test)
 
-    implicit def bmcResultNestedBooleanOps(test: Result[Boolean]): NestedBooleanOps =
+    implicit final def bmcResultNestedBooleanOps(test: Result[Boolean]): NestedBooleanOps =
       new NestedBooleanOps(test)
 
   }
@@ -76,7 +76,7 @@ object ResultSyntax {
       * Throws exceptions into your face
       *
       */
-    @scala.inline
+
     def asOptionUnsafe(): Option[T] =
       Result.asOptionUnsafe(value)
 
@@ -86,7 +86,7 @@ object ResultSyntax {
       * Throws exceptions into your face
       *
       */
-    @scala.inline
+
     def asListUnsafe(): List[T] =
       Result.asListUnsafe(value)
 
@@ -95,7 +95,7 @@ object ResultSyntax {
       * hand side is converted into a [[Throwable]] and corresponds to a
       * failed [[Try]]
       */
-    @scala.inline
+
     def asTry: Try[T] =
       Result.asTry(value)
 
@@ -104,7 +104,7 @@ object ResultSyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-    @scala.inline
+
     def unsafeGet(): T =
       Result.unsafeGet(value)
 
@@ -160,7 +160,7 @@ object ResultSyntax {
       * it's just the final value that is discarded
       *
       */
-    @scala.inline
+
     def discardContent: Result[Unit] =
       Result.discardContent(value)
   }
@@ -292,14 +292,14 @@ object Result {
   /**
     * N.B. pass only pure values. Otherwise use [[Result.apply]]
     */
-  @scala.inline
+
   def pure[T](t: T): Result[T] =
     Correct(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
+
   def fail[T](bad: Anomaly): Result[T] =
     Incorrect(bad)
 
@@ -307,7 +307,7 @@ object Result {
     * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
     * if it is not also an [[Anomaly]]
     */
-  @scala.inline
+
   def failThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))
@@ -316,14 +316,14 @@ object Result {
   /**
     * N.B. pass only pure values. Otherwise use [[Result.apply]]
     */
-  @scala.inline
+
   def correct[T](t: T): Result[T] =
     Correct(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
+
   def incorrect[T](bad: Anomaly): Result[T] =
     Incorrect(bad)
 
@@ -331,7 +331,7 @@ object Result {
     * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
     * if it is not also an [[Anomaly]]
     */
-  @scala.inline
+
   def incorrectThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))

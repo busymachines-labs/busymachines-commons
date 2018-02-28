@@ -11,10 +11,10 @@ import busymachines.core._
 object OptionSyntaxCats {
 
   trait Implicits {
-    implicit def bmcOptionCatsReferenceOps[T](value: Option[T]): ReferenceOps[T] =
+    implicit final def bmcOptionCatsReferenceOps[T](value: Option[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcOptionCatsCompanionObjectOpsOps(value: Option.type): CompanionObjectOps =
+    implicit final def bmcOptionCatsCompanionObjectOpsOps(value: Option.type): CompanionObjectOps =
       new CompanionObjectOps(value)
   }
 

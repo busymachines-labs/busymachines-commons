@@ -37,7 +37,7 @@ object EitherSyntax {
     *
     */
   trait Implicits {
-    implicit def bmcEitherEffectReferenceOps[L, R](value: Either[L, R]): ReferenceOps[L, R] =
+    implicit final def bmcEitherEffectReferenceOps[L, R](value: Either[L, R]): ReferenceOps[L, R] =
       new ReferenceOps(value)
   }
 
@@ -52,7 +52,7 @@ object EitherSyntax {
       * Discards the left value
       *
       */
-    @scala.inline
+
     def asOptionUnsafe(): Option[R] =
       value.toOption
 

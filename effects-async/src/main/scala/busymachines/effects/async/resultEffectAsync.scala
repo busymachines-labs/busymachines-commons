@@ -15,13 +15,13 @@ object ResultSyntaxAsync {
     *
     */
   trait Implcits {
-    implicit def bmcResultAsyncCompanionObjectOps(obj: Result.type): CompanionObjectOps =
+    implicit final def bmcResultAsyncCompanionObjectOps(obj: Result.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcResultAsyncReferenceOps[T](value: Result[T]): ReferenceOps[T] =
+    implicit final def bmcResultAsyncReferenceOps[T](value: Result[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcResultAsyncSafeReferenceOps[T](value: => Result[T]): SafeReferenceOps[T] =
+    implicit final def bmcResultAsyncSafeReferenceOps[T](value: => Result[T]): SafeReferenceOps[T] =
       new SafeReferenceOps(value)
   }
 
@@ -30,22 +30,22 @@ object ResultSyntaxAsync {
     */
   final class CompanionObjectOps(val obj: Result.type) extends AnyVal {
 
-    def asFuture[T](value: Result[T]): Future[T] =
+    @inline def asFuture[T](value: Result[T]): Future[T] =
       FutureOps.fromResult(value)
 
-    def asIO[T](value: Result[T]): IO[T] =
+    @inline def asIO[T](value: Result[T]): IO[T] =
       IOOps.fromResult(value)
 
-    def asTask[T](value: Result[T]): Task[T] =
+    @inline def asTask[T](value: Result[T]): Task[T] =
       TaskOps.fromResult(value)
 
-    def suspendInFuture[T](value: => Result[T])(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture[T](value: => Result[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendResult(value)
 
-    def suspendInIO[T](value: => Result[T]): IO[T] =
+    @inline def suspendInIO[T](value: => Result[T]): IO[T] =
       IOOps.suspendResult(value)
 
-    def suspendInTask[T](value: => Result[T]): Task[T] =
+    @inline def suspendInTask[T](value: => Result[T]): Task[T] =
       TaskOps.suspendResult(value)
   }
 
@@ -61,7 +61,7 @@ object ResultSyntaxAsync {
       * [[Correct]] becomes a pure effect
       *
       */
-    def asFuture: Future[T] =
+    @inline def asFuture: Future[T] =
       FutureOps.fromResult(value)
 
     /**
@@ -71,7 +71,7 @@ object ResultSyntaxAsync {
       * [[Correct]] becomes a pure effect
       *
       */
-    def asIO: IO[T] =
+    @inline def asIO: IO[T] =
       IOOps.fromResult(value)
 
     /**
@@ -81,7 +81,7 @@ object ResultSyntaxAsync {
       * [[Correct]] becomes a pure effect
       *
       */
-    def asTask: Task[T] =
+    @inline def asTask: Task[T] =
       TaskOps.fromResult(value)
 
     //=========================================================================

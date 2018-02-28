@@ -26,4 +26,4 @@ package busymachines.core
   * @since 07 Sep 2017
   *
   */
-case class SubjectToChange(until: String) extends scala.annotation.StaticAnnotation
+final case class SubjectToChange(until: String) extends scala.annotation.StaticAnnotation

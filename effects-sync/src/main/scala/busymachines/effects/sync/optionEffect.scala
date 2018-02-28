@@ -33,16 +33,16 @@ object OptionSyntax {
     *
     */
   trait Implicits {
-    implicit def bmcOptionCompanionObjectOps(obj: Option.type): CompanionObjectOps =
+    implicit final def bmcOptionCompanionObjectOps(obj: Option.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcOptionReferenceOps[T](value: Option[T]): ReferenceOps[T] =
+    implicit final def bmcOptionReferenceOps[T](value: Option[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcOptionBooleanOps(test: Boolean): BooleanOps =
+    implicit final def bmcOptionBooleanOps(test: Boolean): BooleanOps =
       new BooleanOps(test)
 
-    implicit def bmcOptionNestedBooleanOps(test: Option[Boolean]): NestedBooleanOps =
+    implicit final def bmcOptionNestedBooleanOps(test: Option[Boolean]): NestedBooleanOps =
       new NestedBooleanOps(test)
   }
 
@@ -58,32 +58,32 @@ object OptionSyntax {
     /**
       * N.B. pass only pure values
       */
-    @scala.inline
+
     def pure[T](value: T): Option[T] =
       OptionOps.pure(value)
 
     /**
       * N.B. pass only pure values
       */
-    @scala.inline
+
     def some[T](value: T): Option[T] =
       OptionOps.some(value)
 
     /**
       * Failed effect
       */
-    @scala.inline
+
     def fail[T]: Option[T] =
       None
 
     /**
       * Failed effect
       */
-    @scala.inline
+
     def none[T]: Option[T] =
       None
 
-    @scala.inline
+
     def unit: Option[Unit] =
       OptionOps.unit
 
@@ -94,7 +94,7 @@ object OptionSyntax {
     /**
       * Returns `None` if this is a `Failure` or a `Some` containing the value if this is a `Success`.
       */
-    @scala.inline
+
     def fromTryUnsafe[T](value: Try[T]): Option[T] =
       value.toOption
 
@@ -107,7 +107,7 @@ object OptionSyntax {
       * Left(12).toOption  // None
       * }}}
       */
-    @scala.inline
+
     def fromEitherUnsafe[L, R](either: Either[L, R]): Option[R] =
       either.toOption
 
@@ -120,7 +120,7 @@ object OptionSyntax {
       * Incorrect(12).toOption  // None
       * }}}
       */
-    @scala.inline
+
     def fromResultUnsafe[T](r: Result[T]): Option[T] =
       r.toOption
 
@@ -287,7 +287,7 @@ object OptionSyntax {
       * Returns a singleton list containing the $option's value
       * if it is nonempty, or the empty list if the $option is empty.
       */
-    @scala.inline
+
     def asList: List[T] =
       value.toList
 
@@ -320,7 +320,7 @@ object OptionSyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-    @scala.inline
+
     def unsafeGet(): T =
       OptionOps.unsafeGet(value)
 
@@ -418,18 +418,18 @@ object OptionOps {
   /**
     * N.B. pass only pure values
     */
-  @scala.inline
+
   def pure[T](t: T): Option[T] =
     Option(t)
 
   /**
     * N.B. pass only pure values
     */
-  @scala.inline
+
   def some[T](t: T): Option[T] =
     Option(t)
 
-  @scala.inline
+
   val unit: Option[Unit] =
     Option(())
 
@@ -518,7 +518,7 @@ object OptionOps {
     *
     * Will throw exceptions in your face if the underlying effect is failed
     */
-  @scala.inline
+
   def unsafeGet[T](value: Option[T]): T =
     value.get
 

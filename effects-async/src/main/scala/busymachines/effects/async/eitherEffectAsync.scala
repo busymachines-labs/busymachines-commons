@@ -14,13 +14,13 @@ object EitherSyntaxAsync {
     *
     */
   trait Implcits {
-    implicit def bmcEitherAsyncCompanionObjectOps(obj: Either.type): CompanionObjectOps =
+    implicit final def bmcEitherAsyncCompanionObjectOps(obj: Either.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcEitherAsyncReferenceOps[L, R](value: Either[L, R]): ReferenceOps[L, R] =
+    implicit final def bmcEitherAsyncReferenceOps[L, R](value: Either[L, R]): ReferenceOps[L, R] =
       new ReferenceOps(value)
 
-    implicit def bmcEitherAsyncSafeReferenceOps[L, R](value: => Either[L, R]): SafeReferenceOps[L, R] =
+    implicit final def bmcEitherAsyncSafeReferenceOps[L, R](value: => Either[L, R]): SafeReferenceOps[L, R] =
       new SafeReferenceOps(value)
   }
 

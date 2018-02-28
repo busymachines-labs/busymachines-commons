@@ -11,10 +11,10 @@ import busymachines.effects.sync._
 object ResultSyntaxCats {
 
   trait Implicits {
-    implicit def bmcResultCatsReferenceOps[T](value: Result[T]): ReferenceOps[T] =
+    implicit final def bmcResultCatsReferenceOps[T](value: Result[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcResultCatsCompanionObjectOpsOps(value: Result.type): CompanionObjectOps =
+    implicit final def bmcResultCatsCompanionObjectOpsOps(value: Result.type): CompanionObjectOps =
       new CompanionObjectOps(value)
   }
 

@@ -20,8 +20,7 @@ import scala.util.control.NonFatal
   */
 trait TaskTypeDefinitions {
 
-
-  type CancellableFuture[T] = mex.CancelableFuture[T]
+  final type CancellableFuture[T] = mex.CancelableFuture[T]
 
   /**
     * N.B.
@@ -29,11 +28,11 @@ trait TaskTypeDefinitions {
     * which makes this type the only implicit in context necessary to do
     * interop between [[Task]] and [[scala.concurrent.Future]]
     */
-  type Scheduler = mex.Scheduler
-  type Task[T]   = mev.Task[T]
+  final type Scheduler = mex.Scheduler
+  final type Task[T]   = mev.Task[T]
 
-  @inline def Scheduler: mex.Scheduler.type = mex.Scheduler
-  @inline def Task:      mev.Task.type      = mev.Task
+  @inline final def Scheduler: mex.Scheduler.type = mex.Scheduler
+  @inline final def Task:      mev.Task.type      = mev.Task
 
 }
 
@@ -43,22 +42,22 @@ object TaskSyntax {
     *
     */
   trait Implicits {
-    implicit def bmcTaskCompanionObjectOps(obj: mev.Task.type): CompanionObjectOps =
+    implicit final def bmcTaskCompanionObjectOps(obj: mev.Task.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcTaskReferenceOps[T](value: Task[T]): ReferenceOps[T] =
+    implicit final def bmcTaskReferenceOps[T](value: Task[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcTaskNestedOptionOps[T](nopt: Task[Option[T]]): NestedOptionOps[T] =
+    implicit final def bmcTaskNestedOptionOps[T](nopt: Task[Option[T]]): NestedOptionOps[T] =
       new NestedOptionOps(nopt)
 
-    implicit def bmcTaskNestedResultOps[T](result: Task[Result[T]]): NestedResultOps[T] =
+    implicit final def bmcTaskNestedResultOps[T](result: Task[Result[T]]): NestedResultOps[T] =
       new NestedResultOps(result)
 
-    implicit def bmcTaskBooleanOps(test: Boolean): BooleanOps =
+    implicit final def bmcTaskBooleanOps(test: Boolean): BooleanOps =
       new BooleanOps(test)
 
-    implicit def bmcTaskNestedBooleanOps(test: Task[Boolean]): NestedBooleanOps =
+    implicit final def bmcTaskNestedBooleanOps(test: Task[Boolean]): NestedBooleanOps =
       new NestedBooleanOps(test)
   }
 
@@ -72,14 +71,14 @@ object TaskSyntax {
     /**
       * Failed effect but with an [[Anomaly]]
       */
-    @scala.inline
+
     def fail[T](bad: Anomaly): Task[T] =
       TaskOps.fail(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
-    @scala.inline
+
     def failThr[T](bad: Throwable): Task[T] =
       TaskOps.failThr(bad)
 
@@ -219,7 +218,7 @@ object TaskSyntax {
       * all failed cases will be wrapped in a:
       * [[busymachines.effects.sync.validated.GenericValidationFailures]]
       */
-    @scala.inline
+
     def fromValidated[T](value: Validated[T]): Task[T] =
       TaskOps.fromValidated(value)
 
@@ -260,7 +259,7 @@ object TaskSyntax {
       * }}}
       *
       */
-    @scala.inline
+
     def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.fromValidated(value, ctor)
 
@@ -1175,21 +1174,21 @@ object TaskOps {
     * N.B. pass only pure values. If you have side effects, then
     * use [[Task.apply]] to suspend them inside this future.
     */
-  @scala.inline
+
   def pure[T](value: T): Task[T] =
     Task.pure(value)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
+
   def fail[T](bad: Anomaly): Task[T] =
     Task.raiseError(bad.asThrowable)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
-  @scala.inline
+
   def failThr[T](bad: Throwable): Task[T] =
     Task.raiseError(bad)
 
@@ -1341,7 +1340,7 @@ object TaskOps {
     * all failed cases will be wrapped in a:
     * [[busymachines.effects.sync.validated.GenericValidationFailures]]
     */
-  @scala.inline
+
   def fromValidated[T](value: Validated[T]): Task[T] = value match {
     case Validated.Valid(e)   => TaskOps.pure(e)
     case Validated.Invalid(e) => TaskOps.fail(GenericValidationFailures(e.head, e.tail))
@@ -1384,7 +1383,7 @@ object TaskOps {
     * }}}
     *
     */
-  @scala.inline
+
   def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] = value match {
     case Validated.Valid(e)   => TaskOps.pure(e)
     case Validated.Invalid(e) => TaskOps.fail(ctor(e.head, e.tail))
