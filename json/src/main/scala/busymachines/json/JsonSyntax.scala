@@ -22,20 +22,30 @@ import busymachines.effects.sync.Result
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
-  * @since 19 Oct 2017
+  * @since 28 Feb 2018
   *
   */
-@scala.deprecated("use JsonSyntax.Implicits instead. Will be removed in 0.3.0", "0.3.0-RC6")
-trait JsonSyntaxImplicits {
+object JsonSyntax {
 
-  implicit final class EncoderOps[A](val wrappedEncodeable: A) {
+  trait Implicits {
+    implicit final def bmcJsonEncoderOps[A](wrappedEncodeable: A): EncoderOps[A] =
+      new EncoderOps(wrappedEncodeable)
+
+    implicit final def bmcJsonDecoderOpsString(rawJson: String): DecoderOpsString =
+      new DecoderOpsString(rawJson)
+
+    implicit final def bmcJsonDecoderOpsJson(js: Json): DecoderOpsJson =
+      new DecoderOpsJson(js)
+  }
+
+  final class EncoderOps[A](val wrappedEncodeable: A) extends AnyVal {
     def asJson(implicit encoder: Encoder[A]): Json = encoder(wrappedEncodeable)
 
     def asJsonObject(implicit encoder: ObjectEncoder[A]): JsonObject =
       encoder.encodeObject(wrappedEncodeable)
   }
 
-  implicit final class DecoderOpsString(val rawJson: String) {
+  final class DecoderOpsString(val rawJson: String) extends AnyVal {
     def unsafeAsJson: Json = JsonParsing.unsafeParseString(rawJson)
 
     def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
@@ -46,7 +56,7 @@ trait JsonSyntaxImplicits {
     }
   }
 
-  implicit final class DecoderOpsJson(val js: Json) {
+  final class DecoderOpsJson(val js: Json) extends AnyVal {
 
     def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
       JsonDecoding.unsafeDecodeAs[A](js)
