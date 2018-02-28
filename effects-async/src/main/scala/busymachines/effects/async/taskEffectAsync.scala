@@ -1,7 +1,7 @@
 package busymachines.effects.async
 
 import monix.{execution => mex}
-import monix.{eval      => mev}
+import monix.{eval => mev}
 
 import cats.{data => cd}
 
