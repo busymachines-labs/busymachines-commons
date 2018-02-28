@@ -633,7 +633,7 @@ object Result {
     *   def indexExists(i: Int): Result[Unit] = ???
 
     *   val fileIndex: List[Int] = List(0,1,2,3,4)
-    *   val result: Result[Unit] = Result.traverse(fileIndex)(indexExists)
+    *   val result: Result[Unit] = Result.traverse_(fileIndex)(indexExists)
     * }}}
     */
   @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
@@ -676,7 +676,7 @@ object Result {
     * @inline def indexToFilename(i: Int): Result[String] = ???
     *
     *   val fileNamesResult: List[Result[String]] = List(0,1,2,3,4).map(indexToFileName)
-    *   val fileNames:       Result[Unit] = Result.sequence(fileNamesTry)
+    *   val fileNames:       Result[Unit] = Result.sequence_(fileNamesTry)
     * }}}
     */
   @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(

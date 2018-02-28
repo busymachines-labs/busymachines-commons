@@ -61,7 +61,6 @@ object ValidatedSyntax {
       * Throws exceptions into your face
       *
       */
-
     @inline def asOptionUnsafe(): Option[T] =
       ValidatedOps.asOptionUnsafe(value)
 
@@ -73,7 +72,6 @@ object ValidatedSyntax {
       * Throws exceptions into your face
       *
       */
-
     @inline def asOptionUnsafe(ctor: (Anomaly, List[Anomaly]) => Anomalies): Option[T] =
       ValidatedOps.asOptionUnsafe(value, ctor)
 
@@ -83,7 +81,6 @@ object ValidatedSyntax {
       * Throws exceptions into your face
       *
       */
-
     @inline def asListUnsafe(): List[T] =
       ValidatedOps.asListUnsafe(value)
 
@@ -93,7 +90,6 @@ object ValidatedSyntax {
       * Allows you to specify which specific [[Anomalies]] to throw in your face.
       *
       */
-
     @inline def asListUnsafe(ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] =
       ValidatedOps.asListUnsafe(value, ctor)
 
@@ -102,7 +98,6 @@ object ValidatedSyntax {
       * hand side is converted into a [[Throwable]] and corresponds to a
       * failed [[Try]]
       */
-
     @inline def asTry: Try[T] =
       ValidatedOps.asTry(value)
 
@@ -110,7 +105,6 @@ object ValidatedSyntax {
       * Transforms this result into a [[Try]]. The [[Anomaly]]s are
       * transformed into an [[Anomalies]] of your choice
       */
-
     @inline def asTry(ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
       ValidatedOps.asTry(value, ctor)
 
@@ -125,7 +119,6 @@ object ValidatedSyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-
     @inline def unsafeGet(): T =
       ValidatedOps.unsafeGet(value)
 
@@ -134,7 +127,6 @@ object ValidatedSyntax {
       *
       * Will throw exceptions of your choice in your face if the underlying effect is failed
       */
-
     @inline def unsafeGet(ctor: (Anomaly, List[Anomaly]) => Anomalies): T =
       ValidatedOps.unsafeGet(value, ctor)
 
@@ -202,7 +194,6 @@ object ValidatedSyntax {
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-
     @inline def fromOptionAno[T](opt: Option[T], ifNone: => Anomaly): Validated[T] =
       ValidatedOps.fromOption(opt, ifNone)
 
@@ -214,7 +205,6 @@ object ValidatedSyntax {
       * If we have multiple [[Anomalies]] then each individual [[Anomalies.messages]] is sequenced
       * withing this effect
       */
-
     @inline def fromTryAno[T](t: Try[T]): Validated[T] =
       ValidatedOps.fromTry(t)
 
@@ -224,7 +214,6 @@ object ValidatedSyntax {
       * If we have multiple [[Anomalies]] then each individual [[Anomalies.messages]] is sequenced
       * withing this effect
       */
-
     @inline def fromResult[T](t: Result[T]): Validated[T] =
       ValidatedOps.fromResult(t)
 
@@ -264,7 +253,6 @@ object ValidatedSyntax {
       * Throws exceptions into your face
       *
       */
-
     @inline def asOptionUnsafe[T](value: Validated[T]): Option[T] =
       ValidatedOps.asOptionUnsafe(value)
 
@@ -276,7 +264,6 @@ object ValidatedSyntax {
       * Throws exceptions into your face
       *
       */
-
     @inline def asOptionUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Option[T] =
       ValidatedOps.asOptionUnsafe(value, ctor)
 
@@ -286,7 +273,6 @@ object ValidatedSyntax {
       * Throws exceptions into your face
       *
       */
-
     @inline def asListUnsafe[T](value: Validated[T]): List[T] =
       ValidatedOps.asListUnsafe(value)
 
@@ -296,7 +282,6 @@ object ValidatedSyntax {
       * Allows you to specify which specific [[Anomalies]] to throw in your face.
       *
       */
-
     @inline def asListUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] =
       ValidatedOps.asListUnsafe(value, ctor)
 
@@ -305,7 +290,6 @@ object ValidatedSyntax {
       * hand side is converted into a [[Throwable]] and corresponds to a
       * failed [[Try]]
       */
-
     @inline def asTry[T](value: Validated[T]): Try[T] =
       ValidatedOps.asTry(value)
 
@@ -313,7 +297,6 @@ object ValidatedSyntax {
       * Transforms this result into a [[Try]]. The [[Anomaly]]s are
       * transformed into an [[Anomalies]] of your choice
       */
-
     @inline def asTry[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
       ValidatedOps.asTry(value, ctor)
 
@@ -328,7 +311,6 @@ object ValidatedSyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-
     @inline def unsafeGet[T](value: Validated[T]): T =
       ValidatedOps.unsafeGet(value)
 
@@ -337,7 +319,6 @@ object ValidatedSyntax {
       *
       * Will throw exceptions of your choice in your face if the underlying effect is failed
       */
-
     @inline def unsafeGet[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): T =
       ValidatedOps.unsafeGet(value, ctor)
 
@@ -347,7 +328,6 @@ object ValidatedSyntax {
       * N.B. the computation captured within this effect are still executed,
       * it's just the final value that is discarded
       */
-
     @inline def discardContent[T](value: Validated[T]): Validated[Unit] =
       ValidatedOps.discardContent(value)
 
@@ -364,7 +344,6 @@ object ValidatedSyntax {
       *   }
       * }}}
       */
-
     @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
@@ -373,7 +352,6 @@ object ValidatedSyntax {
     /**
       * Basically like ``traverse`` but discards the value
       */
-
     @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] =
       ValidatedOps.traverse_(col)(fn)
 
@@ -390,7 +368,6 @@ object ValidatedSyntax {
       *   val fileNames:    Validated[List[String]] = Validated.sequence(fileNamesTry)
       * }}}
       */
-
     @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
       implicit
       cbf: CanBuildFrom[M[Validated[A]], A, M[A]]
@@ -399,7 +376,6 @@ object ValidatedSyntax {
     /**
       * Like ``sequence`` but discards the value
       */
-
     @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
       ValidatedOps.sequence_(in)
 

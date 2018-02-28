@@ -272,7 +272,7 @@ object OptionSyntax {
       * @inline def indexToFilename(i: Int): Option[String] = ???
       *
       *   val fileIndex: List[Int] = List(0,1,2,3,4)
-      *   val fileNames: Option[List[String]] = Option.traverse(fileIndex){ i =>
+      *   val fileNames: Option[List[String]] = Option.traverse_(fileIndex){ i =>
       *     indexToFilename(i)
       *   }
       * }}}
@@ -684,7 +684,7 @@ object OptionOps {
     * @inline def indexToFilename(i: Int): Option[String] = ???
     *
     *   val fileIndex: List[Int] = List(0,1,2,3,4)
-    *   val fileNames: Option[List[String]] = Option.traverse(fileIndex){ i =>
+    *   val fileNames: Option[List[String]] = Option.traverse_(fileIndex){ i =>
     *     indexToFilename(i)
     *   }
     * }}}
@@ -715,6 +715,7 @@ object OptionOps {
   /**
     * Similar to [[sequence]], but discards all content. i.e. used only
     * for the combined effects.
+    *
     * see:
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
