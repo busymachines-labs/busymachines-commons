@@ -867,6 +867,32 @@ object FutureSyntax {
 
     /**
       *
+      * Similar to [[scala.concurrent.Future.traverse]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[scala.concurrent.Future.traverse]]
+      */
+    @inline def traverse_[A, B, M[X] <: TraversableOnce[X]](in: M[A])(fn: A => Future[B])(
+      implicit
+      cbf: CanBuildFrom[M[A], B, M[B]],
+      ec:  ExecutionContext
+    ): Future[Unit] = FutureOps.traverse_(in)(fn)
+
+    /**
+      *
+      * Similar to [[scala.concurrent.Future.sequence]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[scala.concurrent.Future.sequence]]
+      */
+    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Future[A]])(
+      implicit
+      cbf: CanBuildFrom[M[Future[A]], A, M[A]],
+      ec:  ExecutionContext
+    ): Future[Unit] = FutureOps.sequence_(in)
+
+    /**
+      *
       * Syntactically inspired from [[Future.traverse]], but it differs semantically
       * insofar as this method does not attempt to run any futures in parallel. "M" stands
       * for "monadic", as opposed to "applicative" which is the foundation for the formal definition
@@ -2219,6 +2245,33 @@ object FutureOps {
   //=========================================================================
   //=============================== Traversals ==============================
   //=========================================================================
+
+  /**
+    *
+    * Similar to [[scala.concurrent.Future.traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[scala.concurrent.Future.traverse]]
+    */
+  @inline def traverse_[A, B, M[X] <: TraversableOnce[X]](in: M[A])(fn: A => Future[B])(
+    implicit
+    cbf: CanBuildFrom[M[A], B, M[B]],
+    ec:  ExecutionContext
+  ): Future[Unit] =
+    FutureOps.discardContent(Future.traverse(in)(fn))
+
+  /**
+    *
+    * Similar to [[scala.concurrent.Future.sequence]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[scala.concurrent.Future.sequence]]
+    */
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Future[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Future[A]], A, M[A]],
+    ec:  ExecutionContext
+  ): Future[Unit] = FutureOps.discardContent(Future.sequence(in))
 
   /**
     *

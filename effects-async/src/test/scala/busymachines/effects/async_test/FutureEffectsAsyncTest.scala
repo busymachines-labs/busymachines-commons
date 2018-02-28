@@ -2866,97 +2866,139 @@ final class FutureEffectsAsyncTest extends FunSpec {
       }
     }
 
-    describe("Future.serialize") {
+    describe("traversals") {
 
-      test("empty list") {
-        val input:    Seq[Int] = List()
-        val expected: Seq[Int] = List()
+      describe("Future.serialize") {
 
-        var sideEffect: Int = 0
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
 
-        val eventualResult = Future.serialize(input) { i =>
-          Future {
-            sideEffect = 42
+          var sideEffect: Int = 0
+
+          val eventualResult = Future.serialize(input) { i =>
+            Future {
+              sideEffect = 42
+            }
           }
+
+          assert(eventualResult.r == expected)
+          assert(sideEffect == 0, "nothing should have happened")
         }
 
-        assert(eventualResult.r == expected)
-        assert(sideEffect == 0, "nothing should have happened")
+        test("no two futures should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: Future[Seq[String]] = Future.serialize(input) { i =>
+            Future {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each future but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          assert(expected == eventualResult.r)
+          assert(previouslyProcessed == Option(100))
+        }
       }
 
-      test("no two futures should run in parallel") {
-        val input: Seq[Int] = (1 to 100).toList
-        val expected = input.map(_.toString)
+      describe("Future.serialize_") {
 
-        var previouslyProcessed: Option[Int] = None
-        var startedFlag:         Option[Int] = None
+        test("empty list") {
+          val input: Seq[Int] = List()
 
-        val eventualResult: Future[Seq[String]] = Future.serialize(input) { i =>
-          Future {
-            assert(
-              startedFlag.isEmpty,
-              s"started flag should have been empty at the start of each future but was: $startedFlag"
-            )
-            previouslyProcessed foreach { previous =>
-              assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
-                actual = previous
-              )
+          var sideEffect: Int = 0
+
+          val eventualResult = Future.serialize_(input) { i =>
+            Future {
+              sideEffect = 42
             }
-            startedFlag         = Some(i)
-            startedFlag         = None
-            previouslyProcessed = Some(i)
-            i.toString
           }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
         }
-        assert(expected == eventualResult.r)
-        assert(previouslyProcessed == Option(100))
+
+        test("no two futures should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: Future[Unit] = Future.serialize_(input) { i =>
+            Future {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each future but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          eventualResult.r
+          assert(previouslyProcessed == Option(100))
+        }
+      }
+
+      describe("Future.traverse_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult: Future[Unit] = Future.traverse_(input) { i =>
+            Future {
+              sideEffect = 42
+            }
+          }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+      }
+
+      describe("Future.sequence_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult: Future[Unit] = Future.sequence_ {
+            input.map { i =>
+              Future {
+                sideEffect = 42
+              }
+            }
+          }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
+        }
       }
     }
 
-    describe("Future.serialize_") {
-
-      test("empty list") {
-        val input:    Seq[Int] = List()
-
-        var sideEffect: Int = 0
-
-        val eventualResult = Future.serialize_(input) { i =>
-          Future {
-            sideEffect = 42
-          }
-        }
-
-        eventualResult.r
-        assert(sideEffect == 0, "nothing should have happened")
-      }
-
-      test("no two futures should run in parallel") {
-        val input: Seq[Int] = (1 to 100).toList
-
-        var previouslyProcessed: Option[Int] = None
-        var startedFlag:         Option[Int] = None
-
-        val eventualResult: Future[Unit] = Future.serialize_(input) { i =>
-          Future {
-            assert(
-              startedFlag.isEmpty,
-              s"started flag should have been empty at the start of each future but was: $startedFlag"
-            )
-            previouslyProcessed foreach { previous =>
-              assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
-                actual = previous
-              )
-            }
-            startedFlag         = Some(i)
-            startedFlag         = None
-            previouslyProcessed = Some(i)
-            i.toString
-          }
-        }
-        eventualResult.r
-        assert(previouslyProcessed == Option(100))
-      }
-    }
   }
 
 } //end test
