@@ -111,8 +111,8 @@ lazy val `effects-sync-cats` = project
   .settings(
     name in ThisProject := "busymachines-commons-effects-sync-cats",
     libraryDependencies ++= Seq(
-      Dependencies.catsCore withSources (),
-      Dependencies.scalaTest % Test withSources (),
+      Dependencies.catsCore  withSources (),
+      Dependencies.scalaTest % Test withSources ()
     )
   )
   .dependsOn(
