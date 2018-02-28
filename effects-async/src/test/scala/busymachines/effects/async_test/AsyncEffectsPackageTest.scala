@@ -46,6 +46,7 @@ final class AsyncEffectsPackageTest extends FunSpec {
 
     test("future") {
       async.future.bmcFutureBooleanOps(true)
+      assert(async.future.ExCtx.toString.size > 0)
     }
 
   }
