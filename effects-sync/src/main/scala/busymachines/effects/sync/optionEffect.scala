@@ -83,7 +83,6 @@ object OptionSyntax {
     def none[T]: Option[T] =
       None
 
-
     def unit: Option[Unit] =
       OptionOps.unit
 
@@ -428,7 +427,6 @@ object OptionOps {
 
   def some[T](t: T): Option[T] =
     Option(t)
-
 
   val unit: Option[Unit] =
     Option(())

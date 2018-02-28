@@ -22,17 +22,18 @@ lazy val currentSnapshotVersion = "0.3.0-SNAPSHOT"
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
 addCommandAlias("build",           ";compile;Test/compile")
-addCommandAlias("rebuild",         ";clean;update;compile;Test/compile")
-addCommandAlias("ci",              ";scalafmtCheck;coverageOff;rebuild;test")
+addCommandAlias("rebuild",         ";clean;compile;Test/compile")
+addCommandAlias("rebuild-update",  ";clean;update;compile;Test/compile")
+addCommandAlias("ci",              ";scalafmtCheck;coverageOff;rebuild-update;test")
 addCommandAlias("ci-quick",        ";scalafmtCheck;build;test")
-addCommandAlias("doLocal",         ";rebuild;publishLocal")
-addCommandAlias("doSnapshotLocal", ";rebuild;setSnapshotVersion;publishLocal")
+addCommandAlias("doLocal",         ";rebuild-update;publishLocal")
+addCommandAlias("doSnapshotLocal", ";rebuild-update;setSnapshotVersion;publishLocal")
 
 addCommandAlias("mkSite",        ";docs/makeMicrosite")
 addCommandAlias("doSitePublish", ";docs/publishMicrosite")
 
-addCommandAlias("doCoverage",       ";rebuild;coverage;test;coverageReport;coverageOff")
-addCommandAlias("doCoverage-quick", ";build;coverage;test;coverageReport;coverageOff")
+addCommandAlias("doCoverage", ";rebuild;coverage;test;coverageReport;coverageOff")
+addCommandAlias("doCoverage", ";rebuild-update;coverage;test;coverageReport;coverageOff")
 
 /**
   * Use with care. Releases a snapshot to sonatype repository.

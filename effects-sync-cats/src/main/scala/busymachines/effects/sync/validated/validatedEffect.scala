@@ -114,10 +114,8 @@ object ValidatedSyntax {
     def asTry(ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
       ValidatedOps.asTry(value, ctor)
 
-
     def asResult: Result[T] =
       ValidatedOps.asResult(value)
-
 
     def asResult(ctor: (Anomaly, List[Anomaly]) => Anomalies): Result[T] =
       ValidatedOps.asResult(value, ctor)
@@ -139,7 +137,6 @@ object ValidatedSyntax {
 
     def unsafeGet(ctor: (Anomaly, List[Anomaly]) => Anomalies): T =
       ValidatedOps.unsafeGet(value, ctor)
-
 
     def discardContent: Validated[Unit] =
       ValidatedOps.discardContent(value)
@@ -188,21 +185,17 @@ object ValidatedSyntax {
     /**
       * N.B. pass only pure values.
       */
-
     def pure[T](value: T): Validated[T] = ValidatedOps.pure(value)
 
     /**
       * Failed effect
       */
-
     def fail[T](bad: Anomaly, bads: Anomaly*): Validated[T] = ValidatedOps.fail(bad, bads: _*)
 
     /**
       * Failed effect overload
       */
-
     def fail[T](bads: cd.NonEmptyList[Anomaly]): Validated[T] = ValidatedOps.fail(bads)
-
 
     def unit: Validated[Unit] = ValidatedOps.unit
 
@@ -324,10 +317,8 @@ object ValidatedSyntax {
     def asTry[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
       ValidatedOps.asTry(value, ctor)
 
-
     def asResult[T](value: Validated[T]): Result[T] =
       ValidatedOps.asResult(value)
-
 
     def asResult[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Result[T] =
       ValidatedOps.asResult(value, ctor)
@@ -412,10 +403,8 @@ object ValidatedSyntax {
     def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
       ValidatedOps.sequence_(in)
 
-
     def sequence[A](head: Validated[A], tail: Validated[A]*): Validated[List[A]] =
       ValidatedOps.sequence(head, tail: _*)
-
 
     def sequence_[A](head: Validated[A], tail: Validated[A]*): Validated[Unit] =
       ValidatedOps.sequence_(head, tail: _*)
@@ -431,19 +420,16 @@ object ValidatedOps {
   /**
     * N.B. pass only pure values.
     */
-
   def pure[T](value: T): Validated[T] = Validated.Valid(value)
 
   /**
     * Failed effect
     */
-
   def fail[T](bad: Anomaly, bads: Anomaly*): Validated[T] = Validated.Invalid(cd.NonEmptyList.of(bad, bads: _*))
 
   /**
     * Failed effect overload
     */
-
   def fail[T](bads: cd.NonEmptyList[Anomaly]): Validated[T] = Validated.Invalid(bads)
 
   val unit: Validated[Unit] = ValidatedOps.pure(())
