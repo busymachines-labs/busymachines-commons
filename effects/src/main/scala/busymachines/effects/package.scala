@@ -20,7 +20,6 @@ package busymachines
 import busymachines.effects.async._
 import busymachines.effects.sync._
 
-import busymachines.effects.async.validated._
 import busymachines.effects.sync.validated._
 
 /**

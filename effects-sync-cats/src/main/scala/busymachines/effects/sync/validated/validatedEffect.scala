@@ -33,7 +33,7 @@ import scala.util.control.NonFatal
 trait ValidatedTypeDefinitions {
   type Validated[T] = cd.Validated[cd.NonEmptyList[Anomaly], T]
 
-  val Validated: cd.Validated.type = cd.Validated
+  @inline def Validated: cd.Validated.type = cd.Validated
 }
 
 object ValidatedSyntax {
@@ -42,7 +42,7 @@ object ValidatedSyntax {
     implicit def bmcValidatedReferenceOps[T](ops: Validated[T]): ReferenceOps[T] =
       new ReferenceOps(ops)
 
-    implicit def bmcValidatedCompanionObjectOps(obj: Validated.type): CompanionObjectOps =
+    implicit def bmcValidatedCompanionObjectOps(obj: cd.Validated.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
     implicit def bmcValidatedBooleanOps(test: Boolean): BooleanOps =
@@ -180,7 +180,7 @@ object ValidatedSyntax {
 
   }
 
-  final class CompanionObjectOps(val obj: Validated.type) {
+  final class CompanionObjectOps(val obj: cd.Validated.type) {
 
     /**
       * N.B. pass only pure values.

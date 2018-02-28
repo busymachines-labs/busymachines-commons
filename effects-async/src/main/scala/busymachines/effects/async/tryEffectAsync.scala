@@ -14,7 +14,7 @@ object TrySyntaxAsync {
     *
     */
   trait Implcits {
-    implicit def bmcTryAsyncCompanionObjectOps(obj: Try.type): CompanionObjectOps =
+    implicit def bmcTryAsyncCompanionObjectOps(obj: scala.util.Try.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
     implicit def bmcTryAsyncReferenceOps[T](value: Try[T]): ReferenceOps[T] =
@@ -27,7 +27,7 @@ object TrySyntaxAsync {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Try.type) extends AnyVal {
+  final class CompanionObjectOps(val obj: scala.util.Try.type) extends AnyVal {
 
     /**
       * [[scala.util.Failure]] is sequenced into this effect

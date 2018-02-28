@@ -14,7 +14,7 @@ object TrySyntaxCats {
     implicit def bmcTryCatsReferenceOps[T](value: Try[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcTryCatsCompanionObjectOpsOps(value: Try.type): CompanionObjectOps =
+    implicit def bmcTryCatsCompanionObjectOpsOps(value: scala.util.Try.type): CompanionObjectOps =
       new CompanionObjectOps(value)
   }
 
@@ -22,7 +22,7 @@ object TrySyntaxCats {
     @inline def asValidated: Validated[T] = ValidatedOps.fromTry(value)
   }
 
-  final class CompanionObjectOps(val TryObj: Try.type) extends AnyVal {
+  final class CompanionObjectOps(val tryObj: scala.util.Try.type) extends AnyVal {
     @inline def asValidated[T](value: Try[T]): Validated[T] = ValidatedOps.fromTry(value)
   }
 }

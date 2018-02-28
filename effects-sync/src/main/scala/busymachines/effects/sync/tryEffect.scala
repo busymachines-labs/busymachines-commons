@@ -33,7 +33,8 @@ trait TryTypeDefinitons {
   type TrySuccess[T] = scala.util.Success[T]
   type TryFailure[T] = scala.util.Failure[T]
 
-  @inline val Try:        scala.util.Try.type     = scala.util.Try
+  @inline def Try: scala.util.Try.type = scala.util.Try
+  //these two have to be val, because otherwise you can't use them in pattern matches :(((
   @inline val TrySuccess: scala.util.Success.type = scala.util.Success
   @inline val TryFailure: scala.util.Failure.type = scala.util.Failure
 }
@@ -44,7 +45,7 @@ object TrySyntax {
     *
     */
   trait Implicits {
-    implicit def bmcTryCompanionObjectOps(obj: Try.type): CompanionObjectOps =
+    implicit def bmcTryCompanionObjectOps(obj: scala.util.Try.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
     implicit def bmcTryReferenceOps[T](value: Try[T]): ReferenceOps[T] =
@@ -66,7 +67,7 @@ object TrySyntax {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Try.type) extends AnyVal {
+  final class CompanionObjectOps(val obj: scala.util.Try.type) extends AnyVal {
 
     /**
       * N.B. pass only pure values. Otherwise use [[Try.apply]]

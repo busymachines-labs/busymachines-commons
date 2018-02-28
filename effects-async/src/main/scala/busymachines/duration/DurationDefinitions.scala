@@ -11,21 +11,21 @@ import java.util.concurrent.TimeUnit
   */
 trait DurationDefinitions {
   type FiniteDuration = d.FiniteDuration
-  val FiniteDuration: d.FiniteDuration.type = d.FiniteDuration
+  @inline def FiniteDuration: d.FiniteDuration.type = d.FiniteDuration
 
-  val Nanos:   TimeUnit = TimeUnit.NANOSECONDS
-  val Micros:  TimeUnit = TimeUnit.MICROSECONDS
-  val Millis:  TimeUnit = TimeUnit.MILLISECONDS
-  val Seconds: TimeUnit = TimeUnit.SECONDS
-  val Minutes: TimeUnit = TimeUnit.MINUTES
-  val Hours:   TimeUnit = TimeUnit.HOURS
-  val Days:    TimeUnit = TimeUnit.DAYS
+  @inline def Nanos:   TimeUnit = TimeUnit.NANOSECONDS
+  @inline def Micros:  TimeUnit = TimeUnit.MICROSECONDS
+  @inline def Millis:  TimeUnit = TimeUnit.MILLISECONDS
+  @inline def Seconds: TimeUnit = TimeUnit.SECONDS
+  @inline def Minutes: TimeUnit = TimeUnit.MINUTES
+  @inline def Hours:   TimeUnit = TimeUnit.HOURS
+  @inline def Days:    TimeUnit = TimeUnit.DAYS
 
-  def nanos(s:   Long): FiniteDuration = d.FiniteDuration(s, Nanos)
-  def micros(s:  Long): FiniteDuration = d.FiniteDuration(s, Micros)
-  def millis(s:  Long): FiniteDuration = d.FiniteDuration(s, Millis)
-  def seconds(s: Long): FiniteDuration = d.FiniteDuration(s, Seconds)
-  def minutes(s: Long): FiniteDuration = d.FiniteDuration(s, Minutes)
-  def hours(s:   Long): FiniteDuration = d.FiniteDuration(s, Hours)
-  def days(s:    Long): FiniteDuration = d.FiniteDuration(s, Days)
+  @inline def nanos(s:   Long): FiniteDuration = d.FiniteDuration(s, Nanos)
+  @inline def micros(s:  Long): FiniteDuration = d.FiniteDuration(s, Micros)
+  @inline def millis(s:  Long): FiniteDuration = d.FiniteDuration(s, Millis)
+  @inline def seconds(s: Long): FiniteDuration = d.FiniteDuration(s, Seconds)
+  @inline def minutes(s: Long): FiniteDuration = d.FiniteDuration(s, Minutes)
+  @inline def hours(s:   Long): FiniteDuration = d.FiniteDuration(s, Hours)
+  @inline def days(s:    Long): FiniteDuration = d.FiniteDuration(s, Days)
 }

@@ -3,6 +3,8 @@ package busymachines.effects.async
 import busymachines.core._
 import busymachines.effects.sync.validated._
 
+import cats.{data => cd}
+
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
@@ -15,7 +17,7 @@ object ValidatedSyntaxAsync {
     *
     */
   trait Implcits {
-    implicit def bmcValidatedAsyncCompanionObjectOps(obj: Validated.type): CompanionObjectOps =
+    implicit def bmcValidatedAsyncCompanionObjectOps(obj: cd.Validated.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
     implicit def bmcValidatedAsyncReferenceOps[T](value: Validated[T]): ReferenceOps[T] =
@@ -28,7 +30,7 @@ object ValidatedSyntaxAsync {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Validated.type) extends AnyVal {
+  final class CompanionObjectOps(val obj: cd.Validated.type) extends AnyVal {
 
     //
     def asFuture[T](value: Validated[T]): Future[T] =

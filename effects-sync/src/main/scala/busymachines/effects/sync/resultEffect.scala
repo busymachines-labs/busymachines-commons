@@ -36,9 +36,9 @@ trait ResultTypeDefinitions {
 }
 
 trait ResultCompanionAliases {
-  val Result:    busymachines.effects.sync.Result.type    = busymachines.effects.sync.Result
-  val Correct:   busymachines.effects.sync.Correct.type   = busymachines.effects.sync.Correct
-  val Incorrect: busymachines.effects.sync.Incorrect.type = busymachines.effects.sync.Incorrect
+  @inline def Result:    busymachines.effects.sync.Result.type    = busymachines.effects.sync.Result
+  @inline def Correct:   busymachines.effects.sync.Correct.type   = busymachines.effects.sync.Correct
+  @inline def Incorrect: busymachines.effects.sync.Incorrect.type = busymachines.effects.sync.Incorrect
 }
 
 object ResultSyntax {

@@ -1,5 +1,8 @@
 package busymachines.effects.async
 
+import monix.{execution => mex}
+import monix.{eval      => mev}
+
 import busymachines.core._
 import busymachines.effects.sync._
 import busymachines.effects.sync.validated._
@@ -16,8 +19,7 @@ import scala.util.control.NonFatal
   *
   */
 trait TaskTypeDefinitions {
-  import monix.{execution => mex}
-  import monix.{eval      => mev}
+
 
   type CancellableFuture[T] = mex.CancelableFuture[T]
 
@@ -30,8 +32,8 @@ trait TaskTypeDefinitions {
   type Scheduler = mex.Scheduler
   type Task[T]   = mev.Task[T]
 
-  val Scheduler: mex.Scheduler.type = mex.Scheduler
-  val Task:      mev.Task.type      = mev.Task
+  @inline def Scheduler: mex.Scheduler.type = mex.Scheduler
+  @inline def Task:      mev.Task.type      = mev.Task
 
 }
 
@@ -41,7 +43,7 @@ object TaskSyntax {
     *
     */
   trait Implicits {
-    implicit def bmcTaskCompanionObjectOps(obj: Task.type): CompanionObjectOps =
+    implicit def bmcTaskCompanionObjectOps(obj: mev.Task.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
     implicit def bmcTaskReferenceOps[T](value: Task[T]): ReferenceOps[T] =
@@ -63,7 +65,7 @@ object TaskSyntax {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Task.type) extends AnyVal {
+  final class CompanionObjectOps(val obj: mev.Task.type) extends AnyVal {
 
     // —— def pure[T](value: T): Task[T] —— already defined on companion object
 

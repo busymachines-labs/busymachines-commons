@@ -17,14 +17,12 @@ import scala.{concurrent => sc}
   */
 trait FutureTypeDefinitions {
   type Future[T] = sc.Future[T]
-  val Future: sc.Future.type = sc.Future
+  @inline def Future: sc.Future.type = sc.Future
 
   type ExecutionContext = sc.ExecutionContext
-  val ExecutionContext: sc.ExecutionContext.type = sc.ExecutionContext
-
-  val Await: sc.Await.type = sc.Await
-
-  def blocking[T](body: => T): T = sc.blocking(body)
+  @inline def ExecutionContext: sc.ExecutionContext.type = sc.ExecutionContext
+  @inline def Await:            sc.Await.type            = sc.Await
+  @inline def blocking[T](body: => T): T = sc.blocking(body)
 
 }
 
@@ -34,7 +32,7 @@ object FutureSyntax {
     *
     */
   trait Implicits {
-    implicit def bmcFutureCompanionObjectOps(obj: Future.type): CompanionObjectOps =
+    implicit def bmcFutureCompanionObjectOps(obj: sc.Future.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
     implicit def bmcFutureReferenceOps[T](value: Future[T]): ReferenceOps[T] =
@@ -59,7 +57,7 @@ object FutureSyntax {
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Future.type) extends AnyVal {
+  final class CompanionObjectOps(val obj: sc.Future.type) extends AnyVal {
 
     /**
       * N.B. pass only pure values. If you have side effects, then
@@ -330,7 +328,6 @@ object FutureSyntax {
       implicit
       ec: ExecutionContext
     ): Future[T] = FutureOps.suspendValidated(value, ctor)
-
 
     /**
       * @return
