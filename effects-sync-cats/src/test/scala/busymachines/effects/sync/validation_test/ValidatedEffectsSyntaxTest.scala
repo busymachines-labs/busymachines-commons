@@ -42,8 +42,8 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
   private val thr:   RuntimeException          = new RuntimeException("runtime_exception")
   private val ano:   Anomaly                   = InvalidInputFailure("invalid_input_failure")
   private val anoG:  GenericValidationFailures = GenericValidationFailures(ano)
-  private val anoT:  TVFs                      = TVFs(ano)
-  private val anoT2: TVFs                      = TVFs(ano, List(ano))
+  private val anoT:  TestValidationFailures    = TestValidationFailures(ano)
+  private val anoT2: TestValidationFailures    = TestValidationFailures(ano, List(ano))
 
   private val none: Option[Int] = Option.empty
   private val some: Option[Int] = Option.pure(42)
@@ -257,8 +257,8 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          assertThrows[TVFs](
-            Validated.asOptionUnsafe(failV, TVFs)
+          assertThrows[TestValidationFailures](
+            Validated.asOptionUnsafe(failV, TestValidationFailures)
           )
         }
 
@@ -267,7 +267,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(Validated.asOptionUnsafe(pureV, TVFs) == some)
+          assert(Validated.asOptionUnsafe(pureV, TestValidationFailures) == some)
         }
 
       }
@@ -281,8 +281,8 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          assertThrows[TVFs](
-            Validated.asListUnsafe(failV, TVFs)
+          assertThrows[TestValidationFailures](
+            Validated.asListUnsafe(failV, TestValidationFailures)
           )
         }
 
@@ -291,7 +291,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(Validated.asListUnsafe(pureV, TVFs) == List(42))
+          assert(Validated.asListUnsafe(pureV, TestValidationFailures) == List(42))
         }
 
       }
@@ -303,7 +303,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          assert(Validated.asTry(failV, TVFs) == failureT)
+          assert(Validated.asTry(failV, TestValidationFailures) == failureT)
         }
 
         test("pure") {
@@ -311,7 +311,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(Validated.asTry(pureV, TVFs) == success)
+          assert(Validated.asTry(pureV, TestValidationFailures) == success)
         }
       }
 
@@ -322,7 +322,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          assert(Validated.asResult(failV, TVFs) == incorrectT)
+          assert(Validated.asResult(failV, TestValidationFailures) == incorrectT)
         }
 
         test("pure") {
@@ -330,7 +330,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(Validated.asResult(pureV, TVFs) == correct)
+          assert(Validated.asResult(pureV, TestValidationFailures) == correct)
         }
 
       }
@@ -344,7 +344,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          val t = intercept[TVFs](Validated.unsafeGet(failV, TVFs))
+          val t = intercept[TestValidationFailures](Validated.unsafeGet(failV, TestValidationFailures))
           assert(t == anoT)
           assert(t.id.name == TVFsID.name) //hack for coverage
         }
@@ -354,7 +354,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(Validated.unsafeGet(pureV, TVFs) == 42)
+          assert(Validated.unsafeGet(pureV, TestValidationFailures) == 42)
         }
 
       }
@@ -406,7 +406,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
             else
               Validated.pure(i.toString)
           }
-          val t = intercept[TVFs](result.r(TVFs))
+          val t = intercept[TestValidationFailures](result.r(TestValidationFailures))
           assert(t.messages.length == 10)
         }
 
@@ -439,7 +439,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
             else
               Validated.pure(i.toString)
           }
-          val t = intercept[TVFs](result.r(TVFs))
+          val t = intercept[TestValidationFailures](result.r(TestValidationFailures))
           assert(t.messages.length == 10)
         }
 
@@ -484,7 +484,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
                 Validated.pure(i.toString)
             }
           }
-          val t = intercept[TVFs](result.r(TVFs))
+          val t = intercept[TestValidationFailures](result.r(TestValidationFailures))
           assert(t.messages.length == 10)
         }
 
@@ -519,7 +519,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
                 Validated.pure(i.toString)
             }
           }
-          val t = intercept[TVFs](result.r(TVFs))
+          val t = intercept[TestValidationFailures](result.r(TestValidationFailures))
           assert(t.messages.length == 10)
         }
 
@@ -546,8 +546,8 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          assertThrows[TVFs](
-            failV.asOptionUnsafe(TVFs)
+          assertThrows[TestValidationFailures](
+            failV.asOptionUnsafe(TestValidationFailures)
           )
         }
 
@@ -556,7 +556,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(pureV.asOptionUnsafe(TVFs) == some)
+          assert(pureV.asOptionUnsafe(TestValidationFailures) == some)
         }
 
       }
@@ -570,8 +570,8 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          assertThrows[TVFs](
-            failV.asListUnsafe(TVFs)
+          assertThrows[TestValidationFailures](
+            failV.asListUnsafe(TestValidationFailures)
           )
         }
 
@@ -580,7 +580,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(pureV.asListUnsafe(TVFs) == List(42))
+          assert(pureV.asListUnsafe(TestValidationFailures) == List(42))
         }
       }
 
@@ -591,7 +591,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          assert(failV.asTry(TVFs) == failureT)
+          assert(failV.asTry(TestValidationFailures) == failureT)
         }
 
         test("pure") {
@@ -599,7 +599,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(pureV.asTry(TVFs) == success)
+          assert(pureV.asTry(TestValidationFailures) == success)
         }
 
       }
@@ -611,7 +611,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          assert(failV.asResult(TVFs) == incorrectT)
+          assert(failV.asResult(TestValidationFailures) == incorrectT)
         }
 
         test("pure") {
@@ -619,7 +619,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(pureV.asResult(TVFs) == correct)
+          assert(pureV.asResult(TestValidationFailures) == correct)
         }
 
       }
@@ -631,7 +631,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("fail — ano") {
-          assertThrows[TVFs](failV.unsafeGet(TVFs))
+          assertThrows[TestValidationFailures](failV.unsafeGet(TestValidationFailures))
         }
 
         test("pure") {
@@ -639,7 +639,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         }
 
         test("pure — ano") {
-          assert(pureV.unsafeGet(TVFs) == 42)
+          assert(pureV.unsafeGet(TestValidationFailures) == 42)
         }
 
       }

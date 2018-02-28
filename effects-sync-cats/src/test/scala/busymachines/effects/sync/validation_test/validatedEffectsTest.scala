@@ -3,6 +3,7 @@ package busymachines.effects.sync.validation_test
 import org.scalatest._
 
 import busymachines.core._
+import busymachines.effects.sync._
 import busymachines.effects.sync.validated._
 
 /**
@@ -59,8 +60,17 @@ class ValidatedEffectsTest extends FunSpec {
 
     test("reject both") {
       val v = PWDValidator(invBoth)
-      //FIXME: create some scalatest DSL to allow testing this stuff easier
-      assert(v == Validated.fail(PWDValidator.InvSpaces, PWDValidator.InvSize))
+      assert(v == Validated.fail(PWDValidator.InvSpaces, PWDValidator.InvSize), "failed")
+
+      assert(
+        v.asResult == Result.fail(GenericValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))),
+        "as result — normal"
+      )
+
+      assert(
+        v.asResult(TestValidationFailures) == Result.fail(TestValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))),
+        "as result — ctor"
+      )
     }
 
   }

@@ -8,7 +8,7 @@ import busymachines.core._
   * @since 26 Feb 2018
   *
   */
-private[validation_test] case class TVFs(
+private[validation_test] case class TestValidationFailures(
   bad:  Anomaly,
   bads: List[Anomaly] = Nil
 ) extends AnomalousFailures(
