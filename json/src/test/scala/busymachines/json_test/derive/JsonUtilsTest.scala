@@ -135,7 +135,7 @@ class JsonUtilsTest extends FlatSpec with EitherValues with Matchers {
       """.stripMargin
 
     an[JsonParsingFailure] shouldBe thrownBy {
-       JsonDecoding.decodeAs[AnarchistMelon](rawJson).unsafeGet
+      JsonDecoding.decodeAs[AnarchistMelon](rawJson).unsafeGet
     }
   }
 

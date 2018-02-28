@@ -1533,7 +1533,6 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-
         describe("validated asFuture") {
           test("invalid") {
             assertThrows[GenericValidationFailures](invalid.asIO.r)
