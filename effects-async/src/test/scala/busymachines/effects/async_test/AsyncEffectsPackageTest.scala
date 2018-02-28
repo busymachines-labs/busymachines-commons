@@ -36,6 +36,10 @@ final class AsyncEffectsPackageTest extends FunSpec {
       async.io.bmcIOBooleanOps(true)
     }
 
+    test("validated") {
+      async.validated.bmcValidatedAsyncCompanionObjectOps(busymachines.effects.sync.validated.Validated)
+    }
+
     test("task") {
       async.task.bmcTaskBooleanOps(true)
     }

@@ -19,6 +19,8 @@ package object async
 
   object result extends ResultSyntaxAsync.Implcits
 
+  object validated extends ValidatedSyntaxAsync.Implcits
+
   object io extends IOTypeDefinitions with IOSyntax.Implicits
 
   object future extends FutureTypeDefinitions with FutureSyntax.Implicits

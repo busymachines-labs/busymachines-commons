@@ -1,8 +1,10 @@
 package busymachines.effects.async
 
 import busymachines.core._
-import busymachines.duration, duration.FiniteDuration
 import busymachines.effects.sync._
+import busymachines.effects.sync.validated._
+
+import busymachines.duration, duration.FiniteDuration
 
 import scala.collection.generic.CanBuildFrom
 import scala.util.control.NonFatal
@@ -203,6 +205,81 @@ object TaskSyntax {
       */
     def suspendResult[T](result: => Result[T]): Task[T] =
       TaskOps.suspendResult(result)
+
+    /**
+      *
+      * Lift the [[Validated]] in this effect
+      * [[Validated.Invalid]] becomes a failed effect
+      * [[Validated.Valid]] becomes a pure effect
+      *
+      * Consider using the overload with an extra constructor parameter
+      * for a custom [[busymachines.core.Anomalies]], otherwise your
+      * all failed cases will be wrapped in a:
+      * [[busymachines.effects.sync.validated.GenericValidationFailures]]
+      */
+    @scala.inline
+    def fromValidated[T](value: Validated[T]): Task[T] =
+      TaskOps.fromValidated(value)
+
+    /**
+      *
+      * Lift the [[Validated]] in this effect
+      * [[Validated.Invalid]] becomes a failed effect
+      * [[Validated.Valid]] becomes a pure effect
+      *
+      * Provide the constructor for the specific [[busymachines.core.Anomalies]]
+      * into which the anomalies shall be stored.
+      *
+      * e.g. Creating case classes like bellow, or constructors on companion objects
+      * makes using this method almost completely non-intrusive
+      * {{{
+      * case class TVFs(
+      *   bad:  Anomaly,
+      *   bads: List[Anomaly] = Nil
+      * ) extends AnomalousFailures(
+      *       TVFsID,
+      *       s"Test validation failed with ${bads.length + 1} anomalies",
+      *       bad,
+      *       bads
+      *     )
+      *
+      * case object TVFsID extends AnomalyID {
+      *   override def name = "test_validation_001"
+      * }
+      *
+      * object Test {
+      *   Task.fromValidated(
+      *     Validated.pure(42),
+      *     TVFs
+      *   )
+      *   //in validated postfix notation it's infinitely more concise
+      *   Validated.pure(42).asTask(TVFs)
+      * }
+      * }}}
+      *
+      */
+    @scala.inline
+    def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+      TaskOps.fromValidated(value, ctor)
+
+    /**
+      *
+      * Suspend any side-effects that might happen during the creation of this [[Validated]].
+      *
+      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+      * You might as well use [[TaskOps.fromValidated]]
+      */
+    def suspendValidated[T](value: => Validated[T]): Task[T] =
+      TaskOps.suspendValidated(value)
+
+    /**
+      * Suspend any side-effects that might happen during the creation of this [[Validated]].
+      *
+      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+      * You might as well use [[FutureOps.fromValidated]]
+      */
+    def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+      TaskOps.suspendValidated(value, ctor)
 
     /**
       * !!! USE WITH CARE !!!
@@ -1250,6 +1327,85 @@ object TaskOps {
     */
   def suspendResult[T](result: => Result[T]): Task[T] =
     Task.suspend(TaskOps.fromResult(result))
+
+  /**
+    *
+    * Lift the [[Validated]] in this effect
+    * [[Validated.Invalid]] becomes a failed effect
+    * [[Validated.Valid]] becomes a pure effect
+    *
+    * Consider using the overload with an extra constructor parameter
+    * for a custom [[busymachines.core.Anomalies]], otherwise your
+    * all failed cases will be wrapped in a:
+    * [[busymachines.effects.sync.validated.GenericValidationFailures]]
+    */
+  @scala.inline
+  def fromValidated[T](value: Validated[T]): Task[T] = value match {
+    case Validated.Valid(e)   => TaskOps.pure(e)
+    case Validated.Invalid(e) => TaskOps.fail(GenericValidationFailures(e.head, e.tail))
+  }
+
+  /**
+    *
+    * Lift the [[Validated]] in this effect
+    * [[Validated.Invalid]] becomes a failed effect
+    * [[Validated.Valid]] becomes a pure effect
+    *
+    * Provide the constructor for the specific [[busymachines.core.Anomalies]]
+    * into which the anomalies shall be stored.
+    *
+    * e.g. Creating case classes like bellow, or constructors on companion objects
+    * makes using this method almost completely non-intrusive
+    * {{{
+    * case class TVFs(
+    *   bad:  Anomaly,
+    *   bads: List[Anomaly] = Nil
+    * ) extends AnomalousFailures(
+    *       TVFsID,
+    *       s"Test validation failed with ${bads.length + 1} anomalies",
+    *       bad,
+    *       bads
+    *     )
+    *
+    * case object TVFsID extends AnomalyID {
+    *   override def name = "test_validation_001"
+    * }
+    *
+    * object Test {
+    *   Task.fromValidated(
+    *     Validated.pure(42),
+    *     TVFs
+    *   )
+    *   //in validated postfix notation it's infinitely more concise
+    *   Validated.pure(42).asTask(TVFs)
+    * }
+    * }}}
+    *
+    */
+  @scala.inline
+  def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] = value match {
+    case Validated.Valid(e)   => TaskOps.pure(e)
+    case Validated.Invalid(e) => TaskOps.fail(ctor(e.head, e.tail))
+  }
+
+  /**
+    *
+    * Suspend any side-effects that might happen during the creation of this [[Validated]].
+    *
+    * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+    * You might as well use [[TaskOps.fromValidated]]
+    */
+  def suspendValidated[T](value: => Validated[T]): Task[T] =
+    Task.suspend(TaskOps.fromValidated(value))
+
+  /**
+    * Suspend any side-effects that might happen during the creation of this [[Validated]].
+    *
+    * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+    * You might as well use [[FutureOps.fromValidated]]
+    */
+  def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+    Task.suspend(TaskOps.fromValidated(value, ctor))
 
   /**
     * !!! USE WITH CARE !!!

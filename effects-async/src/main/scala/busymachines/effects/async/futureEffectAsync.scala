@@ -2,6 +2,7 @@ package busymachines.effects.async
 
 import busymachines.core._
 import busymachines.effects.sync._
+import busymachines.effects.sync.validated._
 import busymachines.duration, duration.FiniteDuration
 
 import scala.collection.generic.CanBuildFrom
@@ -244,6 +245,92 @@ object FutureSyntax {
       */
     def suspendResult[T](result: => Result[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendResult(result)
+
+    /**
+      *
+      * Lift the [[Validated]] in this effect
+      * [[Validated.Invalid]] becomes a failed effect
+      * [[Validated.Valid]] becomes a pure effect
+      *
+      * Consider using the overload with an extra constructor parameter
+      * for a custom [[busymachines.core.Anomalies]], otherwise your
+      * all failed cases will be wrapped in a:
+      * [[busymachines.effects.sync.validated.GenericValidationFailures]]
+      */
+    def fromValidated[T](value: Validated[T]): Future[T] =
+      FutureOps.fromValidated(value)
+
+    /**
+      *
+      * Lift the [[Validated]] in this effect
+      * [[Validated.Invalid]] becomes a failed effect
+      * [[Validated.Valid]] becomes a pure effect
+      *
+      * Provide the constructor for the specific [[busymachines.core.Anomalies]]
+      * into which the anomalies shall be stored.
+      *
+      * e.g. Creating case classes like bellow, or constructors on companion objects
+      * makes using this method almost completely non-intrusive
+      * {{{
+      * case class TVFs(
+      *   bad:  Anomaly,
+      *   bads: List[Anomaly] = Nil
+      * ) extends AnomalousFailures(
+      *       TVFsID,
+      *       s"Test validation failed with ${bads.length + 1} anomalies",
+      *       bad,
+      *       bads
+      *     )
+      *
+      * case object TVFsID extends AnomalyID {
+      *   override def name = "test_validation_001"
+      * }
+      *
+      * object Test {
+      *   Future.fromValidated(
+      *     Validated.pure(42),
+      *     TVFs
+      *   )
+      *   //in validated postfix notation it's infinitely more concise
+      *   Validated.pure(42).asFuture(TVFs)
+      * }
+      * }}}
+      *
+      */
+    @scala.inline
+    def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
+      FutureOps.fromValidated(value, ctor)
+
+    /**
+      * N.B.
+      * For Future in particular, this is useless, since you suspend a side-effect which
+      * gets immediately applied due to the nature of the Future. This is useful only that
+      * any exceptions thrown (bad code) is captured "within" the Future.
+      *
+      * Suspend any side-effects that might happen during the creation of this [[Validated]].
+      *
+      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+      * You might as well use [[FutureOps.fromValidated]]
+      */
+    def suspendValidated[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
+      FutureOps.suspendValidated(value)
+
+    /**
+      * N.B.
+      * For Future in particular, this is useless, since you suspend a side-effect which
+      * gets immediately applied due to the nature of the Future. This is useful only that
+      * any exceptions thrown (bad code) is captured "within" the Future.
+      *
+      * Suspend any side-effects that might happen during the creation of this [[Validated]].
+      *
+      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+      * You might as well use [[FutureOps.fromValidated]]
+      */
+    def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies)(
+      implicit
+      ec: ExecutionContext
+    ): Future[T] = FutureOps.suspendValidated(value, ctor)
+
 
     /**
       * @return
@@ -1448,6 +1535,97 @@ object FutureOps {
     */
   def suspendResult[T](result: => Result[T])(implicit ec: ExecutionContext): Future[T] =
     Future(result).flatMap(FutureOps.fromResult)
+
+  /**
+    *
+    * Lift the [[Validated]] in this effect
+    * [[Validated.Invalid]] becomes a failed effect
+    * [[Validated.Valid]] becomes a pure effect
+    *
+    * Consider using the overload with an extra constructor parameter
+    * for a custom [[busymachines.core.Anomalies]], otherwise your
+    * all failed cases will be wrapped in a:
+    * [[busymachines.effects.sync.validated.GenericValidationFailures]]
+    */
+  @scala.inline
+  def fromValidated[T](value: Validated[T]): Future[T] = value match {
+    case Validated.Valid(e)   => FutureOps.pure(e)
+    case Validated.Invalid(e) => FutureOps.fail(GenericValidationFailures(e.head, e.tail))
+  }
+
+  /**
+    *
+    * Lift the [[Validated]] in this effect
+    * [[Validated.Invalid]] becomes a failed effect
+    * [[Validated.Valid]] becomes a pure effect
+    *
+    * Provide the constructor for the specific [[busymachines.core.Anomalies]]
+    * into which the anomalies shall be stored.
+    *
+    * e.g. Creating case classes like bellow, or constructors on companion objects
+    * makes using this method almost completely non-intrusive
+    * {{{
+    * case class TVFs(
+    *   bad:  Anomaly,
+    *   bads: List[Anomaly] = Nil
+    * ) extends AnomalousFailures(
+    *       TVFsID,
+    *       s"Test validation failed with ${bads.length + 1} anomalies",
+    *       bad,
+    *       bads
+    *     )
+    *
+    * case object TVFsID extends AnomalyID {
+    *   override def name = "test_validation_001"
+    * }
+    *
+    * object Test {
+    *   Future.fromValidated(
+    *     Validated.pure(42),
+    *     TVFs
+    *   )
+    *   //in validated postfix notation it's infinitely more concise
+    *   Validated.pure(42).asFuture(TVFs)
+    * }
+    * }}}
+    *
+    */
+  @scala.inline
+  def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] = value match {
+    case Validated.Valid(e)   => FutureOps.pure(e)
+    case Validated.Invalid(e) => FutureOps.fail(ctor(e.head, e.tail))
+  }
+
+  /**
+    * N.B.
+    * For Future in particular, this is useless, since you suspend a side-effect which
+    * gets immediately applied due to the nature of the Future. This is useful only that
+    * any exceptions thrown (bad code) is captured "within" the Future.
+    *
+    * Suspend any side-effects that might happen during the creation of this [[Validated]].
+    *
+    * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+    * You might as well use [[FutureOps.fromValidated]]
+    */
+  def suspendValidated[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
+    Future(value).flatMap(v => FutureOps.fromValidated(v))
+
+  /**
+    * N.B.
+    * For Future in particular, this is useless, since you suspend a side-effect which
+    * gets immediately applied due to the nature of the Future. This is useful only that
+    * any exceptions thrown (bad code) is captured "within" the Future.
+    *
+    * Suspend any side-effects that might happen during the creation of this [[Validated]].
+    *
+    * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+    * You might as well use [[FutureOps.fromValidated]]
+    */
+  def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies)(
+    implicit
+    ec: ExecutionContext
+  ): Future[T] =
+    Future(value).flatMap(v => FutureOps.fromValidated(v, ctor))
 
   /**
     * @return

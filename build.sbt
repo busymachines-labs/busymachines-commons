@@ -133,7 +133,8 @@ lazy val `effects-async` = project
   )
   .dependsOn(
     core,
-    `effects-sync`
+    `effects-sync`,
+    `effects-sync-cats`
   )
 
 lazy val effects = project

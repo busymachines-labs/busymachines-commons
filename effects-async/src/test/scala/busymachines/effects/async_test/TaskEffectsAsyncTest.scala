@@ -3,6 +3,10 @@ package busymachines.effects.async_test
 import busymachines.core._
 import busymachines.effects.async._
 import busymachines.effects.sync._
+
+import busymachines.effects.sync.validated._
+import busymachines.effects.async.validated._
+
 import org.scalatest._
 
 /**
@@ -41,6 +45,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
   private val correct:   Result[Int] = Result(42)
   private val incorrect: Result[Int] = Result.fail(ano)
+
+  private val valid:   Validated[Int] = Validated.pure(42)
+  private val invalid: Validated[Int] = Validated.fail(ano)
 
   private val failedF:  Future[Int] = Future.fail(ano)
   private val successF: Future[Int] = Future.pure(42)
@@ -152,6 +159,25 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("correct") {
             assert(Task.fromResult(correct).r == 42)
           }
+        }
+
+        describe("fromValidated") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](Task.fromValidated(invalid).r)
+          }
+
+          test("valid") {
+            assert(Task.fromValidated(valid).r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](Task.fromValidated(invalid, TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(Task.fromValidated(valid, TVFs).r == 42)
+          }
+
         }
 
         describe("fromFuturePure") {
@@ -778,7 +804,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asIOThr") {
+        describe("either asTaskThr") {
           test("fail") {
             assertThrows[RuntimeException](Either.asTaskThr(left).r)
           }
@@ -788,13 +814,31 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("result asIO") {
+        describe("result asTask") {
           test("fail") {
             assertThrows[InvalidInputFailure](Result.asTask(incorrect).r)
           }
 
           test("pure") {
             assert(Result.asTask(correct).r == 42)
+          }
+        }
+
+        describe("validated asFuture") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](Validated.asTask(invalid).r)
+          }
+
+          test("valid") {
+            assert(Validated.asTask(valid).r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](Validated.asTask(invalid, TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(Validated.asTask(valid, TVFs).r == 42)
           }
         }
 
@@ -1469,7 +1513,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asIOThr") {
+        describe("either asTaskThr") {
           test("fail") {
             assertThrows[RuntimeException](left.asTaskThr.r)
           }
@@ -1479,13 +1523,31 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("result asIO") {
+        describe("result asTask") {
           test("fail") {
             assertThrows[InvalidInputFailure](incorrect.asTask.r)
           }
 
           test("pure") {
             assert(correct.asTask.r == 42)
+          }
+        }
+
+        describe("validated asTask") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](invalid.asTask.r)
+          }
+
+          test("valid") {
+            assert(valid.asTask.r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](invalid.asTask(TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(valid.asTask(TVFs).r == 42)
           }
         }
 
@@ -1693,6 +1755,23 @@ final class TaskEffectsAsyncTest extends FunSpec {
             Result.pure(throw thr)
           )
           assertThrows[RuntimeException](f.r)
+        }
+
+        describe("suspendValidated") {
+          test("normal") {
+            val f = Task.suspendValidated(
+              Validated.pure(throw thr)
+            )
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("ano") {
+            val f = Task.suspendValidated(
+              Validated.pure(throw thr),
+              TVFs
+            )
+            assertThrows[RuntimeException](f.r)
+          }
         }
 
         test("suspendFuture") {
@@ -2251,6 +2330,18 @@ final class TaskEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
+          describe("suspendValidated") {
+            test("normal") {
+              val f = Validated.pure(throw thr).suspendInTask
+              assertThrows[RuntimeException](f.r)
+            }
+
+            test("ano") {
+              val f = Validated.pure(throw thr).suspendInTask(TVFs)
+              assertThrows[RuntimeException](f.r)
+            }
+          }
+
           test("suspendFuture") {
             var sideEffect: Int = 0
             val f = Future[Int] {
@@ -2299,6 +2390,18 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("suspendResult") {
             val f = Result.suspendInTask(Result.pure(throw thr))
             assertThrows[RuntimeException](f.r)
+          }
+
+          describe("suspendValidated") {
+            test("normal") {
+              val f = Validated.suspendInTask(Validated.pure(throw thr))
+              assertThrows[RuntimeException](f.r)
+            }
+
+            test("ano") {
+              val f = Validated.suspendInTask(Validated.pure(throw thr), TVFs)
+              assertThrows[RuntimeException](f.r)
+            }
           }
 
           test("suspendFuture") {
