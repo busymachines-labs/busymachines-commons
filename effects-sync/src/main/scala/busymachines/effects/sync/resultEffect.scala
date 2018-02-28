@@ -76,7 +76,6 @@ object ResultSyntax {
       * Throws exceptions into your face
       *
       */
-
     @inline def asOptionUnsafe(): Option[T] =
       Result.asOptionUnsafe(value)
 
@@ -86,7 +85,6 @@ object ResultSyntax {
       * Throws exceptions into your face
       *
       */
-
     @inline def asListUnsafe(): List[T] =
       Result.asListUnsafe(value)
 
@@ -95,7 +93,6 @@ object ResultSyntax {
       * hand side is converted into a [[Throwable]] and corresponds to a
       * failed [[Try]]
       */
-
     @inline def asTry: Try[T] =
       Result.asTry(value)
 
@@ -104,7 +101,6 @@ object ResultSyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-
     @inline def unsafeGet(): T =
       Result.unsafeGet(value)
 
@@ -160,7 +156,6 @@ object ResultSyntax {
       * it's just the final value that is discarded
       *
       */
-
     @inline def discardContent: Result[Unit] =
       Result.discardContent(value)
   }
@@ -307,7 +302,6 @@ object Result {
     * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
     * if it is not also an [[Anomaly]]
     */
-
   @inline def failThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))
@@ -316,14 +310,12 @@ object Result {
   /**
     * N.B. pass only pure values. Otherwise use [[Result.apply]]
     */
-
   @inline def correct[T](t: T): Result[T] =
     Correct(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-
   @inline def incorrect[T](bad: Anomaly): Result[T] =
     Incorrect(bad)
 
@@ -331,7 +323,6 @@ object Result {
     * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
     * if it is not also an [[Anomaly]]
     */
-
   @inline def incorrectThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))
@@ -724,18 +715,18 @@ object Result {
   */
 object Correct {
 
-  @inline def apply[T](value: T): Result[T] =
+  def apply[T](value: T): Result[T] =
     Right[Anomaly, T](value)
 
-  @inline def unapply[A <: Anomaly, C](arg: Right[A, C]): Option[C] =
+  def unapply[A <: Anomaly, C](arg: Right[A, C]): Option[C] =
     Right.unapply(arg)
 }
 
 object Incorrect {
 
-  @inline def apply[T](bad: Anomaly): Result[T] =
+  def apply[T](bad: Anomaly): Result[T] =
     Left[Anomaly, T](bad)
 
-  @inline def unapply[A <: Anomaly, C](arg: Left[A, C]): Option[A] =
+  def unapply[A <: Anomaly, C](arg: Left[A, C]): Option[A] =
     Left.unapply(arg)
 }
