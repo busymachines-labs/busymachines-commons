@@ -58,28 +58,24 @@ object OptionSyntax {
     /**
       * N.B. pass only pure values
       */
-
     @inline def pure[T](value: T): Option[T] =
       OptionOps.pure(value)
 
     /**
       * N.B. pass only pure values
       */
-
     @inline def some[T](value: T): Option[T] =
       OptionOps.some(value)
 
     /**
       * Failed effect
       */
-
     @inline def fail[T]: Option[T] =
       None
 
     /**
       * Failed effect
       */
-
     @inline def none[T]: Option[T] =
       None
 
@@ -93,7 +89,6 @@ object OptionSyntax {
     /**
       * Returns `None` if this is a `Failure` or a `Some` containing the value if this is a `Success`.
       */
-
     @inline def fromTryUnsafe[T](value: Try[T]): Option[T] =
       value.toOption
 
@@ -106,7 +101,6 @@ object OptionSyntax {
       * Left(12).toOption  // None
       * }}}
       */
-
     @inline def fromEitherUnsafe[L, R](either: Either[L, R]): Option[R] =
       either.toOption
 
@@ -119,7 +113,6 @@ object OptionSyntax {
       * Incorrect(12).toOption  // None
       * }}}
       */
-
     @inline def fromResultUnsafe[T](r: Result[T]): Option[T] =
       r.toOption
 
@@ -258,6 +251,27 @@ object OptionSyntax {
     ): Option[C[B]] = OptionOps.traverse(col)(fn)
 
     /**
+      * Similar to [[traverse]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * see:
+      * https://typelevel.org/cats/api/cats/Traverse.html
+      *
+      * {{{
+      * @inline def indexToFilename(i: Int): Option[String] = ???
+      *
+      *   val fileIndex: List[Int] = List(0,1,2,3,4)
+      *   val fileNames: Option[List[String]] = Option.traverse(fileIndex){ i =>
+      *     indexToFilename(i)
+      *   }
+      * }}}
+      */
+    @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): Option[Unit] = OptionOps.traverse_(col)(fn)
+
+    /**
       * see:
       * https://typelevel.org/cats/api/cats/Traverse.html
       *
@@ -275,6 +289,26 @@ object OptionSyntax {
       cbf: CanBuildFrom[M[Option[A]], A, M[A]]
     ): Option[M[A]] = OptionOps.sequence(in)
 
+    /**
+      * Similar to [[sequence]], but discards all content. i.e. used only
+      * for the combined effects.
+      * see:
+      * https://typelevel.org/cats/api/cats/Traverse.html
+      *
+      * Specialized case of [[traverse]]
+      *
+      * {{{
+      * @inline def indexToFilename(i: Int): Option[String] = ???
+      *
+      *   val fileNamesOption: List[Option[String]] = List(0,1,2,3,4).map(indexToFileName)
+      *   val fileNames:       Option[Unit] = Option.sequence_(fileNamesOption)
+      * }}}
+      */
+    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+      implicit
+      cbf: CanBuildFrom[M[Option[A]], A, M[A]]
+    ): Option[Unit] = OptionOps.sequence_(in)
+
   }
 
   /**
@@ -286,7 +320,6 @@ object OptionSyntax {
       * Returns a singleton list containing the $option's value
       * if it is nonempty, or the empty list if the $option is empty.
       */
-
     @inline def asList: List[T] =
       value.toList
 
@@ -319,7 +352,6 @@ object OptionSyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-
     @inline def unsafeGet(): T =
       OptionOps.unsafeGet(value)
 
@@ -417,14 +449,12 @@ object OptionOps {
   /**
     * N.B. pass only pure values
     */
-
   @inline def pure[T](t: T): Option[T] =
     Option(t)
 
   /**
     * N.B. pass only pure values
     */
-
   @inline def some[T](t: T): Option[T] =
     Option(t)
 
@@ -516,7 +546,6 @@ object OptionOps {
     *
     * Will throw exceptions in your face if the underlying effect is failed
     */
-
   @inline def unsafeGet[T](value: Option[T]): T =
     value.get
 
@@ -562,6 +591,17 @@ object OptionOps {
     case Some(v) => Option(v)
     case None    => ifNone
   }
+
+  /**
+    *
+    * Explicitely discard the contents of this effect, and return [[Unit]] instead.
+    *
+    * N.B. thecomputation captured within this effect are still executed,
+    * it's just the final value that is discarded
+    *
+    */
+  @inline def discardContent[T](value: Option[T]): Option[Unit] =
+    value.map(ConstantsSyncEffects.UnitFunction1)
 
   //=========================================================================
   //=============================== Traversals ==============================
@@ -612,6 +652,27 @@ object OptionOps {
   }
 
   /**
+    * Similar to [[traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * {{{
+    * @inline def indexToFilename(i: Int): Option[String] = ???
+    *
+    *   val fileIndex: List[Int] = List(0,1,2,3,4)
+    *   val fileNames: Option[List[String]] = Option.traverse(fileIndex){ i =>
+    *     indexToFilename(i)
+    *   }
+    * }}}
+    */
+  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Option[Unit] = OptionOps.discardContent(OptionOps.traverse(col)(fn))
+
+  /**
     * see:
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
@@ -628,5 +689,25 @@ object OptionOps {
     implicit
     cbf: CanBuildFrom[M[Option[A]], A, M[A]]
   ): Option[M[A]] = OptionOps.traverse(in)(identity)
+
+  /**
+    * Similar to [[sequence]], but discards all content. i.e. used only
+    * for the combined effects.
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * Specialized case of [[traverse]]
+    *
+    * {{{
+    * @inline def indexToFilename(i: Int): Option[String] = ???
+    *
+    *   val fileNamesOption: List[Option[String]] = List(0,1,2,3,4).map(indexToFileName)
+    *   val fileNames:       Option[Unit] = Option.sequence_(fileNamesOption)
+    * }}}
+    */
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Option[A]], A, M[A]]
+  ): Option[Unit] = OptionOps.discardContent(OptionOps.sequence(in))
 
 }

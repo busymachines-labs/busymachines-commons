@@ -410,6 +410,34 @@ final class OptionEffectsTest extends FunSpec {
 
       }
 
+      describe("Option.traverse_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val result = Option.traverse_(input) { i =>
+            Option {
+              sideEffect = 42
+            }
+          }
+
+          assert(result == Option.unit)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("non empty list") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val result = Option.traverse_(input) { i =>
+            Option.pure(i.toString)
+          }
+          assert(Option.unit == result)
+        }
+
+      }
+
       describe("Option.sequence") {
 
         test("empty list") {
@@ -431,6 +459,28 @@ final class OptionEffectsTest extends FunSpec {
             }
           }
           assert(expected == result.r)
+        }
+
+      }
+
+      describe("Option.sequence_") {
+
+        test("empty list") {
+          val input: Seq[Option[Int]] = List()
+
+          val result = Option.sequence_(input)
+          assert(result == Option.unit)
+        }
+
+        test("non empty list") {
+          val input: Seq[Option[Int]] = (1 to 100).toList.map(Option.pure)
+
+          val result: Option[Unit] = Option.sequence_ {
+            input map { tr =>
+              tr.map(i => i.toString)
+            }
+          }
+          assert(Option.unit == result)
         }
 
       }
