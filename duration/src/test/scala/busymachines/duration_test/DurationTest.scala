@@ -44,7 +44,7 @@ class DurationTest extends FunSpec {
     }
 
     test("FinisteDuration alias") {
-      assert(FiniteDuration.apply(1L, d.Nanos).toNanos == 1L)
+      assert(FiniteDuration.apply(1L, d.TimeUnits.Nanos).toNanos == 1L)
     }
   }
 
