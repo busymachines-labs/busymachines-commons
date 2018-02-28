@@ -626,7 +626,7 @@ final class ResultEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val result = Result.traverse(input) { i =>
+          val result = Result.traverse_(input) { i =>
             Result {
               sideEffect = 42
             }
@@ -639,7 +639,7 @@ final class ResultEffectsTest extends FunSpec {
         test("non empty list") {
           val input: Seq[Int] = (1 to 100).toList
 
-          val result: Result[Seq[String]] = Result.traverse(input) { i =>
+          val result: Result[Unit] = Result.traverse_(input) { i =>
             Result.pure(i.toString)
           }
           assert(Result.unit == result)
@@ -681,10 +681,9 @@ final class ResultEffectsTest extends FunSpec {
         }
 
         test("non empty list") {
-          val nrs = (1 to 100).toList
           val input: Seq[Result[Int]] = (1 to 100).toList.map(Result.pure)
 
-          val result: Result[Seq[String]] = Result.sequence {
+          val result: Result[Unit] = Result.sequence_ {
             input map { tr =>
               tr.map(i => i.toString)
             }
