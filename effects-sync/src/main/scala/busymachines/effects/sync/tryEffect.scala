@@ -420,6 +420,29 @@ object TrySyntax {
     ): Try[C[B]] = TryOps.traverse(col)(fn)
 
     /**
+      *
+      * Similar to [[traverse]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      *
+      * see:
+      * https://typelevel.org/cats/api/cats/Traverse.html
+      *
+      * {{{
+      * @inline def  indexToFilename(i: Int): Try[String] = ???
+      *
+      *   val fileIndex: List[Int] = List(0,1,2,3,4)
+      *   val fileNames: Try[Unit] = Try.traverse_(fileIndex){ i =>
+      *     indexToFilename(i)
+      *   }
+      * }}}
+      */
+    @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): Try[Unit] = TryOps.traverse_(col)(fn)
+
+    /**
       * see:
       * https://typelevel.org/cats/api/cats/Traverse.html
       *
@@ -436,6 +459,28 @@ object TrySyntax {
       implicit
       cbf: CanBuildFrom[M[Try[A]], A, M[A]]
     ): Try[M[A]] = TryOps.sequence(in)
+
+    /**
+      *
+      * Similar to [[sequence]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * see:
+      * https://typelevel.org/cats/api/cats/Traverse.html
+      *
+      * Specialized case of [[traverse]]
+      *
+      * {{{
+      * @inline def  indexToFilename(i: Int): Try[String] = ???
+      *
+      *   val fileNamesTry: List[Try[String]] = List(0,1,2,3,4).map(indexToFileName)
+      *   val fileNames:    Try[Unit]         = Try.sequence_(fileNamesTry)
+      * }}}
+      */
+    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+      implicit
+      cbf: CanBuildFrom[M[Try[A]], A, M[A]]
+    ): Try[Unit] = TryOps.sequence_(in)
 
   }
 
@@ -1140,6 +1185,29 @@ object TryOps {
   }
 
   /**
+    *
+    * Similar to [[traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    *
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * {{{
+    * @inline def  indexToFilename(i: Int): Try[String] = ???
+    *
+    *   val fileIndex: List[Int] = List(0,1,2,3,4)
+    *   val fileNames: Try[Unit] = Try.traverse_(fileIndex){ i =>
+    *     indexToFilename(i)
+    *   }
+    * }}}
+    */
+  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Try[Unit] = TryOps.discardContent(TryOps.traverse(col)(fn))
+
+  /**
     * see:
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
@@ -1156,4 +1224,26 @@ object TryOps {
     implicit
     cbf: CanBuildFrom[M[Try[A]], A, M[A]]
   ): Try[M[A]] = TryOps.traverse(in)(identity)
+
+  /**
+    *
+    * Similar to [[sequence]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * Specialized case of [[traverse]]
+    *
+    * {{{
+    * @inline def  indexToFilename(i: Int): Try[String] = ???
+    *
+    *   val fileNamesTry: List[Try[String]] = List(0,1,2,3,4).map(indexToFileName)
+    *   val fileNames:    Try[Unit]         = Try.sequence_(fileNamesTry)
+    * }}}
+    */
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Try[A]], A, M[A]]
+  ): Try[Unit] = TryOps.discardContent(TryOps.sequence(in))
 }
