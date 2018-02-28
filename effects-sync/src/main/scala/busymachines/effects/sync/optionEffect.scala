@@ -59,31 +59,31 @@ object OptionSyntax {
       * N.B. pass only pure values
       */
 
-    def pure[T](value: T): Option[T] =
+    @inline def pure[T](value: T): Option[T] =
       OptionOps.pure(value)
 
     /**
       * N.B. pass only pure values
       */
 
-    def some[T](value: T): Option[T] =
+    @inline def some[T](value: T): Option[T] =
       OptionOps.some(value)
 
     /**
       * Failed effect
       */
 
-    def fail[T]: Option[T] =
+    @inline def fail[T]: Option[T] =
       None
 
     /**
       * Failed effect
       */
 
-    def none[T]: Option[T] =
+    @inline def none[T]: Option[T] =
       None
 
-    def unit: Option[Unit] =
+    @inline def unit: Option[Unit] =
       OptionOps.unit
 
     //===========================================================================
@@ -94,7 +94,7 @@ object OptionSyntax {
       * Returns `None` if this is a `Failure` or a `Some` containing the value if this is a `Success`.
       */
 
-    def fromTryUnsafe[T](value: Try[T]): Option[T] =
+    @inline def fromTryUnsafe[T](value: Try[T]): Option[T] =
       value.toOption
 
     /**
@@ -107,7 +107,7 @@ object OptionSyntax {
       * }}}
       */
 
-    def fromEitherUnsafe[L, R](either: Either[L, R]): Option[R] =
+    @inline def fromEitherUnsafe[L, R](either: Either[L, R]): Option[R] =
       either.toOption
 
     /**
@@ -120,7 +120,7 @@ object OptionSyntax {
       * }}}
       */
 
-    def fromResultUnsafe[T](r: Result[T]): Option[T] =
+    @inline def fromResultUnsafe[T](r: Result[T]): Option[T] =
       r.toOption
 
     /**
@@ -128,7 +128,7 @@ object OptionSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   [[None]] if false, or if effect is [[None]]
       */
-    def cond[T](test: Boolean, good: => T): Option[T] =
+    @inline def cond[T](test: Boolean, good: => T): Option[T] =
       OptionOps.cond(test, good)
 
     /**
@@ -136,7 +136,7 @@ object OptionSyntax {
       *   effect from ``good`` if the boolean is true
       *   [[None]] if false, or if effect is [[None]]
       */
-    def condWith[T](test: Boolean, good: => Option[T]): Option[T] =
+    @inline def condWith[T](test: Boolean, good: => Option[T]): Option[T] =
       OptionOps.condWith(test, good)
 
     /**
@@ -144,7 +144,7 @@ object OptionSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   [[None]] if false, or if effect is [[None]]
       */
-    def flatCond[T](test: Option[Boolean], good: => T): Option[T] =
+    @inline def flatCond[T](test: Option[Boolean], good: => T): Option[T] =
       OptionOps.flatCond(test, good)
 
     /**
@@ -152,7 +152,7 @@ object OptionSyntax {
       *   effect resulted from ``good`` if the boolean is true
       *   [[None]] if false, or if effect is [[None]]
       */
-    def flatCondWith[T](test: Option[Boolean], good: => Option[T]): Option[T] =
+    @inline def flatCondWith[T](test: Option[Boolean], good: => Option[T]): Option[T] =
       OptionOps.flatCondWith(test, good)
 
     //===========================================================================
@@ -163,31 +163,31 @@ object OptionSyntax {
       * Returns a singleton list containing the $option's value
       * if it is nonempty, or the empty list if the $option is empty.
       */
-    def asList[T](value: Option[T]): List[T] =
+    @inline def asList[T](value: Option[T]): List[T] =
       value.toList
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asTry[T](value: Option[T], ifNone: => Anomaly): Try[T] =
+    @inline def asTry[T](value: Option[T], ifNone: => Anomaly): Try[T] =
       OptionOps.asTry(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asTryThr[T](value: Option[T], ifNone: => Throwable): Try[T] =
+    @inline def asTryThr[T](value: Option[T], ifNone: => Throwable): Try[T] =
       OptionOps.asTryThr(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asEither[T](value: Option[T], ifNone: => Throwable): Either[Throwable, T] =
+    @inline def asEither[T](value: Option[T], ifNone: => Throwable): Either[Throwable, T] =
       OptionOps.asEither(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asResult[T](value: Option[T], ifNone: => Anomaly): Result[T] =
+    @inline def asResult[T](value: Option[T], ifNone: => Anomaly): Result[T] =
       OptionOps.asResult(value, ifNone)
 
     /**
@@ -195,7 +195,7 @@ object OptionSyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-    def unsafeGet[T](value: Option[T]): T =
+    @inline def unsafeGet[T](value: Option[T]): T =
       value.get
 
     //===========================================================================
@@ -219,20 +219,20 @@ object OptionSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[T, R](value: Option[T], good: T => R, bad: => R): Option[R] =
+    @inline def morph[T, R](value: Option[T], good: T => R, bad: => R): Option[R] =
       OptionOps.morph(value, good, bad)
 
     /**
       * If the underlying option is [[None]], then make this effect Some(ifNone).
       */
-    def recover[T](value: Option[T], ifNone: => T): Option[T] =
+    @inline def recover[T](value: Option[T], ifNone: => T): Option[T] =
       OptionOps.recover(value, ifNone)
 
     /**
       * If the underlying option is [[None]], then make this effect equal to
       * the returned one
       */
-    def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] =
+    @inline def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] =
       OptionOps.recoverWith(value, ifNone)
 
     //=========================================================================
@@ -244,7 +244,7 @@ object OptionSyntax {
       * https://typelevel.org/cats/api/cats/Traverse.html
       *
       * {{{
-      *   def indexToFilename(i: Int): Option[String] = ???
+      * @inline def indexToFilename(i: Int): Option[String] = ???
       *
       *   val fileIndex: List[Int] = List(0,1,2,3,4)
       *   val fileNames: Option[List[String]] = Option.traverse(fileIndex){ i =>
@@ -252,7 +252,7 @@ object OptionSyntax {
       *   }
       * }}}
       */
-    def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+    @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
     ): Option[C[B]] = OptionOps.traverse(col)(fn)
@@ -264,13 +264,13 @@ object OptionSyntax {
       * Specialized case of [[traverse]]
       *
       * {{{
-      *   def indexToFilename(i: Int): Option[String] = ???
+      * @inline def indexToFilename(i: Int): Option[String] = ???
       *
       *   val fileNamesOption: List[Option[String]] = List(0,1,2,3,4).map(indexToFileName)
       *   val fileNames:       Option[List[String]] = Option.sequence(fileNamesOption)
       * }}}
       */
-    def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+    @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
       implicit
       cbf: CanBuildFrom[M[Option[A]], A, M[A]]
     ): Option[M[A]] = OptionOps.sequence(in)
@@ -287,31 +287,31 @@ object OptionSyntax {
       * if it is nonempty, or the empty list if the $option is empty.
       */
 
-    def asList: List[T] =
+    @inline def asList: List[T] =
       value.toList
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asTry(ifNone: => Anomaly): Try[T] =
+    @inline def asTry(ifNone: => Anomaly): Try[T] =
       OptionOps.asTry(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asTryThr(ifNone: => Throwable): Try[T] =
+    @inline def asTryThr(ifNone: => Throwable): Try[T] =
       OptionOps.asTryThr(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asEither(ifNone: => Throwable): Either[Throwable, T] =
+    @inline def asEither(ifNone: => Throwable): Either[Throwable, T] =
       OptionOps.asEither(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asResult(ifNone: => Anomaly): Result[T] =
+    @inline def asResult(ifNone: => Anomaly): Result[T] =
       OptionOps.asResult(value, ifNone)
 
     /**
@@ -320,7 +320,7 @@ object OptionSyntax {
       * Will throw exceptions in your face if the underlying effect is failed
       */
 
-    def unsafeGet(): T =
+    @inline def unsafeGet(): T =
       OptionOps.unsafeGet(value)
 
     /**
@@ -340,20 +340,20 @@ object OptionSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[R](good: T => R, bad: => R): Option[R] =
+    @inline def morph[R](good: T => R, bad: => R): Option[R] =
       OptionOps.morph(value, good, bad)
 
     /**
       * If the underlying option is [[None]], then make this effect Some(ifNone).
       */
-    def recover(ifNone: => T): Option[T] =
+    @inline def recover(ifNone: => T): Option[T] =
       OptionOps.recover(value, ifNone)
 
     /**
       * If the underlying option is [[None]], then make this effect equal to
       * the returned one
       */
-    def recoverWith(ifNone: => Option[T]): Option[T] =
+    @inline def recoverWith(ifNone: => Option[T]): Option[T] =
       OptionOps.recoverWith(value, ifNone)
   }
 
@@ -368,7 +368,7 @@ object OptionSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   [[None]] if false, or if effect is [[None]]
       */
-    def condOption[T](good: => T): Option[T] =
+    @inline def condOption[T](good: => T): Option[T] =
       OptionOps.cond(test, good)
 
     /**
@@ -376,7 +376,7 @@ object OptionSyntax {
       *   effect from ``good`` if the boolean is true
       *   [[None]] if false, or if effect is [[None]]
       */
-    def condWithOption[T](good: => Option[T]): Option[T] =
+    @inline def condWithOption[T](good: => Option[T]): Option[T] =
       OptionOps.condWith(test, good)
 
   }
@@ -392,7 +392,7 @@ object OptionSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   [[None]] if false, or if effect is [[None]]
       */
-    def cond[T](good: => T): Option[T] =
+    @inline def cond[T](good: => T): Option[T] =
       OptionOps.flatCond(test, good)
 
     /**
@@ -400,7 +400,7 @@ object OptionSyntax {
       *   effect resulted from ``good`` if the boolean is true
       *   [[None]] if false, or if effect is [[None]]
       */
-    def condWith[T](good: => Option[T]): Option[T] =
+    @inline def condWith[T](good: => Option[T]): Option[T] =
       OptionOps.flatCondWith(test, good)
   }
 
@@ -418,14 +418,14 @@ object OptionOps {
     * N.B. pass only pure values
     */
 
-  def pure[T](t: T): Option[T] =
+  @inline def pure[T](t: T): Option[T] =
     Option(t)
 
   /**
     * N.B. pass only pure values
     */
 
-  def some[T](t: T): Option[T] =
+  @inline def some[T](t: T): Option[T] =
     Option(t)
 
   val unit: Option[Unit] =
@@ -452,7 +452,7 @@ object OptionOps {
     *   pure effect from ``good`` if the boolean is true
     *   [[None]] if false, or if effect is [[None]]
     */
-  def cond[T](test: Boolean, good: => T): Option[T] =
+  @inline def cond[T](test: Boolean, good: => T): Option[T] =
     if (test) OptionOps.pure(good) else None
 
   /**
@@ -460,7 +460,7 @@ object OptionOps {
     *   effect from ``good`` if the boolean is true
     *   [[None]] if false, or if effect is [[None]]
     */
-  def condWith[T](test: Boolean, good: => Option[T]): Option[T] =
+  @inline def condWith[T](test: Boolean, good: => Option[T]): Option[T] =
     if (test) good else None
 
   /**
@@ -468,7 +468,7 @@ object OptionOps {
     *   pure effect from ``good`` if the boolean is true
     *   [[None]] if false, or if effect is [[None]]
     */
-  def flatCond[T](test: Option[Boolean], good: => T): Option[T] =
+  @inline def flatCond[T](test: Option[Boolean], good: => T): Option[T] =
     test.flatMap(b => OptionOps.cond(b, good))
 
   /**
@@ -476,7 +476,7 @@ object OptionOps {
     *   effect resulted from ``good`` if the boolean is true
     *   [[None]] if false, or if effect is [[None]]
     */
-  def flatCondWith[T](test: Option[Boolean], good: => Option[T]): Option[T] =
+  @inline def flatCondWith[T](test: Option[Boolean], good: => Option[T]): Option[T] =
     test.flatMap(b => OptionOps.condWith(b, good))
 
   //===========================================================================
@@ -488,19 +488,19 @@ object OptionOps {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def asTry[T](value: Option[T], ifNone: => Anomaly): Try[T] =
+  @inline def asTry[T](value: Option[T], ifNone: => Anomaly): Try[T] =
     TryOps.fromOption(value, ifNone)
 
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def asTryThr[T](value: Option[T], ifNone: => Throwable): Try[T] =
+  @inline def asTryThr[T](value: Option[T], ifNone: => Throwable): Try[T] =
     TryOps.fromOptionThr(value, ifNone)
 
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def asEither[T](value: Option[T], ifNone: => Throwable): Either[Throwable, T] = value match {
+  @inline def asEither[T](value: Option[T], ifNone: => Throwable): Either[Throwable, T] = value match {
     case Some(v) => Right(v)
     case None    => Left(ifNone)
   }
@@ -508,7 +508,7 @@ object OptionOps {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def asResult[T](value: Option[T], ifNone: => Anomaly): Result[T] =
+  @inline def asResult[T](value: Option[T], ifNone: => Anomaly): Result[T] =
     Result.fromOption(value, ifNone)
 
   /**
@@ -517,7 +517,7 @@ object OptionOps {
     * Will throw exceptions in your face if the underlying effect is failed
     */
 
-  def unsafeGet[T](value: Option[T]): T =
+  @inline def unsafeGet[T](value: Option[T]): T =
     value.get
 
   //===========================================================================
@@ -541,7 +541,7 @@ object OptionOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
-  def morph[T, R](value: Option[T], good: T => R, bad: => R): Option[R] = value match {
+  @inline def morph[T, R](value: Option[T], good: T => R, bad: => R): Option[R] = value match {
     case Some(v) => Option(good(v))
     case None    => Option(bad)
   }
@@ -549,7 +549,7 @@ object OptionOps {
   /**
     * If the underlying option is [[None]], then make this effect Some(ifNone).
     */
-  def recover[T](value: Option[T], ifNone: => T): Option[T] = value match {
+  @inline def recover[T](value: Option[T], ifNone: => T): Option[T] = value match {
     case Some(v) => Option(v)
     case None    => Option(ifNone)
   }
@@ -558,7 +558,7 @@ object OptionOps {
     * If the underlying option is [[None]], then make this effect equal to
     * the returned one
     */
-  def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] = value match {
+  @inline def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] = value match {
     case Some(v) => Option(v)
     case None    => ifNone
   }
@@ -572,7 +572,7 @@ object OptionOps {
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
     * {{{
-    *   def indexToFilename(i: Int): Option[String] = ???
+    * @inline def indexToFilename(i: Int): Option[String] = ???
     *
     *   val fileIndex: List[Int] = List(0,1,2,3,4)
     *   val fileNames: Option[List[String]] = Option.traverse(fileIndex){ i =>
@@ -580,7 +580,7 @@ object OptionOps {
     *   }
     * }}}
     */
-  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): Option[C[B]] = {
@@ -618,13 +618,13 @@ object OptionOps {
     * Specialized case of [[traverse]]
     *
     * {{{
-    *   def indexToFilename(i: Int): Option[String] = ???
+    * @inline def indexToFilename(i: Int): Option[String] = ???
     *
     *   val fileNamesOption: List[Option[String]] = List(0,1,2,3,4).map(indexToFileName)
     *   val fileNames:       Option[List[String]] = Option.sequence(fileNamesOption)
     * }}}
     */
-  def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
     implicit
     cbf: CanBuildFrom[M[Option[A]], A, M[A]]
   ): Option[M[A]] = OptionOps.traverse(in)(identity)

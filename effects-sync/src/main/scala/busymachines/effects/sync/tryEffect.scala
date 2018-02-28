@@ -73,78 +73,78 @@ object TrySyntax {
       * N.B. pass only pure values. Otherwise use [[Try.apply]]
       */
 
-    def pure[T](value: T): Try[T] =
+    @inline def pure[T](value: T): Try[T] =
       TryOps.pure(value)
 
     /**
       * N.B. pass only pure values. Otherwise use [[Try.apply]]
       */
 
-    def success[T](value: T): Try[T] =
+    @inline def success[T](value: T): Try[T] =
       TryOps.success(value)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
 
-    def fail[T](bad: Anomaly): Try[T] =
+    @inline def fail[T](bad: Anomaly): Try[T] =
       TryOps.fail(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
 
-    def failThr[T](bad: Throwable): Try[T] =
+    @inline def failThr[T](bad: Throwable): Try[T] =
       TryOps.failThr(bad)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
 
-    def failure[T](bad: Anomaly): Try[T] =
+    @inline def failure[T](bad: Anomaly): Try[T] =
       TryOps.failure(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
 
-    def failureThr[T](bad: Throwable): Try[T] =
+    @inline def failureThr[T](bad: Throwable): Try[T] =
       TryOps.failureThr(bad)
 
-    def unit: Try[Unit] =
+    @inline def unit: Try[Unit] =
       TryOps.unit
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def fromOption[T](opt: Option[T], ifNone: => Anomaly): Try[T] =
+    @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Try[T] =
       TryOps.fromOption(opt, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Try[T] =
+    @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Try[T] =
       TryOps.fromOptionThr(opt, ifNone)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] =
+    @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] =
       TryOps.fromEither(either, transformLeft)
 
     /**
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
+    @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
       TryOps.fromEitherThr(either)(ev)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] =
+    @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] =
       TryOps.fromEitherThr(either, transformLeft)
 
     /**
@@ -154,7 +154,7 @@ object TrySyntax {
       * [[Correct]] becomes a pure effect
       *
       */
-    def fromResult[T](result: Result[T]) =
+    @inline def fromResult[T](result: Result[T]) =
       TryOps.fromResult(result)
 
     /**
@@ -162,7 +162,7 @@ object TrySyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def cond[T](test: Boolean, good: => T, bad: => Anomaly): Try[T] =
+    @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Try[T] =
       TryOps.cond(test, good, bad)
 
     /**
@@ -170,7 +170,7 @@ object TrySyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condThr[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
+    @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
       TryOps.condThr(test, good, bad)
 
     /**
@@ -178,7 +178,7 @@ object TrySyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWith[T](test: Boolean, good: => Try[T], bad: => Anomaly): Try[T] =
+    @inline def condWith[T](test: Boolean, good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.condWith(test, good, bad)
 
     /**
@@ -186,7 +186,7 @@ object TrySyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condWithThr[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
+    @inline def condWithThr[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
       TryOps.condWithThr(test, good, bad)
 
     /**
@@ -195,7 +195,7 @@ object TrySyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCond[T](test: Try[Boolean], good: => T, bad: => Anomaly): Try[T] =
+    @inline def flatCond[T](test: Try[Boolean], good: => T, bad: => Anomaly): Try[T] =
       TryOps.flatCond(test, good, bad)
 
     /**
@@ -204,7 +204,7 @@ object TrySyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondThr[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
+    @inline def flatCondThr[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
       TryOps.flatCondThr(test, good, bad)
 
     /**
@@ -213,7 +213,7 @@ object TrySyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondWith[T](test: Try[Boolean], good: => Try[T], bad: => Anomaly): Try[T] =
+    @inline def flatCondWith[T](test: Try[Boolean], good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.flatCondWith(test, good, bad)
 
     /**
@@ -222,63 +222,63 @@ object TrySyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondWithThr[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
+    @inline def flatCondWithThr[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
       TryOps.flatCondWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrue(test: Boolean, bad: => Anomaly): Try[Unit] =
+    @inline def failOnTrue(test: Boolean, bad: => Anomaly): Try[Unit] =
       TryOps.failOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueThr(test: Boolean, bad: => Throwable): Try[Unit] =
+    @inline def failOnTrueThr(test: Boolean, bad: => Throwable): Try[Unit] =
       TryOps.failOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalse(test: Boolean, bad: => Anomaly): Try[Unit] =
+    @inline def failOnFalse(test: Boolean, bad: => Anomaly): Try[Unit] =
       TryOps.failOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseThr(test: Boolean, bad: => Throwable): Try[Unit] =
+    @inline def failOnFalseThr(test: Boolean, bad: => Throwable): Try[Unit] =
       TryOps.failOnFalseThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def flatFailOnTrue(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
+    @inline def flatFailOnTrue(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
       TryOps.flatFailOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def flatFailOnTrueThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
+    @inline def flatFailOnTrueThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
       TryOps.flatFailOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def flatFailOnFalse(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
+    @inline def flatFailOnFalse(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
       TryOps.flatFailOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def flatFailOnFalseThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
+    @inline def flatFailOnFalseThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
       TryOps.flatFailOnFalseThr(test, bad)
 
     /**
@@ -286,7 +286,7 @@ object TrySyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
+    @inline def unpackOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
       TryOps.unpackOption(nopt, ifNone)
 
     /**
@@ -294,7 +294,7 @@ object TrySyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
+    @inline def unpackOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
       TryOps.unpackOptionThr(nopt, ifNone)
 
     /**
@@ -302,7 +302,7 @@ object TrySyntax {
       *
       * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
       */
-    def unpackResult[T](value: Try[Result[T]]): Try[T] =
+    @inline def unpackResult[T](value: Try[Result[T]]): Try[T] =
       TryOps.unpackResult(value)
 
     /**
@@ -311,7 +311,7 @@ object TrySyntax {
       * Throws exceptions into your face
       *
       */
-    def asOptionUnsafe[T](value: Try[T]): Option[T] =
+    @inline def asOptionUnsafe[T](value: Try[T]): Option[T] =
       TryOps.asOptionUnsafe(value)
 
     /**
@@ -320,13 +320,13 @@ object TrySyntax {
       * Throws exceptions into your face
       *
       */
-    def asListUnsafe[T](value: Try[T]): List[T] =
+    @inline def asListUnsafe[T](value: Try[T]): List[T] =
       TryOps.asListUnsafe(value)
 
     /**
       * Returns `Left` with `Throwable` if this is a `Failure`, otherwise returns `Right` with `Success` value.
       */
-    def asEither[T](value: Try[T]): Either[Throwable, T] =
+    @inline def asEither[T](value: Try[T]): Either[Throwable, T] =
       value.toEither
 
     /**
@@ -340,7 +340,7 @@ object TrySyntax {
       * this transformation.
       *
       */
-    def asResult[T](value: Try[T]): Result[T] =
+    @inline def asResult[T](value: Try[T]): Result[T] =
       TryOps.asResult(value)
 
     /**
@@ -348,7 +348,7 @@ object TrySyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-    def unsafeGet[T](value: Try[T]): T =
+    @inline def unsafeGet[T](value: Try[T]): T =
       TryOps.unsafeGet(value)
 
     //===========================================================================
@@ -360,7 +360,7 @@ object TrySyntax {
       * "bi" map, because it also allows you to change both branches of the effect, not just the
       * happy path.
       */
-    def bimap[T, R](value: Try[T], good: T => R, bad: Throwable => Anomaly): Try[R] =
+    @inline def bimap[T, R](value: Try[T], good: T => R, bad: Throwable => Anomaly): Try[R] =
       TryOps.bimap(value, good, bad)
 
     /**
@@ -369,7 +369,7 @@ object TrySyntax {
       *
       * The overload that uses [[Throwable]] instead of [[Anomaly]]
       */
-    def bimapThr[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] =
+    @inline def bimapThr[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] =
       TryOps.bimapThr(value, good, bad)
 
     /**
@@ -389,7 +389,7 @@ object TrySyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[T, R](value: Try[T], good: T => R, bad: Throwable => R): Try[R] =
+    @inline def morph[T, R](value: Try[T], good: T => R, bad: Throwable => R): Try[R] =
       TryOps.morph(value, good, bad)
 
     /**
@@ -400,7 +400,7 @@ object TrySyntax {
       * it's just the final value that is discarded
       *
       */
-    def discardContent[_](value: Try[_]): Try[Unit] =
+    @inline def discardContent[_](value: Try[_]): Try[Unit] =
       TryOps.discardContent(value)
 
     //=========================================================================
@@ -412,7 +412,7 @@ object TrySyntax {
       * https://typelevel.org/cats/api/cats/Traverse.html
       *
       * {{{
-      *   def indexToFilename(i: Int): Try[String] = ???
+      * @inline def  indexToFilename(i: Int): Try[String] = ???
       *
       *   val fileIndex: List[Int] = List(0,1,2,3,4)
       *   val fileNames: Try[List[String]] = Try.traverse(fileIndex){ i =>
@@ -420,7 +420,7 @@ object TrySyntax {
       *   }
       * }}}
       */
-    def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+    @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
     ): Try[C[B]] = TryOps.traverse(col)(fn)
@@ -432,13 +432,13 @@ object TrySyntax {
       * Specialized case of [[traverse]]
       *
       * {{{
-      *   def indexToFilename(i: Int): Try[String] = ???
+      * @inline def  indexToFilename(i: Int): Try[String] = ???
       *
       *   val fileNamesTry: List[Try[String]] = List(0,1,2,3,4).map(indexToFileName)
       *   val fileNames:    Try[List[String]] = Try.sequence(fileNamesTry)
       * }}}
       */
-    def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+    @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
       implicit
       cbf: CanBuildFrom[M[Try[A]], A, M[A]]
     ): Try[M[A]] = TryOps.sequence(in)
@@ -456,7 +456,7 @@ object TrySyntax {
       * Throws exceptions into your face
       *
       */
-    def asOptionUnsafe(): Option[T] =
+    @inline def asOptionUnsafe(): Option[T] =
       TryOps.asOptionUnsafe(value)
 
     /**
@@ -465,13 +465,13 @@ object TrySyntax {
       * Throws exceptions into your face
       *
       */
-    def asListUnsafe(): List[T] =
+    @inline def asListUnsafe(): List[T] =
       TryOps.asListUnsafe(value)
 
     /**
       * Returns `Left` with `Throwable` if this is a `Failure`, otherwise returns `Right` with `Success` value.
       */
-    def asEither: Either[Throwable, T] =
+    @inline def asEither: Either[Throwable, T] =
       value.toEither
 
     /**
@@ -485,7 +485,7 @@ object TrySyntax {
       * this transformation.
       *
       */
-    def asResult: Result[T] =
+    @inline def asResult: Result[T] =
       TryOps.asResult(value)
 
     /**
@@ -493,7 +493,7 @@ object TrySyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-    def unsafeGet(): T =
+    @inline def unsafeGet(): T =
       TryOps.unsafeGet(value)
 
     /**
@@ -501,7 +501,7 @@ object TrySyntax {
       * "bi" map, because it also allows you to change both branches of the effect, not just the
       * happy path.
       */
-    def bimap[R](good: T => R, bad: Throwable => Anomaly): Try[R] =
+    @inline def bimap[R](good: T => R, bad: Throwable => Anomaly): Try[R] =
       TryOps.bimap(value, good, bad)
 
     /**
@@ -510,7 +510,7 @@ object TrySyntax {
       *
       * The overload that uses [[Throwable]] instead of [[Anomaly]]
       */
-    def bimapThr[R](good: T => R, bad: Throwable => Throwable): Try[R] =
+    @inline def bimapThr[R](good: T => R, bad: Throwable => Throwable): Try[R] =
       TryOps.bimapThr(value, good, bad)
 
     /**
@@ -530,7 +530,7 @@ object TrySyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[R](good: T => R, bad: Throwable => R): Try[R] =
+    @inline def morph[R](good: T => R, bad: Throwable => R): Try[R] =
       TryOps.morph(value, good, bad)
 
     /**
@@ -541,7 +541,7 @@ object TrySyntax {
       * it's just the final value that is discarded
       *
       */
-    def discardContent: Try[Unit] =
+    @inline def discardContent: Try[Unit] =
       TryOps.discardContent(value)
   }
 
@@ -556,7 +556,7 @@ object TrySyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpack(ifNone: => Anomaly): Try[T] =
+    @inline def unpack(ifNone: => Anomaly): Try[T] =
       TryOps.unpackOption(nopt, ifNone)
 
     /**
@@ -564,7 +564,7 @@ object TrySyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackThr(ifNone: => Throwable): Try[T] =
+    @inline def unpackThr(ifNone: => Throwable): Try[T] =
       TryOps.unpackOptionThr(nopt, ifNone)
   }
 
@@ -578,7 +578,7 @@ object TrySyntax {
       *
       * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
       */
-    def unpack: Try[T] =
+    @inline def unpack: Try[T] =
       TryOps.unpackResult(result)
   }
 
@@ -593,7 +593,7 @@ object TrySyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condTry[T](good: => T, bad: => Anomaly): Try[T] =
+    @inline def condTry[T](good: => T, bad: => Anomaly): Try[T] =
       TryOps.cond(test, good, bad)
 
     /**
@@ -601,7 +601,7 @@ object TrySyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condTryThr[T](good: => T, bad: => Throwable): Try[T] =
+    @inline def condTryThr[T](good: => T, bad: => Throwable): Try[T] =
       TryOps.condThr(test, good, bad)
 
     /**
@@ -609,7 +609,7 @@ object TrySyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWithTry[T](good: => Try[T], bad: => Anomaly): Try[T] =
+    @inline def condWithTry[T](good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.condWith(test, good, bad)
 
     /**
@@ -617,35 +617,35 @@ object TrySyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condWithTryThr[T](good: => Try[T], bad: => Throwable): Try[T] =
+    @inline def condWithTryThr[T](good: => Try[T], bad: => Throwable): Try[T] =
       TryOps.condWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueTry(bad: => Anomaly): Try[Unit] =
+    @inline def failOnTrueTry(bad: => Anomaly): Try[Unit] =
       TryOps.failOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueTryThr(bad: => Throwable): Try[Unit] =
+    @inline def failOnTrueTryThr(bad: => Throwable): Try[Unit] =
       TryOps.failOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseTry(bad: => Anomaly): Try[Unit] =
+    @inline def failOnFalseTry(bad: => Anomaly): Try[Unit] =
       TryOps.failOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseTryThr(bad: => Throwable): Try[Unit] =
+    @inline def failOnFalseTryThr(bad: => Throwable): Try[Unit] =
       TryOps.failOnFalseThr(test, bad)
 
   }
@@ -662,7 +662,7 @@ object TrySyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def cond[T](good: => T, bad: => Anomaly): Try[T] =
+    @inline def cond[T](good: => T, bad: => Anomaly): Try[T] =
       TryOps.flatCond(test, good, bad)
 
     /**
@@ -671,7 +671,7 @@ object TrySyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condThr[T](good: => T, bad: => Throwable): Try[T] =
+    @inline def condThr[T](good: => T, bad: => Throwable): Try[T] =
       TryOps.flatCondThr(test, good, bad)
 
     /**
@@ -680,7 +680,7 @@ object TrySyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condWith[T](good: => Try[T], bad: => Anomaly): Try[T] =
+    @inline def condWith[T](good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.flatCondWith(test, good, bad)
 
     /**
@@ -689,35 +689,35 @@ object TrySyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condWithThr[T](good: => Try[T], bad: => Throwable): Try[T] =
+    @inline def condWithThr[T](good: => Try[T], bad: => Throwable): Try[T] =
       TryOps.flatCondWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def failOnTrue(bad: => Anomaly): Try[Unit] =
+    @inline def failOnTrue(bad: => Anomaly): Try[Unit] =
       TryOps.flatFailOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def failOnTrueThr(bad: => Throwable): Try[Unit] =
+    @inline def failOnTrueThr(bad: => Throwable): Try[Unit] =
       TryOps.flatFailOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def failOnFalse(bad: => Anomaly): Try[Unit] =
+    @inline def failOnFalse(bad: => Anomaly): Try[Unit] =
       TryOps.flatFailOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def failOnFalseThr(bad: => Throwable): Try[Unit] =
+    @inline def failOnFalseThr(bad: => Throwable): Try[Unit] =
       TryOps.flatFailOnFalseThr(test, bad)
 
   }
@@ -735,42 +735,42 @@ object TryOps {
     * N.B. pass only pure values. Otherwise use [[Try.apply]]
     */
 
-  def pure[T](t: T): Try[T] =
+  @inline def pure[T](t: T): Try[T] =
     Success(t)
 
   /**
     * N.B. pass only pure values. Otherwise use [[Try.apply]]
     */
 
-  def success[T](t: T): Try[T] =
+  @inline def success[T](t: T): Try[T] =
     Success(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
 
-  def fail[T](bad: Anomaly): Try[T] =
+  @inline def fail[T](bad: Anomaly): Try[T] =
     Failure(bad.asThrowable)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
 
-  def failure[T](bad: Anomaly): Try[T] =
+  @inline def failure[T](bad: Anomaly): Try[T] =
     Failure(bad.asThrowable)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
 
-  def failThr[T](thr: Throwable): Try[T] =
+  @inline def failThr[T](thr: Throwable): Try[T] =
     Failure(thr)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
 
-  def failureThr[T](thr: Throwable): Try[T] =
+  @inline def failureThr[T](thr: Throwable): Try[T] =
     Failure(thr)
 
   val unit: Try[Unit] =
@@ -785,7 +785,7 @@ object TryOps {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def fromOption[T](opt: Option[T], ifNone: => Anomaly): Try[T] = opt match {
+  @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Try[T] = opt match {
     case None        => TryOps.fail(ifNone)
     case Some(value) => TryOps.pure(value)
   }
@@ -793,7 +793,7 @@ object TryOps {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Try[T] = opt match {
+  @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Try[T] = opt match {
     case None        => TryOps.failThr(ifNone)
     case Some(value) => TryOps.pure(value)
   }
@@ -802,14 +802,14 @@ object TryOps {
     * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
     * if it is a [[Throwable]].
     */
-  def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
+  @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
     either.toTry(ev)
 
   /**
     * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
-  def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] = either match {
+  @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] = either match {
     case Left(left)   => TryOps.fail(transformLeft(left))
     case Right(value) => TryOps.pure(value)
   }
@@ -818,7 +818,7 @@ object TryOps {
     * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     */
-  def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] = either match {
+  @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] = either match {
     case Left(left)   => TryOps.failThr(transformLeft(left))
     case Right(value) => TryOps.pure(value)
   }
@@ -830,7 +830,7 @@ object TryOps {
     * [[Correct]] becomes a pure effect
     *
     */
-  def fromResult[T](r: Result[T]): Try[T] = r match {
+  @inline def fromResult[T](r: Result[T]): Try[T] = r match {
     case Correct(value)     => TryOps.pure(value)
     case Incorrect(anomaly) => TryOps.fail(anomaly)
   }
@@ -844,7 +844,7 @@ object TryOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def cond[T](test: Boolean, good: => T, bad: => Anomaly): Try[T] =
+  @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Try[T] =
     if (test) TryOps.pure(good) else TryOps.fail(bad)
 
   /**
@@ -852,7 +852,7 @@ object TryOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     */
-  def condThr[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
+  @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
     if (test) TryOps.pure(good) else TryOps.failThr(bad)
 
   /**
@@ -860,7 +860,7 @@ object TryOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def condWith[T](test: Boolean, good: => Try[T], bad: => Anomaly): Try[T] =
+  @inline def condWith[T](test: Boolean, good: => Try[T], bad: => Anomaly): Try[T] =
     if (test) good else TryOps.fail(bad)
 
   /**
@@ -868,35 +868,35 @@ object TryOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     */
-  def condWithThr[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
+  @inline def condWithThr[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
     if (test) good else TryOps.failThr(bad)
 
   /**
     * @return
     *   Failed effect, if the boolean is true
     */
-  def failOnTrue(test: Boolean, bad: => Anomaly): Try[Unit] =
+  @inline def failOnTrue(test: Boolean, bad: => Anomaly): Try[Unit] =
     if (test) TryOps.fail(bad) else TryOps.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is true
     */
-  def failOnTrueThr(test: Boolean, bad: => Throwable): Try[Unit] =
+  @inline def failOnTrueThr(test: Boolean, bad: => Throwable): Try[Unit] =
     if (test) TryOps.failThr(bad) else TryOps.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def failOnFalse(test: Boolean, bad: => Anomaly): Try[Unit] =
+  @inline def failOnFalse(test: Boolean, bad: => Anomaly): Try[Unit] =
     if (!test) TryOps.fail(bad) else TryOps.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def failOnFalseThr(test: Boolean, bad: => Throwable): Try[Unit] =
+  @inline def failOnFalseThr(test: Boolean, bad: => Throwable): Try[Unit] =
     if (!test) TryOps.failThr(bad) else TryOps.unit
 
   /**
@@ -905,7 +905,7 @@ object TryOps {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCond[T](test: Try[Boolean], good: => T, bad: => Anomaly): Try[T] =
+  @inline def flatCond[T](test: Try[Boolean], good: => T, bad: => Anomaly): Try[T] =
     test.flatMap(b => TryOps.cond(b, good, bad))
 
   /**
@@ -914,7 +914,7 @@ object TryOps {
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondThr[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
+  @inline def flatCondThr[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
     test.flatMap(b => TryOps.condThr(b, good, bad))
 
   /**
@@ -923,7 +923,7 @@ object TryOps {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondWith[T](test: Try[Boolean], good: => Try[T], bad: => Anomaly): Try[T] =
+  @inline def flatCondWith[T](test: Try[Boolean], good: => Try[T], bad: => Anomaly): Try[T] =
     test.flatMap(b => TryOps.condWith(b, good, bad))
 
   /**
@@ -932,35 +932,35 @@ object TryOps {
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondWithThr[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
+  @inline def flatCondWithThr[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
     test.flatMap(b => TryOps.condWithThr(b, good, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
-  def flatFailOnTrue(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
+  @inline def flatFailOnTrue(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
     test.flatMap(b => if (b) TryOps.fail(bad) else TryOps.unit)
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
-  def flatFailOnTrueThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
+  @inline def flatFailOnTrueThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
     test.flatMap(b => if (b) TryOps.failThr(bad) else TryOps.unit)
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
-  def flatFailOnFalse(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
+  @inline def flatFailOnFalse(test: Try[Boolean], bad: => Anomaly): Try[Unit] =
     test.flatMap(b => if (!b) TryOps.fail(bad) else TryOps.unit)
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
-  def flatFailOnFalseThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
+  @inline def flatFailOnFalseThr(test: Try[Boolean], bad: => Throwable): Try[Unit] =
     test.flatMap(b => if (!b) TryOps.failThr(bad) else TryOps.unit)
 
   /**
@@ -968,7 +968,7 @@ object TryOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
-  def unpackOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
+  @inline def unpackOption[T](nopt: Try[Option[T]], ifNone: => Anomaly): Try[T] =
     nopt.flatMap(opt => TryOps.fromOption(opt, ifNone))
 
   /**
@@ -976,7 +976,7 @@ object TryOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
-  def unpackOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
+  @inline def unpackOptionThr[T](nopt: Try[Option[T]], ifNone: => Throwable): Try[T] =
     nopt.flatMap(opt => TryOps.fromOptionThr(opt, ifNone))
 
   /**
@@ -984,7 +984,7 @@ object TryOps {
     *
     * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
     */
-  def unpackResult[T](result: Try[Result[T]]): Try[T] =
+  @inline def unpackResult[T](result: Try[Result[T]]): Try[T] =
     result.flatMap(r => TryOps.fromResult(r))
 
   //===========================================================================
@@ -998,7 +998,7 @@ object TryOps {
     *
     */
 
-  def asOptionUnsafe[T](value: Try[T]): Option[T] = value match {
+  @inline def asOptionUnsafe[T](value: Try[T]): Option[T] = value match {
     case Failure(exception) => throw exception
     case Success(value)     => Option(value)
   }
@@ -1010,7 +1010,7 @@ object TryOps {
     *
     */
 
-  def asListUnsafe[T](value: Try[T]): List[T] = value match {
+  @inline def asListUnsafe[T](value: Try[T]): List[T] = value match {
     case Failure(exception) => throw exception
     case Success(value)     => List(value)
   }
@@ -1028,7 +1028,7 @@ object TryOps {
     * this transformation.
     *
     */
-  def asResult[T](value: Try[T]): Result[T] = Result.fromTry(value)
+  @inline def asResult[T](value: Try[T]): Result[T] = Result.fromTry(value)
 
   /**
     * !!! USE WITH CARE !!!
@@ -1036,7 +1036,7 @@ object TryOps {
     * Will throw exceptions in your face if the underlying effect is failed
     */
 
-  def unsafeGet[T](value: Try[T]): T =
+  @inline def unsafeGet[T](value: Try[T]): T =
     value.get
 
   //===========================================================================
@@ -1048,7 +1048,7 @@ object TryOps {
     * "bi" map, because it also allows you to change both branches of the effect, not just the
     * happy path.
     */
-  def bimap[T, R](value: Try[T], good: T => R, bad: Throwable => Anomaly): Try[R] = value match {
+  @inline def bimap[T, R](value: Try[T], good: T => R, bad: Throwable => Anomaly): Try[R] = value match {
     case Failure(t) => TryOps.fail(bad(t))
     case Success(v) => TryOps.pure(good(v))
   }
@@ -1059,7 +1059,7 @@ object TryOps {
     *
     * The overload that uses [[Throwable]] instead of [[Anomaly]]
     */
-  def bimapThr[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] = value match {
+  @inline def bimapThr[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] = value match {
     case Failure(t) => TryOps.failThr(bad(t))
     case Success(v) => TryOps.pure(good(v))
   }
@@ -1081,7 +1081,7 @@ object TryOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
-  def morph[T, R](value: Try[T], good: T => R, bad: Throwable => R): Try[R] = value match {
+  @inline def morph[T, R](value: Try[T], good: T => R, bad: Throwable => R): Try[R] = value match {
     case Failure(value) => TryOps.pure(bad(value))
     case Success(value) => TryOps.pure(good(value))
   }
@@ -1094,7 +1094,7 @@ object TryOps {
     * it's just the final value that is discarded
     *
     */
-  def discardContent[T](value: Try[T]): Try[Unit] =
+  @inline def discardContent[T](value: Try[T]): Try[Unit] =
     value.map(UnitFunction)
 
   //=========================================================================
@@ -1106,7 +1106,7 @@ object TryOps {
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
     * {{{
-    *   def indexToFilename(i: Int): Try[String] = ???
+    * @inline def  indexToFilename(i: Int): Try[String] = ???
     *
     *   val fileIndex: List[Int] = List(0,1,2,3,4)
     *   val fileNames: Try[List[String]] = Try.traverse(fileIndex){ i =>
@@ -1114,7 +1114,7 @@ object TryOps {
     *   }
     * }}}
     */
-  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): Try[C[B]] = {
@@ -1152,13 +1152,13 @@ object TryOps {
     * Specialized case of [[traverse]]
     *
     * {{{
-    *   def indexToFilename(i: Int): Try[String] = ???
+    * @inline def  indexToFilename(i: Int): Try[String] = ???
     *
     *   val fileNamesTry: List[Try[String]] = List(0,1,2,3,4).map(indexToFileName)
     *   val fileNames:    Try[List[String]] = Try.sequence(fileNamesTry)
     * }}}
     */
-  def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
     implicit
     cbf: CanBuildFrom[M[Try[A]], A, M[A]]
   ): Try[M[A]] = TryOps.traverse(in)(identity)

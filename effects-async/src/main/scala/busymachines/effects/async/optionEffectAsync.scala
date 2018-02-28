@@ -77,7 +77,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
       */
-    def suspendInFuture[T](value: => Option[T], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture[T](value: => Option[T], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendOption(value, ifNone)
 
     /**
@@ -92,7 +92,9 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
       */
-    def suspendInFutureThr[T](value: => Option[T], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFutureThr[T](value: => Option[T], ifNone: => Throwable)(
+      implicit ec:                           ExecutionContext
+    ): Future[T] =
       FutureOps.suspendOptionThr(value, ifNone)
 
     /**
@@ -103,7 +105,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
       */
-    def suspendInIO[T](value: => Option[T], ifNone: => Anomaly): IO[T] =
+    @inline def suspendInIO[T](value: => Option[T], ifNone: => Anomaly): IO[T] =
       IOOps.suspendOption(value, ifNone)
 
     /**
@@ -114,7 +116,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
       */
-    def suspendInIOThr[T](value: => Option[T], ifNone: => Throwable): IO[T] =
+    @inline def suspendInIOThr[T](value: => Option[T], ifNone: => Throwable): IO[T] =
       IOOps.suspendOptionThr(value, ifNone)
 
     /**
@@ -125,7 +127,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
-    def suspendInTask[T](value: => Option[T], ifNone: => Anomaly): Task[T] =
+    @inline def suspendInTask[T](value: => Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(value, ifNone)
 
     /**
@@ -136,7 +138,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
-    def suspendInTaskThr[T](value: => Option[T], ifNone: => Throwable): Task[T] =
+    @inline def suspendInTaskThr[T](value: => Option[T], ifNone: => Throwable): Task[T] =
       TaskOps.suspendOptionThr(value, ifNone)
   }
 
@@ -148,25 +150,25 @@ object OptionSyntaxAsync {
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asFuture(ifNone: => Anomaly): Future[T] =
+    @inline def asFuture(ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect, if it is [[None]]
       */
-    def asFutureThr(ifNone: => Throwable): Future[T] =
+    @inline def asFutureThr(ifNone: => Throwable): Future[T] =
       FutureOps.fromOptionThr(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asIO(ifNone: => Anomaly): IO[T] =
+    @inline def asIO(ifNone: => Anomaly): IO[T] =
       IOOps.fromOption(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def asIOThr(ifNone: => Throwable): IO[T] =
+    @inline def asIOThr(ifNone: => Throwable): IO[T] =
       IOOps.fromOptionThr(value, ifNone)
 
     /**
@@ -177,7 +179,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
-    def asTask(ifNone: => Anomaly): Task[T] =
+    @inline def asTask(ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(value, ifNone)
 
     /**
@@ -188,7 +190,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
-    def asTaskThr(ifNone: => Throwable): Task[T] =
+    @inline def asTaskThr(ifNone: => Throwable): Task[T] =
       TaskOps.suspendOptionThr(value, ifNone)
 
     //=========================================================================
@@ -205,7 +207,7 @@ object OptionSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFailFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFailFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnFail(value, effect)
 
     /**
@@ -218,7 +220,7 @@ object OptionSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPureFuture[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnPureFuture[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnPure(value, effect)
 
     /**
@@ -231,7 +233,7 @@ object OptionSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFailIO[_](effect: => IO[_]): IO[Unit] =
+    @inline def effectOnFailIO[_](effect: => IO[_]): IO[Unit] =
       IOOps.effectOnFail(value, effect)
 
     /**
@@ -243,7 +245,7 @@ object OptionSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPureIO[_](effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPureIO[_](effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnPure(value, effect)
 
     /**
@@ -256,7 +258,7 @@ object OptionSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFailTask[_](effect: => Task[_]): Task[Unit] =
+    @inline def effectOnFailTask[_](effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnFail(value, effect)
 
     /**
@@ -269,7 +271,7 @@ object OptionSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPureTask[_](effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPureTask[_](effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnPure(value, effect)
 
   }
@@ -291,7 +293,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
       */
-    def suspendInFuture(ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture(ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendOption(value, ifNone)
 
     /**
@@ -306,7 +308,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
       */
-    def suspendInFutureThr(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFutureThr(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendOptionThr(value, ifNone)
 
     /**
@@ -317,7 +319,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
       */
-    def suspendInIO(ifNone: => Anomaly): IO[T] =
+    @inline def suspendInIO(ifNone: => Anomaly): IO[T] =
       IOOps.suspendOption(value, ifNone)
 
     /**
@@ -328,7 +330,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
       */
-    def suspendInIOThr(ifNone: => Throwable): IO[T] =
+    @inline def suspendInIOThr(ifNone: => Throwable): IO[T] =
       IOOps.suspendOptionThr(value, ifNone)
 
     /**
@@ -339,7 +341,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
-    def suspendInTask(ifNone: => Anomaly): Task[T] =
+    @inline def suspendInTask(ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(value, ifNone)
 
     /**
@@ -350,7 +352,7 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
-    def suspendInTaskThr(ifNone: => Throwable): Task[T] =
+    @inline def suspendInTaskThr(ifNone: => Throwable): Task[T] =
       TaskOps.suspendOptionThr(value, ifNone)
   }
 }

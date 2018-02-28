@@ -62,7 +62,7 @@ object ValidatedSyntax {
       *
       */
 
-    def asOptionUnsafe(): Option[T] =
+    @inline def asOptionUnsafe(): Option[T] =
       ValidatedOps.asOptionUnsafe(value)
 
     /**
@@ -74,7 +74,7 @@ object ValidatedSyntax {
       *
       */
 
-    def asOptionUnsafe(ctor: (Anomaly, List[Anomaly]) => Anomalies): Option[T] =
+    @inline def asOptionUnsafe(ctor: (Anomaly, List[Anomaly]) => Anomalies): Option[T] =
       ValidatedOps.asOptionUnsafe(value, ctor)
 
     /**
@@ -84,7 +84,7 @@ object ValidatedSyntax {
       *
       */
 
-    def asListUnsafe(): List[T] =
+    @inline def asListUnsafe(): List[T] =
       ValidatedOps.asListUnsafe(value)
 
     /**
@@ -94,7 +94,7 @@ object ValidatedSyntax {
       *
       */
 
-    def asListUnsafe(ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] =
+    @inline def asListUnsafe(ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] =
       ValidatedOps.asListUnsafe(value, ctor)
 
     /**
@@ -103,7 +103,7 @@ object ValidatedSyntax {
       * failed [[Try]]
       */
 
-    def asTry: Try[T] =
+    @inline def asTry: Try[T] =
       ValidatedOps.asTry(value)
 
     /**
@@ -111,13 +111,13 @@ object ValidatedSyntax {
       * transformed into an [[Anomalies]] of your choice
       */
 
-    def asTry(ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
+    @inline def asTry(ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
       ValidatedOps.asTry(value, ctor)
 
-    def asResult: Result[T] =
+    @inline def asResult: Result[T] =
       ValidatedOps.asResult(value)
 
-    def asResult(ctor: (Anomaly, List[Anomaly]) => Anomalies): Result[T] =
+    @inline def asResult(ctor: (Anomaly, List[Anomaly]) => Anomalies): Result[T] =
       ValidatedOps.asResult(value, ctor)
 
     /**
@@ -126,7 +126,7 @@ object ValidatedSyntax {
       * Will throw exceptions in your face if the underlying effect is failed
       */
 
-    def unsafeGet(): T =
+    @inline def unsafeGet(): T =
       ValidatedOps.unsafeGet(value)
 
     /**
@@ -135,10 +135,10 @@ object ValidatedSyntax {
       * Will throw exceptions of your choice in your face if the underlying effect is failed
       */
 
-    def unsafeGet(ctor: (Anomaly, List[Anomaly]) => Anomalies): T =
+    @inline def unsafeGet(ctor: (Anomaly, List[Anomaly]) => Anomalies): T =
       ValidatedOps.unsafeGet(value, ctor)
 
-    def discardContent: Validated[Unit] =
+    @inline def discardContent: Validated[Unit] =
       ValidatedOps.discardContent(value)
 
   }
@@ -153,7 +153,7 @@ object ValidatedSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def cond[T](good: => T, bad: => Anomaly): Validated[T] =
+    @inline def cond[T](good: => T, bad: => Anomaly): Validated[T] =
       ValidatedOps.cond(test, good, bad)
 
     /**
@@ -161,21 +161,21 @@ object ValidatedSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWith[T](good: => Validated[T], bad: => Anomaly): Validated[T] =
+    @inline def condWith[T](good: => Validated[T], bad: => Anomaly): Validated[T] =
       ValidatedOps.condWith(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def invalidOnTrue(bad: => Anomaly): Validated[Unit] =
+    @inline def invalidOnTrue(bad: => Anomaly): Validated[Unit] =
       ValidatedOps.invalidOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def invalidOnFalse(bad: => Anomaly): Validated[Unit] =
+    @inline def invalidOnFalse(bad: => Anomaly): Validated[Unit] =
       ValidatedOps.invalidOnFalse(test, bad)
 
   }
@@ -185,25 +185,25 @@ object ValidatedSyntax {
     /**
       * N.B. pass only pure values.
       */
-    def pure[T](value: T): Validated[T] = ValidatedOps.pure(value)
+    @inline def pure[T](value: T): Validated[T] = ValidatedOps.pure(value)
 
     /**
       * Failed effect
       */
-    def fail[T](bad: Anomaly, bads: Anomaly*): Validated[T] = ValidatedOps.fail(bad, bads: _*)
+    @inline def fail[T](bad: Anomaly, bads: Anomaly*): Validated[T] = ValidatedOps.fail(bad, bads: _*)
 
     /**
       * Failed effect overload
       */
-    def fail[T](bads: cd.NonEmptyList[Anomaly]): Validated[T] = ValidatedOps.fail(bads)
+    @inline def fail[T](bads: cd.NonEmptyList[Anomaly]): Validated[T] = ValidatedOps.fail(bads)
 
-    def unit: Validated[Unit] = ValidatedOps.unit
+    @inline def unit: Validated[Unit] = ValidatedOps.unit
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
 
-    def fromOptionAno[T](opt: Option[T], ifNone: => Anomaly): Validated[T] =
+    @inline def fromOptionAno[T](opt: Option[T], ifNone: => Anomaly): Validated[T] =
       ValidatedOps.fromOption(opt, ifNone)
 
     /**
@@ -215,7 +215,7 @@ object ValidatedSyntax {
       * withing this effect
       */
 
-    def fromTryAno[T](t: Try[T]): Validated[T] =
+    @inline def fromTryAno[T](t: Try[T]): Validated[T] =
       ValidatedOps.fromTry(t)
 
     /**
@@ -225,7 +225,7 @@ object ValidatedSyntax {
       * withing this effect
       */
 
-    def fromResult[T](t: Result[T]): Validated[T] =
+    @inline def fromResult[T](t: Result[T]): Validated[T] =
       ValidatedOps.fromResult(t)
 
     /**
@@ -233,7 +233,7 @@ object ValidatedSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condAno[T](test: Boolean, good: => T, bad: => Anomaly): Validated[T] =
+    @inline def condAno[T](test: Boolean, good: => T, bad: => Anomaly): Validated[T] =
       ValidatedOps.cond(test, good, bad)
 
     /**
@@ -241,21 +241,21 @@ object ValidatedSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWith[T](test: Boolean, good: => Validated[T], bad: => Anomaly): Validated[T] =
+    @inline def condWith[T](test: Boolean, good: => Validated[T], bad: => Anomaly): Validated[T] =
       ValidatedOps.condWith(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def invalidOnTrue(test: Boolean, bad: => Anomaly): Validated[Unit] =
+    @inline def invalidOnTrue(test: Boolean, bad: => Anomaly): Validated[Unit] =
       ValidatedOps.invalidOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def invalidOnFalse(test: Boolean, bad: => Anomaly): Validated[Unit] =
+    @inline def invalidOnFalse(test: Boolean, bad: => Anomaly): Validated[Unit] =
       ValidatedOps.invalidOnFalse(test, bad)
 
     /**
@@ -265,7 +265,7 @@ object ValidatedSyntax {
       *
       */
 
-    def asOptionUnsafe[T](value: Validated[T]): Option[T] =
+    @inline def asOptionUnsafe[T](value: Validated[T]): Option[T] =
       ValidatedOps.asOptionUnsafe(value)
 
     /**
@@ -277,7 +277,7 @@ object ValidatedSyntax {
       *
       */
 
-    def asOptionUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Option[T] =
+    @inline def asOptionUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Option[T] =
       ValidatedOps.asOptionUnsafe(value, ctor)
 
     /**
@@ -287,7 +287,7 @@ object ValidatedSyntax {
       *
       */
 
-    def asListUnsafe[T](value: Validated[T]): List[T] =
+    @inline def asListUnsafe[T](value: Validated[T]): List[T] =
       ValidatedOps.asListUnsafe(value)
 
     /**
@@ -297,7 +297,7 @@ object ValidatedSyntax {
       *
       */
 
-    def asListUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] =
+    @inline def asListUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] =
       ValidatedOps.asListUnsafe(value, ctor)
 
     /**
@@ -306,7 +306,7 @@ object ValidatedSyntax {
       * failed [[Try]]
       */
 
-    def asTry[T](value: Validated[T]): Try[T] =
+    @inline def asTry[T](value: Validated[T]): Try[T] =
       ValidatedOps.asTry(value)
 
     /**
@@ -314,13 +314,13 @@ object ValidatedSyntax {
       * transformed into an [[Anomalies]] of your choice
       */
 
-    def asTry[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
+    @inline def asTry[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
       ValidatedOps.asTry(value, ctor)
 
-    def asResult[T](value: Validated[T]): Result[T] =
+    @inline def asResult[T](value: Validated[T]): Result[T] =
       ValidatedOps.asResult(value)
 
-    def asResult[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Result[T] =
+    @inline def asResult[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Result[T] =
       ValidatedOps.asResult(value, ctor)
 
     /**
@@ -329,7 +329,7 @@ object ValidatedSyntax {
       * Will throw exceptions in your face if the underlying effect is failed
       */
 
-    def unsafeGet[T](value: Validated[T]): T =
+    @inline def unsafeGet[T](value: Validated[T]): T =
       ValidatedOps.unsafeGet(value)
 
     /**
@@ -338,7 +338,7 @@ object ValidatedSyntax {
       * Will throw exceptions of your choice in your face if the underlying effect is failed
       */
 
-    def unsafeGet[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): T =
+    @inline def unsafeGet[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): T =
       ValidatedOps.unsafeGet(value, ctor)
 
     /**
@@ -348,7 +348,7 @@ object ValidatedSyntax {
       * it's just the final value that is discarded
       */
 
-    def discardContent[T](value: Validated[T]): Validated[Unit] =
+    @inline def discardContent[T](value: Validated[T]): Validated[Unit] =
       ValidatedOps.discardContent(value)
 
     /**
@@ -356,7 +356,7 @@ object ValidatedSyntax {
       * https://typelevel.org/cats/api/cats/Traverse.html
       *
       * {{{
-      *   def checkIndex(i: Int): Validated[String] = ???
+      * @inline def  checkIndex(i: Int): Validated[String] = ???
       *
       *   val fileIndex: List[Int] = List(0,1,2,3,4)
       *   val fileNames: Validated[List[String]] = Validated.traverse(fileIndex){ i =>
@@ -365,7 +365,7 @@ object ValidatedSyntax {
       * }}}
       */
 
-    def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
+    @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
     ): Validated[C[B]] = ValidatedOps.traverse(col)(fn)
@@ -374,7 +374,7 @@ object ValidatedSyntax {
       * Basically like ``traverse`` but discards the value
       */
 
-    def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] =
+    @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] =
       ValidatedOps.traverse_(col)(fn)
 
     /**
@@ -384,14 +384,14 @@ object ValidatedSyntax {
       * Specialized case of [[traverse]]
       *
       * {{{
-      *   def checkIndex(i: Int): Validated[String] = ???
+      * @inline def  checkIndex(i: Int): Validated[String] = ???
       *
       *   val fileNamesTry: List[Validated[String]] = List(0,1,2,3,4).map(checkIndex)
       *   val fileNames:    Validated[List[String]] = Validated.sequence(fileNamesTry)
       * }}}
       */
 
-    def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
+    @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
       implicit
       cbf: CanBuildFrom[M[Validated[A]], A, M[A]]
     ): Validated[M[A]] = ValidatedOps.sequence(in)
@@ -400,13 +400,13 @@ object ValidatedSyntax {
       * Like ``sequence`` but discards the value
       */
 
-    def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
+    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
       ValidatedOps.sequence_(in)
 
-    def sequence[A](head: Validated[A], tail: Validated[A]*): Validated[List[A]] =
+    @inline def sequence[A](head: Validated[A], tail: Validated[A]*): Validated[List[A]] =
       ValidatedOps.sequence(head, tail: _*)
 
-    def sequence_[A](head: Validated[A], tail: Validated[A]*): Validated[Unit] =
+    @inline def sequence_[A](head: Validated[A], tail: Validated[A]*): Validated[Unit] =
       ValidatedOps.sequence_(head, tail: _*)
   }
 }
@@ -420,17 +420,17 @@ object ValidatedOps {
   /**
     * N.B. pass only pure values.
     */
-  def pure[T](value: T): Validated[T] = Validated.Valid(value)
+  @inline def pure[T](value: T): Validated[T] = Validated.Valid(value)
 
   /**
     * Failed effect
     */
-  def fail[T](bad: Anomaly, bads: Anomaly*): Validated[T] = Validated.Invalid(cd.NonEmptyList.of(bad, bads: _*))
+  @inline def fail[T](bad: Anomaly, bads: Anomaly*): Validated[T] = Validated.Invalid(cd.NonEmptyList.of(bad, bads: _*))
 
   /**
     * Failed effect overload
     */
-  def fail[T](bads: cd.NonEmptyList[Anomaly]): Validated[T] = Validated.Invalid(bads)
+  @inline def fail[T](bads: cd.NonEmptyList[Anomaly]): Validated[T] = Validated.Invalid(bads)
 
   val unit: Validated[Unit] = ValidatedOps.pure(())
 
@@ -441,7 +441,7 @@ object ValidatedOps {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def fromOption[T](opt: Option[T], ifNone: => Anomaly): Validated[T] = opt match {
+  @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Validated[T] = opt match {
     case None    => ValidatedOps.fail(ifNone)
     case Some(v) => ValidatedOps.pure(v)
   }
@@ -454,7 +454,7 @@ object ValidatedOps {
     * If we have multiple [[Anomalies]] then each individual [[Anomalies.messages]] is sequenced
     * withing this effect
     */
-  def fromTry[T](t: Try[T]): Validated[T] = t match {
+  @inline def fromTry[T](t: Try[T]): Validated[T] = t match {
     case TryFailure(a: Anomalies) => ValidatedOps.fail(a.firstAnomaly, a.restOfAnomalies: _*)
     case TryFailure(a: Anomaly)   => ValidatedOps.fail(a)
     case TryFailure(NonFatal(r)) => ValidatedOps.fail(CatastrophicError(r))
@@ -467,7 +467,7 @@ object ValidatedOps {
     * If we have multiple [[Anomalies]] then each individual [[Anomalies.messages]] is sequenced
     * withing this effect
     */
-  def fromResult[T](t: Result[T]): Validated[T] = t match {
+  @inline def fromResult[T](t: Result[T]): Validated[T] = t match {
     case Incorrect(a: Anomalies) => ValidatedOps.fail(a.firstAnomaly, a.restOfAnomalies: _*)
     case Incorrect(a: Anomaly)   => ValidatedOps.fail(a)
     case Correct(value) => ValidatedOps.pure(value)
@@ -482,7 +482,7 @@ object ValidatedOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def cond[T](test: Boolean, good: => T, bad: => Anomaly): Validated[T] =
+  @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Validated[T] =
     if (test) ValidatedOps.pure(good) else ValidatedOps.fail(bad)
 
   /**
@@ -490,21 +490,21 @@ object ValidatedOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def condWith[T](test: Boolean, good: => Validated[T], bad: => Anomaly): Validated[T] =
+  @inline def condWith[T](test: Boolean, good: => Validated[T], bad: => Anomaly): Validated[T] =
     if (test) good else ValidatedOps.fail(bad)
 
   /**
     * @return
     *   Failed effect, if the boolean is true
     */
-  def invalidOnTrue(test: Boolean, bad: => Anomaly): Validated[Unit] =
+  @inline def invalidOnTrue(test: Boolean, bad: => Anomaly): Validated[Unit] =
     if (test) ValidatedOps.fail(bad) else ValidatedOps.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def invalidOnFalse(test: Boolean, bad: => Anomaly): Validated[Unit] =
+  @inline def invalidOnFalse(test: Boolean, bad: => Anomaly): Validated[Unit] =
     if (!test) ValidatedOps.fail(bad) else ValidatedOps.unit
 
   //===========================================================================
@@ -517,7 +517,7 @@ object ValidatedOps {
     * Throws exceptions into your face
     *
     */
-  def asOptionUnsafe[T](value: Validated[T]): Option[T] = value match {
+  @inline def asOptionUnsafe[T](value: Validated[T]): Option[T] = value match {
     case cd.Validated.Valid(value) => OptionOps.pure(value)
     case cd.Validated.Invalid(e)   => throw GenericValidationFailures(e.head, e.tail)
   }
@@ -530,10 +530,11 @@ object ValidatedOps {
     * Throws exceptions into your face
     *
     */
-  def asOptionUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Option[T] = value match {
-    case cd.Validated.Valid(value) => OptionOps.pure(value)
-    case cd.Validated.Invalid(e)   => throw ctor(e.head, e.tail).asThrowable
-  }
+  @inline def asOptionUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Option[T] =
+    value match {
+      case cd.Validated.Valid(value) => OptionOps.pure(value)
+      case cd.Validated.Invalid(e)   => throw ctor(e.head, e.tail).asThrowable
+    }
 
   /**
     * !!! USE WITH CARE !!!
@@ -541,7 +542,7 @@ object ValidatedOps {
     * Throws exceptions into your face
     *
     */
-  def asListUnsafe[T](value: Validated[T]): List[T] = value match {
+  @inline def asListUnsafe[T](value: Validated[T]): List[T] = value match {
     case cd.Validated.Valid(value) => List(value)
     case cd.Validated.Invalid(e)   => throw GenericValidationFailures(e.head, e.tail)
   }
@@ -552,7 +553,7 @@ object ValidatedOps {
     * Allows you to specify which specific [[Anomalies]] to throw in your face.
     *
     */
-  def asListUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] = value match {
+  @inline def asListUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] = value match {
     case cd.Validated.Valid(value) => List(value)
     case cd.Validated.Invalid(e)   => throw ctor(e.head, e.tail).asThrowable
   }
@@ -561,7 +562,7 @@ object ValidatedOps {
     * Transforms this result into a [[Try]]. The [[Anomaly]]s are
     * transformed into an [[GenericValidationFailures]]
     */
-  def asTry[T](value: Validated[T]): Try[T] = value match {
+  @inline def asTry[T](value: Validated[T]): Try[T] = value match {
     case cd.Validated.Valid(value) => TryOps.pure(value)
     case cd.Validated.Invalid(e)   => TryOps.fail(GenericValidationFailures(e.head, e.tail))
   }
@@ -570,7 +571,7 @@ object ValidatedOps {
     * Transforms this result into a [[Try]]. The [[Anomaly]]s are
     * transformed into an [[Anomalies]] of your choice
     */
-  def asTry[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] = value match {
+  @inline def asTry[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] = value match {
     case cd.Validated.Valid(value) => TryOps.pure(value)
     case cd.Validated.Invalid(e)   => TryOps.fail(ctor(e.head, e.tail))
   }
@@ -579,7 +580,7 @@ object ValidatedOps {
     * Transforms this result into a [[Result]]. The [[Anomaly]]s are
     * transformed into an [[GenericValidationFailures]]
     */
-  def asResult[T](value: Validated[T]): Result[T] = value match {
+  @inline def asResult[T](value: Validated[T]): Result[T] = value match {
     case cd.Validated.Valid(value) => Result.pure(value)
     case cd.Validated.Invalid(e)   => Result.fail(GenericValidationFailures(e.head, e.tail))
   }
@@ -588,7 +589,7 @@ object ValidatedOps {
     * Transforms this result into a [[Try]]. The [[Anomaly]]s are
     * transformed into an [[Anomalies]] of your choice
     */
-  def asResult[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Result[T] = value match {
+  @inline def asResult[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Result[T] = value match {
     case cd.Validated.Valid(value) => Result.pure(value)
     case cd.Validated.Invalid(e)   => Result.fail(ctor(e.head, e.tail))
   }
@@ -598,7 +599,7 @@ object ValidatedOps {
     *
     * Will throw exceptions in your face if the underlying effect is failed
     */
-  def unsafeGet[T](value: Validated[T]): T = value match {
+  @inline def unsafeGet[T](value: Validated[T]): T = value match {
     case cd.Validated.Valid(value) => value
     case cd.Validated.Invalid(e)   => throw GenericValidationFailures(e.head, e.tail)
   }
@@ -608,7 +609,7 @@ object ValidatedOps {
     *
     * Will throw exceptions of your choice in your face if the underlying effect is failed
     */
-  def unsafeGet[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): T = value match {
+  @inline def unsafeGet[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): T = value match {
     case cd.Validated.Valid(value) => value
     case cd.Validated.Invalid(e)   => throw ctor(e.head, e.tail).asThrowable
   }
@@ -624,7 +625,7 @@ object ValidatedOps {
     * it's just the final value that is discarded
     */
 
-  def discardContent[T](value: Validated[T]): Validated[Unit] =
+  @inline def discardContent[T](value: Validated[T]): Validated[Unit] =
     value.map(UnitFunction)
 
   //=========================================================================
@@ -636,7 +637,7 @@ object ValidatedOps {
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
     * {{{
-    *   def checkIndex(i: Int): Validated[String] = ???
+    * @inline def  checkIndex(i: Int): Validated[String] = ???
     *
     *   val fileIndex: List[Int] = List(0,1,2,3,4)
     *   val fileNames: Validated[List[String]] = Validated.traverse(fileIndex){ i =>
@@ -644,7 +645,7 @@ object ValidatedOps {
     *   }
     * }}}
     */
-  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
+  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): Validated[C[B]] = {
@@ -666,7 +667,7 @@ object ValidatedOps {
   /**
     * Like ``traverse`` but discards the value
     */
-  def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] = {
+  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] = {
     import cats.instances.list._
     import cats.syntax.foldable._
     if (col.isEmpty) {
@@ -684,13 +685,13 @@ object ValidatedOps {
     * Specialized case of [[traverse]]
     *
     * {{{
-    *   def checkIndex(i: Int): Validated[String] = ???
+    * @inline def  checkIndex(i: Int): Validated[String] = ???
     *
     *   val fileNamesTry: List[Validated[String]] = List(0,1,2,3,4).map(checkIndex)
     *   val fileNames:    Validated[List[String]] = Validated.sequence(fileNamesTry)
     * }}}
     */
-  def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
+  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
     implicit
     cbf: CanBuildFrom[M[Validated[A]], A, M[A]]
   ): Validated[M[A]] = ValidatedOps.traverse(in)(identity)
@@ -705,25 +706,25 @@ object ValidatedOps {
     * Specialized case of [[traverse]]
     *
     * {{{
-    *   def checkIndex(i: Int): Validated[String] = ???
+    * @inline def  checkIndex(i: Int): Validated[String] = ???
     *
     *   val fileNamesTry: List[Validated[String]] = List(0,1,2,3,4).map(checkIndex)
     *   val fileNames:    Validated[List[String]] = Validated.sequence(fileNamesTry)
     * }}}
     */
-  def sequence[A](head: Validated[A], tail: Validated[A]*): Validated[List[A]] =
+  @inline def sequence[A](head: Validated[A], tail: Validated[A]*): Validated[List[A]] =
     ValidatedOps.sequence(head :: tail.toList)
 
   /**
     * Like ``sequence`` but discards the value
     */
-  def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
     ValidatedOps.traverse_(in)(identity)
 
   /**
     * Like ``sequence`` but discards the value
     */
-  def sequence_[A](head: Validated[A], tail: Validated[A]*): Validated[Unit] =
+  @inline def sequence_[A](head: Validated[A], tail: Validated[A]*): Validated[Unit] =
     ValidatedOps.sequence_(head :: tail.toList)
 
   //=========================================================================

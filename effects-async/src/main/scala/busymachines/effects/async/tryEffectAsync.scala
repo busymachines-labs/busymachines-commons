@@ -63,7 +63,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Future.fromTry]]
       */
-    def suspendInFuture[T](value: => Try[T])(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture[T](value: => Try[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendTry(value)
 
     /**
@@ -75,7 +75,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromTry]]
       */
-    def suspendInIO[T](value: => Try[T]): IO[T] =
+    @inline def suspendInIO[T](value: => Try[T]): IO[T] =
       IOOps.suspendTry(value)
 
     /**
@@ -87,7 +87,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
-    def suspendInTask[T](value: => Try[T]): Task[T] =
+    @inline def suspendInTask[T](value: => Try[T]): Task[T] =
       TaskOps.suspendTry(value)
   }
 
@@ -136,7 +136,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Future.fromTry]]
       */
-    def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendTry(value)
 
     /**
@@ -148,7 +148,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromTry]]
       */
-    def suspendInIO: IO[T] =
+    @inline def suspendInIO: IO[T] =
       IOOps.suspendTry(value)
 
     /**
@@ -160,7 +160,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
-    def suspendInTask: Task[T] =
+    @inline def suspendInTask: Task[T] =
       TaskOps.suspendTry(value)
   }
 }

@@ -33,42 +33,42 @@ object EitherSyntaxAsync {
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asFuture[L, R](value: Either[L, R], bad: L => Anomaly): Future[R] =
+    @inline def asFuture[L, R](value: Either[L, R], bad: L => Anomaly): Future[R] =
       FutureOps.fromEither(value, bad)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asFutureThr[L, R](value: Either[L, R], bad: L => Throwable): Future[R] =
+    @inline def asFutureThr[L, R](value: Either[L, R], bad: L => Throwable): Future[R] =
       FutureOps.fromEitherThr(value, bad)
 
     /**
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def asFutureThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
+    @inline def asFutureThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
       FutureOps.fromEitherThr(value)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asIO[L, R](value: Either[L, R], bad: L => Anomaly): IO[R] =
+    @inline def asIO[L, R](value: Either[L, R], bad: L => Anomaly): IO[R] =
       IOOps.fromEither(value, bad)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asIOThr[L, R](value: Either[L, R], bad: L => Throwable): IO[R] =
+    @inline def asIOThr[L, R](value: Either[L, R], bad: L => Throwable): IO[R] =
       IOOps.fromEitherThr(value, bad)
 
     /**
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def asIOThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+    @inline def asIOThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
       IOOps.fromEitherThr(value)(ev)
 
     /**
@@ -80,7 +80,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
-    def asTask[L, R](value: Either[L, R], bad: L => Anomaly): Task[R] =
+    @inline def asTask[L, R](value: Either[L, R], bad: L => Anomaly): Task[R] =
       TaskOps.suspendEither(value, bad)
 
     /**
@@ -91,7 +91,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
-    def asTaskThr[L, R](value: Either[L, R], bad: L => Throwable): Task[R] =
+    @inline def asTaskThr[L, R](value: Either[L, R], bad: L => Throwable): Task[R] =
       TaskOps.suspendEitherThr(value, bad)
 
     /**
@@ -102,7 +102,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
-    def asTaskThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+    @inline def asTaskThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.suspendEitherThr(value)(ev)
 
     /**
@@ -118,7 +118,9 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromEither]]
       */
-    def suspendInFuture[L, R](value: => Either[L, R], bad: L => Anomaly)(implicit ec: ExecutionContext): Future[R] =
+    @inline def suspendInFuture[L, R](value: => Either[L, R], bad: L => Anomaly)(
+      implicit ec: ExecutionContext
+    ): Future[R] =
       FutureOps.suspendEither(value, bad)
 
     /**
@@ -134,7 +136,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromEither]]
       */
-    def suspendInFutureThr[L, R](value: => Either[L, R], bad: L => Throwable)(
+    @inline def suspendInFutureThr[L, R](value: => Either[L, R], bad: L => Throwable)(
       implicit ec: ExecutionContext
     ): Future[R] =
       FutureOps.suspendEitherThr(value, bad)
@@ -151,7 +153,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromEither]]
       */
-    def suspendInFutureThr[L, R](value: => Either[L, R])(
+    @inline def suspendInFutureThr[L, R](value: => Either[L, R])(
       implicit
       ev: L <:< Throwable,
       ec: ExecutionContext
@@ -166,7 +168,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromEither]]
       */
-    def suspendInIO[L, R](value: => Either[L, R], bad: L => Anomaly): IO[R] =
+    @inline def suspendInIO[L, R](value: => Either[L, R], bad: L => Anomaly): IO[R] =
       IOOps.suspendEither(value, bad)
 
     /**
@@ -177,7 +179,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromEither]]
       */
-    def suspendInIOThr[L, R](value: => Either[L, R], bad: L => Throwable): IO[R] =
+    @inline def suspendInIOThr[L, R](value: => Either[L, R], bad: L => Throwable): IO[R] =
       IOOps.suspendEitherThr(value, bad)
 
     /**
@@ -188,7 +190,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromEither]]
       */
-    def suspendInIOThr[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+    @inline def suspendInIOThr[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
       IOOps.suspendEitherThr(value)(ev)
 
     /**
@@ -199,7 +201,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
-    def suspendInTask[L, R](value: => Either[L, R], bad: L => Anomaly): Task[R] =
+    @inline def suspendInTask[L, R](value: => Either[L, R], bad: L => Anomaly): Task[R] =
       TaskOps.suspendEither(value, bad)
 
     /**
@@ -210,7 +212,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
-    def suspendInTaskThr[L, R](value: => Either[L, R], bad: L => Throwable): Task[R] =
+    @inline def suspendInTaskThr[L, R](value: => Either[L, R], bad: L => Throwable): Task[R] =
       TaskOps.suspendEitherThr(value, bad)
 
     /**
@@ -221,7 +223,7 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
-    def suspendInTaskThr[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+    @inline def suspendInTaskThr[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.suspendEitherThr(value)(ev)
   }
 
@@ -234,55 +236,55 @@ object EitherSyntaxAsync {
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asFuture(bad: L => Anomaly): Future[R] =
+    @inline def asFuture(bad: L => Anomaly): Future[R] =
       FutureOps.fromEither(value, bad)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asFutureThr(bad: L => Throwable): Future[R] =
+    @inline def asFutureThr(bad: L => Throwable): Future[R] =
       FutureOps.fromEitherThr(value, bad)
 
     /**
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def asFutureThr(implicit ev: L <:< Throwable): Future[R] =
+    @inline def asFutureThr(implicit ev: L <:< Throwable): Future[R] =
       FutureOps.fromEitherThr(value)
 
-    def asIO(bad: L => Anomaly): IO[R] =
+    @inline def asIO(bad: L => Anomaly): IO[R] =
       IOOps.fromEither(value, bad)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asIOThr(bad: L => Throwable): IO[R] =
+    @inline def asIOThr(bad: L => Throwable): IO[R] =
       IOOps.fromEitherThr(value, bad)
 
-    def asIOThr(implicit ev: L <:< Throwable): IO[R] =
+    @inline def asIOThr(implicit ev: L <:< Throwable): IO[R] =
       IOOps.fromEitherThr(value)(ev)
 
     /**
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def asTask(bad: L => Anomaly): Task[R] =
+    @inline def asTask(bad: L => Anomaly): Task[R] =
       TaskOps.fromEither(value, bad)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asTaskThr(bad: L => Throwable): Task[R] =
+    @inline def asTaskThr(bad: L => Throwable): Task[R] =
       TaskOps.fromEitherThr(value, bad)
 
     /**
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def asTaskThr(implicit ev: L <:< Throwable): Task[R] =
+    @inline def asTaskThr(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.fromEitherThr(value)(ev)
 
   }
@@ -292,31 +294,31 @@ object EitherSyntaxAsync {
     */
   final class SafeReferenceOps[L, R](value: => Either[L, R]) {
 
-    def suspendInFuture(bad: L => Anomaly)(implicit ec: ExecutionContext): Future[R] =
+    @inline def suspendInFuture(bad: L => Anomaly)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.suspendEither(value, bad)
 
-    def suspendInFutureThr(bad: L => Throwable)(implicit ec: ExecutionContext): Future[R] =
+    @inline def suspendInFutureThr(bad: L => Throwable)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.suspendEitherThr(value, bad)
 
-    def suspendInFutureThr(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
+    @inline def suspendInFutureThr(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
       FutureOps.suspendEitherThr(value)
 
-    def suspendInIO(bad: L => Anomaly): IO[R] =
+    @inline def suspendInIO(bad: L => Anomaly): IO[R] =
       IOOps.suspendEither(value, bad)
 
-    def suspendInIOThr(bad: L => Throwable): IO[R] =
+    @inline def suspendInIOThr(bad: L => Throwable): IO[R] =
       IOOps.suspendEitherThr(value, bad)
 
-    def suspendInIOThr(implicit ev: L <:< Throwable): IO[R] =
+    @inline def suspendInIOThr(implicit ev: L <:< Throwable): IO[R] =
       IOOps.suspendEitherThr(value)(ev)
 
-    def suspendInTask(bad: L => Anomaly): Task[R] =
+    @inline def suspendInTask(bad: L => Anomaly): Task[R] =
       TaskOps.suspendEither(value, bad)
 
-    def suspendInTaskThr(bad: L => Throwable): Task[R] =
+    @inline def suspendInTaskThr(bad: L => Throwable): Task[R] =
       TaskOps.suspendEitherThr(value, bad)
 
-    def suspendInTaskThr(implicit ev: L <:< Throwable): Task[R] =
+    @inline def suspendInTaskThr(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.suspendEitherThr(value)(ev)
 
   }

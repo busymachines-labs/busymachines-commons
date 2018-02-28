@@ -64,21 +64,21 @@ object FutureSyntax {
       * use [[Future.apply]] to suspend them inside this future.
       */
 
-    def pure[T](value: T): Future[T] =
+    @inline def pure[T](value: T): Future[T] =
       FutureOps.pure(value)
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
 
-    def fail[T](bad: Anomaly): Future[T] =
+    @inline def fail[T](bad: Anomaly): Future[T] =
       FutureOps.fail(bad)
 
     /**
       * Failed effect with a [[Throwable]]
       */
 
-    def failThr[T](bad: Throwable): Future[T] =
+    @inline def failThr[T](bad: Throwable): Future[T] =
       FutureOps.failThr(bad)
 
     // —— def unit: Future[Unit] —— already defined on Future object
@@ -87,7 +87,7 @@ object FutureSyntax {
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
 
-    def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] =
+    @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(opt, ifNone)
 
     /**
@@ -102,15 +102,15 @@ object FutureSyntax {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
       */
-    def suspendOption[T](opt:    => Option[T], ifNone: => Anomaly)(
-      implicit executionContext: ExecutionContext
+    @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly)(
+      implicit executionContext:      ExecutionContext
     ): Future[T] =
       FutureOps.suspendOption(opt, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect, if it is [[None]]
       */
-    def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Future[T] =
+    @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Future[T] =
       FutureOps.fromOptionThr(opt, ifNone)
 
     /**
@@ -125,8 +125,8 @@ object FutureSyntax {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
       */
-    def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(
-      implicit executionContext: ExecutionContext
+    @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(
+      implicit executionContext:         ExecutionContext
     ): Future[T] = FutureOps.suspendOptionThr(opt, ifNone)
 
     // —— def fromTry —— already defined on Future object
@@ -144,14 +144,14 @@ object FutureSyntax {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Future.fromTry]]
       */
-    def suspendTry[T](tr: => Try[T])(implicit executionContext: ExecutionContext): Future[T] =
+    @inline def suspendTry[T](tr: => Try[T])(implicit executionContext: ExecutionContext): Future[T] =
       FutureOps.suspendTry(tr)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Future[R] =
+    @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Future[R] =
       FutureOps.fromEither(either, transformLeft)
 
     /**
@@ -167,7 +167,7 @@ object FutureSyntax {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromEither]]
       */
-    def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly)(
+    @inline def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly)(
       implicit ec: ExecutionContext
     ): Future[R] = FutureOps.suspendEither(either, transformLeft)
 
@@ -175,7 +175,7 @@ object FutureSyntax {
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
+    @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
       FutureOps.fromEitherThr(either)(ev)
 
     /**
@@ -190,7 +190,7 @@ object FutureSyntax {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromEither]]
       */
-    def suspendEitherThr[L, R](either: => Either[L, R])(
+    @inline def suspendEitherThr[L, R](either: => Either[L, R])(
       implicit
       ev: L <:< Throwable,
       ec: ExecutionContext
@@ -200,7 +200,7 @@ object FutureSyntax {
       * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] =
+    @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] =
       FutureOps.fromEitherThr(either, transformLeft)
 
     /**
@@ -216,7 +216,7 @@ object FutureSyntax {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromEither]]
       */
-    def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable)(
+    @inline def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable)(
       implicit ec: ExecutionContext
     ): Future[R] = FutureOps.suspendEitherThr(either, transformLeft)
 
@@ -227,7 +227,7 @@ object FutureSyntax {
       * [[Correct]] becomes a pure effect
       *
       */
-    def fromResult[T](result: Result[T]): Future[T] =
+    @inline def fromResult[T](result: Result[T]): Future[T] =
       FutureOps.fromResult(result)
 
     /**
@@ -241,7 +241,7 @@ object FutureSyntax {
       * N.B. this is useless if the [[Result]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromResult]]
       */
-    def suspendResult[T](result: => Result[T])(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendResult[T](result: => Result[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendResult(result)
 
     /**
@@ -255,7 +255,7 @@ object FutureSyntax {
       * all failed cases will be wrapped in a:
       * [[busymachines.effects.sync.validated.GenericValidationFailures]]
       */
-    def fromValidated[T](value: Validated[T]): Future[T] =
+    @inline def fromValidated[T](value: Validated[T]): Future[T] =
       FutureOps.fromValidated(value)
 
     /**
@@ -296,7 +296,7 @@ object FutureSyntax {
       *
       */
 
-    def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
+    @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
       FutureOps.fromValidated(value, ctor)
 
     /**
@@ -310,7 +310,7 @@ object FutureSyntax {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromValidated]]
       */
-    def suspendValidated[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendValidated[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendValidated(value)
 
     /**
@@ -324,7 +324,7 @@ object FutureSyntax {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromValidated]]
       */
-    def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies)(
+    @inline def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies)(
       implicit
       ec: ExecutionContext
     ): Future[T] = FutureOps.suspendValidated(value, ctor)
@@ -334,7 +334,7 @@ object FutureSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def cond[T](test: Boolean, good: => T, bad: => Anomaly): Future[T] =
+    @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Future[T] =
       FutureOps.cond(test, good, bad)
 
     /**
@@ -342,7 +342,7 @@ object FutureSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condThr[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
+    @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
       FutureOps.condThr(test, good, bad)
 
     /**
@@ -350,7 +350,7 @@ object FutureSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWith[T](test: Boolean, good: => Future[T], bad: => Anomaly): Future[T] =
+    @inline def condWith[T](test: Boolean, good: => Future[T], bad: => Anomaly): Future[T] =
       FutureOps.condWith(test, good, bad)
 
     /**
@@ -358,7 +358,7 @@ object FutureSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condWithThr[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
+    @inline def condWithThr[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
       FutureOps.condWithThr(test, good, bad)
 
     /**
@@ -367,7 +367,9 @@ object FutureSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+    @inline def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(
+      implicit ec:                ExecutionContext
+    ): Future[T] =
       FutureOps.flatCond(test, good, bad)
 
     /**
@@ -376,8 +378,8 @@ object FutureSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(
-      implicit ec:           ExecutionContext
+    @inline def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(
+      implicit ec:                   ExecutionContext
     ): Future[T] =
       FutureOps.flatCondThr(test, good, bad)
 
@@ -387,8 +389,8 @@ object FutureSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
-      implicit ec:            ExecutionContext
+    @inline def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
+      implicit ec:                    ExecutionContext
     ): Future[T] =
       FutureOps.flatCondWith(test, good, bad)
 
@@ -398,7 +400,7 @@ object FutureSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondWithThr[T](
+    @inline def flatCondWithThr[T](
       test: Future[Boolean],
       good: => Future[T],
       bad:  => Throwable
@@ -411,56 +413,60 @@ object FutureSyntax {
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrue(test: Boolean, bad: => Anomaly): Future[Unit] =
+    @inline def failOnTrue(test: Boolean, bad: => Anomaly): Future[Unit] =
       FutureOps.failOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueThr(test: Boolean, bad: => Throwable): Future[Unit] =
+    @inline def failOnTrueThr(test: Boolean, bad: => Throwable): Future[Unit] =
       FutureOps.failOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalse(test: Boolean, bad: => Anomaly): Future[Unit] =
+    @inline def failOnFalse(test: Boolean, bad: => Anomaly): Future[Unit] =
       FutureOps.failOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseThr(test: Boolean, bad: => Throwable): Future[Unit] =
+    @inline def failOnFalseThr(test: Boolean, bad: => Throwable): Future[Unit] =
       FutureOps.failOnFalseThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def flatFailOnTrue(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def flatFailOnTrue(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def flatFailOnTrueThr(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def flatFailOnTrueThr(test: Future[Boolean], bad: => Throwable)(
+      implicit ec:                      ExecutionContext
+    ): Future[Unit] =
       FutureOps.flatFailOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def flatFailOnFalse(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def flatFailOnFalse(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def flatFailOnFalseThr(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def flatFailOnFalseThr(test: Future[Boolean], bad: => Throwable)(
+      implicit ec:                       ExecutionContext
+    ): Future[Unit] =
       FutureOps.flatFailOnFalseThr(test, bad)
 
     /**
@@ -468,7 +474,7 @@ object FutureSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackOption[T](nopt: Future[Option[T]], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+    @inline def unpackOption[T](nopt: Future[Option[T]], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.unpackOption(nopt, ifNone)
 
     /**
@@ -476,7 +482,9 @@ object FutureSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackOptionThr[T](nopt: Future[Option[T]], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+    @inline def unpackOptionThr[T](nopt: Future[Option[T]], ifNone: => Throwable)(
+      implicit ec:                       ExecutionContext
+    ): Future[T] =
       FutureOps.unpackOptionThr(nopt, ifNone)
 
     /**
@@ -484,7 +492,7 @@ object FutureSyntax {
       *
       * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
       */
-    def unpackResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] =
+    @inline def unpackResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.unpackResult(value)
 
     /**
@@ -492,7 +500,7 @@ object FutureSyntax {
       *
       * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
       */
-    def attemptResult[T](value: Future[T])(implicit ec: ExecutionContext): Future[Result[T]] =
+    @inline def attemptResult[T](value: Future[T])(implicit ec: ExecutionContext): Future[Result[T]] =
       FutureOps.attemptResult(value)
 
     /**
@@ -504,7 +512,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
+    @inline def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
       FutureOps.asIO(value)
 
     /**
@@ -516,7 +524,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    def asTask[T](value: Future[T]): Task[T] =
+    @inline def asTask[T](value: Future[T]): Task[T] =
       FutureOps.asTask(value)
 
     /**
@@ -527,7 +535,7 @@ object FutureSyntax {
       * Usage. N.B. that this only makes sense if the creation of the Future itself
       * is also suspended in the [[IO]].
       * {{{
-      *   def writeToDB(v: Int, s: String): Future[Long] = ???
+      * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
       *   //...
       *   val io = IO.suspendFuture(writeToDB(42, "string"))
       *   //no database writes happened yet, since the future did
@@ -545,7 +553,7 @@ object FutureSyntax {
       * }}}
       *
       */
-    def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
+    @inline def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
       FutureOps.suspendInIO(value)
 
     /**
@@ -556,7 +564,7 @@ object FutureSyntax {
       * Usage. N.B. that this only makes sense if the creation of the Future itself
       * is also suspended in the [[Task]].
       * {{{
-      *   def writeToDB(v: Int, s: String): Future[Long] = ???
+      * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
       *   //...
       *   val task = Task.suspendFuture(writeToDB(42, "string"))
       *   //no database writes happened yet, since the future did
@@ -574,7 +582,7 @@ object FutureSyntax {
       * }}}
       *
       */
-    def suspendInTask[T](value: => Future[T]): Task[T] =
+    @inline def suspendInTask[T](value: => Future[T]): Task[T] =
       FutureOps.suspendInTask(value)
 
     /**
@@ -584,7 +592,7 @@ object FutureSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = FutureOps.defaultDuration): T =
+    @inline def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = FutureOps.defaultDuration): T =
       FutureOps.unsafeSyncGet(value, atMost)
 
     //=========================================================================
@@ -602,7 +610,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnTrue[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnTrue[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnTrue(test, effect)
 
     /**
@@ -616,7 +624,9 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnTrue[_](test: Future[Boolean], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def flatEffectOnTrue[_](test: Future[Boolean], effect: => Future[_])(
+      implicit ec:                        ExecutionContext
+    ): Future[Unit] =
       FutureOps.flatEffectOnTrue(test, effect)
 
     /**
@@ -629,7 +639,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFalse[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFalse[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnFalse(test, effect)
 
     /**
@@ -643,7 +653,9 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(
+      implicit ec:                         ExecutionContext
+    ): Future[Unit] =
       FutureOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -656,7 +668,9 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[T, _](value: Option[T], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFail[T, _](value: Option[T], effect: => Future[_])(
+      implicit ec: ExecutionContext
+    ): Future[Unit] =
       FutureOps.effectOnFail(value, effect)
 
     /**
@@ -670,7 +684,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnNone[T, _](value: Future[Option[T]], effect: => Future[_])(
+    @inline def flatEffectOnNone[T, _](value: Future[Option[T]], effect: => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnNone(value, effect)
@@ -685,7 +699,9 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[T, _](value: Option[T], effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnPure[T, _](value: Option[T], effect: T => Future[_])(
+      implicit ec: ExecutionContext
+    ): Future[Unit] =
       FutureOps.effectOnPure(value, effect)
 
     /**
@@ -699,7 +715,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnSome[T, _](value: Future[Option[T]], effect: T => Future[_])(
+    @inline def flatEffectOnSome[T, _](value: Future[Option[T]], effect: T => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnSome(value, effect)
@@ -714,7 +730,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[T, _](value: Result[T], effect: Anomaly => Future[_])(
+    @inline def effectOnFail[T, _](value: Result[T], effect: Anomaly => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.effectOnFail(value, effect)
@@ -730,7 +746,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnIncorrect[T, _](value: Future[Result[T]], effect: Anomaly => Future[_])(
+    @inline def flatEffectOnIncorrect[T, _](value: Future[Result[T]], effect: Anomaly => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnIncorrect(value, effect)
@@ -746,7 +762,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnCorrect[T, _](value: Future[Result[T]], effect: T => Future[_])(
+    @inline def flatEffectOnCorrect[T, _](value: Future[Result[T]], effect: T => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnCorrect(value, effect)
@@ -761,7 +777,9 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[T, _](value: Result[T], effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnPure[T, _](value: Result[T], effect: T => Future[_])(
+      implicit ec: ExecutionContext
+    ): Future[Unit] =
       FutureOps.effectOnPure(value, effect)
 
     //=========================================================================
@@ -773,7 +791,7 @@ object FutureSyntax {
       * "bi" map, because it also allows you to change both branches of the effect, not just the
       * happy path.
       */
-    def bimap[T, R](value: Future[T], good: T => R, bad: Throwable => Anomaly)(
+    @inline def bimap[T, R](value: Future[T], good: T => R, bad: Throwable => Anomaly)(
       implicit ec: ExecutionContext
     ): Future[R] =
       FutureOps.bimap(value, good, bad)
@@ -782,7 +800,9 @@ object FutureSyntax {
       * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
       * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
       */
-    def bimap[T, R](value: Future[T], result: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
+    @inline def bimap[T, R](value: Future[T], result: Result[T] => Result[R])(
+      implicit ec: ExecutionContext
+    ): Future[R] =
       FutureOps.bimap(value, result)
 
     /**
@@ -791,7 +811,7 @@ object FutureSyntax {
       *
       * The overload that uses [[Throwable]] instead of [[Anomaly]]
       */
-    def bimapThr[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
+    @inline def bimapThr[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
       implicit ec: ExecutionContext
     ): Future[R] =
       FutureOps.bimapThr(value, good, bad)
@@ -813,7 +833,9 @@ object FutureSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[T, R](value: Future[T], good: T => R, bad: Throwable => R)(implicit ec: ExecutionContext): Future[R] =
+    @inline def morph[T, R](value: Future[T], good: T => R, bad: Throwable => R)(
+      implicit ec: ExecutionContext
+    ): Future[R] =
       FutureOps.morph(value, good, bad)
 
     /**
@@ -822,7 +844,7 @@ object FutureSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[T, R](value: Future[T], result: Result[T] => R)(implicit ec: ExecutionContext): Future[R] =
+    @inline def morph[T, R](value: Future[T], result: Result[T] => R)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.morph(value, result)
 
     /**
@@ -833,7 +855,7 @@ object FutureSyntax {
       * it's just the final value that is discarded
       *
       */
-    def discardContent[_](value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def discardContent[_](value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.discardContent(value)
 
     //=========================================================================
@@ -867,7 +889,7 @@ object FutureSyntax {
       *
       *
       */
-    def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
+    @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]],
       ec:  ExecutionContext
@@ -884,7 +906,7 @@ object FutureSyntax {
       *
       * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
       */
-    def attempResult(implicit ec: ExecutionContext): Future[Result[T]] =
+    @inline def attempResult(implicit ec: ExecutionContext): Future[Result[T]] =
       FutureOps.attemptResult(value)
 
     /**
@@ -896,7 +918,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    def asIO(implicit ec: ExecutionContext): IO[T] =
+    @inline def asIO(implicit ec: ExecutionContext): IO[T] =
       FutureOps.asIO(value)
 
     /**
@@ -908,7 +930,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    def asTask: Task[T] =
+    @inline def asTask: Task[T] =
       FutureOps.asTask(value)
 
     /**
@@ -918,7 +940,7 @@ object FutureSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    def unsafeSyncGet(atMost: FiniteDuration = FutureOps.defaultDuration): T =
+    @inline def unsafeSyncGet(atMost: FiniteDuration = FutureOps.defaultDuration): T =
       FutureOps.unsafeSyncGet(value, atMost)
 
     /**
@@ -926,14 +948,14 @@ object FutureSyntax {
       * "bi" map, because it also allows you to change both branches of the effect, not just the
       * happy path.
       */
-    def bimap[R](good: T => R, bad: Throwable => Anomaly)(implicit ec: ExecutionContext): Future[R] =
+    @inline def bimap[R](good: T => R, bad: Throwable => Anomaly)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.bimap(value, good, bad)
 
     /**
       * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
       * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
       */
-    def bimap[R](result: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
+    @inline def bimap[R](result: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
       FutureOps.bimap(value, result)
 
     /**
@@ -942,7 +964,7 @@ object FutureSyntax {
       *
       * The overload that uses [[Throwable]] instead of [[Anomaly]]
       */
-    def bimapThr[R](good: T => R, bad: Throwable => Throwable)(implicit ec: ExecutionContext): Future[R] =
+    @inline def bimapThr[R](good: T => R, bad: Throwable => Throwable)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.bimapThr(value, good, bad)
 
     /**
@@ -962,7 +984,7 @@ object FutureSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[R](good: T => R, bad: Throwable => R)(implicit ec: ExecutionContext): Future[R] =
+    @inline def morph[R](good: T => R, bad: Throwable => R)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.morph(value, good, bad)
 
     /**
@@ -971,7 +993,7 @@ object FutureSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[R](result: Result[T] => R)(implicit ec: ExecutionContext): Future[R] =
+    @inline def morph[R](result: Result[T] => R)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.morph(value, result)
 
     /**
@@ -982,7 +1004,7 @@ object FutureSyntax {
       * it's just the final value that is discarded
       *
       */
-    def discardContent(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def discardContent(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.discardContent(value)
   }
 
@@ -999,7 +1021,7 @@ object FutureSyntax {
       * Usage. N.B. that this only makes sense if the creation of the Future itself
       * is also suspended in the [[IO]].
       * {{{
-      *   def writeToDB(v: Int, s: String): Future[Long] = ???
+      * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
       *   //...
       *   val io = IO.suspendFuture(writeToDB(42, "string"))
       *   //no database writes happened yet, since the future did
@@ -1017,7 +1039,7 @@ object FutureSyntax {
       * }}}
       *
       */
-    def suspendInIO(implicit ec: ExecutionContext): IO[T] =
+    @inline def suspendInIO(implicit ec: ExecutionContext): IO[T] =
       FutureOps.suspendInIO(value)
 
     /**
@@ -1028,7 +1050,7 @@ object FutureSyntax {
       * Usage. N.B. that this only makes sense if the creation of the Future itself
       * is also suspended in the [[Task]].
       * {{{
-      *   def writeToDB(v: Int, s: String): Future[Long] = ???
+      * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
       *   //...
       *   val task = Task.suspendFuture(writeToDB(42, "string"))
       *   //no database writes happened yet, since the future did
@@ -1046,7 +1068,7 @@ object FutureSyntax {
       * }}}
       *
       */
-    def suspendInTask: Task[T] =
+    @inline def suspendInTask: Task[T] =
       FutureOps.suspendInTask(value)
 
   }
@@ -1062,7 +1084,7 @@ object FutureSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpack(ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+    @inline def unpack(ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.unpackOption(nopt, ifNone)
 
     /**
@@ -1070,7 +1092,7 @@ object FutureSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackThr(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+    @inline def unpackThr(ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.unpackOptionThr(nopt, ifNone)
 
     /**
@@ -1084,7 +1106,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFail[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnNone(nopt, effect)
 
     /**
@@ -1098,7 +1120,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnPure[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnSome(nopt, effect)
 
   }
@@ -1113,7 +1135,7 @@ object FutureSyntax {
       *
       * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
       */
-    def unpack(implicit ec: ExecutionContext): Future[T] =
+    @inline def unpack(implicit ec: ExecutionContext): Future[T] =
       FutureOps.unpackResult(result)
 
     /**
@@ -1127,7 +1149,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[_](effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFail[_](effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnIncorrect(result, effect)
 
     /**
@@ -1141,7 +1163,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnPure[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnCorrect(result, effect)
   }
 
@@ -1156,7 +1178,7 @@ object FutureSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condFuture[T](good: => T, bad: => Anomaly): Future[T] =
+    @inline def condFuture[T](good: => T, bad: => Anomaly): Future[T] =
       FutureOps.cond(test, good, bad)
 
     /**
@@ -1164,7 +1186,7 @@ object FutureSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condFutureThr[T](good: => T, bad: => Throwable): Future[T] =
+    @inline def condFutureThr[T](good: => T, bad: => Throwable): Future[T] =
       FutureOps.condThr(test, good, bad)
 
     /**
@@ -1172,7 +1194,7 @@ object FutureSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWithFuture[T](good: => Future[T], bad: => Anomaly): Future[T] =
+    @inline def condWithFuture[T](good: => Future[T], bad: => Anomaly): Future[T] =
       FutureOps.condWith(test, good, bad)
 
     /**
@@ -1180,35 +1202,35 @@ object FutureSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condWithFutureThr[T](good: => Future[T], bad: => Throwable): Future[T] =
+    @inline def condWithFutureThr[T](good: => Future[T], bad: => Throwable): Future[T] =
       FutureOps.condWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueFuture(bad: => Anomaly): Future[Unit] =
+    @inline def failOnTrueFuture(bad: => Anomaly): Future[Unit] =
       FutureOps.failOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueFutureThr(bad: => Throwable): Future[Unit] =
+    @inline def failOnTrueFutureThr(bad: => Throwable): Future[Unit] =
       FutureOps.failOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseFuture(bad: => Anomaly): Future[Unit] =
+    @inline def failOnFalseFuture(bad: => Anomaly): Future[Unit] =
       FutureOps.failOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseFutureThr(bad: => Throwable): Future[Unit] =
+    @inline def failOnFalseFutureThr(bad: => Throwable): Future[Unit] =
       FutureOps.failOnFalseThr(test, bad)
 
     /**
@@ -1221,7 +1243,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFalseFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
+    @inline def effectOnFalseFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
       FutureOps.effectOnFalse(test, effect)
 
     /**
@@ -1235,7 +1257,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnTrueFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnTrueFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnTrue(test, effect)
 
   }
@@ -1252,7 +1274,7 @@ object FutureSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def cond[T](good: => T, bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+    @inline def cond[T](good: => T, bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flatCond(test, good, bad)
 
     /**
@@ -1261,7 +1283,7 @@ object FutureSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condThr[T](good: => T, bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+    @inline def condThr[T](good: => T, bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flatCondThr(test, good, bad)
 
     /**
@@ -1270,7 +1292,7 @@ object FutureSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condWith[T](good: => Future[T], bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+    @inline def condWith[T](good: => Future[T], bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flatCondWith(test, good, bad)
 
     /**
@@ -1279,28 +1301,28 @@ object FutureSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condWithThr[T](good: => Future[T], bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+    @inline def condWithThr[T](good: => Future[T], bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.flatCondWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def failOnTrue(bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def failOnTrue(bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def failOnTrueThr(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def failOnTrueThr(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def failOnFalse(bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def failOnFalse(bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnFalse(test, bad)
 
     /**
@@ -1314,10 +1336,10 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def failOnFalseThr(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def failOnFalseThr(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnFalseThr(test, bad)
 
-    def effectOnFalse[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
+    @inline def effectOnFalse[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
       FutureOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -1331,7 +1353,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnTrue[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
+    @inline def effectOnTrue[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
       FutureOps.flatEffectOnTrue(test, effect)
 
   }
@@ -1347,21 +1369,21 @@ object FutureOps {
     * use [[Future.apply]] to suspend them inside this future.
     */
 
-  def pure[T](value: T): Future[T] =
+  @inline def pure[T](value: T): Future[T] =
     Future.successful(value)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
 
-  def fail[T](bad: Anomaly): Future[T] =
+  @inline def fail[T](bad: Anomaly): Future[T] =
     Future.failed(bad.asThrowable)
 
   /**
     * Failed effect with a [[Throwable]]
     */
 
-  def failThr[T](bad: Throwable): Future[T] =
+  @inline def failThr[T](bad: Throwable): Future[T] =
     Future.failed(bad)
 
   // —— def unit: Future[Unit] —— already defined on Future object
@@ -1370,7 +1392,7 @@ object FutureOps {
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
 
-  def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] = opt match {
+  @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] = opt match {
     case None        => FutureOps.fail(ifNone)
     case Some(value) => FutureOps.pure(value)
   }
@@ -1387,13 +1409,15 @@ object FutureOps {
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromOption]]
     */
-  def suspendOption[T](opt: => Option[T], ifNone: => Anomaly)(implicit executionContext: ExecutionContext): Future[T] =
+  @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly)(
+    implicit executionContext:      ExecutionContext
+  ): Future[T] =
     Future(opt).flatMap(o => FutureOps.fromOption(o, ifNone))
 
   /**
     * Lift this [[Option]] and transform it into a failed effect, if it is [[None]]
     */
-  def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Future[T] = opt match {
+  @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Future[T] = opt match {
     case None        => FutureOps.failThr(ifNone)
     case Some(value) => FutureOps.pure(value)
   }
@@ -1410,8 +1434,8 @@ object FutureOps {
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromOption]]
     */
-  def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(
-    implicit executionContext: ExecutionContext
+  @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable)(
+    implicit executionContext:         ExecutionContext
   ): Future[T] =
     Future(opt).flatMap(o => FutureOps.fromOptionThr(o, ifNone))
 
@@ -1430,14 +1454,14 @@ object FutureOps {
     * N.B. this is useless if the [[Try]] was previously assigned to a "val".
     * You might as well use [[Future.fromTry]]
     */
-  def suspendTry[T](tr: => Try[T])(implicit executionContext: ExecutionContext): Future[T] =
+  @inline def suspendTry[T](tr: => Try[T])(implicit executionContext: ExecutionContext): Future[T] =
     Future(tr).flatMap(Future.fromTry)
 
   /**
     * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
-  def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Future[R] = either match {
+  @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Future[R] = either match {
     case Left(value)  => FutureOps.fail(transformLeft(value))
     case Right(value) => FutureOps.pure(value)
   }
@@ -1455,7 +1479,7 @@ object FutureOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromEither]]
     */
-  def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly)(
+  @inline def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly)(
     implicit ec: ExecutionContext
   ): Future[R] =
     Future(either).flatMap(eit => FutureOps.fromEither(eit, transformLeft))
@@ -1464,7 +1488,7 @@ object FutureOps {
     * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
     * if it is a [[Throwable]].
     */
-  def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] = either match {
+  @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] = either match {
     case Left(value)  => FutureOps.failThr(ev(value))
     case Right(value) => FutureOps.pure(value)
   }
@@ -1481,14 +1505,16 @@ object FutureOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromEither]]
     */
-  def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
+  @inline def suspendEitherThr[L, R](
+    either:      => Either[L, R]
+  )(implicit ev: L <:< Throwable, ec: ExecutionContext): Future[R] =
     Future(either).flatMap(eit => FutureOps.fromEitherThr(eit)(ev))
 
   /**
     * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     */
-  def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] = either match {
+  @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] = either match {
     case Left(value)  => FutureOps.failThr(transformLeft(value))
     case Right(value) => FutureOps.pure(value)
   }
@@ -1506,7 +1532,7 @@ object FutureOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromEither]]
     */
-  def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable)(
+  @inline def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable)(
     implicit ec: ExecutionContext
   ): Future[R] = Future(either).flatMap(eit => FutureOps.fromEitherThr(eit, transformLeft))
 
@@ -1517,7 +1543,7 @@ object FutureOps {
     * [[Correct]] becomes a pure effect
     *
     */
-  def fromResult[T](result: Result[T]): Future[T] = result match {
+  @inline def fromResult[T](result: Result[T]): Future[T] = result match {
     case Left(value)  => FutureOps.fail(value)
     case Right(value) => FutureOps.pure(value)
   }
@@ -1533,7 +1559,7 @@ object FutureOps {
     * N.B. this is useless if the [[Result]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromResult]]
     */
-  def suspendResult[T](result: => Result[T])(implicit ec: ExecutionContext): Future[T] =
+  @inline def suspendResult[T](result: => Result[T])(implicit ec: ExecutionContext): Future[T] =
     Future(result).flatMap(FutureOps.fromResult)
 
   /**
@@ -1548,7 +1574,7 @@ object FutureOps {
     * [[busymachines.effects.sync.validated.GenericValidationFailures]]
     */
 
-  def fromValidated[T](value: Validated[T]): Future[T] = value match {
+  @inline def fromValidated[T](value: Validated[T]): Future[T] = value match {
     case Validated.Valid(e)   => FutureOps.pure(e)
     case Validated.Invalid(e) => FutureOps.fail(GenericValidationFailures(e.head, e.tail))
   }
@@ -1591,10 +1617,11 @@ object FutureOps {
     *
     */
 
-  def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] = value match {
-    case Validated.Valid(e)   => FutureOps.pure(e)
-    case Validated.Invalid(e) => FutureOps.fail(ctor(e.head, e.tail))
-  }
+  @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
+    value match {
+      case Validated.Valid(e)   => FutureOps.pure(e)
+      case Validated.Invalid(e) => FutureOps.fail(ctor(e.head, e.tail))
+    }
 
   /**
     * N.B.
@@ -1607,7 +1634,7 @@ object FutureOps {
     * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromValidated]]
     */
-  def suspendValidated[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
+  @inline def suspendValidated[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
     Future(value).flatMap(v => FutureOps.fromValidated(v))
 
   /**
@@ -1621,7 +1648,7 @@ object FutureOps {
     * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromValidated]]
     */
-  def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies)(
+  @inline def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies)(
     implicit
     ec: ExecutionContext
   ): Future[T] =
@@ -1632,7 +1659,7 @@ object FutureOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def cond[T](test: Boolean, good: => T, bad: => Anomaly): Future[T] =
+  @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Future[T] =
     if (test) FutureOps.pure(good) else FutureOps.fail(bad)
 
   /**
@@ -1640,7 +1667,7 @@ object FutureOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     */
-  def condThr[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
+  @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
     if (test) FutureOps.pure(good) else FutureOps.failThr(bad)
 
   /**
@@ -1648,7 +1675,7 @@ object FutureOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def condWith[T](test: Boolean, good: => Future[T], bad: => Anomaly): Future[T] =
+  @inline def condWith[T](test: Boolean, good: => Future[T], bad: => Anomaly): Future[T] =
     if (test) good else FutureOps.fail(bad)
 
   /**
@@ -1656,7 +1683,7 @@ object FutureOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     */
-  def condWithThr[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
+  @inline def condWithThr[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
     if (test) good else FutureOps.failThr(bad)
 
   /**
@@ -1665,7 +1692,9 @@ object FutureOps {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+  @inline def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(
+    implicit ec:                ExecutionContext
+  ): Future[T] =
     test.flatMap(t => FutureOps.cond(t, good, bad))
 
   /**
@@ -1674,7 +1703,9 @@ object FutureOps {
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+  @inline def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(
+    implicit ec:                   ExecutionContext
+  ): Future[T] =
     test.flatMap(t => FutureOps.condThr(t, good, bad))
 
   /**
@@ -1683,8 +1714,8 @@ object FutureOps {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
-    implicit ec:            ExecutionContext
+  @inline def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
+    implicit ec:                    ExecutionContext
   ): Future[T] =
     test.flatMap(t => FutureOps.condWith(t, good, bad))
 
@@ -1694,8 +1725,8 @@ object FutureOps {
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondWithThr[T](test: Future[Boolean], good: => Future[T], bad: => Throwable)(
-    implicit ec:               ExecutionContext
+  @inline def flatCondWithThr[T](test: Future[Boolean], good: => Future[T], bad: => Throwable)(
+    implicit ec:                       ExecutionContext
   ): Future[T] =
     test.flatMap(t => FutureOps.condWithThr(t, good, bad))
 
@@ -1703,56 +1734,58 @@ object FutureOps {
     * @return
     *   Failed effect, if the boolean is true
     */
-  def failOnTrue(test: Boolean, bad: => Anomaly): Future[Unit] =
+  @inline def failOnTrue(test: Boolean, bad: => Anomaly): Future[Unit] =
     if (test) FutureOps.fail(bad) else Future.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is true
     */
-  def failOnTrueThr(test: Boolean, bad: => Throwable): Future[Unit] =
+  @inline def failOnTrueThr(test: Boolean, bad: => Throwable): Future[Unit] =
     if (test) FutureOps.failThr(bad) else Future.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def failOnFalse(test: Boolean, bad: => Anomaly): Future[Unit] =
+  @inline def failOnFalse(test: Boolean, bad: => Anomaly): Future[Unit] =
     if (!test) FutureOps.fail(bad) else Future.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def failOnFalseThr(test: Boolean, bad: => Throwable): Future[Unit] =
+  @inline def failOnFalseThr(test: Boolean, bad: => Throwable): Future[Unit] =
     if (!test) FutureOps.failThr(bad) else Future.unit
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
-  def flatFailOnTrue(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def flatFailOnTrue(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
     test.flatMap(t => FutureOps.failOnTrue(t, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
-  def flatFailOnTrueThr(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def flatFailOnTrueThr(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
     test.flatMap(t => FutureOps.failOnTrueThr(t, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
-  def flatFailOnFalse(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def flatFailOnFalse(test: Future[Boolean], bad: => Anomaly)(implicit ec: ExecutionContext): Future[Unit] =
     test.flatMap(t => FutureOps.failOnFalse(t, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
-  def flatFailOnFalseThr(test: Future[Boolean], bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def flatFailOnFalseThr(test: Future[Boolean], bad: => Throwable)(
+    implicit ec:                       ExecutionContext
+  ): Future[Unit] =
     test.flatMap(t => FutureOps.failOnFalseThr(t, bad))
 
   /**
@@ -1760,7 +1793,7 @@ object FutureOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
-  def unpackOption[T](nopt: Future[Option[T]], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
+  @inline def unpackOption[T](nopt: Future[Option[T]], ifNone: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
     nopt.flatMap {
       case None    => FutureOps.fail(ifNone)
       case Some(v) => FutureOps.pure(v)
@@ -1771,7 +1804,9 @@ object FutureOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
-  def unpackOptionThr[T](nopt: Future[Option[T]], ifNone: => Throwable)(implicit ec: ExecutionContext): Future[T] =
+  @inline def unpackOptionThr[T](nopt: Future[Option[T]], ifNone: => Throwable)(
+    implicit ec:                       ExecutionContext
+  ): Future[T] =
     nopt.flatMap {
       case None    => FutureOps.failThr(ifNone)
       case Some(v) => FutureOps.pure(v)
@@ -1782,7 +1817,7 @@ object FutureOps {
     *
     * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
     */
-  def unpackResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] = value.flatMap {
+  @inline def unpackResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] = value.flatMap {
     case Left(a)  => FutureOps.fail(a)
     case Right(a) => FutureOps.pure(a)
   }
@@ -1792,7 +1827,7 @@ object FutureOps {
     *
     * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
     */
-  def attemptResult[T](value: Future[T])(implicit ec: ExecutionContext): Future[Result[T]] =
+  @inline def attemptResult[T](value: Future[T])(implicit ec: ExecutionContext): Future[Result[T]] =
     value.map(Result.pure).recover {
       case NonFatal(t) => Result.failThr(t)
     }
@@ -1806,7 +1841,7 @@ object FutureOps {
     * Having to care about such val/def distinctions shows why Future is an
     * imperative programming mess.
     */
-  def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
+  @inline def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
     IOOps.fromFuturePure(value)
 
   /**
@@ -1818,7 +1853,7 @@ object FutureOps {
     * Having to care about such val/def distinctions shows why Future is an
     * imperative programming mess.
     */
-  def asTask[T](value: Future[T]): Task[T] =
+  @inline def asTask[T](value: Future[T]): Task[T] =
     TaskOps.fromFuturePure(value)
 
   /**
@@ -1829,7 +1864,7 @@ object FutureOps {
     * Usage. N.B. that this only makes sense if the creation of the Future itself
     * is also suspended in the [[IO]].
     * {{{
-    *   def writeToDB(v: Int, s: String): Future[Long] = ???
+    * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
     *   //...
     *   val io = IO.suspendFuture(writeToDB(42, "string"))
     *   //no database writes happened yet, since the future did
@@ -1847,7 +1882,7 @@ object FutureOps {
     * }}}
     *
     */
-  def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
+  @inline def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
     IOOps.suspendFuture(value)
 
   /**
@@ -1858,7 +1893,7 @@ object FutureOps {
     * Usage. N.B. that this only makes sense if the creation of the Future itself
     * is also suspended in the [[Task]].
     * {{{
-    *   def writeToDB(v: Int, s: String): Future[Long] = ???
+    * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
     *   //...
     *   val task = Task.suspendFuture(writeToDB(42, "string"))
     *   //no database writes happened yet, since the future did
@@ -1876,7 +1911,7 @@ object FutureOps {
     * }}}
     *
     */
-  def suspendInTask[T](value: => Future[T]): Task[T] =
+  @inline def suspendInTask[T](value: => Future[T]): Task[T] =
     TaskOps.suspendFuture(value)
 
   /**
@@ -1886,7 +1921,7 @@ object FutureOps {
     * call this in your code. You have libraries that do this for you "at the end of the world"
     * parts of your program: e.g. akka-http when waiting for the response value to a request.
     */
-  def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = FutureOps.defaultDuration): T =
+  @inline def unsafeSyncGet[T](value: Future[T], atMost: FiniteDuration = FutureOps.defaultDuration): T =
     Await.result(value, atMost)
 
   //=========================================================================
@@ -1904,7 +1939,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnTrue[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def effectOnTrue[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     if (test) FutureOps.discardContent(effect) else Future.unit
 
   /**
@@ -1918,7 +1953,9 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnTrue[_](test: Future[Boolean], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def flatEffectOnTrue[_](test: Future[Boolean], effect: => Future[_])(
+    implicit ec:                        ExecutionContext
+  ): Future[Unit] =
     test.flatMap(t => FutureOps.effectOnTrue(t, effect))
 
   /**
@@ -1931,7 +1968,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnFalse[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def effectOnFalse[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     if (!test) FutureOps.discardContent(effect) else Future.unit
 
   /**
@@ -1945,7 +1982,9 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(
+    implicit ec:                         ExecutionContext
+  ): Future[Unit] =
     test.flatMap(t => FutureOps.effectOnFalse(t, effect))
 
   /**
@@ -1958,7 +1997,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnFail[T, _](value: Option[T], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def effectOnFail[T, _](value: Option[T], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     if (value.isEmpty) FutureOps.discardContent(effect) else Future.unit
 
   /**
@@ -1972,7 +2011,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnNone[T, _](value: Future[Option[T]], effect: => Future[_])(
+  @inline def flatEffectOnNone[T, _](value: Future[Option[T]], effect: => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(opt => FutureOps.effectOnFail(opt, effect))
@@ -1987,7 +2026,9 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnPure[T, _](value: Option[T], effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def effectOnPure[T, _](value: Option[T], effect: T => Future[_])(
+    implicit ec: ExecutionContext
+  ): Future[Unit] =
     value match {
       case None    => Future.unit
       case Some(v) => FutureOps.discardContent(effect(v))
@@ -2005,7 +2046,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnSome[T, _](value: Future[Option[T]], effect: T => Future[_])(
+  @inline def flatEffectOnSome[T, _](value: Future[Option[T]], effect: T => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(opt => FutureOps.effectOnPure(opt, effect))
@@ -2020,7 +2061,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnFail[T, _](value: Result[T], effect: Anomaly => Future[_])(
+  @inline def effectOnFail[T, _](value: Result[T], effect: Anomaly => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] = value match {
     case Correct(_)         => Future.unit
@@ -2038,7 +2079,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnIncorrect[T, _](value: Future[Result[T]], effect: Anomaly => Future[_])(
+  @inline def flatEffectOnIncorrect[T, _](value: Future[Result[T]], effect: Anomaly => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(result => FutureOps.effectOnFail(result, effect))
@@ -2053,7 +2094,9 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnPure[T, _](value: Result[T], effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def effectOnPure[T, _](value: Result[T], effect: T => Future[_])(
+    implicit ec: ExecutionContext
+  ): Future[Unit] =
     value match {
       case Incorrect(_) => Future.unit
       case Correct(v)   => FutureOps.discardContent(effect(v))
@@ -2070,7 +2113,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnCorrect[T, _](value: Future[Result[T]], effect: T => Future[_])(
+  @inline def flatEffectOnCorrect[T, _](value: Future[Result[T]], effect: T => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(result => FutureOps.effectOnPure(result, effect))
@@ -2084,14 +2127,16 @@ object FutureOps {
     * "bi" map, because it also allows you to change both branches of the effect, not just the
     * happy path.
     */
-  def bimap[T, R](value: Future[T], good: T => R, bad: Throwable => Anomaly)(implicit ec: ExecutionContext): Future[R] =
+  @inline def bimap[T, R](value: Future[T], good: T => R, bad: Throwable => Anomaly)(
+    implicit ec: ExecutionContext
+  ): Future[R] =
     value.transform(tr => tr.bimap(good, bad))
 
   /**
     * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
     * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
     */
-  def bimap[T, R](value: Future[T], result: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
+  @inline def bimap[T, R](value: Future[T], result: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
     FutureOps.attemptResult(value).map(result).flatMap {
       case Correct(v)   => FutureOps.pure(v)
       case Incorrect(v) => FutureOps.fail(v)
@@ -2103,7 +2148,7 @@ object FutureOps {
     *
     * The overload that uses [[Throwable]] instead of [[Anomaly]]
     */
-  def bimapThr[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
+  @inline def bimapThr[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
     implicit ec: ExecutionContext
   ): Future[R] =
     value.transform(tr => tr.bimapThr(good, bad))
@@ -2125,7 +2170,9 @@ object FutureOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
-  def morph[T, R](value: Future[T], good: T => R, bad: Throwable => R)(implicit ec: ExecutionContext): Future[R] =
+  @inline def morph[T, R](value: Future[T], good: T => R, bad: Throwable => R)(
+    implicit ec: ExecutionContext
+  ): Future[R] =
     value.map(good).recover {
       case NonFatal(t) => bad(t)
     }
@@ -2136,7 +2183,7 @@ object FutureOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
-  def morph[T, R](value: Future[T], result: Result[T] => R)(implicit ec: ExecutionContext): Future[R] =
+  @inline def morph[T, R](value: Future[T], result: Result[T] => R)(implicit ec: ExecutionContext): Future[R] =
     FutureOps.attemptResult(value).map(result)
 
   /**
@@ -2147,7 +2194,7 @@ object FutureOps {
     * it's just the final value that is discarded
     *
     */
-  def discardContent[_](value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def discardContent[_](value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     value.map(UnitFunction)
 
   //=========================================================================
@@ -2181,7 +2228,7 @@ object FutureOps {
     *
     *
     */
-  def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
+  @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]],
     ec:  ExecutionContext

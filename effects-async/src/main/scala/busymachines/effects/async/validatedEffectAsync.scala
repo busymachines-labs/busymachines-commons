@@ -51,25 +51,25 @@ object ValidatedSyntaxAsync {
     @inline def asTask[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.fromValidated(value, ctor)
 
-    def suspendInFuture[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendValidated(value)
 
-    def suspendInFuture[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies)(
+    @inline def suspendInFuture[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies)(
       implicit
       ec: ExecutionContext
     ): Future[T] =
       FutureOps.suspendValidated(value, ctor)
 
-    def suspendInIO[T](value: => Validated[T]): IO[T] =
+    @inline def suspendInIO[T](value: => Validated[T]): IO[T] =
       IOOps.suspendValidated(value)
 
-    def suspendInIO[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
+    @inline def suspendInIO[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.suspendValidated(value, ctor)
 
-    def suspendInTask[T](value: => Validated[T]): Task[T] =
+    @inline def suspendInTask[T](value: => Validated[T]): Task[T] =
       TaskOps.suspendValidated(value)
 
-    def suspendInTask[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+    @inline def suspendInTask[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.suspendValidated(value, ctor)
   }
 
@@ -155,7 +155,7 @@ object ValidatedSyntaxAsync {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromValidated]]
       */
-    def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendValidated(value)
 
     /**
@@ -169,7 +169,7 @@ object ValidatedSyntaxAsync {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromValidated]]
       */
-    def suspendInFuture(ctor: (Anomaly, List[Anomaly]) => Anomalies)(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture(ctor: (Anomaly, List[Anomaly]) => Anomalies)(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendValidated(value, ctor)
 
     /**
@@ -179,7 +179,7 @@ object ValidatedSyntaxAsync {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromValidated]]
       */
-    def suspendInIO: IO[T] =
+    @inline def suspendInIO: IO[T] =
       IOOps.suspendValidated(value)
 
     /**
@@ -189,7 +189,7 @@ object ValidatedSyntaxAsync {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromValidated]]
       */
-    def suspendInIO(ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
+    @inline def suspendInIO(ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.suspendValidated(value, ctor)
 
     /**
@@ -199,7 +199,7 @@ object ValidatedSyntaxAsync {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromValidated]]
       */
-    def suspendInTask: Task[T] =
+    @inline def suspendInTask: Task[T] =
       TaskOps.suspendValidated(value)
 
     /**
@@ -209,7 +209,7 @@ object ValidatedSyntaxAsync {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromValidated]]
       */
-    def suspendInTask(ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+    @inline def suspendInTask(ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.suspendValidated(value, ctor)
   }
 }
