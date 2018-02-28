@@ -631,6 +631,25 @@ object Result {
     }
   }
 
+  /**
+    * Similar to [[traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * {{{
+    *   def indexExists(i: Int): Result[Unit] = ???
+
+    *   val fileIndex: List[Int] = List(0,1,2,3,4)
+    *   val result: Result[Unit] = Result.traverse(fileIndex)(indexExists)
+    * }}}
+    */
+  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Result[Unit] = Result.discardContent(Result.traverse(col)(fn))
+
   //=========================================================================
   //=============================== Traversals ==============================
   //=========================================================================
@@ -652,6 +671,27 @@ object Result {
     implicit
     cbf: CanBuildFrom[M[Result[A]], A, M[A]]
   ): Result[M[A]] = Result.traverse(in)(identity)
+
+  /**
+    * Similar to [[traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * Specialized case of [[traverse]]
+    *
+    * {{{
+    * @inline def indexToFilename(i: Int): Result[String] = ???
+    *
+    *   val fileNamesResult: List[Result[String]] = List(0,1,2,3,4).map(indexToFileName)
+    *   val fileNames:       Result[Unit] = Result.sequence(fileNamesTry)
+    * }}}
+    */
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Result[A]], A, M[A]]
+  ): Result[Unit] = Result.discardContent(Result.sequence(in))
 
   //=========================================================================
   //=============================== Constants ===============================
