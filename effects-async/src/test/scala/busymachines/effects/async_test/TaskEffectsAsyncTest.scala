@@ -74,6 +74,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
   private val bfail:  Task[Boolean] = Task.failThr(iae)
 
   //---------------------------------------------------------------------------
+
   describe("sync + pure") {
 
     describe("Task — companion object syntax") {
@@ -2915,53 +2916,144 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       }
     }
+    describe("traversals") {
 
-    describe("Task.serialize") {
+      describe("Task.traverse_") {
 
-      test("empty list") {
-        val input:    Seq[Int] = List()
-        val expected: Seq[Int] = List()
+        test("empty list") {
+          val input: Seq[Int] = List()
 
-        var sideEffect: Int = 0
+          var sideEffect: Int = 0
 
-        val eventualResult = Task.serialize(input) { i =>
-          Task {
-            sideEffect = 42
+          val eventualResult = Task.traverse_(input) { i =>
+            Task {
+              sideEffect = 42
+            }
           }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
         }
 
-        assert(eventualResult.r == expected)
-        assert(sideEffect == 0, "nothing should have happened")
       }
 
-      test("no two tasks should run in parallel") {
-        val input: Seq[Int] = (1 to 100).toList
-        val expected = input.map(_.toString)
+      describe("Task.sequence_") {
 
-        var previouslyProcessed: Option[Int] = None
-        var startedFlag:         Option[Int] = None
+        test("empty list") {
+          val input: Seq[Int] = List()
 
-        val eventualResult: Task[Seq[String]] = Task.serialize(input) { i =>
-          Task {
-            assert(
-              startedFlag.isEmpty,
-              s"started flag should have been empty at the start of each tasks but was: $startedFlag"
-            )
-            previouslyProcessed foreach { previous =>
-              assertResult(expected = i - 1, "... the task were not executed in the correct order.")(
-                actual = previous
-              )
+          var sideEffect: Int = 0
+
+          val eventualResult = Task.sequence_ {
+            input.map { i =>
+              Task {
+                sideEffect = 42
+              }
             }
-            startedFlag         = Some(i)
-            startedFlag         = None
-            previouslyProcessed = Some(i)
-            i.toString
           }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
         }
-        assert(expected == eventualResult.r)
+
+      }
+
+      describe("Task.serialize") {
+
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = Task.serialize(input) { i =>
+            Task {
+              sideEffect = 42
+            }
+          }
+
+          assert(eventualResult.r == expected)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("no two tasks should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: Task[Seq[String]] = Task.serialize(input) { i =>
+            Task {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each task but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the tasks were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          assert(expected == eventualResult.r)
+          assert(previouslyProcessed == Option(100))
+        }
+
+      }
+
+      describe("Task.serialize_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = Task.serialize_(input) { i =>
+            Task {
+              sideEffect = 42
+            }
+          }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("no two tasks should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: Task[Unit] = Task.serialize_(input) { i =>
+            Task {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each task but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the tasks were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          eventualResult.r
+          assert(previouslyProcessed == Option(100))
+        }
+
       }
 
     }
+
   }
 
 } //end test

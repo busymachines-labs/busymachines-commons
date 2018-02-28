@@ -751,6 +751,30 @@ object TaskSyntax {
     //=========================================================================
 
     /**
+      * Similar to [[monix.eval.Task.traverse]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[monix.eval.Task.traverse]]
+      *
+      */
+    def traverse_[A, B, M[X] <: TraversableOnce[X]](col: M[A])(fn: A => Task[B])(
+      implicit
+      cbf: CanBuildFrom[M[A], B, M[B]]
+    ): Task[Unit] = TaskOps.traverse_(col)(fn)
+
+    /**
+      * Similar to [[monix.eval.Task.sequence]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[monix.eval.Task.sequence]]
+      *
+      */
+    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Task[A]])(
+      implicit
+      cbf: CanBuildFrom[M[Task[A]], A, M[A]]
+    ): Task[Unit] = TaskOps.sequence_(in)
+
+    /**
       *
       * Syntactically inspired from [[Future.traverse]].
       *
@@ -776,6 +800,18 @@ object TaskSyntax {
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
     ): Task[C[B]] = TaskOps.serialize(col)(fn)
+
+    /**
+      * Similar to [[serialize]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[serialize]]
+      *
+      */
+    @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): Task[Unit] = TaskOps.serialize_(col)(fn)
   }
 
   /**
@@ -1919,6 +1955,30 @@ object TaskOps {
   //=========================================================================
 
   /**
+    * Similar to [[monix.eval.Task.traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[monix.eval.Task.traverse]]
+    *
+    */
+  def traverse_[A, B, M[X] <: TraversableOnce[X]](col: M[A])(fn: A => Task[B])(
+    implicit
+    cbf: CanBuildFrom[M[A], B, M[B]]
+  ): Task[Unit] = TaskOps.discardContent(Task.traverse(col)(fn))
+
+  /**
+    * Similar to [[monix.eval.Task.sequence]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[monix.eval.Task.sequence]]
+    *
+    */
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Task[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Task[A]], A, M[A]]
+  ): Task[Unit] = TaskOps.discardContent(Task.sequence(in))
+
+  /**
     *
     * Syntactically inspired from [[Future.traverse]].
     *
@@ -1944,5 +2004,17 @@ object TaskOps {
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): Task[C[B]] = Task.traverse(col)(fn)(cbf)
+
+  /**
+    * Similar to [[serialize]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[serialize]]
+    *
+    */
+  @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Task[Unit] = TaskOps.discardContent(TaskOps.serialize(col)(fn))
 
 }
