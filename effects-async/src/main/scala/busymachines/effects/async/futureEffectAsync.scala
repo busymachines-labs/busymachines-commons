@@ -1579,8 +1579,8 @@ object FutureOps {
     */
 
   @inline def fromValidated[T](value: Validated[T]): Future[T] = value match {
-    case Validated.Valid(e)   => FutureOps.pure(e)
-    case Validated.Invalid(e) => FutureOps.fail(GenericValidationFailures(e.head, e.tail))
+    case cats.data.Validated.Valid(e)   => FutureOps.pure(e)
+    case cats.data.Validated.Invalid(e) => FutureOps.fail(GenericValidationFailures(e.head, e.tail))
   }
 
   /**
@@ -1623,8 +1623,8 @@ object FutureOps {
 
   @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
     value match {
-      case Validated.Valid(e)   => FutureOps.pure(e)
-      case Validated.Invalid(e) => FutureOps.fail(ctor(e.head, e.tail))
+      case cats.data.Validated.Valid(e)   => FutureOps.pure(e)
+      case cats.data.Validated.Invalid(e) => FutureOps.fail(ctor(e.head, e.tail))
     }
 
   /**
