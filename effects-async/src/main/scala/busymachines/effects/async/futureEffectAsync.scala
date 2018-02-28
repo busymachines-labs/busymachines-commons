@@ -897,6 +897,18 @@ object FutureSyntax {
       cbf: CanBuildFrom[C[A], B, C[B]],
       ec:  ExecutionContext
     ): Future[C[B]] = FutureOps.serialize(col)(fn)
+
+    /**
+      * @see [[serialize]]
+      *
+      * Similar to [[serialize]], but discards all content. i.e. used only
+      * for the combined effects.
+      */
+    @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]],
+      ec:  ExecutionContext
+    ): Future[Unit] = FutureOps.serialize_(col)(fn)
   }
 
   /**
@@ -2266,4 +2278,16 @@ object FutureOps {
       }
     }
   }
+
+  /**
+    * @see [[serialize]]
+    *
+    * Similar to [[serialize]], but discards all content. i.e. used only
+    * for the combined effects.
+    */
+  @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]],
+    ec:  ExecutionContext
+  ): Future[Unit] = FutureOps.discardContent(Future.serialize(col)(fn))
 }

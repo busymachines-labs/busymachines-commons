@@ -2909,8 +2909,53 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
         assert(expected == eventualResult.r)
+        assert(previouslyProcessed == Option(100))
+      }
+    }
+
+    describe("Future.serialize_") {
+
+      test("empty list") {
+        val input:    Seq[Int] = List()
+
+        var sideEffect: Int = 0
+
+        val eventualResult = Future.serialize_(input) { i =>
+          Future {
+            sideEffect = 42
+          }
+        }
+
+        eventualResult.r
+        assert(sideEffect == 0, "nothing should have happened")
       }
 
+      test("no two futures should run in parallel") {
+        val input: Seq[Int] = (1 to 100).toList
+
+        var previouslyProcessed: Option[Int] = None
+        var startedFlag:         Option[Int] = None
+
+        val eventualResult: Future[Unit] = Future.serialize_(input) { i =>
+          Future {
+            assert(
+              startedFlag.isEmpty,
+              s"started flag should have been empty at the start of each future but was: $startedFlag"
+            )
+            previouslyProcessed foreach { previous =>
+              assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
+                actual = previous
+              )
+            }
+            startedFlag         = Some(i)
+            startedFlag         = None
+            previouslyProcessed = Some(i)
+            i.toString
+          }
+        }
+        eventualResult.r
+        assert(previouslyProcessed == Option(100))
+      }
     }
   }
 
