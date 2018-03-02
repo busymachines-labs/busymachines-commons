@@ -1284,7 +1284,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalseFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
+    @inline def effectOnFalseFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnFalse(test, effect)
 
     /**
@@ -1380,7 +1380,7 @@ object FutureSyntax {
     @inline def failOnFalseThr(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnFalseThr(test, bad)
 
-    @inline def effectOnFalse[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
+    @inline def effectOnFalse[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -1394,7 +1394,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrue[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[_] =
+    @inline def effectOnTrue[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnTrue(test, effect)
 
   }

@@ -1090,7 +1090,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalseTask[_](effect: => Task[_]): Task[_] =
+    @inline def effectOnFalseTask[_](effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnFalse(test, effect)
 
     /**
@@ -1190,7 +1190,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalse[_](effect: => Task[_]): Task[_] =
+    @inline def effectOnFalse[_](effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -1204,7 +1204,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrue[_](effect: => Task[_]): Task[_] =
+    @inline def effectOnTrue[_](effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnTrue(test, effect)
 
   }

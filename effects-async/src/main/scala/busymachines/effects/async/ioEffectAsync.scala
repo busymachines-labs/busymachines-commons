@@ -1111,7 +1111,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalseIO[_](effect: => IO[_]): IO[_] =
+    @inline def effectOnFalseIO[_](effect: => IO[_]): IO[Unit] =
       IOOps.effectOnFalse(test, effect)
 
     /**
@@ -1211,7 +1211,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalse[_](effect: => IO[_]): IO[_] =
+    @inline def effectOnFalse[_](effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -1225,7 +1225,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrue[_](effect: => IO[_]): IO[_] =
+    @inline def effectOnTrue[_](effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnTrue(test, effect)
 
   }
