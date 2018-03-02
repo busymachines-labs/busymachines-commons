@@ -17,6 +17,18 @@ title: effects
 "com.busymachines" %% "busymachines-commons-effects-async"      % "0.3.0-RC5"
 ```
 
+## Recommended usage
+```
+libraryDependencies += "com.busymachines" %% "busymachines-commons-effects" % "0.3.0-RC5"
+```
+
+```scala
+import busymachines.effects._
+import busymachines.effects.validated._ //only if you need Validated (see below)
+```
+
+If you need fine grained control then you can still pick and choose the modules you depend on and the imports you make.
+
 ## How it works
 
 The purpose of this module is to give you all the effects (see section in [learning](learning.html#effects)) you need in your daily coding activity, available through a single import:
@@ -157,7 +169,7 @@ This is a bit of a stray cat compared to the other modules. The reason is that i
 
 ### Validated
 
-Ought to be used as an "anomaly accumulating" version of `Result`, as opposed to having fail first semantics.  
+Ought to be used as an "anomaly accumulating" version of `Result`, as opposed to having fail first semantics.
 
 The types and syntax are not immediately available with the usual `import busymachines.effects.sync_`, but rather have to be brought in via the `import busymachines.effects.sync.validated._`. This decision was made through empirical observation, the vast majority of time the semantics of `Result` are better suited than `Validated`, and the use of the latter is a special case.
 
