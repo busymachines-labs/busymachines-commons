@@ -394,7 +394,7 @@ object TrySyntax {
       * it's just the final value that is discarded
       *
       */
-    @inline def discardContent[_](value: Try[_]): Try[Unit] =
+    @inline def discardContent(value: Try[_]): Try[Unit] =
       TryOps.discardContent(value)
 
     //=========================================================================

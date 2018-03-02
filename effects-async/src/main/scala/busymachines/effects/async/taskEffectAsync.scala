@@ -526,7 +526,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrue[_](test: Boolean, effect: => Task[_]): Task[Unit] =
+    @inline def effectOnTrue(test: Boolean, effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnTrue(test, effect)
 
     /**
@@ -540,7 +540,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnTrue[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
+    @inline def flatEffectOnTrue(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnTrue(test, effect)
 
     /**
@@ -553,7 +553,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalse[_](test: Boolean, effect: => Task[_]): Task[Unit] =
+    @inline def effectOnFalse(test: Boolean, effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnFalse(test, effect)
 
     /**
@@ -567,7 +567,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnFalse[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
+    @inline def flatEffectOnFalse(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -580,7 +580,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
+    @inline def effectOnFail[T](value: Option[T], effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnFail(value, effect)
 
     /**
@@ -594,7 +594,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnNone[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
+    @inline def flatEffectOnNone[T](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnNone(value, effect)
 
     /**
@@ -607,7 +607,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPure[T](value: Option[T], effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnPure(value, effect)
 
     /**
@@ -621,7 +621,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnSome[T, _](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
+    @inline def flatEffectOnSome[T](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnSome(value, effect)
 
     /**
@@ -634,7 +634,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[T, _](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] =
+    @inline def effectOnFail[T](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.effectOnFail(value, effect)
 
     /**
@@ -648,7 +648,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnIncorrect[T, _](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
+    @inline def flatEffectOnIncorrect[T](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnIncorrect(value, effect)
 
     /**
@@ -662,7 +662,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnCorrect[T, _](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
+    @inline def flatEffectOnCorrect[T](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnCorrect(value, effect)
 
     /**
@@ -675,7 +675,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[T, _](value: Result[T], effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPure[T](value: Result[T], effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnPure(value, effect)
 
     //=========================================================================
@@ -743,7 +743,7 @@ object TaskSyntax {
       * it's just the final value that is discarded
       *
       */
-    @inline def discardContent[_](value: Task[_]): Task[Unit] =
+    @inline def discardContent(value: Task[_]): Task[Unit] =
       TaskOps.discardContent(value)
 
     //=========================================================================
@@ -953,7 +953,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[_](effect: => Task[_]): Task[Unit] =
+    @inline def effectOnFail(effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnNone(nopt, effect)
 
     /**
@@ -967,7 +967,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[_](effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPure(effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnSome(nopt, effect)
 
   }
@@ -996,7 +996,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[_](effect: Anomaly => Task[_]): Task[Unit] =
+    @inline def effectOnFail(effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnIncorrect(result, effect)
 
     /**
@@ -1010,7 +1010,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[_](effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPure(effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnCorrect(result, effect)
   }
 
@@ -1090,7 +1090,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalseTask[_](effect: => Task[_]): Task[Unit] =
+    @inline def effectOnFalseTask(effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnFalse(test, effect)
 
     /**
@@ -1104,7 +1104,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrueTask[_](effect: => Task[_]): Task[Unit] =
+    @inline def effectOnTrueTask(effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnTrue(test, effect)
 
   }
@@ -1190,7 +1190,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalse[_](effect: => Task[_]): Task[Unit] =
+    @inline def effectOnFalse(effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -1204,7 +1204,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrue[_](effect: => Task[_]): Task[Unit] =
+    @inline def effectOnTrue(effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnTrue(test, effect)
 
   }
@@ -1712,7 +1712,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnTrue[_](test: Boolean, effect: => Task[_]): Task[Unit] =
+  @inline def effectOnTrue(test: Boolean, effect: => Task[_]): Task[Unit] =
     if (test) TaskOps.discardContent(effect) else Task.unit
 
   /**
@@ -1726,7 +1726,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnTrue[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
+  @inline def flatEffectOnTrue(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
     test.flatMap(t => TaskOps.effectOnTrue(t, effect))
 
   /**
@@ -1739,7 +1739,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnFalse[_](test: Boolean, effect: => Task[_]): Task[Unit] =
+  @inline def effectOnFalse(test: Boolean, effect: => Task[_]): Task[Unit] =
     if (!test) TaskOps.discardContent(effect) else Task.unit
 
   /**
@@ -1753,7 +1753,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnFalse[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
+  @inline def flatEffectOnFalse(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
     test.flatMap(t => TaskOps.effectOnFalse(t, effect))
 
   /**
@@ -1766,7 +1766,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnFail[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
+  @inline def effectOnFail[T](value: Option[T], effect: => Task[_]): Task[Unit] =
     if (value.isEmpty) TaskOps.discardContent(effect) else Task.unit
 
   /**
@@ -1780,7 +1780,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnNone[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
+  @inline def flatEffectOnNone[T](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
     value.flatMap(opt => TaskOps.effectOnFail(opt, effect))
 
   /**
@@ -1793,7 +1793,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnPure[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
+  @inline def effectOnPure[T](value: Option[T], effect: T => Task[_]): Task[Unit] =
     value match {
       case None    => Task.unit
       case Some(v) => TaskOps.discardContent(effect(v))
@@ -1811,7 +1811,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnSome[T, _](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
+  @inline def flatEffectOnSome[T](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
     value.flatMap(opt => TaskOps.effectOnPure(opt, effect))
 
   /**
@@ -1824,7 +1824,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnFail[T, _](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] = value match {
+  @inline def effectOnFail[T](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] = value match {
     case Correct(_)         => Task.unit
     case Incorrect(anomaly) => TaskOps.discardContent(effect(anomaly))
   }
@@ -1840,7 +1840,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnIncorrect[T, _](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
+  @inline def flatEffectOnIncorrect[T](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
     value.flatMap(result => TaskOps.effectOnFail(result, effect))
 
   /**
@@ -1853,7 +1853,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnPure[T, _](value: Result[T], effect: T => Task[_]): Task[Unit] =
+  @inline def effectOnPure[T](value: Result[T], effect: T => Task[_]): Task[Unit] =
     value match {
       case Incorrect(_) => Task.unit
       case Correct(v)   => TaskOps.discardContent(effect(v))
@@ -1870,7 +1870,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnCorrect[T, _](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
+  @inline def flatEffectOnCorrect[T](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
     value.flatMap(result => TaskOps.effectOnPure(result, effect))
 
   //=========================================================================
@@ -1947,7 +1947,7 @@ object TaskOps {
     * it's just the final value that is discarded
     *
     */
-  @inline def discardContent[_](value: Task[_]): Task[Unit] =
+  @inline def discardContent(value: Task[_]): Task[Unit] =
     value.map(ConstantsAsyncEffects.UnitFunction1)
 
   //=========================================================================

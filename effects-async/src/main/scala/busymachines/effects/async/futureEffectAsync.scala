@@ -611,7 +611,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrue[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnTrue(test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnTrue(test, effect)
 
     /**
@@ -625,7 +625,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnTrue[_](test: Future[Boolean], effect: => Future[_])(
+    @inline def flatEffectOnTrue(test: Future[Boolean], effect: => Future[_])(
       implicit
       ec: ExecutionContext
     ): Future[Unit] =
@@ -641,7 +641,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalse[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFalse(test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnFalse(test, effect)
 
     /**
@@ -655,7 +655,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(
+    @inline def flatEffectOnFalse(test: Future[Boolean], effect: => Future[_])(
       implicit
       ec: ExecutionContext
     ): Future[Unit] =
@@ -671,7 +671,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[T, _](value: Option[T], effect: => Future[_])(
+    @inline def effectOnFail[T](value: Option[T], effect: => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.effectOnFail(value, effect)
@@ -687,7 +687,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnNone[T, _](value: Future[Option[T]], effect: => Future[_])(
+    @inline def flatEffectOnNone[T](value: Future[Option[T]], effect: => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnNone(value, effect)
@@ -702,7 +702,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[T, _](value: Option[T], effect: T => Future[_])(
+    @inline def effectOnPure[T](value: Option[T], effect: T => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.effectOnPure(value, effect)
@@ -718,7 +718,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnSome[T, _](value: Future[Option[T]], effect: T => Future[_])(
+    @inline def flatEffectOnSome[T](value: Future[Option[T]], effect: T => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnSome(value, effect)
@@ -733,7 +733,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[T, _](value: Result[T], effect: Anomaly => Future[_])(
+    @inline def effectOnFail[T](value: Result[T], effect: Anomaly => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.effectOnFail(value, effect)
@@ -749,7 +749,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnIncorrect[T, _](value: Future[Result[T]], effect: Anomaly => Future[_])(
+    @inline def flatEffectOnIncorrect[T](value: Future[Result[T]], effect: Anomaly => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnIncorrect(value, effect)
@@ -765,7 +765,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnCorrect[T, _](value: Future[Result[T]], effect: T => Future[_])(
+    @inline def flatEffectOnCorrect[T](value: Future[Result[T]], effect: T => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnCorrect(value, effect)
@@ -780,7 +780,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[T, _](value: Result[T], effect: T => Future[_])(
+    @inline def effectOnPure[T](value: Result[T], effect: T => Future[_])(
       implicit ec: ExecutionContext
     ): Future[Unit] =
       FutureOps.effectOnPure(value, effect)
@@ -858,7 +858,7 @@ object FutureSyntax {
       * it's just the final value that is discarded
       *
       */
-    @inline def discardContent[_](value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def discardContent(value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.discardContent(value)
 
     //=========================================================================
@@ -1147,7 +1147,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFail(effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnNone(nopt, effect)
 
     /**
@@ -1161,7 +1161,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnPure(effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnSome(nopt, effect)
 
   }
@@ -1190,7 +1190,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[_](effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFail(effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnIncorrect(result, effect)
 
     /**
@@ -1204,7 +1204,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnPure(effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnCorrect(result, effect)
   }
 
@@ -1284,7 +1284,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalseFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFalseFuture(effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnFalse(test, effect)
 
     /**
@@ -1298,7 +1298,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrueFuture[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnTrueFuture(effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnTrue(test, effect)
 
   }
@@ -1380,7 +1380,7 @@ object FutureSyntax {
     @inline def failOnFalseThr(bad: => Throwable)(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatFailOnFalseThr(test, bad)
 
-    @inline def effectOnFalse[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFalse(effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -1394,7 +1394,7 @@ object FutureSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrue[_](effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnTrue(effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.flatEffectOnTrue(test, effect)
 
   }
@@ -1982,7 +1982,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnTrue[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def effectOnTrue(test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     if (test) FutureOps.discardContent(effect) else Future.unit
 
   /**
@@ -1996,7 +1996,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnTrue[_](test: Future[Boolean], effect: => Future[_])(
+  @inline def flatEffectOnTrue(test: Future[Boolean], effect: => Future[_])(
     implicit
     ec: ExecutionContext
   ): Future[Unit] =
@@ -2012,7 +2012,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnFalse[_](test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def effectOnFalse(test: Boolean, effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     if (!test) FutureOps.discardContent(effect) else Future.unit
 
   /**
@@ -2026,7 +2026,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnFalse[_](test: Future[Boolean], effect: => Future[_])(
+  @inline def flatEffectOnFalse(test: Future[Boolean], effect: => Future[_])(
     implicit
     ec: ExecutionContext
   ): Future[Unit] =
@@ -2042,7 +2042,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnFail[T, _](value: Option[T], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def effectOnFail[T](value: Option[T], effect: => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     if (value.isEmpty) FutureOps.discardContent(effect) else Future.unit
 
   /**
@@ -2056,7 +2056,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnNone[T, _](value: Future[Option[T]], effect: => Future[_])(
+  @inline def flatEffectOnNone[T](value: Future[Option[T]], effect: => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(opt => FutureOps.effectOnFail(opt, effect))
@@ -2071,7 +2071,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnPure[T, _](value: Option[T], effect: T => Future[_])(
+  @inline def effectOnPure[T](value: Option[T], effect: T => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value match {
@@ -2091,7 +2091,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnSome[T, _](value: Future[Option[T]], effect: T => Future[_])(
+  @inline def flatEffectOnSome[T](value: Future[Option[T]], effect: T => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(opt => FutureOps.effectOnPure(opt, effect))
@@ -2106,7 +2106,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnFail[T, _](value: Result[T], effect: Anomaly => Future[_])(
+  @inline def effectOnFail[T](value: Result[T], effect: Anomaly => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] = value match {
     case Correct(_)         => Future.unit
@@ -2124,7 +2124,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnIncorrect[T, _](value: Future[Result[T]], effect: Anomaly => Future[_])(
+  @inline def flatEffectOnIncorrect[T](value: Future[Result[T]], effect: Anomaly => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(result => FutureOps.effectOnFail(result, effect))
@@ -2139,7 +2139,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnPure[T, _](value: Result[T], effect: T => Future[_])(
+  @inline def effectOnPure[T](value: Result[T], effect: T => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value match {
@@ -2158,7 +2158,7 @@ object FutureOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnCorrect[T, _](value: Future[Result[T]], effect: T => Future[_])(
+  @inline def flatEffectOnCorrect[T](value: Future[Result[T]], effect: T => Future[_])(
     implicit ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(result => FutureOps.effectOnPure(result, effect))
@@ -2239,7 +2239,7 @@ object FutureOps {
     * it's just the final value that is discarded
     *
     */
-  @inline def discardContent[_](value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+  @inline def discardContent(value: Future[_])(implicit ec: ExecutionContext): Future[Unit] =
     value.map(ConstantsAsyncEffects.UnitFunction1)
 
   //=========================================================================

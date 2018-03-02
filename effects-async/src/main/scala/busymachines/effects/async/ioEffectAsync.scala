@@ -512,7 +512,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrue[_](test: Boolean, effect: => IO[_]): IO[Unit] =
+    @inline def effectOnTrue(test: Boolean, effect: => IO[_]): IO[Unit] =
       IOOps.effectOnTrue(test, effect)
 
     /**
@@ -526,7 +526,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnTrue[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
+    @inline def flatEffectOnTrue(test: IO[Boolean], effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnTrue(test, effect)
 
     /**
@@ -540,7 +540,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalse[_](test: Boolean, effect: => IO[_]): IO[Unit] =
+    @inline def effectOnFalse(test: Boolean, effect: => IO[_]): IO[Unit] =
       IOOps.effectOnFalse(test, effect)
 
     /**
@@ -554,7 +554,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnFalse[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
+    @inline def flatEffectOnFalse(test: IO[Boolean], effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -567,7 +567,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
+    @inline def effectOnFail[T](value: Option[T], effect: => IO[_]): IO[Unit] =
       IOOps.effectOnFail(value, effect)
 
     /**
@@ -581,7 +581,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnNone[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
+    @inline def flatEffectOnNone[T](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnNone(value, effect)
 
     /**
@@ -594,7 +594,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPure[T](value: Option[T], effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnPure(value, effect)
 
     /**
@@ -608,7 +608,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnSome[T, _](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
+    @inline def flatEffectOnSome[T](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnSome(value, effect)
 
     /**
@@ -621,7 +621,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[T, _](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] =
+    @inline def effectOnFail[T](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.effectOnFail(value, effect)
 
     /**
@@ -635,7 +635,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnIncorrect[T, _](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
+    @inline def flatEffectOnIncorrect[T](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.flatEffectOnIncorrect(value, effect)
 
     /**
@@ -649,7 +649,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def flatEffectOnCorrect[T, _](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
+    @inline def flatEffectOnCorrect[T](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnCorrect(value, effect)
 
     /**
@@ -662,7 +662,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[T, _](value: Result[T], effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPure[T](value: Result[T], effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnPure(value, effect)
 
     //=========================================================================
@@ -730,7 +730,7 @@ object IOSyntax {
       * it's just the final value that is discarded
       *
       */
-    @inline def discardContent[_](value: IO[_]): IO[Unit] =
+    @inline def discardContent(value: IO[_]): IO[Unit] =
       IOOps.discardContent(value)
 
     //=========================================================================
@@ -974,7 +974,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[_](effect: => IO[_]): IO[Unit] =
+    @inline def effectOnFail(effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnNone(nopt, effect)
 
     /**
@@ -988,7 +988,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[_](effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPure(effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnSome(nopt, effect)
 
   }
@@ -1017,7 +1017,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFail[_](effect: Anomaly => IO[_]): IO[Unit] =
+    @inline def effectOnFail(effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.flatEffectOnIncorrect(result, effect)
 
     /**
@@ -1031,7 +1031,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnPure[_](effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPure(effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnCorrect(result, effect)
   }
 
@@ -1111,7 +1111,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalseIO[_](effect: => IO[_]): IO[Unit] =
+    @inline def effectOnFalseIO(effect: => IO[_]): IO[Unit] =
       IOOps.effectOnFalse(test, effect)
 
     /**
@@ -1125,7 +1125,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrueIO[_](effect: => IO[_]): IO[Unit] =
+    @inline def effectOnTrueIO(effect: => IO[_]): IO[Unit] =
       IOOps.effectOnTrue(test, effect)
 
   }
@@ -1211,7 +1211,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnFalse[_](effect: => IO[_]): IO[Unit] =
+    @inline def effectOnFalse(effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -1225,7 +1225,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    @inline def effectOnTrue[_](effect: => IO[_]): IO[Unit] =
+    @inline def effectOnTrue(effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnTrue(test, effect)
 
   }
@@ -1730,7 +1730,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnTrue[_](test: Boolean, effect: => IO[_]): IO[Unit] =
+  @inline def effectOnTrue(test: Boolean, effect: => IO[_]): IO[Unit] =
     if (test) IOOps.discardContent(effect) else IO.unit
 
   /**
@@ -1744,7 +1744,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnTrue[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
+  @inline def flatEffectOnTrue(test: IO[Boolean], effect: => IO[_]): IO[Unit] =
     test.flatMap(t => IOOps.effectOnTrue(t, effect))
 
   /**
@@ -1758,7 +1758,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnFalse[_](test: Boolean, effect: => IO[_]): IO[Unit] =
+  @inline def effectOnFalse(test: Boolean, effect: => IO[_]): IO[Unit] =
     if (!test) IOOps.discardContent(effect) else IO.unit
 
   /**
@@ -1772,7 +1772,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnFalse[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
+  @inline def flatEffectOnFalse(test: IO[Boolean], effect: => IO[_]): IO[Unit] =
     test.flatMap(t => IOOps.effectOnFalse(t, effect))
 
   /**
@@ -1785,7 +1785,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnFail[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
+  @inline def effectOnFail[T](value: Option[T], effect: => IO[_]): IO[Unit] =
     if (value.isEmpty) IOOps.discardContent(effect) else IO.unit
 
   /**
@@ -1799,7 +1799,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnNone[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
+  @inline def flatEffectOnNone[T](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
     value.flatMap(opt => IOOps.effectOnFail(opt, effect))
 
   /**
@@ -1812,7 +1812,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnPure[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
+  @inline def effectOnPure[T](value: Option[T], effect: T => IO[_]): IO[Unit] =
     value match {
       case None    => IO.unit
       case Some(v) => IOOps.discardContent(effect(v))
@@ -1830,7 +1830,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnSome[T, _](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
+  @inline def flatEffectOnSome[T](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
     value.flatMap(opt => IOOps.effectOnPure(opt, effect))
 
   /**
@@ -1843,7 +1843,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnFail[T, _](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] = value match {
+  @inline def effectOnFail[T](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] = value match {
     case Correct(_)         => IO.unit
     case Incorrect(anomaly) => IOOps.discardContent(effect(anomaly))
   }
@@ -1859,7 +1859,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnIncorrect[T, _](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
+  @inline def flatEffectOnIncorrect[T](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
     value.flatMap(result => IOOps.effectOnFail(result, effect))
 
   /**
@@ -1872,7 +1872,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def effectOnPure[T, _](value: Result[T], effect: T => IO[_]): IO[Unit] =
+  @inline def effectOnPure[T](value: Result[T], effect: T => IO[_]): IO[Unit] =
     value match {
       case Incorrect(_) => IO.unit
       case Correct(v)   => IOOps.discardContent(effect(v))
@@ -1889,7 +1889,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  @inline def flatEffectOnCorrect[T, _](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
+  @inline def flatEffectOnCorrect[T](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
     value.flatMap(result => IOOps.effectOnPure(result, effect))
 
   //=========================================================================
@@ -1966,7 +1966,7 @@ object IOOps {
     * it's just the final value that is discarded
     *
     */
-  @inline def discardContent[_](value: IO[_]): IO[Unit] =
+  @inline def discardContent(value: IO[_]): IO[Unit] =
     value.map(ConstantsAsyncEffects.UnitFunction1)
 
   //=========================================================================
