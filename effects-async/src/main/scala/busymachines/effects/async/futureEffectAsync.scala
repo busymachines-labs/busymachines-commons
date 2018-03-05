@@ -672,7 +672,7 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def effectOnFail[T](value: Option[T], effect: => Future[_])(
-      implicit ec: ExecutionContext
+      implicit ec:                     ExecutionContext
     ): Future[Unit] =
       FutureOps.effectOnFail(value, effect)
 
@@ -688,7 +688,7 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def flatEffectOnNone[T](value: Future[Option[T]], effect: => Future[_])(
-      implicit ec: ExecutionContext
+      implicit ec:                         ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnNone(value, effect)
 
@@ -703,7 +703,7 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def effectOnPure[T](value: Option[T], effect: T => Future[_])(
-      implicit ec: ExecutionContext
+      implicit ec:                     ExecutionContext
     ): Future[Unit] =
       FutureOps.effectOnPure(value, effect)
 
@@ -719,7 +719,7 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def flatEffectOnSome[T](value: Future[Option[T]], effect: T => Future[_])(
-      implicit ec: ExecutionContext
+      implicit ec:                         ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnSome(value, effect)
 
@@ -734,7 +734,7 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def effectOnFail[T](value: Result[T], effect: Anomaly => Future[_])(
-      implicit ec: ExecutionContext
+      implicit ec:                     ExecutionContext
     ): Future[Unit] =
       FutureOps.effectOnFail(value, effect)
 
@@ -750,7 +750,7 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def flatEffectOnIncorrect[T](value: Future[Result[T]], effect: Anomaly => Future[_])(
-      implicit ec: ExecutionContext
+      implicit ec:                              ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnIncorrect(value, effect)
 
@@ -766,7 +766,7 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def flatEffectOnCorrect[T](value: Future[Result[T]], effect: T => Future[_])(
-      implicit ec: ExecutionContext
+      implicit ec:                            ExecutionContext
     ): Future[Unit] =
       FutureOps.flatEffectOnCorrect(value, effect)
 
@@ -781,7 +781,7 @@ object FutureSyntax {
       *   side-effects to achieve something.
       */
     @inline def effectOnPure[T](value: Result[T], effect: T => Future[_])(
-      implicit ec: ExecutionContext
+      implicit ec:                     ExecutionContext
     ): Future[Unit] =
       FutureOps.effectOnPure(value, effect)
 
@@ -2057,7 +2057,8 @@ object FutureOps {
     *   side-effects to achieve something.
     */
   @inline def flatEffectOnNone[T](value: Future[Option[T]], effect: => Future[_])(
-    implicit ec: ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(opt => FutureOps.effectOnFail(opt, effect))
 
@@ -2072,7 +2073,8 @@ object FutureOps {
     *   side-effects to achieve something.
     */
   @inline def effectOnPure[T](value: Option[T], effect: T => Future[_])(
-    implicit ec: ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] =
     value match {
       case None    => Future.unit
@@ -2092,7 +2094,8 @@ object FutureOps {
     *   side-effects to achieve something.
     */
   @inline def flatEffectOnSome[T](value: Future[Option[T]], effect: T => Future[_])(
-    implicit ec: ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(opt => FutureOps.effectOnPure(opt, effect))
 
@@ -2107,7 +2110,8 @@ object FutureOps {
     *   side-effects to achieve something.
     */
   @inline def effectOnFail[T](value: Result[T], effect: Anomaly => Future[_])(
-    implicit ec: ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] = value match {
     case Correct(_)         => Future.unit
     case Incorrect(anomaly) => FutureOps.discardContent(effect(anomaly))
@@ -2125,7 +2129,8 @@ object FutureOps {
     *   side-effects to achieve something.
     */
   @inline def flatEffectOnIncorrect[T](value: Future[Result[T]], effect: Anomaly => Future[_])(
-    implicit ec: ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(result => FutureOps.effectOnFail(result, effect))
 
@@ -2140,7 +2145,8 @@ object FutureOps {
     *   side-effects to achieve something.
     */
   @inline def effectOnPure[T](value: Result[T], effect: T => Future[_])(
-    implicit ec: ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] =
     value match {
       case Incorrect(_) => Future.unit
@@ -2159,7 +2165,8 @@ object FutureOps {
     *   side-effects to achieve something.
     */
   @inline def flatEffectOnCorrect[T](value: Future[Result[T]], effect: T => Future[_])(
-    implicit ec: ExecutionContext
+    implicit
+    ec: ExecutionContext
   ): Future[Unit] =
     value.flatMap(result => FutureOps.effectOnPure(result, effect))
 
