@@ -67,7 +67,7 @@ object ValidatedSyntax {
     /**
       * !!! USE WITH CARE !!!
       *
-      * Allows you to specify which specific [[Anomalies]] to throw in your face.
+      * Allows you to specify which specific [[busymachines.core.Anomalies]] to throw in your face.
       *
       * Throws exceptions into your face
       *
@@ -87,23 +87,23 @@ object ValidatedSyntax {
     /**
       * !!! USE WITH CARE !!!
       *
-      * Allows you to specify which specific [[Anomalies]] to throw in your face.
+      * Allows you to specify which specific [[busymachines.core.Anomalies]] to throw in your face.
       *
       */
     @inline def asListUnsafe(ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] =
       ValidatedOps.asListUnsafe(value, ctor)
 
     /**
-      * Transforms this result into a [[Try]]. The [[Anomaly]] on the left
-      * hand side is converted into a [[Throwable]] and corresponds to a
-      * failed [[Try]]
+      * Transforms this result into a [[scala.util.Try]]. The [[busymachines.core.Anomaly]] on the left
+      * hand side is converted into a [[java.lang.Throwable]] and corresponds to a
+      * failed [[scala.util.Try]]
       */
     @inline def asTry: Try[T] =
       ValidatedOps.asTry(value)
 
     /**
-      * Transforms this result into a [[Try]]. The [[Anomaly]]s are
-      * transformed into an [[Anomalies]] of your choice
+      * Transforms this result into a [[scala.util.Try]]. The [[busymachines.core.Anomaly]]s are
+      * transformed into an [[busymachines.core.Anomalies]] of your choice
       */
     @inline def asTry(ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
       ValidatedOps.asTry(value, ctor)
@@ -143,7 +143,7 @@ object ValidatedSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def cond[T](good: => T, bad: => Anomaly): Validated[T] =
       ValidatedOps.cond(test, good, bad)
@@ -151,7 +151,7 @@ object ValidatedSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWith[T](good: => Validated[T], bad: => Anomaly): Validated[T] =
       ValidatedOps.condWith(test, good, bad)
@@ -192,26 +192,26 @@ object ValidatedSyntax {
     @inline def unit: Validated[Unit] = ValidatedOps.unit
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def fromOptionAno[T](opt: Option[T], ifNone: => Anomaly): Validated[T] =
       ValidatedOps.fromOption(opt, ifNone)
 
     /**
-      * Lift this [[Try]] and  sequence its failure case [[Throwable]] within this effect.
-      * If the [[Throwable]] is also an [[Anomaly]] then it is used as is for the [[Incorrect]] case,
-      * but if it is not, then it is wrapped inside of a [[CatastrophicError]] anomaly.
+      * Lift this [[scala.util.Try]] and  sequence its failure case [[java.lang.Throwable]] within this effect.
+      * If the [[java.lang.Throwable]] is also an [[busymachines.core.Anomaly]] then it is used as is for the [[busymachines.effects.sync.Incorrect]] case,
+      * but if it is not, then it is wrapped inside of a [[busymachines.core.CatastrophicError]] anomaly.
       *
-      * If we have multiple [[Anomalies]] then each individual [[Anomalies.messages]] is sequenced
+      * If we have multiple [[busymachines.core.Anomalies]] then each individual [[Anomalies.messages]] is sequenced
       * withing this effect
       */
     @inline def fromTryAno[T](t: Try[T]): Validated[T] =
       ValidatedOps.fromTry(t)
 
     /**
-      * Lift this [[Result]] and  sequence its failure case within this effect.
+      * Lift this [[busymachines.effects.sync.Result]] and  sequence its failure case within this effect.
       *
-      * If we have multiple [[Anomalies]] then each individual [[Anomalies.messages]] is sequenced
+      * If we have multiple [[busymachines.core.Anomalies]] then each individual [[Anomalies.messages]] is sequenced
       * withing this effect
       */
     @inline def fromResult[T](t: Result[T]): Validated[T] =
@@ -220,7 +220,7 @@ object ValidatedSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condAno[T](test: Boolean, good: => T, bad: => Anomaly): Validated[T] =
       ValidatedOps.cond(test, good, bad)
@@ -228,7 +228,7 @@ object ValidatedSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWith[T](test: Boolean, good: => Validated[T], bad: => Anomaly): Validated[T] =
       ValidatedOps.condWith(test, good, bad)
@@ -259,7 +259,7 @@ object ValidatedSyntax {
     /**
       * !!! USE WITH CARE !!!
       *
-      * Allows you to specify which specific [[Anomalies]] to throw in your face.
+      * Allows you to specify which specific [[busymachines.core.Anomalies]] to throw in your face.
       *
       * Throws exceptions into your face
       *
@@ -279,23 +279,23 @@ object ValidatedSyntax {
     /**
       * !!! USE WITH CARE !!!
       *
-      * Allows you to specify which specific [[Anomalies]] to throw in your face.
+      * Allows you to specify which specific [[busymachines.core.Anomalies]] to throw in your face.
       *
       */
     @inline def asListUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] =
       ValidatedOps.asListUnsafe(value, ctor)
 
     /**
-      * Transforms this result into a [[Try]]. The [[Anomaly]] on the left
-      * hand side is converted into a [[Throwable]] and corresponds to a
-      * failed [[Try]]
+      * Transforms this result into a [[scala.util.Try]]. The [[busymachines.core.Anomaly]] on the left
+      * hand side is converted into a [[java.lang.Throwable]] and corresponds to a
+      * failed [[scala.util.Try]]
       */
     @inline def asTry[T](value: Validated[T]): Try[T] =
       ValidatedOps.asTry(value)
 
     /**
-      * Transforms this result into a [[Try]]. The [[Anomaly]]s are
-      * transformed into an [[Anomalies]] of your choice
+      * Transforms this result into a [[scala.util.Try]]. The [[busymachines.core.Anomaly]]s are
+      * transformed into an [[busymachines.core.Anomalies]] of your choice
       */
     @inline def asTry[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] =
       ValidatedOps.asTry(value, ctor)
@@ -415,7 +415,7 @@ object ValidatedOps {
   //===========================================================================
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Validated[T] = opt match {
     case None    => ValidatedOps.fail(ifNone)
@@ -423,11 +423,11 @@ object ValidatedOps {
   }
 
   /**
-    * Lift this [[Try]] and  sequence its failure case [[Throwable]] within this effect.
-    * If the [[Throwable]] is also an [[Anomaly]] then it is used as is for the [[Incorrect]] case,
-    * but if it is not, then it is wrapped inside of a [[CatastrophicError]] anomaly.
+    * Lift this [[scala.util.Try]] and  sequence its failure case [[java.lang.Throwable]] within this effect.
+    * If the [[java.lang.Throwable]] is also an [[busymachines.core.Anomaly]] then it is used as is for the [[busymachines.effects.sync.Incorrect]] case,
+    * but if it is not, then it is wrapped inside of a [[busymachines.core.CatastrophicError]] anomaly.
     *
-    * If we have multiple [[Anomalies]] then each individual [[Anomalies.messages]] is sequenced
+    * If we have multiple [[busymachines.core.Anomalies]] then each individual [[Anomalies.messages]] is sequenced
     * withing this effect
     */
   @inline def fromTry[T](t: Try[T]): Validated[T] = t match {
@@ -438,9 +438,9 @@ object ValidatedOps {
   }
 
   /**
-    * Lift this [[Result]] and  sequence its failure case within this effect.
+    * Lift this [[busymachines.effects.sync.Result]] and  sequence its failure case within this effect.
     *
-    * If we have multiple [[Anomalies]] then each individual [[Anomalies.messages]] is sequenced
+    * If we have multiple [[busymachines.core.Anomalies]] then each individual [[Anomalies.messages]] is sequenced
     * withing this effect
     */
   @inline def fromResult[T](t: Result[T]): Validated[T] = t match {
@@ -456,7 +456,7 @@ object ValidatedOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Validated[T] =
     if (test) ValidatedOps.pure(good) else ValidatedOps.fail(bad)
@@ -464,7 +464,7 @@ object ValidatedOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def condWith[T](test: Boolean, good: => Validated[T], bad: => Anomaly): Validated[T] =
     if (test) good else ValidatedOps.fail(bad)
@@ -501,7 +501,7 @@ object ValidatedOps {
   /**
     * !!! USE WITH CARE !!!
     *
-    * Allows you to specify which specific [[Anomalies]] to throw in your face.
+    * Allows you to specify which specific [[busymachines.core.Anomalies]] to throw in your face.
     *
     * Throws exceptions into your face
     *
@@ -526,7 +526,7 @@ object ValidatedOps {
   /**
     * !!! USE WITH CARE !!!
     *
-    * Allows you to specify which specific [[Anomalies]] to throw in your face.
+    * Allows you to specify which specific [[busymachines.core.Anomalies]] to throw in your face.
     *
     */
   @inline def asListUnsafe[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): List[T] = value match {
@@ -535,7 +535,7 @@ object ValidatedOps {
   }
 
   /**
-    * Transforms this result into a [[Try]]. The [[Anomaly]]s are
+    * Transforms this result into a [[scala.util.Try]]. The [[busymachines.core.Anomaly]]s are
     * transformed into an [[GenericValidationFailures]]
     */
   @inline def asTry[T](value: Validated[T]): Try[T] = value match {
@@ -544,8 +544,8 @@ object ValidatedOps {
   }
 
   /**
-    * Transforms this result into a [[Try]]. The [[Anomaly]]s are
-    * transformed into an [[Anomalies]] of your choice
+    * Transforms this result into a [[scala.util.Try]]. The [[busymachines.core.Anomaly]]s are
+    * transformed into an [[busymachines.core.Anomalies]] of your choice
     */
   @inline def asTry[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Try[T] = value match {
     case cd.Validated.Valid(value) => TryOps.pure(value)
@@ -553,7 +553,7 @@ object ValidatedOps {
   }
 
   /**
-    * Transforms this result into a [[Result]]. The [[Anomaly]]s are
+    * Transforms this result into a [[busymachines.effects.sync.Result]]. The [[busymachines.core.Anomaly]]s are
     * transformed into an [[GenericValidationFailures]]
     */
   @inline def asResult[T](value: Validated[T]): Result[T] = value match {
@@ -562,8 +562,8 @@ object ValidatedOps {
   }
 
   /**
-    * Transforms this result into a [[Try]]. The [[Anomaly]]s are
-    * transformed into an [[Anomalies]] of your choice
+    * Transforms this result into a [[scala.util.Try]]. The [[busymachines.core.Anomaly]]s are
+    * transformed into an [[busymachines.core.Anomalies]] of your choice
     */
   @inline def asResult[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Result[T] = value match {
     case cd.Validated.Valid(value) => Result.pure(value)

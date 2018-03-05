@@ -30,7 +30,7 @@ import scala.util.control.NonFatal
   *
   * Used to bind a route to a port so that it can start accepting HTTP requests.
   *
-  * It wraps everything in a cats [[IO]] to better express the side-effects,
+  * It wraps everything in a [[cats.effect.IO]] to better express the side-effects,
   * and make them composable, and reusable, and etc. etc.
   *
   * As you can see each individual step has a default implementation of an

@@ -20,7 +20,7 @@ package busymachines.effects.sync
 import busymachines.core.Anomaly
 
 /**
-  * This is extremely minimal, since you ought to use [[Result]], and this is here
+  * This is extremely minimal, since you ought to use [[busymachines.effects.sync.Result]], and this is here
   * to give a similar experience with the rest of the Ops, and most of that can be
   * achieved by using cats instead.
   * {{{
@@ -67,21 +67,21 @@ object EitherSyntax {
     }
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def asTry(transformLeft: L => Anomaly): Try[R] =
       TryOps.fromEither(value, transformLeft)
 
     /**
-      * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-      * if it is a [[Throwable]].
+      * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+      * if it is a [[java.lang.Throwable]].
       */
     @inline def asTryThr(implicit ev: L <:< Throwable): Try[R] =
       TryOps.fromEitherThr(value)(ev)
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def asTryThr(transformLeft: L => Throwable): Try[R] =

@@ -56,9 +56,9 @@ object ResultSyntaxAsync {
 
     /**
       *
-      * Lift the [[Result]] in this effect
-      * [[Incorrect]] becomes a failed effect
-      * [[Correct]] becomes a pure effect
+      * Lift the [[busymachines.effects.sync.Result]] in this effect
+      * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+      * [[busymachines.effects.sync.Correct]] becomes a pure effect
       *
       */
     @inline def asFuture: Future[T] =
@@ -66,9 +66,9 @@ object ResultSyntaxAsync {
 
     /**
       *
-      * Lift the [[Result]] in this effect
-      * [[Incorrect]] becomes a failed effect
-      * [[Correct]] becomes a pure effect
+      * Lift the [[busymachines.effects.sync.Result]] in this effect
+      * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+      * [[busymachines.effects.sync.Correct]] becomes a pure effect
       *
       */
     @inline def asIO: IO[T] =
@@ -76,9 +76,9 @@ object ResultSyntaxAsync {
 
     /**
       *
-      * Lift the [[Result]] in this effect
-      * [[Incorrect]] becomes a failed effect
-      * [[Correct]] becomes a pure effect
+      * Lift the [[busymachines.effects.sync.Result]] in this effect
+      * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+      * [[busymachines.effects.sync.Correct]] becomes a pure effect
       *
       */
     @inline def asTask: Task[T] =
@@ -90,7 +90,7 @@ object ResultSyntaxAsync {
 
     /**
       *
-      * Runs the given effect when the value of this [[Result]] is [[Incorrect]]
+      * Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       *
       * @param effect
       *   The effect to run
@@ -103,7 +103,7 @@ object ResultSyntaxAsync {
 
     /**
       *
-      * Runs the given effect when the value of this [[Result]] is [[Correct]]
+      * Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       *
       * @param effect
       *   The effect to run
@@ -116,7 +116,7 @@ object ResultSyntaxAsync {
 
     /**
       *
-      * Runs the given effect when the value of this [[Result]] is [[Incorrect]]
+      * Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       *
       * @param effect
       *   The effect to run
@@ -129,7 +129,7 @@ object ResultSyntaxAsync {
 
     /**
       *
-      * Runs the given effect when the value of this [[Result]] is [[Correct]]
+      * Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       *
       * @param effect
       *   The effect to run
@@ -142,7 +142,7 @@ object ResultSyntaxAsync {
 
     /**
       *
-      * Runs the given effect when the value of this [[Result]] is [[Incorrect]]
+      * Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       *
       * @param effect
       *   The effect to run
@@ -155,7 +155,7 @@ object ResultSyntaxAsync {
 
     /**
       *
-      * Runs the given effect when the value of this [[Result]] is [[Correct]]
+      * Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       *
       * @param effect
       *   The effect to run
@@ -179,29 +179,29 @@ object ResultSyntaxAsync {
       * gets immediately applied due to the nature of the Future. This is useful only that
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
-      * Suspend any side-effects that might happen during the creation of this [[Result]].
+      * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
       *
-      * N.B. this is useless if the [[Result]] was previously assigned to a "val".
+      * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromResult]]
       */
     @inline def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendResult(value)
 
     /**
-      * Suspend any side-effects that might happen during the creation of this [[Result]].
+      * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
       * Other than that it has the semantics of [[IOOps.fromResult]]
       *
-      * N.B. this is useless if the [[Result]] was previously assigned to a "val".
+      * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromResult]]
       */
     @inline def suspendInIO: IO[T] =
       IOOps.suspendResult(value)
 
     /**
-      * Suspend any side-effects that might happen during the creation of this [[Result]].
+      * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
       * Other than that it has the semantics of [[TaskOps.fromResult]]
       *
-      * N.B. this is useless if the [[Result]] was previously assigned to a "val".
+      * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromResult]]
       */
     @inline def suspendInTask: Task[T] =

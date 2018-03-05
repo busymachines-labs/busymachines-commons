@@ -119,7 +119,7 @@ object OptionSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   [[None]] if false, or if effect is [[None]]
+      *   [[scala.None]] if false, or if effect is [[scala.None]]
       */
     @inline def cond[T](test: Boolean, good: => T): Option[T] =
       OptionOps.cond(test, good)
@@ -127,7 +127,7 @@ object OptionSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   [[None]] if false, or if effect is [[None]]
+      *   [[scala.None]] if false, or if effect is [[scala.None]]
       */
     @inline def condWith[T](test: Boolean, good: => Option[T]): Option[T] =
       OptionOps.condWith(test, good)
@@ -135,7 +135,7 @@ object OptionSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   [[None]] if false, or if effect is [[None]]
+      *   [[scala.None]] if false, or if effect is [[scala.None]]
       */
     @inline def flatCond[T](test: Option[Boolean], good: => T): Option[T] =
       OptionOps.flatCond(test, good)
@@ -143,7 +143,7 @@ object OptionSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   [[None]] if false, or if effect is [[None]]
+      *   [[scala.None]] if false, or if effect is [[scala.None]]
       */
     @inline def flatCondWith[T](test: Option[Boolean], good: => Option[T]): Option[T] =
       OptionOps.flatCondWith(test, good)
@@ -160,25 +160,25 @@ object OptionSyntax {
       value.toList
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asTry[T](value: Option[T], ifNone: => Anomaly): Try[T] =
       OptionOps.asTry(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asTryThr[T](value: Option[T], ifNone: => Throwable): Try[T] =
       OptionOps.asTryThr(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asEither[T](value: Option[T], ifNone: => Throwable): Either[Throwable, T] =
       OptionOps.asEither(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asResult[T](value: Option[T], ifNone: => Anomaly): Result[T] =
       OptionOps.asResult(value, ifNone)
@@ -216,13 +216,13 @@ object OptionSyntax {
       OptionOps.morph(value, good, bad)
 
     /**
-      * If the underlying option is [[None]], then make this effect Some(ifNone).
+      * If the underlying option is [[scala.None]], then make this effect Some(ifNone).
       */
     @inline def recover[T](value: Option[T], ifNone: => T): Option[T] =
       OptionOps.recover(value, ifNone)
 
     /**
-      * If the underlying option is [[None]], then make this effect equal to
+      * If the underlying option is [[scala.None]], then make this effect equal to
       * the returned one
       */
     @inline def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] =
@@ -335,25 +335,25 @@ object OptionSyntax {
       value.toList
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asTry(ifNone: => Anomaly): Try[T] =
       OptionOps.asTry(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asTryThr(ifNone: => Throwable): Try[T] =
       OptionOps.asTryThr(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asEither(ifNone: => Throwable): Either[Throwable, T] =
       OptionOps.asEither(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asResult(ifNone: => Anomaly): Result[T] =
       OptionOps.asResult(value, ifNone)
@@ -387,13 +387,13 @@ object OptionSyntax {
       OptionOps.morph(value, good, bad)
 
     /**
-      * If the underlying option is [[None]], then make this effect Some(ifNone).
+      * If the underlying option is [[scala.None]], then make this effect Some(ifNone).
       */
     @inline def recover(ifNone: => T): Option[T] =
       OptionOps.recover(value, ifNone)
 
     /**
-      * If the underlying option is [[None]], then make this effect equal to
+      * If the underlying option is [[scala.None]], then make this effect equal to
       * the returned one
       */
     @inline def recoverWith(ifNone: => Option[T]): Option[T] =
@@ -420,7 +420,7 @@ object OptionSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   [[None]] if false, or if effect is [[None]]
+      *   [[scala.None]] if false, or if effect is [[scala.None]]
       */
     @inline def condOption[T](good: => T): Option[T] =
       OptionOps.cond(test, good)
@@ -428,7 +428,7 @@ object OptionSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   [[None]] if false, or if effect is [[None]]
+      *   [[scala.None]] if false, or if effect is [[scala.None]]
       */
     @inline def condWithOption[T](good: => Option[T]): Option[T] =
       OptionOps.condWith(test, good)
@@ -444,7 +444,7 @@ object OptionSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   [[None]] if false, or if effect is [[None]]
+      *   [[scala.None]] if false, or if effect is [[scala.None]]
       */
     @inline def cond[T](good: => T): Option[T] =
       OptionOps.flatCond(test, good)
@@ -452,7 +452,7 @@ object OptionSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   [[None]] if false, or if effect is [[None]]
+      *   [[scala.None]] if false, or if effect is [[scala.None]]
       */
     @inline def condWith[T](good: => Option[T]): Option[T] =
       OptionOps.flatCondWith(test, good)
@@ -502,7 +502,7 @@ object OptionOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   [[None]] if false, or if effect is [[None]]
+    *   [[scala.None]] if false, or if effect is [[scala.None]]
     */
   @inline def cond[T](test: Boolean, good: => T): Option[T] =
     if (test) OptionOps.pure(good) else None
@@ -510,7 +510,7 @@ object OptionOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   [[None]] if false, or if effect is [[None]]
+    *   [[scala.None]] if false, or if effect is [[scala.None]]
     */
   @inline def condWith[T](test: Boolean, good: => Option[T]): Option[T] =
     if (test) good else None
@@ -518,7 +518,7 @@ object OptionOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   [[None]] if false, or if effect is [[None]]
+    *   [[scala.None]] if false, or if effect is [[scala.None]]
     */
   @inline def flatCond[T](test: Option[Boolean], good: => T): Option[T] =
     test.flatMap(b => OptionOps.cond(b, good))
@@ -526,7 +526,7 @@ object OptionOps {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   [[None]] if false, or if effect is [[None]]
+    *   [[scala.None]] if false, or if effect is [[scala.None]]
     */
   @inline def flatCondWith[T](test: Option[Boolean], good: => Option[T]): Option[T] =
     test.flatMap(b => OptionOps.condWith(b, good))
@@ -538,19 +538,19 @@ object OptionOps {
   // —— def asList —— direct alias to option.toList
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def asTry[T](value: Option[T], ifNone: => Anomaly): Try[T] =
     TryOps.fromOption(value, ifNone)
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def asTryThr[T](value: Option[T], ifNone: => Throwable): Try[T] =
     TryOps.fromOptionThr(value, ifNone)
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def asEither[T](value: Option[T], ifNone: => Throwable): Either[Throwable, T] = value match {
     case Some(v) => Right(v)
@@ -558,7 +558,7 @@ object OptionOps {
   }
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def asResult[T](value: Option[T], ifNone: => Anomaly): Result[T] =
     Result.fromOption(value, ifNone)
@@ -598,7 +598,7 @@ object OptionOps {
   }
 
   /**
-    * If the underlying option is [[None]], then make this effect Some(ifNone).
+    * If the underlying option is [[scala.None]], then make this effect Some(ifNone).
     */
   @inline def recover[T](value: Option[T], ifNone: => T): Option[T] = value match {
     case Some(v) => Option(v)
@@ -606,7 +606,7 @@ object OptionOps {
   }
 
   /**
-    * If the underlying option is [[None]], then make this effect equal to
+    * If the underlying option is [[scala.None]], then make this effect equal to
     * the returned one
     */
   @inline def recoverWith[T](value: Option[T], ifNone: => Option[T]): Option[T] = value match {

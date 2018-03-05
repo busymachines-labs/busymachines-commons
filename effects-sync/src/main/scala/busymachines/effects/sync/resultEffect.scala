@@ -89,9 +89,9 @@ object ResultSyntax {
       Result.asListUnsafe(value)
 
     /**
-      * Transforms this result into a [[Try]]. The [[Anomaly]] on the left
-      * hand side is converted into a [[Throwable]] and corresponds to a
-      * failed [[Try]]
+      * Transforms this result into a [[scala.util.Try]]. The [[busymachines.core.Anomaly]] on the left
+      * hand side is converted into a [[java.lang.Throwable]] and corresponds to a
+      * failed [[scala.util.Try]]
       */
     @inline def asTry: Try[T] =
       Result.asTry(value)
@@ -134,7 +134,7 @@ object ResultSyntax {
 
     /**
       *
-      * If this effect is [[Incorrect]] then it tries to transform it into a [[Correct]] one using
+      * If this effect is [[busymachines.effects.sync.Incorrect]] then it tries to transform it into a [[busymachines.effects.sync.Correct]] one using
       * the given function
       */
     @inline def recover[R >: T](pf: PartialFunction[Anomaly, R]): Result[R] =
@@ -142,7 +142,7 @@ object ResultSyntax {
 
     /**
       *
-      * If this effect is [[Incorrect]] then it brings the final effect into the state returned by the
+      * If this effect is [[busymachines.effects.sync.Incorrect]] then it brings the final effect into the state returned by the
       * ``pf`` function.
       */
     @inline def recoverWith[R >: T](pf: PartialFunction[Anomaly, Result[R]]): Result[R] =
@@ -167,7 +167,7 @@ object ResultSyntax {
   final class NestedOptionOps[T](val nopt: Result[Option[T]]) extends AnyVal {
 
     /**
-      * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+      * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -184,7 +184,7 @@ object ResultSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condResult[T](good: => T, bad: => Anomaly): Result[T] =
       Result.cond(test, good, bad)
@@ -192,7 +192,7 @@ object ResultSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWithResult[T](good: => Result[T], bad: => Anomaly): Result[T] =
       Result.condWith(test, good, bad)
@@ -222,7 +222,7 @@ object ResultSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def cond[T](good: => T, bad: => Anomaly): Result[T] =
@@ -231,7 +231,7 @@ object ResultSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condWith[T](good: => Result[T], bad: => Anomaly): Result[T] =
@@ -261,7 +261,7 @@ object ResultSyntax {
 
 /**
   *
-  * And alternative to this would be to alias the Either.type in [[ResultTypeDefinitions]]:
+  * And alternative to this would be to alias the Either.type in [[busymachines.effects.sync.ResultTypeDefinitions]]:
   * {{{
   *   val Result: Either.type = Either
   * }}}
@@ -272,7 +272,7 @@ object ResultSyntax {
   * }}}
   *
   * Because of ambiguities in the same method names, and signatures which
-  * only differ in that they use [[Anomaly]] instead of [[Throwable]],
+  * only differ in that they use [[busymachines.core.Anomaly]] instead of [[java.lang.Throwable]],
   * and that is too ambiguous to the implicit search, for some reason...
   *
   * Moral of the story:
@@ -285,22 +285,22 @@ object Result {
   //===========================================================================
 
   /**
-    * N.B. pass only pure values. Otherwise use [[Result.apply]]
+    * N.B. pass only pure values. Otherwise use [[busymachines.effects.sync.Result.apply]]
     */
 
   @inline def pure[T](t: T): Result[T] =
     Correct(t)
 
   /**
-    * Failed effect but with an [[Anomaly]]
+    * Failed effect but with an [[busymachines.core.Anomaly]]
     */
 
   @inline def fail[T](bad: Anomaly): Result[T] =
     Incorrect(bad)
 
   /**
-    * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
-    * if it is not also an [[Anomaly]]
+    * Failed effect but with a [[java.lang.Throwable]]. Wraps in a [[busymachines.core.CatastrophicError]]
+    * if it is not also an [[busymachines.core.Anomaly]]
     */
   @inline def failThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
@@ -308,20 +308,20 @@ object Result {
   }
 
   /**
-    * N.B. pass only pure values. Otherwise use [[Result.apply]]
+    * N.B. pass only pure values. Otherwise use [[busymachines.effects.sync.Result.apply]]
     */
   @inline def correct[T](t: T): Result[T] =
     Correct(t)
 
   /**
-    * Failed effect but with an [[Anomaly]]
+    * Failed effect but with an [[busymachines.core.Anomaly]]
     */
   @inline def incorrect[T](bad: Anomaly): Result[T] =
     Incorrect(bad)
 
   /**
-    * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
-    * if it is not also an [[Anomaly]]
+    * Failed effect but with a [[java.lang.Throwable]]. Wraps in a [[busymachines.core.CatastrophicError]]
+    * if it is not also an [[busymachines.core.Anomaly]]
     */
   @inline def incorrectThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
@@ -332,9 +332,9 @@ object Result {
     Correct(())
 
   /**
-    * Captures any throwed [[Throwable]], and wraps it in a [[Result]]. If it is
-    * also a [[Anomaly]] then keep it as is, but if it is not then wrap it into
-    * a [[CatastrophicError]].
+    * Captures any throwed [[java.lang.Throwable]], and wraps it in a [[busymachines.effects.sync.Result]]. If it is
+    * also a [[busymachines.core.Anomaly]] then keep it as is, but if it is not then wrap it into
+    * a [[busymachines.core.CatastrophicError]].
     */
   @inline def apply[T](thunk: => T): Result[T] = {
     try {
@@ -350,7 +350,7 @@ object Result {
   //===========================================================================
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Result[T] = opt match {
     case None    => Result.incorrect(ifNone)
@@ -358,9 +358,9 @@ object Result {
   }
 
   /**
-    * Lift this [[Try]] and  sequence its failure case [[Throwable]] within this effect.
-    * If the [[Throwable]] is also an [[Anomaly]] then it is used as is for the [[Incorrect]] case,
-    * but if it is not, then it is wrapped inside of a [[CatastrophicError]] anomaly.
+    * Lift this [[scala.util.Try]] and  sequence its failure case [[java.lang.Throwable]] within this effect.
+    * If the [[java.lang.Throwable]] is also an [[busymachines.core.Anomaly]] then it is used as is for the [[busymachines.effects.sync.Incorrect]] case,
+    * but if it is not, then it is wrapped inside of a [[busymachines.core.CatastrophicError]] anomaly.
     */
   @inline def fromTry[T](t: Try[T]): Result[T] = t match {
     case Failure(a: Anomaly) => Result.incorrect(a)
@@ -369,7 +369,7 @@ object Result {
   }
 
   /**
-    * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+    * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
   @inline def fromEither[L, R](elr: Either[L, R], transformLeft: L => Anomaly): Result[R] = elr match {
@@ -378,10 +378,10 @@ object Result {
   }
 
   /**
-    * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-    * if it is a [[Throwable]]. If the [[Throwable]] is also an [[Anomaly]] then it is
-    * used as is for the [[Incorrect]] case, but if it is not, then it is wrapped inside
-    * of a [[CatastrophicError]] anomaly.
+    * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+    * if it is a [[java.lang.Throwable]]. If the [[java.lang.Throwable]] is also an [[busymachines.core.Anomaly]] then it is
+    * used as is for the [[busymachines.effects.sync.Incorrect]] case, but if it is not, then it is wrapped inside
+    * of a [[busymachines.core.CatastrophicError]] anomaly.
     */
   @inline def fromEitherThr[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = elr match {
     case Left(left) =>
@@ -399,7 +399,7 @@ object Result {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Result[T] =
     if (test) Result.pure(good) else Result.fail(bad)
@@ -407,7 +407,7 @@ object Result {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def condWith[T](test: Boolean, good: => Result[T], bad: => Anomaly): Result[T] =
     if (test) good else Result.fail(bad)
@@ -429,7 +429,7 @@ object Result {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCond[T](test: Result[Boolean], good: => T, bad: => Anomaly): Result[T] =
@@ -438,7 +438,7 @@ object Result {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWith[T](test: Result[Boolean], good: => Result[T], bad: => Anomaly): Result[T] =
@@ -459,7 +459,7 @@ object Result {
     test.flatMap(b => if (!b) Result.fail(bad) else Result.unit)
 
   /**
-    * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+    * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
     *
     * The failure of this effect takes precedence over the given failure
     */
@@ -493,9 +493,9 @@ object Result {
   }
 
   /**
-    * Transforms this result into a [[Try]]. The [[Anomaly]] on the left
-    * hand side is converted into a [[Throwable]] and corresponds to a
-    * failed [[Try]]
+    * Transforms this result into a [[scala.util.Try]]. The [[busymachines.core.Anomaly]] on the left
+    * hand side is converted into a [[java.lang.Throwable]] and corresponds to a
+    * failed [[scala.util.Try]]
     */
   @inline def asTry[T](value: Result[T]): Try[T] = value match {
     case Left(value)  => scala.util.Failure(value.asThrowable)
@@ -548,7 +548,7 @@ object Result {
 
   /**
     *
-    * If this effect is [[Incorrect]] then it tries to transform it into a [[Correct]] one using
+    * If this effect is [[busymachines.effects.sync.Incorrect]] then it tries to transform it into a [[busymachines.effects.sync.Correct]] one using
     * the given function
     */
   @inline def recover[T, R >: T](value: Result[T], pf: PartialFunction[Anomaly, R]): Result[R] = value match {
@@ -558,7 +558,7 @@ object Result {
 
   /**
     *
-    * If this effect is [[Incorrect]] then it brings the final effect into the state returned by the
+    * If this effect is [[busymachines.effects.sync.Incorrect]] then it brings the final effect into the state returned by the
     * ``pf`` function.
     */
   @inline def recoverWith[T, R >: T](value: Result[T], pf: PartialFunction[Anomaly, Result[R]]): Result[R] =

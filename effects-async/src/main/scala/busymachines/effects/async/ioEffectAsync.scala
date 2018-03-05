@@ -54,13 +54,13 @@ object IOSyntax {
     // —— def pure[T](value: T): IO[T] —— already defined on companion object
 
     /**
-      * Failed effect but with an [[Anomaly]]
+      * Failed effect but with an [[busymachines.core.Anomaly]]
       */
     @inline def fail[T](bad: Anomaly): IO[T] =
       IOOps.fail(bad)
 
     /**
-      * Failed effect but with a [[Throwable]]
+      * Failed effect but with a [[java.lang.Throwable]]
       */
     @inline def failThr[T](bad: Throwable): IO[T] =
       IOOps.failThr(bad)
@@ -68,7 +68,7 @@ object IOSyntax {
     // —— def unit: IO[Unit] —— already defined on IO object
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): IO[T] =
       IOOps.fromOption(opt, ifNone)
@@ -76,7 +76,7 @@ object IOSyntax {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
@@ -85,7 +85,7 @@ object IOSyntax {
       IOOps.suspendOption(opt, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): IO[T] =
       IOOps.fromOptionThr(opt, ifNone)
@@ -93,7 +93,7 @@ object IOSyntax {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
@@ -110,18 +110,18 @@ object IOSyntax {
 
     /**
       *
-      * Suspend any side-effects that might happen during the creation of this [[Try]].
+      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
       * Failed Try yields a failed effect
       * Successful Try yields a pure effect
       *
-      * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromTry]]
       */
     @inline def suspendTry[T](tr: => Try[T]): IO[T] =
       IOOps.suspendTry(tr)
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def fromEitherAnomaly[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] =
@@ -130,7 +130,7 @@ object IOSyntax {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Either]].
-      * And transform its left-hand side into a [[Anomaly]] and sequence it within
+      * And transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       *
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -140,8 +140,8 @@ object IOSyntax {
       IOOps.suspendEither(either, transformLeft)
 
     /**
-      * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-      * if it is a [[Throwable]].
+      * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+      * if it is a [[java.lang.Throwable]].
       */
     @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
       IOOps.fromEitherThr(either)(ev)
@@ -149,7 +149,7 @@ object IOSyntax {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Either]].
-      * And sequence its left-hand-side [[Throwable]] within this effect if it is a [[Throwable]]
+      * And sequence its left-hand-side [[java.lang.Throwable]] within this effect if it is a [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromEither]]
@@ -158,7 +158,7 @@ object IOSyntax {
       IOOps.suspendEitherThr(either)(ev)
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] =
@@ -166,7 +166,7 @@ object IOSyntax {
 
     /**
       * Suspend any side-effects that might happen during the creation of this [[Either]].
-      * And transform its left-hand side into a [[Throwable]] and sequence it within
+      * And transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       *
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -177,19 +177,19 @@ object IOSyntax {
 
     /**
       *
-      * Lift the [[Result]] in this effect
-      * [[Incorrect]] becomes a failed effect
-      * [[Correct]] becomes a pure effect
+      * Lift the [[busymachines.effects.sync.Result]] in this effect
+      * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+      * [[busymachines.effects.sync.Correct]] becomes a pure effect
       *
       */
     @inline def fromResult[T](result: Result[T]): IO[T] =
       IOOps.fromResult(result)
 
     /**
-      * Suspend any side-effects that might happen during the creation of this [[Result]].
+      * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
       * Other than that it has the semantics of [[IOOps.fromResult]]
       *
-      * N.B. this is useless if the [[Result]] was previously assigned to a "val".
+      * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromResult]]
       */
     @inline def suspendResult[T](result: => Result[T]): IO[T] =
@@ -319,7 +319,7 @@ object IOSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
       IOOps.cond(test, good, bad)
@@ -327,7 +327,7 @@ object IOSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
       IOOps.condThr(test, good, bad)
@@ -335,7 +335,7 @@ object IOSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWith[T](test: Boolean, good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.condWith(test, good, bad)
@@ -343,7 +343,7 @@ object IOSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condWithThr[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
       IOOps.condWithThr(test, good, bad)
@@ -351,7 +351,7 @@ object IOSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCond[T](test: IO[Boolean], good: => T, bad: => Anomaly): IO[T] =
@@ -360,7 +360,7 @@ object IOSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondThr[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
@@ -369,7 +369,7 @@ object IOSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondWith[T](test: IO[Boolean], good: => IO[T], bad: => Anomaly): IO[T] =
@@ -378,7 +378,7 @@ object IOSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondWithThr[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
@@ -441,7 +441,7 @@ object IOSyntax {
       IOOps.flatFailOnFalseThr(test, bad)
 
     /**
-      * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+      * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -449,7 +449,7 @@ object IOSyntax {
       IOOps.unpackOption(nopt, ifNone)
 
     /**
-      * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+      * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -457,17 +457,17 @@ object IOSyntax {
       IOOps.unpackOptionThr(nopt, ifNone)
 
     /**
-      * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+      * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
       *
-      * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+      * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def unpackResult[T](value: IO[Result[T]]): IO[T] =
       IOOps.unpackResult(value)
 
     /**
-      * Makes the failure, and non-failure part of this effect explicit in a [[Result]] type.
+      * Makes the failure, and non-failure part of this effect explicit in a [[busymachines.effects.sync.Result]] type.
       *
-      * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
+      * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def attemptResult[T](value: IO[T]): IO[Result[T]] =
       IOOps.attemptResult(value)
@@ -560,7 +560,7 @@ object IOSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Option]] is [[None]]
+      *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
       * @param effect
       *   The effect to run
       * @return
@@ -573,7 +573,7 @@ object IOSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Option]] is [[None]]
+      *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
       *   Does not run the side-effect if the value is also a failed effect.
       * @param effect
       *   The effect to run
@@ -614,7 +614,7 @@ object IOSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Result]] is [[Incorrect]]
+      *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       * @param effect
       *   The effect to run
       * @return
@@ -627,7 +627,7 @@ object IOSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the boxed value of this [[Result]] is [[Incorrect]]
+      *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       *   Does not run the side-effect if the value is also a failed effect.
       * @param effect
       *   The effect to run
@@ -641,7 +641,7 @@ object IOSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the boxed value of this [[Result]] is [[Correct]]
+      *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       *   Does not run the side-effect if the value is also a failed effect.
       * @param effect
       *   The effect to run
@@ -655,7 +655,7 @@ object IOSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Result]] is [[Correct]]
+      *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       * @param effect
       *   The effect to run
       * @return
@@ -678,17 +678,17 @@ object IOSyntax {
       IOOps.bimap(value, good, bad)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       */
     @inline def bimap[T, R](value: IO[T], result: Result[T] => Result[R]): IO[R] =
       IOOps.bimap(value, result)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       *
-      * The overload that uses [[Throwable]] instead of [[Anomaly]]
+      * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
       */
     @inline def bimapThr[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
       IOOps.bimapThr(value, good, bad)
@@ -844,9 +844,9 @@ object IOSyntax {
   final class ReferenceOps[T](val value: IO[T]) extends AnyVal {
 
     /**
-      * Makes the failure, and non-failure part of this effect explicit in a [[Result]] type.
+      * Makes the failure, and non-failure part of this effect explicit in a [[busymachines.effects.sync.Result]] type.
       *
-      * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
+      * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def attempResult: IO[Result[T]] =
       IOOps.attemptResult(value)
@@ -885,17 +885,17 @@ object IOSyntax {
       IOOps.bimap(value, good, bad)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       */
     @inline def bimap[R](result: Result[T] => Result[R]): IO[R] =
       IOOps.bimap(value, result)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       *
-      * The overload that uses [[Throwable]] instead of [[Anomaly]]
+      * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
       */
     @inline def bimapThr[R](good: T => R, bad: Throwable => Throwable): IO[R] =
       IOOps.bimapThr(value, good, bad)
@@ -948,7 +948,7 @@ object IOSyntax {
   final class NestedOptionOps[T](val nopt: IO[Option[T]]) extends AnyVal {
 
     /**
-      * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+      * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -956,7 +956,7 @@ object IOSyntax {
       IOOps.unpackOption(nopt, ifNone)
 
     /**
-      * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+      * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -965,7 +965,7 @@ object IOSyntax {
 
     /**
       *
-      * Runs the given effect when the value of this [[Option]] is [[None]]
+      * Runs the given effect when the value of this [[Option]] is [[scala.None]]
       * Does not run the side-effect if the value is also a failed effect.
       *
       * @param effect
@@ -999,16 +999,16 @@ object IOSyntax {
   final class NestedResultOps[T](val result: IO[Result[T]]) extends AnyVal {
 
     /**
-      * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+      * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
       *
-      * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+      * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def unpack: IO[T] =
       IOOps.unpackResult(result)
 
     /**
       *
-      * Runs the given effect when the boxed value of this [[Result]] is [[Incorrect]]
+      * Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       * Does not run the side-effect if the value is also a failed effect.
       *
       * @param effect
@@ -1022,7 +1022,7 @@ object IOSyntax {
 
     /**
       *
-      * Runs the given effect when the boxed value of this [[Result]] is [[Correct]]
+      * Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       * Does not run the side-effect if the value is also a failed effect.
       *
       * @param effect
@@ -1044,7 +1044,7 @@ object IOSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condIO[T](good: => T, bad: => Anomaly): IO[T] =
       IOOps.cond(test, good, bad)
@@ -1052,7 +1052,7 @@ object IOSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condIOThr[T](good: => T, bad: => Throwable): IO[T] =
       IOOps.condThr(test, good, bad)
@@ -1060,7 +1060,7 @@ object IOSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWithIO[T](good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.condWith(test, good, bad)
@@ -1068,7 +1068,7 @@ object IOSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condWithIOThr[T](good: => IO[T], bad: => Throwable): IO[T] =
       IOOps.condWithThr(test, good, bad)
@@ -1139,7 +1139,7 @@ object IOSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def cond[T](good: => T, bad: => Anomaly): IO[T] =
@@ -1148,7 +1148,7 @@ object IOSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condThr[T](good: => T, bad: => Throwable): IO[T] =
@@ -1157,7 +1157,7 @@ object IOSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condWith[T](good: => IO[T], bad: => Anomaly): IO[T] =
@@ -1166,7 +1166,7 @@ object IOSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condWithThr[T](good: => IO[T], bad: => Throwable): IO[T] =
@@ -1246,13 +1246,13 @@ object IOOps {
     IO.pure(value)
 
   /**
-    * Failed effect but with an [[Anomaly]]
+    * Failed effect but with an [[busymachines.core.Anomaly]]
     */
   @inline def fail[T](bad: Anomaly): IO[T] =
     IO.raiseError(bad.asThrowable)
 
   /**
-    * Failed effect but with a [[Throwable]]
+    * Failed effect but with a [[java.lang.Throwable]]
     */
   @inline def failThr[T](bad: Throwable): IO[T] =
     IO.raiseError(bad)
@@ -1260,7 +1260,7 @@ object IOOps {
   // —— def unit: IO[Unit] —— already defined on IO object
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): IO[T] = opt match {
     case None        => IOOps.fail(ifNone)
@@ -1270,7 +1270,7 @@ object IOOps {
   /**
     *
     * Suspend any side-effects that might happen during the creation of this [[Option]].
-    * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+    * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromOption]]
@@ -1279,7 +1279,7 @@ object IOOps {
     IO.suspend(IOOps.fromOption(opt, ifNone))
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): IO[T] = opt match {
     case None        => IOOps.failThr(ifNone)
@@ -1289,7 +1289,7 @@ object IOOps {
   /**
     *
     * Suspend any side-effects that might happen during the creation of this [[Option]].
-    * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+    * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromOption]]
@@ -1308,18 +1308,18 @@ object IOOps {
 
   /**
     *
-    * Suspend any side-effects that might happen during the creation of this [[Try]].
+    * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
     * Failed Try yields a failed effect
     * Successful Try yields a pure effect
     *
-    * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+    * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromTry]]
     */
   @inline def suspendTry[T](tr: => Try[T]): IO[T] =
     IO.suspend(IOOps.fromTry(tr))
 
   /**
-    * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+    * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
   @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] = either match {
@@ -1330,7 +1330,7 @@ object IOOps {
   /**
     *
     * Suspend any side-effects that might happen during the creation of this [[Either]].
-    * And transform its left-hand side into a [[Anomaly]] and sequence it within
+    * And transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -1340,8 +1340,8 @@ object IOOps {
     IO.suspend(IOOps.fromEither(either, transformLeft))
 
   /**
-    * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-    * if it is a [[Throwable]].
+    * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+    * if it is a [[java.lang.Throwable]].
     */
   @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] = either match {
     case Left(value)  => IOOps.failThr(ev(value))
@@ -1351,7 +1351,7 @@ object IOOps {
   /**
     *
     * Suspend any side-effects that might happen during the creation of this [[Either]].
-    * And sequence its left-hand-side [[Throwable]] within this effect if it is a [[Throwable]]
+    * And sequence its left-hand-side [[java.lang.Throwable]] within this effect if it is a [[java.lang.Throwable]]
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromEither]]
@@ -1360,7 +1360,7 @@ object IOOps {
     IO.suspend(IOOps.fromEitherThr(either)(ev))
 
   /**
-    * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+    * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     */
   @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] = either match {
@@ -1370,7 +1370,7 @@ object IOOps {
 
   /**
     * Suspend any side-effects that might happen during the creation of this [[Either]].
-    * And transform its left-hand side into a [[Throwable]] and sequence it within
+    * And transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -1381,9 +1381,9 @@ object IOOps {
 
   /**
     *
-    * Lift the [[Result]] in this effect
-    * [[Incorrect]] becomes a failed effect
-    * [[Correct]] becomes a pure effect
+    * Lift the [[busymachines.effects.sync.Result]] in this effect
+    * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+    * [[busymachines.effects.sync.Correct]] becomes a pure effect
     *
     */
   @inline def fromResult[T](result: Result[T]): IO[T] = result match {
@@ -1469,10 +1469,10 @@ object IOOps {
     IO.suspend(IOOps.fromValidated(value, ctor))
 
   /**
-    * Suspend any side-effects that might happen during the creation of this [[Result]].
+    * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
     * Other than that it has the semantics of [[IOOps.fromResult]]
     *
-    * N.B. this is useless if the [[Result]] was previously assigned to a "val".
+    * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromResult]]
     */
   @inline def suspendResult[T](result: => Result[T]): IO[T] =
@@ -1529,7 +1529,7 @@ object IOOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
     if (test) IOOps.pure(good) else IOOps.fail(bad)
@@ -1537,7 +1537,7 @@ object IOOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
   @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
     if (test) IOOps.pure(good) else IOOps.failThr(bad)
@@ -1545,7 +1545,7 @@ object IOOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def condWith[T](test: Boolean, good: => IO[T], bad: => Anomaly): IO[T] =
     if (test) good else IOOps.fail(bad)
@@ -1553,7 +1553,7 @@ object IOOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
   @inline def condWithThr[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
     if (test) good else IOOps.failThr(bad)
@@ -1561,7 +1561,7 @@ object IOOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCond[T](test: IO[Boolean], good: => T, bad: => Anomaly): IO[T] =
@@ -1570,7 +1570,7 @@ object IOOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondThr[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
@@ -1579,7 +1579,7 @@ object IOOps {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWith[T](test: IO[Boolean], good: => IO[T], bad: => Anomaly): IO[T] =
@@ -1588,7 +1588,7 @@ object IOOps {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWithThr[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
@@ -1651,7 +1651,7 @@ object IOOps {
     test.flatMap(t => IOOps.failOnFalseThr(t, bad))
 
   /**
-    * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+    * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
     *
     * The failure of this effect takes precedence over the given failure
     */
@@ -1662,7 +1662,7 @@ object IOOps {
     }
 
   /**
-    * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+    * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
     *
     * The failure of this effect takes precedence over the given failure
     */
@@ -1673,9 +1673,9 @@ object IOOps {
     }
 
   /**
-    * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+    * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
     *
-    * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+    * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
     */
   @inline def unpackResult[T](value: IO[Result[T]]): IO[T] = value.flatMap {
     case Left(a)  => IOOps.fail(a)
@@ -1683,9 +1683,9 @@ object IOOps {
   }
 
   /**
-    * Makes the failure, and non-failure part of this effect explicit in a [[Result]] type.
+    * Makes the failure, and non-failure part of this effect explicit in a [[busymachines.effects.sync.Result]] type.
     *
-    * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
+    * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
     */
   @inline def attemptResult[T](value: IO[T]): IO[Result[T]] =
     value.attempt.map((e: Either[Throwable, T]) => Result.fromEitherThr(e))
@@ -1778,7 +1778,7 @@ object IOOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Option]] is [[None]]
+    *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
     * @param effect
     *   The effect to run
     * @return
@@ -1791,7 +1791,7 @@ object IOOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Option]] is [[None]]
+    *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
     *   Does not run the side-effect if the value is also a failed effect.
     * @param effect
     *   The effect to run
@@ -1836,7 +1836,7 @@ object IOOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Result]] is [[Incorrect]]
+    *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
     * @param effect
     *   The effect to run
     * @return
@@ -1851,7 +1851,7 @@ object IOOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the boxed value of this [[Result]] is [[Incorrect]]
+    *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
     *   Does not run the side-effect if the value is also a failed effect.
     * @param effect
     *   The effect to run
@@ -1865,7 +1865,7 @@ object IOOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Result]] is [[Correct]]
+    *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
     * @param effect
     *   The effect to run
     * @return
@@ -1881,7 +1881,7 @@ object IOOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the boxed value of this [[Result]] is [[Correct]]
+    *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
     *   Does not run the side-effect if the value is also a failed effect.
     * @param effect
     *   The effect to run
@@ -1907,8 +1907,8 @@ object IOOps {
     }
 
   /**
-    * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-    * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+    * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+    * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
     */
   @inline def bimap[T, R](value: IO[T], result: Result[T] => Result[R]): IO[R] =
     IOOps.attemptResult(value).map(result).flatMap {
@@ -1917,10 +1917,10 @@ object IOOps {
     }
 
   /**
-    * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-    * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+    * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+    * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
     *
-    * The overload that uses [[Throwable]] instead of [[Anomaly]]
+    * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
     */
   @inline def bimapThr[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
     value.map(good).adaptError {

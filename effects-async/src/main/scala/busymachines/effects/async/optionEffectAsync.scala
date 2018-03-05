@@ -30,37 +30,37 @@ object OptionSyntaxAsync {
   final class CompanionObjectOps(val obj: Option.type) extends AnyVal {
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asFuture[T](value: Option[T], ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect, if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect, if it is [[scala.None]]
       */
     @inline def asFutureThr[T](value: Option[T], ifNone: => Throwable): Future[T] =
       FutureOps.fromOptionThr(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asIO[T](value: Option[T], ifNone: => Anomaly): IO[T] =
       IOOps.fromOption(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asIOThr[T](value: Option[T], ifNone: => Throwable): IO[T] =
       IOOps.fromOptionThr(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asTask[T](value: Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.fromOption(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asTaskThr[T](value: Option[T], ifNone: => Throwable): Task[T] =
       TaskOps.fromOptionThr(value, ifNone)
@@ -72,7 +72,7 @@ object OptionSyntaxAsync {
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
@@ -87,7 +87,7 @@ object OptionSyntaxAsync {
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
@@ -101,7 +101,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
@@ -112,7 +112,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
@@ -123,7 +123,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
@@ -134,7 +134,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
@@ -149,25 +149,25 @@ object OptionSyntaxAsync {
   final class ReferenceOps[T](val value: Option[T]) extends AnyVal {
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asFuture(ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect, if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect, if it is [[scala.None]]
       */
     @inline def asFutureThr(ifNone: => Throwable): Future[T] =
       FutureOps.fromOptionThr(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asIO(ifNone: => Anomaly): IO[T] =
       IOOps.fromOption(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def asIOThr(ifNone: => Throwable): IO[T] =
       IOOps.fromOptionThr(value, ifNone)
@@ -175,7 +175,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
@@ -186,7 +186,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
@@ -200,7 +200,7 @@ object OptionSyntaxAsync {
 
     /**
       *
-      * Runs the given effect when the value of this [[Option]] is [[None]]
+      * Runs the given effect when the value of this [[Option]] is [[scala.None]]
       *
       * @param effect
       *   The effect to run
@@ -226,7 +226,7 @@ object OptionSyntaxAsync {
 
     /**
       *
-      * Runs the given effect when the value of this [[Option]] is [[None]]
+      * Runs the given effect when the value of this [[Option]] is [[scala.None]]
       *
       * @param effect
       *   The effect to run
@@ -251,7 +251,7 @@ object OptionSyntaxAsync {
 
     /**
       *
-      * Runs the given effect when the value of this [[Option]] is [[None]]
+      * Runs the given effect when the value of this [[Option]] is [[scala.None]]
       *
       * @param effect
       *   The effect to run
@@ -289,7 +289,7 @@ object OptionSyntaxAsync {
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
@@ -304,7 +304,7 @@ object OptionSyntaxAsync {
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
@@ -315,7 +315,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
@@ -326,7 +326,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
@@ -337,7 +337,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
@@ -348,7 +348,7 @@ object OptionSyntaxAsync {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]

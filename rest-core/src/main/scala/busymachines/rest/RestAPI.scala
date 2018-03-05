@@ -175,70 +175,70 @@ object RestAPI {
   ): ExceptionHandler =
     ExceptionHandler {
 
-      /**
-        * This might be a stretch of an assumption, but usually there's no
-        * reason to accumulate messages, except in cases of input validation
-        */
+      /*
+       * This might be a stretch of an assumption, but usually there's no
+       * reason to accumulate messages, except in cases of input validation
+       */
       case es: Anomalies =>
         anomalies(StatusCodes.BadRequest, es)(asm)
 
-      /**
-        * Meaning:
-        *
-        * "you cannot find something; it may or may not exist, and I'm not going
-        * to tell you anything else"
-        */
+      /*
+       * Meaning:
+       *
+       * "you cannot find something; it may or may not exist, and I'm not going
+       * to tell you anything else"
+       */
       case _: MeaningfulAnomalies.NotFound =>
         anomaly(StatusCodes.NotFound)
 
-      /**
-        * Meaning:
-        *
-        * "it exists, but you're not even allowed to know about that;
-        * so for short, you can't find it".
-        */
+      /*
+       * Meaning:
+       *
+       * "it exists, but you're not even allowed to know about that;
+       * so for short, you can't find it".
+       */
       case _: MeaningfulAnomalies.Forbidden =>
         anomaly(StatusCodes.NotFound)
 
-      /**
-        * Meaning:
-        *
-        * "something is wrong in the way you authorized, you can try again slightly
-        * differently"
-        */
+      /*
+       * Meaning:
+       *
+       * "something is wrong in the way you authorized, you can try again slightly
+       * differently"
+       */
       case e: Anomaly with MeaningfulAnomalies.Unauthorized =>
         anomaly(StatusCodes.Unauthorized, e)
 
       case e: Anomaly with MeaningfulAnomalies.Denied =>
         anomaly(StatusCodes.Forbidden, e)
 
-      /**
-        * Obviously, whenever some input data is wrong.
-        *
-        * This one is probably your best friend, and the one you
-        * have to specialize the most for any given problem domain.
-        * Otherwise you just wind up with a bunch of nonsense, obtuse
-        * errors like:
-        * - "the input was wrong"
-        * - "gee, thanks, more details, please?"
-        * - sometimes you might be tempted to use NotFound, but this
-        * might be better suited. For instance, when you are dealing
-        * with a "foreign key" situation, and the foreign key is
-        * the input of the client. You'd want to be able to tell
-        * the user that their input was wrong because something was
-        * not found, not simply that it was not found.
-        *
-        * Therefore, specialize frantically.
-        */
+      /*
+       * Obviously, whenever some input data is wrong.
+       *
+       * This one is probably your best friend, and the one you
+       * have to specialize the most for any given problem domain.
+       * Otherwise you just wind up with a bunch of nonsense, obtuse
+       * errors like:
+       * - "the input was wrong"
+       * - "gee, thanks, more details, please?"
+       * - sometimes you might be tempted to use NotFound, but this
+       * might be better suited. For instance, when you are dealing
+       * with a "foreign key" situation, and the foreign key is
+       * the input of the client. You'd want to be able to tell
+       * the user that their input was wrong because something was
+       * not found, not simply that it was not found.
+       *
+       * Therefore, specialize frantically.
+       */
       case e: Anomaly with MeaningfulAnomalies.InvalidInput =>
         anomaly(StatusCodes.BadRequest, e)
 
-      /**
-        * Special type of invalid input.
-        *
-        * E.g. when you're duplicating something that ought to be unique,
-        * like ids, emails.
-        */
+      /*
+       * Special type of invalid input.
+       *
+       * E.g. when you're duplicating something that ought to be unique,
+       * like ids, emails.
+       */
       case e: Anomaly with MeaningfulAnomalies.Conflict =>
         anomaly(StatusCodes.Conflict, e)
 
@@ -249,12 +249,12 @@ object RestAPI {
         anomaly(StatusCodes.NotImplemented, CatastrophicError(e))
     }
 
-  /**
-    * This is a handler for the fabled "Boxed Error" that you get when
-    * a future fails with what is marked as an "Error". Unfortunately
-    * this applies to NotImplementedErrors, and our Catastrophes,
-    * which is really annoying :/
-    */
+  /*
+   * This is a handler for the fabled "Boxed Error" that you get when
+   * a future fails with what is marked as an "Error". Unfortunately
+   * this applies to NotImplementedErrors, and our Catastrophes,
+   * which is really annoying :/
+   */
   private def boxedErrorHandler(
     implicit am: ToEntityMarshaller[Anomaly]
   ): ExceptionHandler = ExceptionHandler {

@@ -71,14 +71,14 @@ object TaskSyntax {
     // —— def pure[T](value: T): Task[T] —— already defined on companion object
 
     /**
-      * Failed effect but with an [[Anomaly]]
+      * Failed effect but with an [[busymachines.core.Anomaly]]
       */
 
     @inline def fail[T](bad: Anomaly): Task[T] =
       TaskOps.fail(bad)
 
     /**
-      * Failed effect but with a [[Throwable]]
+      * Failed effect but with a [[java.lang.Throwable]]
       */
 
     @inline def failThr[T](bad: Throwable): Task[T] =
@@ -87,7 +87,7 @@ object TaskSyntax {
     // —— def unit: Task[Unit] —— already defined on Task object
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.fromOption(opt, ifNone)
@@ -95,7 +95,7 @@ object TaskSyntax {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
@@ -104,7 +104,7 @@ object TaskSyntax {
       TaskOps.suspendOption(opt, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Task[T] =
       TaskOps.fromOptionThr(opt, ifNone)
@@ -112,7 +112,7 @@ object TaskSyntax {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
@@ -124,18 +124,18 @@ object TaskSyntax {
 
     /**
       *
-      * Suspend any side-effects that might happen during the creation of this [[Try]].
+      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
       * Failed Try yields a failed effect
       * Successful Try yields a pure effect
       *
-      * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
     @inline def suspendTry[T](tr: => Try[T]): Task[T] =
       TaskOps.suspendTry(tr)
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Task[R] =
@@ -144,7 +144,7 @@ object TaskSyntax {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Either]].
-      * And transform its left-hand side into a [[Anomaly]] and sequence it within
+      * And transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       *
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -154,8 +154,8 @@ object TaskSyntax {
       TaskOps.suspendEither(either, transformLeft)
 
     /**
-      * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-      * if it is a [[Throwable]].
+      * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+      * if it is a [[java.lang.Throwable]].
       */
     @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.fromEitherThr(either)(ev)
@@ -163,7 +163,7 @@ object TaskSyntax {
     /**
       *
       * Suspend any side-effects that might happen during the creation of this [[Either]].
-      * And sequence its left-hand-side [[Throwable]] within this effect if it is a [[Throwable]]
+      * And sequence its left-hand-side [[java.lang.Throwable]] within this effect if it is a [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
@@ -172,7 +172,7 @@ object TaskSyntax {
       TaskOps.suspendEitherThr(either)(ev)
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] =
@@ -180,7 +180,7 @@ object TaskSyntax {
 
     /**
       * Suspend any side-effects that might happen during the creation of this [[Either]].
-      * And transform its left-hand side into a [[Throwable]] and sequence it within
+      * And transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       *
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -191,19 +191,19 @@ object TaskSyntax {
 
     /**
       *
-      * Lift the [[Result]] in this effect
-      * [[Incorrect]] becomes a failed effect
-      * [[Correct]] becomes a pure effect
+      * Lift the [[busymachines.effects.sync.Result]] in this effect
+      * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+      * [[busymachines.effects.sync.Correct]] becomes a pure effect
       *
       */
     @inline def fromResult[T](result: Result[T]): Task[T] =
       TaskOps.fromResult(result)
 
     /**
-      * Suspend any side-effects that might happen during the creation of this [[Result]].
+      * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
       * Other than that it has the semantics of [[TaskOps.fromResult]]
       *
-      * N.B. this is useless if the [[Result]] was previously assigned to a "val".
+      * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromResult]]
       */
     @inline def suspendResult[T](result: => Result[T]): Task[T] =
@@ -327,7 +327,7 @@ object TaskSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Task[T] =
       TaskOps.cond(test, good, bad)
@@ -335,7 +335,7 @@ object TaskSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
       TaskOps.condThr(test, good, bad)
@@ -343,7 +343,7 @@ object TaskSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWith[T](test: Boolean, good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.condWith(test, good, bad)
@@ -351,7 +351,7 @@ object TaskSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condWithThr[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
       TaskOps.condWithThr(test, good, bad)
@@ -359,7 +359,7 @@ object TaskSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCond[T](test: Task[Boolean], good: => T, bad: => Anomaly): Task[T] =
@@ -368,7 +368,7 @@ object TaskSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondThr[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
@@ -377,7 +377,7 @@ object TaskSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondWith[T](test: Task[Boolean], good: => Task[T], bad: => Anomaly): Task[T] =
@@ -386,7 +386,7 @@ object TaskSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondWithThr[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
@@ -449,7 +449,7 @@ object TaskSyntax {
       TaskOps.flatFailOnFalseThr(test, bad)
 
     /**
-      * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+      * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -457,7 +457,7 @@ object TaskSyntax {
       TaskOps.unpackOption(nopt, ifNone)
 
     /**
-      * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+      * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -465,17 +465,17 @@ object TaskSyntax {
       TaskOps.unpackOptionThr(nopt, ifNone)
 
     /**
-      * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+      * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
       *
-      * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+      * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def unpackResult[T](value: Task[Result[T]]): Task[T] =
       TaskOps.unpackResult(value)
 
     /**
-      * Makes the failure, and non-failure part of this effect explicit in a [[Result]] type.
+      * Makes the failure, and non-failure part of this effect explicit in a [[busymachines.effects.sync.Result]] type.
       *
-      * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
+      * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def attemptResult[T](value: Task[T]): Task[Result[T]] =
       TaskOps.attemptResult(value)
@@ -573,7 +573,7 @@ object TaskSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Option]] is [[None]]
+      *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
       * @param effect
       *   The effect to run
       * @return
@@ -586,7 +586,7 @@ object TaskSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Option]] is [[None]]
+      *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
       *   Does not run the side-effect if the value is also a failed effect.
       * @param effect
       *   The effect to run
@@ -627,7 +627,7 @@ object TaskSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Result]] is [[Incorrect]]
+      *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       * @param effect
       *   The effect to run
       * @return
@@ -640,7 +640,7 @@ object TaskSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the boxed value of this [[Result]] is [[Incorrect]]
+      *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       *   Does not run the side-effect if the value is also a failed effect.
       * @param effect
       *   The effect to run
@@ -654,7 +654,7 @@ object TaskSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the boxed value of this [[Result]] is [[Correct]]
+      *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       *   Does not run the side-effect if the value is also a failed effect.
       * @param effect
       *   The effect to run
@@ -668,7 +668,7 @@ object TaskSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Result]] is [[Correct]]
+      *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       * @param effect
       *   The effect to run
       * @return
@@ -691,17 +691,17 @@ object TaskSyntax {
       TaskOps.bimap(value, good, bad)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       */
     @inline def bimap[T, R](value: Task[T], result: Result[T] => Result[R]): Task[R] =
       TaskOps.bimap(value, result)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       *
-      * The overload that uses [[Throwable]] instead of [[Anomaly]]
+      * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
       */
     @inline def bimapThr[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
       TaskOps.bimapThr(value, good, bad)
@@ -820,9 +820,9 @@ object TaskSyntax {
   final class ReferenceOps[T](val value: Task[T]) extends AnyVal {
 
     /**
-      * Makes the failure, and non-failure part of this effect explicit in a [[Result]] type.
+      * Makes the failure, and non-failure part of this effect explicit in a [[busymachines.effects.sync.Result]] type.
       *
-      * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
+      * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def attempResult: Task[Result[T]] =
       TaskOps.attemptResult(value)
@@ -864,17 +864,17 @@ object TaskSyntax {
       TaskOps.bimap(value, good, bad)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       */
     @inline def bimap[R](result: Result[T] => Result[R]): Task[R] =
       TaskOps.bimap(value, result)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       *
-      * The overload that uses [[Throwable]] instead of [[Anomaly]]
+      * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
       */
     @inline def bimapThr[R](good: T => R, bad: Throwable => Throwable): Task[R] =
       TaskOps.bimapThr(value, good, bad)
@@ -927,7 +927,7 @@ object TaskSyntax {
   final class NestedOptionOps[T](val nopt: Task[Option[T]]) extends AnyVal {
 
     /**
-      * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+      * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -935,7 +935,7 @@ object TaskSyntax {
       TaskOps.unpackOption(nopt, ifNone)
 
     /**
-      * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+      * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -944,7 +944,7 @@ object TaskSyntax {
 
     /**
       *
-      * Runs the given effect when the value of this [[Option]] is [[None]]
+      * Runs the given effect when the value of this [[Option]] is [[scala.None]]
       * Does not run the side-effect if the value is also a failed effect.
       *
       * @param effect
@@ -978,16 +978,16 @@ object TaskSyntax {
   final class NestedResultOps[T](val result: Task[Result[T]]) extends AnyVal {
 
     /**
-      * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+      * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
       *
-      * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+      * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def unpack: Task[T] =
       TaskOps.unpackResult(result)
 
     /**
       *
-      * Runs the given effect when the boxed value of this [[Result]] is [[Incorrect]]
+      * Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       * Does not run the side-effect if the value is also a failed effect.
       *
       * @param effect
@@ -1001,7 +1001,7 @@ object TaskSyntax {
 
     /**
       *
-      * Runs the given effect when the boxed value of this [[Result]] is [[Correct]]
+      * Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       * Does not run the side-effect if the value is also a failed effect.
       *
       * @param effect
@@ -1023,7 +1023,7 @@ object TaskSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condTask[T](good: => T, bad: => Anomaly): Task[T] =
       TaskOps.cond(test, good, bad)
@@ -1031,7 +1031,7 @@ object TaskSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condTaskThr[T](good: => T, bad: => Throwable): Task[T] =
       TaskOps.condThr(test, good, bad)
@@ -1039,7 +1039,7 @@ object TaskSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWithTask[T](good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.condWith(test, good, bad)
@@ -1047,7 +1047,7 @@ object TaskSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condWithTaskThr[T](good: => Task[T], bad: => Throwable): Task[T] =
       TaskOps.condWithThr(test, good, bad)
@@ -1118,7 +1118,7 @@ object TaskSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def cond[T](good: => T, bad: => Anomaly): Task[T] =
@@ -1127,7 +1127,7 @@ object TaskSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condThr[T](good: => T, bad: => Throwable): Task[T] =
@@ -1136,7 +1136,7 @@ object TaskSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condWith[T](good: => Task[T], bad: => Anomaly): Task[T] =
@@ -1145,7 +1145,7 @@ object TaskSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condWithThr[T](good: => Task[T], bad: => Throwable): Task[T] =
@@ -1226,14 +1226,14 @@ object TaskOps {
     Task.pure(value)
 
   /**
-    * Failed effect but with an [[Anomaly]]
+    * Failed effect but with an [[busymachines.core.Anomaly]]
     */
 
   @inline def fail[T](bad: Anomaly): Task[T] =
     Task.raiseError(bad.asThrowable)
 
   /**
-    * Failed effect but with a [[Throwable]]
+    * Failed effect but with a [[java.lang.Throwable]]
     */
 
   @inline def failThr[T](bad: Throwable): Task[T] =
@@ -1242,7 +1242,7 @@ object TaskOps {
   // —— def unit: Task[Unit] —— already defined on Task object
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Task[T] = opt match {
     case None        => TaskOps.fail(ifNone)
@@ -1252,7 +1252,7 @@ object TaskOps {
   /**
     *
     * Suspend any side-effects that might happen during the creation of this [[Option]].
-    * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+    * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromOption]]
@@ -1261,7 +1261,7 @@ object TaskOps {
     Task.suspend(TaskOps.fromOption(opt, ifNone))
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Task[T] = opt match {
     case None        => TaskOps.failThr(ifNone)
@@ -1271,7 +1271,7 @@ object TaskOps {
   /**
     *
     * Suspend any side-effects that might happen during the creation of this [[Option]].
-    * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+    * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromOption]]
@@ -1283,18 +1283,18 @@ object TaskOps {
 
   /**
     *
-    * Suspend any side-effects that might happen during the creation of this [[Try]].
+    * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
     * Failed Try yields a failed effect
     * Successful Try yields a pure effect
     *
-    * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+    * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
     * You might as well use [[Task.fromTry]]
     */
   @inline def suspendTry[T](tr: => Try[T]): Task[T] =
     Task.suspend(Task.fromTry(tr))
 
   /**
-    * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+    * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
   @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Task[R] = either match {
@@ -1305,7 +1305,7 @@ object TaskOps {
   /**
     *
     * Suspend any side-effects that might happen during the creation of this [[Either]].
-    * And transform its left-hand side into a [[Anomaly]] and sequence it within
+    * And transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -1315,8 +1315,8 @@ object TaskOps {
     Task.suspend(TaskOps.fromEither(either, transformLeft))
 
   /**
-    * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-    * if it is a [[Throwable]].
+    * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+    * if it is a [[java.lang.Throwable]].
     */
   @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] = either match {
     case Left(value)  => TaskOps.failThr(ev(value))
@@ -1326,7 +1326,7 @@ object TaskOps {
   /**
     *
     * Suspend any side-effects that might happen during the creation of this [[Either]].
-    * And sequence its left-hand-side [[Throwable]] within this effect if it is a [[Throwable]]
+    * And sequence its left-hand-side [[java.lang.Throwable]] within this effect if it is a [[java.lang.Throwable]]
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromEither]]
@@ -1335,7 +1335,7 @@ object TaskOps {
     Task.suspend(TaskOps.fromEitherThr(either)(ev))
 
   /**
-    * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+    * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     */
   @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] = either match {
@@ -1345,7 +1345,7 @@ object TaskOps {
 
   /**
     * Suspend any side-effects that might happen during the creation of this [[Either]].
-    * And transform its left-hand side into a [[Throwable]] and sequence it within
+    * And transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -1356,9 +1356,9 @@ object TaskOps {
 
   /**
     *
-    * Lift the [[Result]] in this effect
-    * [[Incorrect]] becomes a failed effect
-    * [[Correct]] becomes a pure effect
+    * Lift the [[busymachines.effects.sync.Result]] in this effect
+    * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+    * [[busymachines.effects.sync.Correct]] becomes a pure effect
     *
     */
   @inline def fromResult[T](result: Result[T]): Task[T] = result match {
@@ -1367,10 +1367,10 @@ object TaskOps {
   }
 
   /**
-    * Suspend any side-effects that might happen during the creation of this [[Result]].
+    * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
     * Other than that it has the semantics of [[TaskOps.fromResult]]
     *
-    * N.B. this is useless if the [[Result]] was previously assigned to a "val".
+    * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromResult]]
     */
   @inline def suspendResult[T](result: => Result[T]): Task[T] =
@@ -1507,7 +1507,7 @@ object TaskOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Task[T] =
     if (test) TaskOps.pure(good) else TaskOps.fail(bad)
@@ -1515,7 +1515,7 @@ object TaskOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
   @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
     if (test) TaskOps.pure(good) else TaskOps.failThr(bad)
@@ -1523,7 +1523,7 @@ object TaskOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def condWith[T](test: Boolean, good: => Task[T], bad: => Anomaly): Task[T] =
     if (test) good else TaskOps.fail(bad)
@@ -1531,7 +1531,7 @@ object TaskOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
   @inline def condWithThr[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
     if (test) good else TaskOps.failThr(bad)
@@ -1539,7 +1539,7 @@ object TaskOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCond[T](test: Task[Boolean], good: => T, bad: => Anomaly): Task[T] =
@@ -1548,7 +1548,7 @@ object TaskOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondThr[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
@@ -1557,7 +1557,7 @@ object TaskOps {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWith[T](test: Task[Boolean], good: => Task[T], bad: => Anomaly): Task[T] =
@@ -1566,7 +1566,7 @@ object TaskOps {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWithThr[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
@@ -1629,7 +1629,7 @@ object TaskOps {
     test.flatMap(t => TaskOps.failOnFalseThr(t, bad))
 
   /**
-    * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+    * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
     *
     * The failure of this effect takes precedence over the given failure
     */
@@ -1640,7 +1640,7 @@ object TaskOps {
     }
 
   /**
-    * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+    * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
     *
     * The failure of this effect takes precedence over the given failure
     */
@@ -1651,9 +1651,9 @@ object TaskOps {
     }
 
   /**
-    * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+    * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
     *
-    * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+    * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
     */
   @inline def unpackResult[T](value: Task[Result[T]]): Task[T] = value.flatMap {
     case Left(a)  => TaskOps.fail(a)
@@ -1661,9 +1661,9 @@ object TaskOps {
   }
 
   /**
-    * Makes the failure, and non-failure part of this effect explicit in a [[Result]] type.
+    * Makes the failure, and non-failure part of this effect explicit in a [[busymachines.effects.sync.Result]] type.
     *
-    * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
+    * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
     */
   @inline def attemptResult[T](value: Task[T]): Task[Result[T]] =
     value.attempt.map((e: Either[Throwable, T]) => Result.fromEitherThr(e))
@@ -1759,7 +1759,7 @@ object TaskOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Option]] is [[None]]
+    *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
     * @param effect
     *   The effect to run
     * @return
@@ -1772,7 +1772,7 @@ object TaskOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Option]] is [[None]]
+    *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
     *   Does not run the side-effect if the value is also a failed effect.
     * @param effect
     *   The effect to run
@@ -1817,7 +1817,7 @@ object TaskOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Result]] is [[Incorrect]]
+    *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
     * @param effect
     *   The effect to run
     * @return
@@ -1832,7 +1832,7 @@ object TaskOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the boxed value of this [[Result]] is [[Incorrect]]
+    *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
     *   Does not run the side-effect if the value is also a failed effect.
     * @param effect
     *   The effect to run
@@ -1846,7 +1846,7 @@ object TaskOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Result]] is [[Correct]]
+    *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
     * @param effect
     *   The effect to run
     * @return
@@ -1862,7 +1862,7 @@ object TaskOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the boxed value of this [[Result]] is [[Correct]]
+    *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
     *   Does not run the side-effect if the value is also a failed effect.
     * @param effect
     *   The effect to run
@@ -1888,8 +1888,8 @@ object TaskOps {
     }
 
   /**
-    * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-    * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+    * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+    * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
     */
   @inline def bimap[T, R](value: Task[T], result: Result[T] => Result[R]): Task[R] =
     TaskOps.attemptResult(value).map(result).flatMap {
@@ -1898,10 +1898,10 @@ object TaskOps {
     }
 
   /**
-    * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-    * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+    * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+    * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
     *
-    * The overload that uses [[Throwable]] instead of [[Anomaly]]
+    * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
     */
   @inline def bimapThr[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
     value.map(good).adaptError {

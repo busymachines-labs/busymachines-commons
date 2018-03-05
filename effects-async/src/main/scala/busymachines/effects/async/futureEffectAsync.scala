@@ -70,13 +70,13 @@ object FutureSyntax {
       FutureOps.pure(value)
 
     /**
-      * Failed effect but with an [[Anomaly]]
+      * Failed effect but with an [[busymachines.core.Anomaly]]
       */
     @inline def fail[T](bad: Anomaly): Future[T] =
       FutureOps.fail(bad)
 
     /**
-      * Failed effect with a [[Throwable]]
+      * Failed effect with a [[java.lang.Throwable]]
       */
     @inline def failThr[T](bad: Throwable): Future[T] =
       FutureOps.failThr(bad)
@@ -84,7 +84,7 @@ object FutureSyntax {
     // —— def unit: Future[Unit] —— already defined on Future object
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] =
       FutureOps.fromOption(opt, ifNone)
@@ -96,7 +96,7 @@ object FutureSyntax {
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
@@ -105,7 +105,7 @@ object FutureSyntax {
       FutureOps.suspendOption(opt, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect, if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect, if it is [[scala.None]]
       */
     @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Future[T] =
       FutureOps.fromOptionThr(opt, ifNone)
@@ -117,7 +117,7 @@ object FutureSyntax {
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
       * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromOption]]
@@ -133,18 +133,18 @@ object FutureSyntax {
       * gets immediately applied due to the nature of the Future. This is useful only that
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
-      * Suspend any side-effects that might happen during the creation of this [[Try]].
+      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
       * Failed Try yields a failed effect
       * Successful Try yields a pure effect
       *
-      * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[Future.fromTry]]
       */
     @inline def suspendTry[T](tr: => Try[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendTry(tr)
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Future[R] =
@@ -157,7 +157,7 @@ object FutureSyntax {
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
       * Suspend any side-effects that might happen during the creation of this [[Either]].
-      * And transform its left-hand side into a [[Anomaly]] and sequence it within
+      * And transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       *
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -168,8 +168,8 @@ object FutureSyntax {
     ): Future[R] = FutureOps.suspendEither(either, transformLeft)
 
     /**
-      * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-      * if it is a [[Throwable]].
+      * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+      * if it is a [[java.lang.Throwable]].
       */
     @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] =
       FutureOps.fromEitherThr(either)(ev)
@@ -181,7 +181,7 @@ object FutureSyntax {
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
       * Suspend any side-effects that might happen during the creation of this [[Either]].
-      * And sequence its left-hand-side [[Throwable]] within this effect if it is a [[Throwable]]
+      * And sequence its left-hand-side [[java.lang.Throwable]] within this effect if it is a [[java.lang.Throwable]]
       *
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromEither]]
@@ -193,7 +193,7 @@ object FutureSyntax {
     ): Future[R] = FutureOps.suspendEitherThr(either)(ev, ec)
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] =
@@ -206,7 +206,7 @@ object FutureSyntax {
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
       * Suspend any side-effects that might happen during the creation of this [[Either]].
-      * And transform its left-hand side into a [[Throwable]] and sequence it within
+      * And transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       *
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -218,9 +218,9 @@ object FutureSyntax {
 
     /**
       *
-      * Lift the [[Result]] in this effect
-      * [[Incorrect]] becomes a failed effect
-      * [[Correct]] becomes a pure effect
+      * Lift the [[busymachines.effects.sync.Result]] in this effect
+      * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+      * [[busymachines.effects.sync.Correct]] becomes a pure effect
       *
       */
     @inline def fromResult[T](result: Result[T]): Future[T] =
@@ -232,9 +232,9 @@ object FutureSyntax {
       * gets immediately applied due to the nature of the Future. This is useful only that
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
-      * Suspend any side-effects that might happen during the creation of this [[Result]].
+      * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
       *
-      * N.B. this is useless if the [[Result]] was previously assigned to a "val".
+      * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromResult]]
       */
     @inline def suspendResult[T](result: => Result[T])(implicit ec: ExecutionContext): Future[T] =
@@ -327,7 +327,7 @@ object FutureSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Future[T] =
       FutureOps.cond(test, good, bad)
@@ -335,7 +335,7 @@ object FutureSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
       FutureOps.condThr(test, good, bad)
@@ -343,7 +343,7 @@ object FutureSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWith[T](test: Boolean, good: => Future[T], bad: => Anomaly): Future[T] =
       FutureOps.condWith(test, good, bad)
@@ -351,7 +351,7 @@ object FutureSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condWithThr[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
       FutureOps.condWithThr(test, good, bad)
@@ -359,7 +359,7 @@ object FutureSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(
@@ -371,7 +371,7 @@ object FutureSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(
@@ -383,7 +383,7 @@ object FutureSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
@@ -395,7 +395,7 @@ object FutureSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondWithThr[T](
@@ -470,7 +470,7 @@ object FutureSyntax {
       FutureOps.flatFailOnFalseThr(test, bad)
 
     /**
-      * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+      * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -478,7 +478,7 @@ object FutureSyntax {
       FutureOps.unpackOption(nopt, ifNone)
 
     /**
-      * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+      * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -489,17 +489,17 @@ object FutureSyntax {
       FutureOps.unpackOptionThr(nopt, ifNone)
 
     /**
-      * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+      * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
       *
-      * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+      * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def unpackResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.unpackResult(value)
 
     /**
-      * Makes the failure, and non-failure part of this effect explicit in a [[Result]] type.
+      * Makes the failure, and non-failure part of this effect explicit in a [[busymachines.effects.sync.Result]] type.
       *
-      * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
+      * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def attemptResult[T](value: Future[T])(implicit ec: ExecutionContext): Future[Result[T]] =
       FutureOps.attemptResult(value)
@@ -664,7 +664,7 @@ object FutureSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Option]] is [[None]]
+      *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
       * @param effect
       *   The effect to run
       * @return
@@ -679,7 +679,7 @@ object FutureSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Option]] is [[None]]
+      *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
       *   Does not run the side-effect if the value is also a failed effect.
       * @param effect
       *   The effect to run
@@ -726,7 +726,7 @@ object FutureSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Result]] is [[Incorrect]]
+      *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       * @param effect
       *   The effect to run
       * @return
@@ -741,7 +741,7 @@ object FutureSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the boxed value of this [[Result]] is [[Incorrect]]
+      *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       *   Does not run the side-effect if the value is also a failed effect.
       * @param effect
       *   The effect to run
@@ -757,7 +757,7 @@ object FutureSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the boxed value of this [[Result]] is [[Correct]]
+      *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       *   Does not run the side-effect if the value is also a failed effect.
       * @param effect
       *   The effect to run
@@ -773,7 +773,7 @@ object FutureSyntax {
     /**
       *
       * @param value
-      *   Runs the given effect when the value of this [[Result]] is [[Correct]]
+      *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       * @param effect
       *   The effect to run
       * @return
@@ -800,8 +800,8 @@ object FutureSyntax {
       FutureOps.bimap(value, good, bad)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       */
     @inline def bimap[T, R](value: Future[T], result: Result[T] => Result[R])(
       implicit ec: ExecutionContext
@@ -809,10 +809,10 @@ object FutureSyntax {
       FutureOps.bimap(value, result)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       *
-      * The overload that uses [[Throwable]] instead of [[Anomaly]]
+      * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
       */
     @inline def bimapThr[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
       implicit ec: ExecutionContext
@@ -943,9 +943,9 @@ object FutureSyntax {
   final class ReferenceOps[T](val value: Future[T]) extends AnyVal {
 
     /**
-      * Makes the failure, and non-failure part of this effect explicit in a [[Result]] type.
+      * Makes the failure, and non-failure part of this effect explicit in a [[busymachines.effects.sync.Result]] type.
       *
-      * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
+      * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def attempResult(implicit ec: ExecutionContext): Future[Result[T]] =
       FutureOps.attemptResult(value)
@@ -993,17 +993,17 @@ object FutureSyntax {
       FutureOps.bimap(value, good, bad)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       */
     @inline def bimap[R](result: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
       FutureOps.bimap(value, result)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       *
-      * The overload that uses [[Throwable]] instead of [[Anomaly]]
+      * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
       */
     @inline def bimapThr[R](good: T => R, bad: Throwable => Throwable)(implicit ec: ExecutionContext): Future[R] =
       FutureOps.bimapThr(value, good, bad)
@@ -1121,7 +1121,7 @@ object FutureSyntax {
   final class NestedOptionOps[T](val nopt: Future[Option[T]]) extends AnyVal {
 
     /**
-      * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+      * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -1129,7 +1129,7 @@ object FutureSyntax {
       FutureOps.unpackOption(nopt, ifNone)
 
     /**
-      * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+      * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -1138,7 +1138,7 @@ object FutureSyntax {
 
     /**
       *
-      * Runs the given effect when the value of this [[Option]] is [[None]]
+      * Runs the given effect when the value of this [[Option]] is [[scala.None]]
       * Does not run the side-effect if the value is also a failed effect.
       *
       * @param effect
@@ -1172,16 +1172,16 @@ object FutureSyntax {
   final class NestedResultOps[T](val result: Future[Result[T]]) extends AnyVal {
 
     /**
-      * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+      * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
       *
-      * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+      * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def unpack(implicit ec: ExecutionContext): Future[T] =
       FutureOps.unpackResult(result)
 
     /**
       *
-      * Runs the given effect when the boxed value of this [[Result]] is [[Incorrect]]
+      * Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
       * Does not run the side-effect if the value is also a failed effect.
       *
       * @param effect
@@ -1195,7 +1195,7 @@ object FutureSyntax {
 
     /**
       *
-      * Runs the given effect when the boxed value of this [[Result]] is [[Correct]]
+      * Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
       * Does not run the side-effect if the value is also a failed effect.
       *
       * @param effect
@@ -1217,7 +1217,7 @@ object FutureSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condFuture[T](good: => T, bad: => Anomaly): Future[T] =
       FutureOps.cond(test, good, bad)
@@ -1225,7 +1225,7 @@ object FutureSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condFutureThr[T](good: => T, bad: => Throwable): Future[T] =
       FutureOps.condThr(test, good, bad)
@@ -1233,7 +1233,7 @@ object FutureSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWithFuture[T](good: => Future[T], bad: => Anomaly): Future[T] =
       FutureOps.condWith(test, good, bad)
@@ -1241,7 +1241,7 @@ object FutureSyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condWithFutureThr[T](good: => Future[T], bad: => Throwable): Future[T] =
       FutureOps.condWithThr(test, good, bad)
@@ -1312,7 +1312,7 @@ object FutureSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def cond[T](good: => T, bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
@@ -1321,7 +1321,7 @@ object FutureSyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condThr[T](good: => T, bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
@@ -1330,7 +1330,7 @@ object FutureSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condWith[T](good: => Future[T], bad: => Anomaly)(implicit ec: ExecutionContext): Future[T] =
@@ -1339,7 +1339,7 @@ object FutureSyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condWithThr[T](good: => Future[T], bad: => Throwable)(implicit ec: ExecutionContext): Future[T] =
@@ -1414,14 +1414,14 @@ object FutureOps {
     Future.successful(value)
 
   /**
-    * Failed effect but with an [[Anomaly]]
+    * Failed effect but with an [[busymachines.core.Anomaly]]
     */
 
   @inline def fail[T](bad: Anomaly): Future[T] =
     Future.failed(bad.asThrowable)
 
   /**
-    * Failed effect with a [[Throwable]]
+    * Failed effect with a [[java.lang.Throwable]]
     */
 
   @inline def failThr[T](bad: Throwable): Future[T] =
@@ -1430,7 +1430,7 @@ object FutureOps {
   // —— def unit: Future[Unit] —— already defined on Future object
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
 
   @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Future[T] = opt match {
@@ -1445,7 +1445,7 @@ object FutureOps {
     * any exceptions thrown (bad code) is captured "within" the Future.
     *
     * Suspend any side-effects that might happen during the creation of this [[Option]].
-    * If the option is [[None]] then we get back a failed effect with the given [[Anomaly]]
+    * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromOption]]
@@ -1454,7 +1454,7 @@ object FutureOps {
     Future(opt).flatMap(o => FutureOps.fromOption(o, ifNone))
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect, if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect, if it is [[scala.None]]
     */
   @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Future[T] = opt match {
     case None        => FutureOps.failThr(ifNone)
@@ -1468,7 +1468,7 @@ object FutureOps {
     * any exceptions thrown (bad code) is captured "within" the Future.
     *
     * Suspend any side-effects that might happen during the creation of this [[Option]].
-    * If the option is [[None]] then we get back a failed effect with the given [[Throwable]]
+    * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
     *
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromOption]]
@@ -1484,18 +1484,18 @@ object FutureOps {
     * gets immediately applied due to the nature of the Future. This is useful only that
     * any exceptions thrown (bad code) is captured "within" the Future.
     *
-    * Suspend any side-effects that might happen during the creation of this [[Try]].
+    * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
     * Failed Try yields a failed effect
     * Successful Try yields a pure effect
     *
-    * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+    * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
     * You might as well use [[Future.fromTry]]
     */
   @inline def suspendTry[T](tr: => Try[T])(implicit ec: ExecutionContext): Future[T] =
     Future(tr).flatMap(Future.fromTry)
 
   /**
-    * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+    * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
   @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Future[R] = either match {
@@ -1510,7 +1510,7 @@ object FutureOps {
     * any exceptions thrown (bad code) is captured "within" the Future.
     *
     * Suspend any side-effects that might happen during the creation of this [[Either]].
-    * And transform its left-hand side into a [[Anomaly]] and sequence it within
+    * And transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -1522,8 +1522,8 @@ object FutureOps {
     Future(either).flatMap(eit => FutureOps.fromEither(eit, transformLeft))
 
   /**
-    * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-    * if it is a [[Throwable]].
+    * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+    * if it is a [[java.lang.Throwable]].
     */
   @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Future[R] = either match {
     case Left(value)  => FutureOps.failThr(ev(value))
@@ -1537,7 +1537,7 @@ object FutureOps {
     * any exceptions thrown (bad code) is captured "within" the Future.
     *
     * Suspend any side-effects that might happen during the creation of this [[Either]].
-    * And sequence its left-hand-side [[Throwable]] within this effect if it is a [[Throwable]]
+    * And sequence its left-hand-side [[java.lang.Throwable]] within this effect if it is a [[java.lang.Throwable]]
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromEither]]
@@ -1548,7 +1548,7 @@ object FutureOps {
     Future(either).flatMap(eit => FutureOps.fromEitherThr(eit)(ev))
 
   /**
-    * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+    * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     */
   @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Future[R] = either match {
@@ -1563,7 +1563,7 @@ object FutureOps {
     * any exceptions thrown (bad code) is captured "within" the Future.
     *
     * Suspend any side-effects that might happen during the creation of this [[Either]].
-    * And transform its left-hand side into a [[Throwable]] and sequence it within
+    * And transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     *
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
@@ -1575,9 +1575,9 @@ object FutureOps {
 
   /**
     *
-    * Lift the [[Result]] in this effect
-    * [[Incorrect]] becomes a failed effect
-    * [[Correct]] becomes a pure effect
+    * Lift the [[busymachines.effects.sync.Result]] in this effect
+    * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+    * [[busymachines.effects.sync.Correct]] becomes a pure effect
     *
     */
   @inline def fromResult[T](result: Result[T]): Future[T] = result match {
@@ -1591,9 +1591,9 @@ object FutureOps {
     * gets immediately applied due to the nature of the Future. This is useful only that
     * any exceptions thrown (bad code) is captured "within" the Future.
     *
-    * Suspend any side-effects that might happen during the creation of this [[Result]].
+    * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
     *
-    * N.B. this is useless if the [[Result]] was previously assigned to a "val".
+    * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromResult]]
     */
   @inline def suspendResult[T](result: => Result[T])(implicit ec: ExecutionContext): Future[T] =
@@ -1694,7 +1694,7 @@ object FutureOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Future[T] =
     if (test) FutureOps.pure(good) else FutureOps.fail(bad)
@@ -1702,7 +1702,7 @@ object FutureOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
   @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Future[T] =
     if (test) FutureOps.pure(good) else FutureOps.failThr(bad)
@@ -1710,7 +1710,7 @@ object FutureOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def condWith[T](test: Boolean, good: => Future[T], bad: => Anomaly): Future[T] =
     if (test) good else FutureOps.fail(bad)
@@ -1718,7 +1718,7 @@ object FutureOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
   @inline def condWithThr[T](test: Boolean, good: => Future[T], bad: => Throwable): Future[T] =
     if (test) good else FutureOps.failThr(bad)
@@ -1726,7 +1726,7 @@ object FutureOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCond[T](test: Future[Boolean], good: => T, bad: => Anomaly)(
@@ -1738,7 +1738,7 @@ object FutureOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondThr[T](test: Future[Boolean], good: => T, bad: => Throwable)(
@@ -1750,7 +1750,7 @@ object FutureOps {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWith[T](test: Future[Boolean], good: => Future[T], bad: => Anomaly)(
@@ -1762,7 +1762,7 @@ object FutureOps {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWithThr[T](test: Future[Boolean], good: => Future[T], bad: => Throwable)(
@@ -1831,7 +1831,7 @@ object FutureOps {
     test.flatMap(t => FutureOps.failOnFalseThr(t, bad))
 
   /**
-    * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+    * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
     *
     * The failure of this effect takes precedence over the given failure
     */
@@ -1842,7 +1842,7 @@ object FutureOps {
     }
 
   /**
-    * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+    * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
     *
     * The failure of this effect takes precedence over the given failure
     */
@@ -1856,9 +1856,9 @@ object FutureOps {
     }
 
   /**
-    * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+    * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
     *
-    * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+    * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
     */
   @inline def unpackResult[T](value: Future[Result[T]])(implicit ec: ExecutionContext): Future[T] = value.flatMap {
     case Left(a)  => FutureOps.fail(a)
@@ -1866,9 +1866,9 @@ object FutureOps {
   }
 
   /**
-    * Makes the failure, and non-failure part of this effect explicit in a [[Result]] type.
+    * Makes the failure, and non-failure part of this effect explicit in a [[busymachines.effects.sync.Result]] type.
     *
-    * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
+    * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
     */
   @inline def attemptResult[T](value: Future[T])(implicit ec: ExecutionContext): Future[Result[T]] =
     value.map(Result.pure).recover {
@@ -2035,7 +2035,7 @@ object FutureOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Option]] is [[None]]
+    *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
     * @param effect
     *   The effect to run
     * @return
@@ -2048,7 +2048,7 @@ object FutureOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Option]] is [[None]]
+    *   Runs the given effect when the value of this [[Option]] is [[scala.None]]
     *   Does not run the side-effect if the value is also a failed effect.
     * @param effect
     *   The effect to run
@@ -2102,7 +2102,7 @@ object FutureOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Result]] is [[Incorrect]]
+    *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
     * @param effect
     *   The effect to run
     * @return
@@ -2120,7 +2120,7 @@ object FutureOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the boxed value of this [[Result]] is [[Incorrect]]
+    *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
     *   Does not run the side-effect if the value is also a failed effect.
     * @param effect
     *   The effect to run
@@ -2137,7 +2137,7 @@ object FutureOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the value of this [[Result]] is [[Correct]]
+    *   Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
     * @param effect
     *   The effect to run
     * @return
@@ -2156,7 +2156,7 @@ object FutureOps {
   /**
     *
     * @param value
-    *   Runs the given effect when the boxed value of this [[Result]] is [[Correct]]
+    *   Runs the given effect when the boxed value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
     *   Does not run the side-effect if the value is also a failed effect.
     * @param effect
     *   The effect to run
@@ -2185,8 +2185,8 @@ object FutureOps {
     value.transform(tr => tr.bimap(good, bad))
 
   /**
-    * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-    * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+    * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+    * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
     */
   @inline def bimap[T, R](value: Future[T], result: Result[T] => Result[R])(implicit ec: ExecutionContext): Future[R] =
     FutureOps.attemptResult(value).map(result).flatMap {
@@ -2195,10 +2195,10 @@ object FutureOps {
     }
 
   /**
-    * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-    * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+    * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+    * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
     *
-    * The overload that uses [[Throwable]] instead of [[Anomaly]]
+    * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
     */
   @inline def bimapThr[T, R](value: Future[T], good: T => R, bad: Throwable => Throwable)(
     implicit ec: ExecutionContext

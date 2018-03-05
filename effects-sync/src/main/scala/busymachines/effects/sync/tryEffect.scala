@@ -82,25 +82,25 @@ object TrySyntax {
       TryOps.success(value)
 
     /**
-      * Failed effect but with an [[Anomaly]]
+      * Failed effect but with an [[busymachines.core.Anomaly]]
       */
     @inline def fail[T](bad: Anomaly): Try[T] =
       TryOps.fail(bad)
 
     /**
-      * Failed effect but with a [[Throwable]]
+      * Failed effect but with a [[java.lang.Throwable]]
       */
     @inline def failThr[T](bad: Throwable): Try[T] =
       TryOps.failThr(bad)
 
     /**
-      * Failed effect but with an [[Anomaly]]
+      * Failed effect but with an [[busymachines.core.Anomaly]]
       */
     @inline def failure[T](bad: Anomaly): Try[T] =
       TryOps.failure(bad)
 
     /**
-      * Failed effect but with a [[Throwable]]
+      * Failed effect but with a [[java.lang.Throwable]]
       */
     @inline def failureThr[T](bad: Throwable): Try[T] =
       TryOps.failureThr(bad)
@@ -109,33 +109,33 @@ object TrySyntax {
       TryOps.unit
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Try[T] =
       TryOps.fromOption(opt, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
     @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Try[T] =
       TryOps.fromOptionThr(opt, ifNone)
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] =
       TryOps.fromEither(either, transformLeft)
 
     /**
-      * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-      * if it is a [[Throwable]].
+      * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+      * if it is a [[java.lang.Throwable]].
       */
     @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
       TryOps.fromEitherThr(either)(ev)
 
     /**
-      * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+      * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
     @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] =
@@ -143,9 +143,9 @@ object TrySyntax {
 
     /**
       *
-      * Lift the [[Result]] in this effect
-      * [[Incorrect]] becomes a failed effect
-      * [[Correct]] becomes a pure effect
+      * Lift the [[busymachines.effects.sync.Result]] in this effect
+      * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+      * [[busymachines.effects.sync.Correct]] becomes a pure effect
       *
       */
     @inline def fromResult[T](result: Result[T]) =
@@ -154,7 +154,7 @@ object TrySyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Try[T] =
       TryOps.cond(test, good, bad)
@@ -162,7 +162,7 @@ object TrySyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
       TryOps.condThr(test, good, bad)
@@ -170,7 +170,7 @@ object TrySyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWith[T](test: Boolean, good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.condWith(test, good, bad)
@@ -178,7 +178,7 @@ object TrySyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condWithThr[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
       TryOps.condWithThr(test, good, bad)
@@ -186,7 +186,7 @@ object TrySyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCond[T](test: Try[Boolean], good: => T, bad: => Anomaly): Try[T] =
@@ -195,7 +195,7 @@ object TrySyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondThr[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
@@ -204,7 +204,7 @@ object TrySyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondWith[T](test: Try[Boolean], good: => Try[T], bad: => Anomaly): Try[T] =
@@ -213,7 +213,7 @@ object TrySyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def flatCondWithThr[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
@@ -276,7 +276,7 @@ object TrySyntax {
       TryOps.flatFailOnFalseThr(test, bad)
 
     /**
-      * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+      * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -284,7 +284,7 @@ object TrySyntax {
       TryOps.unpackOption(nopt, ifNone)
 
     /**
-      * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+      * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -292,9 +292,9 @@ object TrySyntax {
       TryOps.unpackOptionThr(nopt, ifNone)
 
     /**
-      * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+      * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
       *
-      * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+      * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def unpackResult[T](value: Try[Result[T]]): Try[T] =
       TryOps.unpackResult(value)
@@ -325,11 +325,11 @@ object TrySyntax {
 
     /**
       *
-      * Tranforms this Try into a [[Result]]. If the [[Throwable]] of
-      * the [[scala.util.Failure]] case is also an [[Anomaly]] then
-      * its type is preserved, and simply mapped to a [[Incorrect]].
+      * Tranforms this Try into a [[busymachines.effects.sync.Result]]. If the [[java.lang.Throwable]] of
+      * the [[scala.util.Failure]] case is also an [[busymachines.core.Anomaly]] then
+      * its type is preserved, and simply mapped to a [[busymachines.effects.sync.Incorrect]].
       *
-      * If it is not an [[Anomaly]] then it is wrapped in a
+      * If it is not an [[busymachines.core.Anomaly]] then it is wrapped in a
       * [[busymachines.core.CatastrophicError]]. So be careful with
       * this transformation.
       *
@@ -358,10 +358,10 @@ object TrySyntax {
       TryOps.bimap(value, good, bad)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       *
-      * The overload that uses [[Throwable]] instead of [[Anomaly]]
+      * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
       */
     @inline def bimapThr[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] =
       TryOps.bimapThr(value, good, bad)
@@ -515,11 +515,11 @@ object TrySyntax {
 
     /**
       *
-      * Tranforms this Try into a [[Result]]. If the [[Throwable]] of
-      * the [[scala.util.Failure]] case is also an [[Anomaly]] then
-      * its type is preserved, and simply mapped to a [[Incorrect]].
+      * Tranforms this Try into a [[busymachines.effects.sync.Result]]. If the [[java.lang.Throwable]] of
+      * the [[scala.util.Failure]] case is also an [[busymachines.core.Anomaly]] then
+      * its type is preserved, and simply mapped to a [[busymachines.effects.sync.Incorrect]].
       *
-      * If it is not an [[Anomaly]] then it is wrapped in a
+      * If it is not an [[busymachines.core.Anomaly]] then it is wrapped in a
       * [[busymachines.core.CatastrophicError]]. So be careful with
       * this transformation.
       *
@@ -544,10 +544,10 @@ object TrySyntax {
       TryOps.bimap(value, good, bad)
 
     /**
-      * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-      * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+      * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+      * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
       *
-      * The overload that uses [[Throwable]] instead of [[Anomaly]]
+      * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
       */
     @inline def bimapThr[R](good: T => R, bad: Throwable => Throwable): Try[R] =
       TryOps.bimapThr(value, good, bad)
@@ -591,7 +591,7 @@ object TrySyntax {
   final class NestedOptionOps[T](val nopt: Try[Option[T]]) extends AnyVal {
 
     /**
-      * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+      * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -599,7 +599,7 @@ object TrySyntax {
       TryOps.unpackOption(nopt, ifNone)
 
     /**
-      * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+      * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
       *
       * The failure of this effect takes precedence over the given failure
       */
@@ -613,9 +613,9 @@ object TrySyntax {
   final class NestedResultOps[T](val result: Try[Result[T]]) extends AnyVal {
 
     /**
-      * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+      * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
       *
-      * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+      * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
       */
     @inline def unpack: Try[T] =
       TryOps.unpackResult(result)
@@ -630,7 +630,7 @@ object TrySyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condTry[T](good: => T, bad: => Anomaly): Try[T] =
       TryOps.cond(test, good, bad)
@@ -638,7 +638,7 @@ object TrySyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condTryThr[T](good: => T, bad: => Throwable): Try[T] =
       TryOps.condThr(test, good, bad)
@@ -646,7 +646,7 @@ object TrySyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       */
     @inline def condWithTry[T](good: => Try[T], bad: => Anomaly): Try[T] =
       TryOps.condWith(test, good, bad)
@@ -654,7 +654,7 @@ object TrySyntax {
     /**
       * @return
       *   effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       */
     @inline def condWithTryThr[T](good: => Try[T], bad: => Throwable): Try[T] =
       TryOps.condWithThr(test, good, bad)
@@ -698,7 +698,7 @@ object TrySyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def cond[T](good: => T, bad: => Anomaly): Try[T] =
@@ -707,7 +707,7 @@ object TrySyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condThr[T](good: => T, bad: => Throwable): Try[T] =
@@ -716,7 +716,7 @@ object TrySyntax {
     /**
       * @return
       *   effect resulted from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+      *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condWith[T](good: => Try[T], bad: => Anomaly): Try[T] =
@@ -725,7 +725,7 @@ object TrySyntax {
     /**
       * @return
       *   pure effect from ``good`` if the boolean is true
-      *   failed effect with ``bad`` [[Throwable]] if boolean is false
+      *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
     @inline def condWithThr[T](good: => Try[T], bad: => Throwable): Try[T] =
@@ -785,28 +785,28 @@ object TryOps {
     Success(t)
 
   /**
-    * Failed effect but with an [[Anomaly]]
+    * Failed effect but with an [[busymachines.core.Anomaly]]
     */
 
   @inline def fail[T](bad: Anomaly): Try[T] =
     Failure(bad.asThrowable)
 
   /**
-    * Failed effect but with an [[Anomaly]]
+    * Failed effect but with an [[busymachines.core.Anomaly]]
     */
 
   @inline def failure[T](bad: Anomaly): Try[T] =
     Failure(bad.asThrowable)
 
   /**
-    * Failed effect but with a [[Throwable]]
+    * Failed effect but with a [[java.lang.Throwable]]
     */
 
   @inline def failThr[T](thr: Throwable): Try[T] =
     Failure(thr)
 
   /**
-    * Failed effect but with a [[Throwable]]
+    * Failed effect but with a [[java.lang.Throwable]]
     */
 
   @inline def failureThr[T](thr: Throwable): Try[T] =
@@ -822,7 +822,7 @@ object TryOps {
   //===========================================================================
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Try[T] = opt match {
     case None        => TryOps.fail(ifNone)
@@ -830,7 +830,7 @@ object TryOps {
   }
 
   /**
-    * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
+    * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
     */
   @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Try[T] = opt match {
     case None        => TryOps.failThr(ifNone)
@@ -838,14 +838,14 @@ object TryOps {
   }
 
   /**
-    * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
-    * if it is a [[Throwable]].
+    * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
+    * if it is a [[java.lang.Throwable]].
     */
   @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Try[R] =
     either.toTry(ev)
 
   /**
-    * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
+    * Lift this [[Either]] and transform its left-hand side into a [[busymachines.core.Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
   @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Try[R] = either match {
@@ -854,7 +854,7 @@ object TryOps {
   }
 
   /**
-    * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
+    * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     */
   @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Try[R] = either match {
@@ -864,9 +864,9 @@ object TryOps {
 
   /**
     *
-    * Lift the [[Result]] in this effect
-    * [[Incorrect]] becomes a failed effect
-    * [[Correct]] becomes a pure effect
+    * Lift the [[busymachines.effects.sync.Result]] in this effect
+    * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
+    * [[busymachines.effects.sync.Correct]] becomes a pure effect
     *
     */
   @inline def fromResult[T](r: Result[T]): Try[T] = r match {
@@ -881,7 +881,7 @@ object TryOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Try[T] =
     if (test) TryOps.pure(good) else TryOps.fail(bad)
@@ -889,7 +889,7 @@ object TryOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
   @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Try[T] =
     if (test) TryOps.pure(good) else TryOps.failThr(bad)
@@ -897,7 +897,7 @@ object TryOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def condWith[T](test: Boolean, good: => Try[T], bad: => Anomaly): Try[T] =
     if (test) good else TryOps.fail(bad)
@@ -905,7 +905,7 @@ object TryOps {
   /**
     * @return
     *   effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
   @inline def condWithThr[T](test: Boolean, good: => Try[T], bad: => Throwable): Try[T] =
     if (test) good else TryOps.failThr(bad)
@@ -941,7 +941,7 @@ object TryOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCond[T](test: Try[Boolean], good: => T, bad: => Anomaly): Try[T] =
@@ -950,7 +950,7 @@ object TryOps {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondThr[T](test: Try[Boolean], good: => T, bad: => Throwable): Try[T] =
@@ -959,7 +959,7 @@ object TryOps {
   /**
     * @return
     *   effect resulted from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Anomaly]] if boolean is false
+    *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWith[T](test: Try[Boolean], good: => Try[T], bad: => Anomaly): Try[T] =
@@ -968,7 +968,7 @@ object TryOps {
   /**
     * @return
     *   pure effect from ``good`` if the boolean is true
-    *   failed effect with ``bad`` [[Throwable]] if boolean is false
+    *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
   @inline def flatCondWithThr[T](test: Try[Boolean], good: => Try[T], bad: => Throwable): Try[T] =
@@ -1003,7 +1003,7 @@ object TryOps {
     test.flatMap(b => if (!b) TryOps.failThr(bad) else TryOps.unit)
 
   /**
-    * Sequences the given [[Anomaly]] if Option is [[None]] into this effect
+    * Sequences the given [[busymachines.core.Anomaly]] if Option is [[scala.None]] into this effect
     *
     * The failure of this effect takes precedence over the given failure
     */
@@ -1011,7 +1011,7 @@ object TryOps {
     nopt.flatMap(opt => TryOps.fromOption(opt, ifNone))
 
   /**
-    * Sequences the given [[Throwable]] if Option is [[None]] into this effect
+    * Sequences the given [[java.lang.Throwable]] if Option is [[scala.None]] into this effect
     *
     * The failure of this effect takes precedence over the given failure
     */
@@ -1019,9 +1019,9 @@ object TryOps {
     nopt.flatMap(opt => TryOps.fromOptionThr(opt, ifNone))
 
   /**
-    * Sequences the failure of the [[Incorrect]] [[Result]] into this effect.
+    * Sequences the failure of the [[busymachines.effects.sync.Incorrect]] [[busymachines.effects.sync.Result]] into this effect.
     *
-    * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
+    * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
     */
   @inline def unpackResult[T](result: Try[Result[T]]): Try[T] =
     result.flatMap(r => TryOps.fromResult(r))
@@ -1058,11 +1058,11 @@ object TryOps {
 
   /**
     *
-    * Tranforms this Try into a [[Result]]. If the [[Throwable]] of
-    * the [[scala.util.Failure]] case is also an [[Anomaly]] then
-    * its type is preserved, and simply mapped to a [[Incorrect]].
+    * Tranforms this Try into a [[busymachines.effects.sync.Result]]. If the [[java.lang.Throwable]] of
+    * the [[scala.util.Failure]] case is also an [[busymachines.core.Anomaly]] then
+    * its type is preserved, and simply mapped to a [[busymachines.effects.sync.Incorrect]].
     *
-    * If it is not an [[Anomaly]] then it is wrapped in a
+    * If it is not an [[busymachines.core.Anomaly]] then it is wrapped in a
     * [[busymachines.core.CatastrophicError]]. So be careful with
     * this transformation.
     *
@@ -1093,10 +1093,10 @@ object TryOps {
   }
 
   /**
-    * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
-    * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
+    * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
+    * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
     *
-    * The overload that uses [[Throwable]] instead of [[Anomaly]]
+    * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
     */
   @inline def bimapThr[T, R](value: Try[T], good: T => R, bad: Throwable => Throwable): Try[R] = value match {
     case Failure(t) => TryOps.failThr(bad(t))

@@ -56,11 +56,11 @@ object TrySyntaxAsync {
       * gets immediately applied due to the nature of the Future. This is useful only that
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
-      * Suspend any side-effects that might happen during the creation of this [[Try]].
+      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
       * Failed Try yields a failed effect
       * Successful Try yields a pure effect
       *
-      * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[Future.fromTry]]
       */
     @inline def suspendInFuture[T](value: => Try[T])(implicit ec: ExecutionContext): Future[T] =
@@ -68,11 +68,11 @@ object TrySyntaxAsync {
 
     /**
       *
-      * Suspend any side-effects that might happen during the creation of this [[Try]].
+      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
       * Failed Try yields a failed effect
       * Successful Try yields a pure effect
       *
-      * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromTry]]
       */
     @inline def suspendInIO[T](value: => Try[T]): IO[T] =
@@ -80,11 +80,11 @@ object TrySyntaxAsync {
 
     /**
       *
-      * Suspend any side-effects that might happen during the creation of this [[Try]].
+      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
       * Failed Try yields a failed effect
       * Successful Try yields a pure effect
       *
-      * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
     @inline def suspendInTask[T](value: => Try[T]): Task[T] =
@@ -129,11 +129,11 @@ object TrySyntaxAsync {
       * gets immediately applied due to the nature of the Future. This is useful only that
       * any exceptions thrown (bad code) is captured "within" the Future.
       *
-      * Suspend any side-effects that might happen during the creation of this [[Try]].
+      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
       * Failed Try yields a failed effect
       * Successful Try yields a pure effect
       *
-      * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[Future.fromTry]]
       */
     @inline def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
@@ -141,11 +141,11 @@ object TrySyntaxAsync {
 
     /**
       *
-      * Suspend any side-effects that might happen during the creation of this [[Try]].
+      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
       * Failed Try yields a failed effect
       * Successful Try yields a pure effect
       *
-      * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromTry]]
       */
     @inline def suspendInIO: IO[T] =
@@ -153,11 +153,11 @@ object TrySyntaxAsync {
 
     /**
       *
-      * Suspend any side-effects that might happen during the creation of this [[Try]].
+      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
       * Failed Try yields a failed effect
       * Successful Try yields a pure effect
       *
-      * N.B. this is useless if the [[Try]] was previously assigned to a "val".
+      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
     @inline def suspendInTask: Task[T] =
