@@ -72,8 +72,10 @@ private[rest_json_test] class BasicAuthenticatedRoutesRestAPIForTesting
         pathEndOrSingleSlash {
           get {
             complete(
-              (StatusCodes.OK,
-               Future.successful(SomeTestDTOGet(int = 42, string = basicAuth.getOrElse("it's optional!"), None)))
+              (
+                StatusCodes.OK,
+                Future.successful(SomeTestDTOGet(int = 42, string = basicAuth.getOrElse("it's optional!"), None))
+              )
             )
           }
         }

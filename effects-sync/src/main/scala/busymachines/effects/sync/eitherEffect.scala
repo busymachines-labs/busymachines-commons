@@ -37,7 +37,7 @@ object EitherSyntax {
     *
     */
   trait Implicits {
-    implicit def bmcEitherEffectReferenceOps[L, R](value: Either[L, R]): ReferenceOps[L, R] =
+    implicit final def bmcEitherEffectReferenceOps[L, R](value: Either[L, R]): ReferenceOps[L, R] =
       new ReferenceOps(value)
   }
 
@@ -52,8 +52,7 @@ object EitherSyntax {
       * Discards the left value
       *
       */
-    @scala.inline
-    def asOptionUnsafe(): Option[R] =
+    @inline def asOptionUnsafe(): Option[R] =
       value.toOption
 
     /**
@@ -62,7 +61,7 @@ object EitherSyntax {
       * Discards the left value
       *
       */
-    def asListUnsafe(): List[R] = value match {
+    @inline def asListUnsafe(): List[R] = value match {
       case Right(good) => List(good)
       case _           => Nil
     }
@@ -71,27 +70,27 @@ object EitherSyntax {
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asTry(transformLeft: L => Anomaly): Try[R] =
+    @inline def asTry(transformLeft: L => Anomaly): Try[R] =
       TryOps.fromEither(value, transformLeft)
 
     /**
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def asTryThr(implicit ev: L <:< Throwable): Try[R] =
+    @inline def asTryThr(implicit ev: L <:< Throwable): Try[R] =
       TryOps.fromEitherThr(value)(ev)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def asTryThr(transformLeft: L => Throwable): Try[R] =
+    @inline def asTryThr(transformLeft: L => Throwable): Try[R] =
       TryOps.fromEitherThr(value, transformLeft)
 
-    def asResult(transformLeft: L => Anomaly): Result[R] =
+    @inline def asResult(transformLeft: L => Anomaly): Result[R] =
       Result.fromEither(value, transformLeft)
 
-    def asResultThr(implicit ev: L <:< Throwable): Result[R] =
+    @inline def asResultThr(implicit ev: L <:< Throwable): Result[R] =
       Result.fromEitherThr(value)(ev)
 
     /**
@@ -99,7 +98,7 @@ object EitherSyntax {
       *
       * Throws exception if there isn't one
       */
-    def unsafeGetLeft(): L =
+    @inline def unsafeGetLeft(): L =
       value.left.get
 
     /**
@@ -107,7 +106,7 @@ object EitherSyntax {
       *
       * Throws exception if there isn't one
       */
-    def unsafeGetRight(): R =
+    @inline def unsafeGetRight(): R =
       value.right.get
   }
 }

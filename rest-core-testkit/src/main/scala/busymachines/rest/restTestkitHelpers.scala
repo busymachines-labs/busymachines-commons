@@ -129,8 +129,9 @@ private[rest] object RequestDebugging {
   private[rest] def requestLogFun(
     printingTimeoutDuration: FiniteDuration
   )(transformEntity:         String => String)(
-    implicit materializer:   Materializer,
-    ec:                      ExecutionContext
+    implicit
+    materializer: Materializer,
+    ec:           ExecutionContext
   ): HttpRequest => Unit = { req =>
     printRequest(req, printingTimeoutDuration)(transformEntity)
   }

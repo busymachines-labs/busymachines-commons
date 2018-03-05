@@ -38,7 +38,6 @@ final class JsonDefaultAutoSemiAutoInteractionTest extends FlatSpec {
 
   it should "... auto should use the explicit codec for sub-hierarchies of Melon" in {
 
-
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
     val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
     val smallMelon:  Melon = SmallMelon

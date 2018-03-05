@@ -2,6 +2,9 @@ package busymachines.effects.async
 
 import busymachines.core._
 import busymachines.effects.sync._
+import busymachines.effects.sync.validated._
+
+import cats.{effect => ce}
 
 import scala.collection.generic.CanBuildFrom
 import scala.util.control.NonFatal
@@ -13,10 +16,9 @@ import scala.util.control.NonFatal
   *
   */
 trait IOTypeDefinitions {
-  import cats.{effect => ce}
 
-  type IO[T] = ce.IO[T]
-  val IO: ce.IO.type = ce.IO
+  final type IO[T] = ce.IO[T]
+  @inline final def IO: ce.IO.type = ce.IO
 }
 
 object IOSyntax {
@@ -25,44 +27,42 @@ object IOSyntax {
     *
     */
   trait Implicits {
-    implicit def bmcIOCompanionObjectOps(obj: IO.type): CompanionObjectOps =
+    implicit final def bmcIOCompanionObjectOps(obj: ce.IO.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcIOReferenceOps[T](value: IO[T]): ReferenceOps[T] =
+    implicit final def bmcIOReferenceOps[T](value: IO[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcIONestedOptionOps[T](nopt: IO[Option[T]]): NestedOptionOps[T] =
+    implicit final def bmcIONestedOptionOps[T](nopt: IO[Option[T]]): NestedOptionOps[T] =
       new NestedOptionOps(nopt)
 
-    implicit def bmcIONestedResultOps[T](result: IO[Result[T]]): NestedResultOps[T] =
+    implicit final def bmcIONestedResultOps[T](result: IO[Result[T]]): NestedResultOps[T] =
       new NestedResultOps(result)
 
-    implicit def bmcIOBooleanOps(test: Boolean): BooleanOps =
+    implicit final def bmcIOBooleanOps(test: Boolean): BooleanOps =
       new BooleanOps(test)
 
-    implicit def bmcIONestedBooleanOps(test: IO[Boolean]): NestedBooleanOps =
+    implicit final def bmcIONestedBooleanOps(test: IO[Boolean]): NestedBooleanOps =
       new NestedBooleanOps(test)
   }
 
   /**
     *
     */
-  final class CompanionObjectOps(val obj: IO.type) extends AnyVal {
+  final class CompanionObjectOps(val obj: ce.IO.type) extends AnyVal {
 
     // —— def pure[T](value: T): IO[T] —— already defined on companion object
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
-    @scala.inline
-    def fail[T](bad: Anomaly): IO[T] =
+    @inline def fail[T](bad: Anomaly): IO[T] =
       IOOps.fail(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
-    @scala.inline
-    def failThr[T](bad: Throwable): IO[T] =
+    @inline def failThr[T](bad: Throwable): IO[T] =
       IOOps.failThr(bad)
 
     // —— def unit: IO[Unit] —— already defined on IO object
@@ -70,7 +70,7 @@ object IOSyntax {
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def fromOption[T](opt: Option[T], ifNone: => Anomaly): IO[T] =
+    @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): IO[T] =
       IOOps.fromOption(opt, ifNone)
 
     /**
@@ -81,13 +81,13 @@ object IOSyntax {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
       */
-    def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): IO[T] =
+    @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): IO[T] =
       IOOps.suspendOption(opt, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): IO[T] =
+    @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): IO[T] =
       IOOps.fromOptionThr(opt, ifNone)
 
     /**
@@ -98,14 +98,14 @@ object IOSyntax {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromOption]]
       */
-    def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
+    @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
       IOOps.suspendOptionThr(opt, ifNone)
 
     /**
       * [[scala.util.Failure]] is sequenced into this effect
       * [[scala.util.Success]] is the pure value of this effect
       */
-    def fromTry[T](tr: Try[T]): IO[T] =
+    @inline def fromTry[T](tr: Try[T]): IO[T] =
       IOOps.fromTry(tr)
 
     /**
@@ -117,14 +117,14 @@ object IOSyntax {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromTry]]
       */
-    def suspendTry[T](tr: => Try[T]): IO[T] =
+    @inline def suspendTry[T](tr: => Try[T]): IO[T] =
       IOOps.suspendTry(tr)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def fromEitherAnomaly[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] =
+    @inline def fromEitherAnomaly[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] =
       IOOps.fromEither(either, transformLeft)
 
     /**
@@ -136,14 +136,14 @@ object IOSyntax {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromEither]]
       */
-    def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): IO[R] =
+    @inline def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): IO[R] =
       IOOps.suspendEither(either, transformLeft)
 
     /**
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+    @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
       IOOps.fromEitherThr(either)(ev)
 
     /**
@@ -154,14 +154,14 @@ object IOSyntax {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromEither]]
       */
-    def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+    @inline def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
       IOOps.suspendEitherThr(either)(ev)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] =
+    @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] =
       IOOps.fromEitherThr(either, transformLeft)
 
     /**
@@ -172,7 +172,7 @@ object IOSyntax {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromEither]]
       */
-    def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): IO[R] =
+    @inline def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): IO[R] =
       IOOps.suspendEitherThr(either, transformLeft)
 
     /**
@@ -182,7 +182,7 @@ object IOSyntax {
       * [[Correct]] becomes a pure effect
       *
       */
-    def fromResult[T](result: Result[T]): IO[T] =
+    @inline def fromResult[T](result: Result[T]): IO[T] =
       IOOps.fromResult(result)
 
     /**
@@ -192,8 +192,81 @@ object IOSyntax {
       * N.B. this is useless if the [[Result]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromResult]]
       */
-    def suspendResult[T](result: => Result[T]): IO[T] =
+    @inline def suspendResult[T](result: => Result[T]): IO[T] =
       IOOps.suspendResult(result)
+
+    /**
+      *
+      * Lift the [[Validated]] in this effect
+      * [[Validated.Invalid]] becomes a failed effect
+      * [[Validated.Valid]] becomes a pure effect
+      *
+      * Consider using the overload with an extra constructor parameter
+      * for a custom [[busymachines.core.Anomalies]], otherwise your
+      * all failed cases will be wrapped in a:
+      * [[busymachines.effects.sync.validated.GenericValidationFailures]]
+      */
+    @inline def fromValidated[T](value: Validated[T]): IO[T] =
+      IOOps.fromValidated(value)
+
+    /**
+      *
+      * Lift the [[Validated]] in this effect
+      * [[Validated.Invalid]] becomes a failed effect
+      * [[Validated.Valid]] becomes a pure effect
+      *
+      * Provide the constructor for the specific [[busymachines.core.Anomalies]]
+      * into which the anomalies shall be stored.
+      *
+      * e.g. Creating case classes like bellow, or constructors on companion objects
+      * makes using this method almost completely non-intrusive
+      * {{{
+      * case class TVFs(
+      *   bad:  Anomaly,
+      *   bads: List[Anomaly] = Nil
+      * ) extends AnomalousFailures(
+      *       TVFsID,
+      *       s"Test validation failed with ${bads.length + 1} anomalies",
+      *       bad,
+      *       bads
+      *     )
+      *
+      * case object TVFsID extends AnomalyID {
+      *   override def name = "test_validation_001"
+      * }
+      *
+      * object Test {
+      *   IO.fromValidated(
+      *     Validated.pure(42),
+      *     TVFs
+      *   )
+      *   //in validated postfix notation it's infinitely more concise
+      *   Validated.pure(42).asIO(TVFs)
+      * }
+      * }}}
+      *
+      */
+    @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
+      IOOps.fromValidated(value, ctor)
+
+    /**
+      *
+      * Suspend any side-effects that might happen during the creation of this [[Validated]].
+      *
+      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+      * You might as well use [[IOOps.fromValidated]]
+      */
+    @inline def suspendValidated[T](value: => Validated[T]): IO[T] =
+      IOOps.suspendValidated(value)
+
+    /**
+      * Suspend any side-effects that might happen during the creation of this [[Validated]].
+      *
+      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+      * You might as well use [[FutureOps.fromValidated]]
+      */
+    @inline def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
+      IOOps.suspendValidated(value, ctor)
 
     /**
       * !!! USE WITH CARE !!!
@@ -203,7 +276,7 @@ object IOSyntax {
       * If you are certain that this [[Future]] is pure, then you can use
       * this method to lift it into [[IO]].
       */
-    def fromFuturePure[T](future: Future[T])(implicit ec: ExecutionContext): IO[T] =
+    @inline def fromFuturePure[T](future: Future[T])(implicit ec: ExecutionContext): IO[T] =
       IOOps.fromFuturePure(future)
 
     /**
@@ -214,7 +287,7 @@ object IOSyntax {
       * Usage. N.B. that this only makes sense if the creation of the Future itself
       * is also suspended in the [[IO]].
       * {{{
-      *   def writeToDB(v: Int, s: String): Future[Long] = ???
+      * @inline def writeToDB(v: Int, s: String): Future[Long] = ???
       *   //...
       *   val io = IO.suspendFuture(writeToDB(42, "string"))
       *   //no database writes happened yet, since the future did
@@ -232,7 +305,7 @@ object IOSyntax {
       * }}}
       *
       */
-    def suspendFuture[T](result: => Future[T])(implicit ec: ExecutionContext): IO[T] =
+    @inline def suspendFuture[T](result: => Future[T])(implicit ec: ExecutionContext): IO[T] =
       IOOps.suspendFuture(result)
 
     /**
@@ -240,7 +313,7 @@ object IOSyntax {
       * Transform a monix [[Task]] into an [[IO]]. No gotchas because pure
       * functional programming is awesome.
       */
-    def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
+    @inline def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
       IOOps.fromTask(task)
 
     /**
@@ -248,7 +321,7 @@ object IOSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
+    @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
       IOOps.cond(test, good, bad)
 
     /**
@@ -256,7 +329,7 @@ object IOSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condThr[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
+    @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
       IOOps.condThr(test, good, bad)
 
     /**
@@ -264,7 +337,7 @@ object IOSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWith[T](test: Boolean, good: => IO[T], bad: => Anomaly): IO[T] =
+    @inline def condWith[T](test: Boolean, good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.condWith(test, good, bad)
 
     /**
@@ -272,7 +345,7 @@ object IOSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condWithThr[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
+    @inline def condWithThr[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
       IOOps.condWithThr(test, good, bad)
 
     /**
@@ -281,7 +354,7 @@ object IOSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCond[T](test: IO[Boolean], good: => T, bad: => Anomaly): IO[T] =
+    @inline def flatCond[T](test: IO[Boolean], good: => T, bad: => Anomaly): IO[T] =
       IOOps.flatCond(test, good, bad)
 
     /**
@@ -290,7 +363,7 @@ object IOSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondThr[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
+    @inline def flatCondThr[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
       IOOps.flatCondThr(test, good, bad)
 
     /**
@@ -299,7 +372,7 @@ object IOSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondWith[T](test: IO[Boolean], good: => IO[T], bad: => Anomaly): IO[T] =
+    @inline def flatCondWith[T](test: IO[Boolean], good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.flatCondWith(test, good, bad)
 
     /**
@@ -308,63 +381,63 @@ object IOSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondWithThr[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
+    @inline def flatCondWithThr[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
       IOOps.flatCondWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrue(test: Boolean, bad: => Anomaly): IO[Unit] =
+    @inline def failOnTrue(test: Boolean, bad: => Anomaly): IO[Unit] =
       IOOps.failOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueThr(test: Boolean, bad: => Throwable): IO[Unit] =
+    @inline def failOnTrueThr(test: Boolean, bad: => Throwable): IO[Unit] =
       IOOps.failOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalse(test: Boolean, bad: => Anomaly): IO[Unit] =
+    @inline def failOnFalse(test: Boolean, bad: => Anomaly): IO[Unit] =
       IOOps.failOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseThr(test: Boolean, bad: => Throwable): IO[Unit] =
+    @inline def failOnFalseThr(test: Boolean, bad: => Throwable): IO[Unit] =
       IOOps.failOnFalseThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def flatFailOnTrue(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
+    @inline def flatFailOnTrue(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
       IOOps.flatFailOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def flatFailOnTrueThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
+    @inline def flatFailOnTrueThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
       IOOps.flatFailOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def flatFailOnFalse(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
+    @inline def flatFailOnFalse(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
       IOOps.flatFailOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def flatFailOnFalseThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
+    @inline def flatFailOnFalseThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
       IOOps.flatFailOnFalseThr(test, bad)
 
     /**
@@ -372,7 +445,7 @@ object IOSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
+    @inline def unpackOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
       IOOps.unpackOption(nopt, ifNone)
 
     /**
@@ -380,7 +453,7 @@ object IOSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
+    @inline def unpackOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
       IOOps.unpackOptionThr(nopt, ifNone)
 
     /**
@@ -388,7 +461,7 @@ object IOSyntax {
       *
       * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
       */
-    def unpackResult[T](value: IO[Result[T]]): IO[T] =
+    @inline def unpackResult[T](value: IO[Result[T]]): IO[T] =
       IOOps.unpackResult(value)
 
     /**
@@ -396,7 +469,7 @@ object IOSyntax {
       *
       * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
       */
-    def attemptResult[T](value: IO[T]): IO[Result[T]] =
+    @inline def attemptResult[T](value: IO[T]): IO[Result[T]] =
       IOOps.attemptResult(value)
 
     /**
@@ -405,13 +478,13 @@ object IOSyntax {
       * The moment you call this, the side-effects suspended in this [[IO]] start being
       * executed.
       */
-    def asFutureUnsafe[T](value: IO[T]): Future[T] =
+    @inline def asFutureUnsafe[T](value: IO[T]): Future[T] =
       IOOps.asFutureUnsafe(value)
 
     /**
       * No gotchas. Pure functional programming = <3
       */
-    def asTask[T](value: IO[T]): Task[T] =
+    @inline def asTask[T](value: IO[T]): Task[T] =
       IOOps.asTask(value)
 
     /**
@@ -421,7 +494,7 @@ object IOSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    def unsafeSyncGet[T](value: IO[T]): T =
+    @inline def unsafeSyncGet[T](value: IO[T]): T =
       IOOps.unsafeSyncGet(value)
 
     //=========================================================================
@@ -439,7 +512,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnTrue[_](test: Boolean, effect: => IO[_]): IO[Unit] =
+    @inline def effectOnTrue(test: Boolean, effect: => IO[_]): IO[Unit] =
       IOOps.effectOnTrue(test, effect)
 
     /**
@@ -453,7 +526,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnTrue[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
+    @inline def flatEffectOnTrue(test: IO[Boolean], effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnTrue(test, effect)
 
     /**
@@ -467,7 +540,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFalse[_](test: Boolean, effect: => IO[_]): IO[Unit] =
+    @inline def effectOnFalse(test: Boolean, effect: => IO[_]): IO[Unit] =
       IOOps.effectOnFalse(test, effect)
 
     /**
@@ -481,7 +554,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnFalse[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
+    @inline def flatEffectOnFalse(test: IO[Boolean], effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -494,7 +567,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
+    @inline def effectOnFail[T](value: Option[T], effect: => IO[_]): IO[Unit] =
       IOOps.effectOnFail(value, effect)
 
     /**
@@ -508,7 +581,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnNone[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
+    @inline def flatEffectOnNone[T](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnNone(value, effect)
 
     /**
@@ -521,7 +594,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPure[T](value: Option[T], effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnPure(value, effect)
 
     /**
@@ -535,7 +608,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnSome[T, _](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
+    @inline def flatEffectOnSome[T](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnSome(value, effect)
 
     /**
@@ -548,7 +621,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[T, _](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] =
+    @inline def effectOnFail[T](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.effectOnFail(value, effect)
 
     /**
@@ -562,7 +635,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnIncorrect[T, _](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
+    @inline def flatEffectOnIncorrect[T](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.flatEffectOnIncorrect(value, effect)
 
     /**
@@ -576,7 +649,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnCorrect[T, _](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
+    @inline def flatEffectOnCorrect[T](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnCorrect(value, effect)
 
     /**
@@ -589,7 +662,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[T, _](value: Result[T], effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPure[T](value: Result[T], effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnPure(value, effect)
 
     //=========================================================================
@@ -601,14 +674,14 @@ object IOSyntax {
       * "bi" map, because it also allows you to change both branches of the effect, not just the
       * happy path.
       */
-    def bimap[T, R](value: IO[T], good: T => R, bad: Throwable => Anomaly): IO[R] =
+    @inline def bimap[T, R](value: IO[T], good: T => R, bad: Throwable => Anomaly): IO[R] =
       IOOps.bimap(value, good, bad)
 
     /**
       * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
       * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
       */
-    def bimap[T, R](value: IO[T], result: Result[T] => Result[R]): IO[R] =
+    @inline def bimap[T, R](value: IO[T], result: Result[T] => Result[R]): IO[R] =
       IOOps.bimap(value, result)
 
     /**
@@ -617,7 +690,7 @@ object IOSyntax {
       *
       * The overload that uses [[Throwable]] instead of [[Anomaly]]
       */
-    def bimapThr[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
+    @inline def bimapThr[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
       IOOps.bimapThr(value, good, bad)
 
     /**
@@ -637,7 +710,7 @@ object IOSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[T, R](value: IO[T], good: T => R, bad: Throwable => R): IO[R] =
+    @inline def morph[T, R](value: IO[T], good: T => R, bad: Throwable => R): IO[R] =
       IOOps.morph(value, good, bad)
 
     /**
@@ -646,7 +719,7 @@ object IOSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[T, R](value: IO[T], result: Result[T] => R): IO[R] =
+    @inline def morph[T, R](value: IO[T], result: Result[T] => R): IO[R] =
       IOOps.morph(value, result)
 
     /**
@@ -657,7 +730,7 @@ object IOSyntax {
       * it's just the final value that is discarded
       *
       */
-    def discardContent[_](value: IO[_]): IO[Unit] =
+    @inline def discardContent(value: IO[_]): IO[Unit] =
       IOOps.discardContent(value)
 
     //=========================================================================
@@ -669,7 +742,7 @@ object IOSyntax {
       * https://typelevel.org/cats/api/cats/Traverse.html
       *
       * {{{
-      *   def indexToFilename(i: Int): IO[String] = ???
+      * @inline def indexToFilename(i: Int): IO[String] = ???
       *
       *   val fileIndex: List[Int] = List(0,1,2,3,4)
       *   val fileNames: IO[List[String]] = IO.traverse(fileIndex){ i =>
@@ -677,10 +750,22 @@ object IOSyntax {
       *   }
       * }}}
       */
-    def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
     ): IO[C[B]] = IOOps.traverse(col)(fn)
+
+    /**
+      * Similar to [[traverse]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[traverse]]
+      *
+      */
+    @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): IO[Unit] = IOOps.traverse_(col)(fn)
 
     /**
       * see:
@@ -689,16 +774,28 @@ object IOSyntax {
       * Specialized case of [[traverse]]
       *
       * {{{
-      *   def indexToFilename(i: Int): IO[String] = ???
+      * @inline def indexToFilename(i: Int): IO[String] = ???
       *
       *   val fileNamesIO: List[IO[String]] = List(0,1,2,3,4).map(indexToFileName)
       *   val fileNames: IO[List[String]] = IO.sequence(fileNamesIO)
       * }}}
       */
-    def sequence[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+    @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
       implicit
       cbf: CanBuildFrom[M[IO[A]], A, M[A]]
     ): IO[M[A]] = IOOps.sequence(in)
+
+    /**
+      * Similar to [[sequence]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[sequence]]
+      *
+      */
+    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+      implicit
+      cbf: CanBuildFrom[M[IO[A]], A, M[A]]
+    ): IO[Unit] = IOOps.sequence_(in)
 
     /**
       *
@@ -722,10 +819,22 @@ object IOSyntax {
       *
       *
       */
-    def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
     ): IO[C[B]] = IOOps.serialize(col)(fn)
+
+    /**
+      * Similar to [[serialize]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[serialize]]
+      *
+      */
+    @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): IO[Unit] = IOOps.serialize_(col)(fn)
 
   }
 
@@ -739,7 +848,7 @@ object IOSyntax {
       *
       * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
       */
-    def attempResult: IO[Result[T]] =
+    @inline def attempResult: IO[Result[T]] =
       IOOps.attemptResult(value)
 
     /**
@@ -748,13 +857,13 @@ object IOSyntax {
       * The moment you call this, the side-effects suspended in this [[IO]] start being
       * executed.
       */
-    def asFutureUnsafe(): Future[T] =
+    @inline def asFutureUnsafe(): Future[T] =
       IOOps.asFutureUnsafe(value)
 
     /**
       * No gotchas. Pure functional programming = <3
       */
-    def asTask: Task[T] =
+    @inline def asTask: Task[T] =
       IOOps.asTask(value)
 
     /**
@@ -764,7 +873,7 @@ object IOSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    def unsafeSyncGet(): T =
+    @inline def unsafeSyncGet(): T =
       IOOps.unsafeSyncGet(value)
 
     /**
@@ -772,14 +881,14 @@ object IOSyntax {
       * "bi" map, because it also allows you to change both branches of the effect, not just the
       * happy path.
       */
-    def bimap[R](good: T => R, bad: Throwable => Anomaly): IO[R] =
+    @inline def bimap[R](good: T => R, bad: Throwable => Anomaly): IO[R] =
       IOOps.bimap(value, good, bad)
 
     /**
       * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
       * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
       */
-    def bimap[R](result: Result[T] => Result[R]): IO[R] =
+    @inline def bimap[R](result: Result[T] => Result[R]): IO[R] =
       IOOps.bimap(value, result)
 
     /**
@@ -788,7 +897,7 @@ object IOSyntax {
       *
       * The overload that uses [[Throwable]] instead of [[Anomaly]]
       */
-    def bimapThr[R](good: T => R, bad: Throwable => Throwable): IO[R] =
+    @inline def bimapThr[R](good: T => R, bad: Throwable => Throwable): IO[R] =
       IOOps.bimapThr(value, good, bad)
 
     /**
@@ -808,7 +917,7 @@ object IOSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[R](good: T => R, bad: Throwable => R): IO[R] =
+    @inline def morph[R](good: T => R, bad: Throwable => R): IO[R] =
       IOOps.morph(value, good, bad)
 
     /**
@@ -817,7 +926,7 @@ object IOSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[R](result: Result[T] => R): IO[R] =
+    @inline def morph[R](result: Result[T] => R): IO[R] =
       IOOps.morph(value, result)
 
     /**
@@ -828,7 +937,7 @@ object IOSyntax {
       * it's just the final value that is discarded
       *
       */
-    def discardContent: IO[Unit] =
+    @inline def discardContent: IO[Unit] =
       IOOps.discardContent(value)
   }
 
@@ -843,7 +952,7 @@ object IOSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpack(ifNone: => Anomaly): IO[T] =
+    @inline def unpack(ifNone: => Anomaly): IO[T] =
       IOOps.unpackOption(nopt, ifNone)
 
     /**
@@ -851,7 +960,7 @@ object IOSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackThr(ifNone: => Throwable): IO[T] =
+    @inline def unpackThr(ifNone: => Throwable): IO[T] =
       IOOps.unpackOptionThr(nopt, ifNone)
 
     /**
@@ -865,7 +974,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[_](effect: => IO[_]): IO[Unit] =
+    @inline def effectOnFail(effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnNone(nopt, effect)
 
     /**
@@ -879,7 +988,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[_](effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPure(effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnSome(nopt, effect)
 
   }
@@ -894,8 +1003,7 @@ object IOSyntax {
       *
       * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
       */
-    @scala.inline
-    def unpack: IO[T] =
+    @inline def unpack: IO[T] =
       IOOps.unpackResult(result)
 
     /**
@@ -909,7 +1017,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[_](effect: Anomaly => IO[_]): IO[Unit] =
+    @inline def effectOnFail(effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.flatEffectOnIncorrect(result, effect)
 
     /**
@@ -923,7 +1031,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[_](effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPure(effect: T => IO[_]): IO[Unit] =
       IOOps.flatEffectOnCorrect(result, effect)
   }
 
@@ -938,7 +1046,7 @@ object IOSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condIO[T](good: => T, bad: => Anomaly): IO[T] =
+    @inline def condIO[T](good: => T, bad: => Anomaly): IO[T] =
       IOOps.cond(test, good, bad)
 
     /**
@@ -946,7 +1054,7 @@ object IOSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condIOThr[T](good: => T, bad: => Throwable): IO[T] =
+    @inline def condIOThr[T](good: => T, bad: => Throwable): IO[T] =
       IOOps.condThr(test, good, bad)
 
     /**
@@ -954,7 +1062,7 @@ object IOSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWithIO[T](good: => IO[T], bad: => Anomaly): IO[T] =
+    @inline def condWithIO[T](good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.condWith(test, good, bad)
 
     /**
@@ -962,35 +1070,35 @@ object IOSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condWithIOThr[T](good: => IO[T], bad: => Throwable): IO[T] =
+    @inline def condWithIOThr[T](good: => IO[T], bad: => Throwable): IO[T] =
       IOOps.condWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueIO(bad: => Anomaly): IO[Unit] =
+    @inline def failOnTrueIO(bad: => Anomaly): IO[Unit] =
       IOOps.failOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueIOThr(bad: => Throwable): IO[Unit] =
+    @inline def failOnTrueIOThr(bad: => Throwable): IO[Unit] =
       IOOps.failOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseIO(bad: => Anomaly): IO[Unit] =
+    @inline def failOnFalseIO(bad: => Anomaly): IO[Unit] =
       IOOps.failOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseIOThr(bad: => Throwable): IO[Unit] =
+    @inline def failOnFalseIOThr(bad: => Throwable): IO[Unit] =
       IOOps.failOnFalseThr(test, bad)
 
     /**
@@ -1003,7 +1111,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFalseIO[_](effect: => IO[_]): IO[_] =
+    @inline def effectOnFalseIO(effect: => IO[_]): IO[Unit] =
       IOOps.effectOnFalse(test, effect)
 
     /**
@@ -1017,7 +1125,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnTrueIO[_](effect: => IO[_]): IO[Unit] =
+    @inline def effectOnTrueIO(effect: => IO[_]): IO[Unit] =
       IOOps.effectOnTrue(test, effect)
 
   }
@@ -1034,7 +1142,7 @@ object IOSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def cond[T](good: => T, bad: => Anomaly): IO[T] =
+    @inline def cond[T](good: => T, bad: => Anomaly): IO[T] =
       IOOps.flatCond(test, good, bad)
 
     /**
@@ -1043,7 +1151,7 @@ object IOSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condThr[T](good: => T, bad: => Throwable): IO[T] =
+    @inline def condThr[T](good: => T, bad: => Throwable): IO[T] =
       IOOps.flatCondThr(test, good, bad)
 
     /**
@@ -1052,7 +1160,7 @@ object IOSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condWith[T](good: => IO[T], bad: => Anomaly): IO[T] =
+    @inline def condWith[T](good: => IO[T], bad: => Anomaly): IO[T] =
       IOOps.flatCondWith(test, good, bad)
 
     /**
@@ -1061,35 +1169,35 @@ object IOSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condWithThr[T](good: => IO[T], bad: => Throwable): IO[T] =
+    @inline def condWithThr[T](good: => IO[T], bad: => Throwable): IO[T] =
       IOOps.flatCondWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def failOnTrue(bad: => Anomaly): IO[Unit] =
+    @inline def failOnTrue(bad: => Anomaly): IO[Unit] =
       IOOps.flatFailOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def failOnTrueThr(bad: => Throwable): IO[Unit] =
+    @inline def failOnTrueThr(bad: => Throwable): IO[Unit] =
       IOOps.flatFailOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def failOnFalse(bad: => Anomaly): IO[Unit] =
+    @inline def failOnFalse(bad: => Anomaly): IO[Unit] =
       IOOps.flatFailOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def failOnFalseThr(bad: => Throwable): IO[Unit] =
+    @inline def failOnFalseThr(bad: => Throwable): IO[Unit] =
       IOOps.flatFailOnFalseThr(test, bad)
 
     /**
@@ -1103,7 +1211,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFalse[_](effect: => IO[_]): IO[_] =
+    @inline def effectOnFalse(effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -1117,7 +1225,7 @@ object IOSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnTrue[_](effect: => IO[_]): IO[_] =
+    @inline def effectOnTrue(effect: => IO[_]): IO[Unit] =
       IOOps.flatEffectOnTrue(test, effect)
 
   }
@@ -1134,22 +1242,19 @@ object IOOps {
     * N.B. pass only pure values. If you have side effects, then
     * use [[IO.apply]] to suspend them inside this future.
     */
-  @scala.inline
-  def pure[T](value: T): IO[T] =
+  @inline def pure[T](value: T): IO[T] =
     IO.pure(value)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
-  def fail[T](bad: Anomaly): IO[T] =
+  @inline def fail[T](bad: Anomaly): IO[T] =
     IO.raiseError(bad.asThrowable)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
-  @scala.inline
-  def failThr[T](bad: Throwable): IO[T] =
+  @inline def failThr[T](bad: Throwable): IO[T] =
     IO.raiseError(bad)
 
   // —— def unit: IO[Unit] —— already defined on IO object
@@ -1157,7 +1262,7 @@ object IOOps {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def fromOption[T](opt: Option[T], ifNone: => Anomaly): IO[T] = opt match {
+  @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): IO[T] = opt match {
     case None        => IOOps.fail(ifNone)
     case Some(value) => IOOps.pure(value)
   }
@@ -1170,13 +1275,13 @@ object IOOps {
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromOption]]
     */
-  def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): IO[T] =
+  @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): IO[T] =
     IO.suspend(IOOps.fromOption(opt, ifNone))
 
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): IO[T] = opt match {
+  @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): IO[T] = opt match {
     case None        => IOOps.failThr(ifNone)
     case Some(value) => IOOps.pure(value)
   }
@@ -1189,14 +1294,14 @@ object IOOps {
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromOption]]
     */
-  def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
+  @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): IO[T] =
     IO.suspend(IOOps.fromOptionThr(opt, ifNone))
 
   /**
     * [[scala.util.Failure]] is sequenced into this effect
     * [[scala.util.Success]] is the pure value of this effect
     */
-  def fromTry[T](tr: Try[T]): IO[T] = tr match {
+  @inline def fromTry[T](tr: Try[T]): IO[T] = tr match {
     case scala.util.Success(v) => IO.pure(v)
     case scala.util.Failure(t) => IO.raiseError(t)
   }
@@ -1210,14 +1315,14 @@ object IOOps {
     * N.B. this is useless if the [[Try]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromTry]]
     */
-  def suspendTry[T](tr: => Try[T]): IO[T] =
+  @inline def suspendTry[T](tr: => Try[T]): IO[T] =
     IO.suspend(IOOps.fromTry(tr))
 
   /**
     * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
-  def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] = either match {
+  @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] = either match {
     case Left(value)  => IOOps.fail(transformLeft(value))
     case Right(value) => IOOps.pure(value)
   }
@@ -1231,14 +1336,14 @@ object IOOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromEither]]
     */
-  def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): IO[R] =
+  @inline def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): IO[R] =
     IO.suspend(IOOps.fromEither(either, transformLeft))
 
   /**
     * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
     * if it is a [[Throwable]].
     */
-  def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] = either match {
+  @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] = either match {
     case Left(value)  => IOOps.failThr(ev(value))
     case Right(value) => IOOps.pure(value)
   }
@@ -1251,14 +1356,14 @@ object IOOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromEither]]
     */
-  def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
+  @inline def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): IO[R] =
     IO.suspend(IOOps.fromEitherThr(either)(ev))
 
   /**
     * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     */
-  def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] = either match {
+  @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] = either match {
     case Left(value)  => IOOps.failThr(transformLeft(value))
     case Right(value) => IOOps.pure(value)
   }
@@ -1271,7 +1376,7 @@ object IOOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromEither]]
     */
-  def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): IO[R] =
+  @inline def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): IO[R] =
     IO.suspend(IOOps.fromEitherThr(either, transformLeft))
 
   /**
@@ -1281,10 +1386,87 @@ object IOOps {
     * [[Correct]] becomes a pure effect
     *
     */
-  def fromResult[T](result: Result[T]): IO[T] = result match {
+  @inline def fromResult[T](result: Result[T]): IO[T] = result match {
     case Left(value)  => IOOps.fail(value)
     case Right(value) => IOOps.pure(value)
   }
+
+  /**
+    *
+    * Lift the [[Validated]] in this effect
+    * [[Validated.Invalid]] becomes a failed effect
+    * [[Validated.Valid]] becomes a pure effect
+    *
+    * Consider using the overload with an extra constructor parameter
+    * for a custom [[busymachines.core.Anomalies]], otherwise your
+    * all failed cases will be wrapped in a:
+    * [[busymachines.effects.sync.validated.GenericValidationFailures]]
+    */
+  @inline def fromValidated[T](value: Validated[T]): IO[T] = value match {
+    case cats.data.Validated.Valid(e)   => IOOps.pure(e)
+    case cats.data.Validated.Invalid(e) => IOOps.fail(GenericValidationFailures(e.head, e.tail))
+  }
+
+  /**
+    *
+    * Lift the [[Validated]] in this effect
+    * [[Validated.Invalid]] becomes a failed effect
+    * [[Validated.Valid]] becomes a pure effect
+    *
+    * Provide the constructor for the specific [[busymachines.core.Anomalies]]
+    * into which the anomalies shall be stored.
+    *
+    * e.g. Creating case classes like bellow, or constructors on companion objects
+    * makes using this method almost completely non-intrusive
+    * {{{
+    * case class TVFs(
+    *   bad:  Anomaly,
+    *   bads: List[Anomaly] = Nil
+    * ) extends AnomalousFailures(
+    *       TVFsID,
+    *       s"Test validation failed with ${bads.length + 1} anomalies",
+    *       bad,
+    *       bads
+    *     )
+    *
+    * case object TVFsID extends AnomalyID {
+    *   override def name = "test_validation_001"
+    * }
+    *
+    * object Test {
+    *   IO.fromValidated(
+    *     Validated.pure(42),
+    *     TVFs
+    *   )
+    *   //in validated postfix notation it's infinitely more concise
+    *   Validated.pure(42).asIO(TVFs)
+    * }
+    * }}}
+    *
+    */
+  @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] = value match {
+    case cats.data.Validated.Valid(e)   => IOOps.pure(e)
+    case cats.data.Validated.Invalid(e) => IOOps.fail(ctor(e.head, e.tail))
+  }
+
+  /**
+    *
+    * Suspend any side-effects that might happen during the creation of this [[Validated]].
+    *
+    * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+    * You might as well use [[IOOps.fromValidated]]
+    */
+  @inline def suspendValidated[T](value: => Validated[T]): IO[T] =
+    IO.suspend(IOOps.fromValidated(value))
+
+  /**
+    * Suspend any side-effects that might happen during the creation of this [[Validated]].
+    *
+    * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+    * You might as well use [[FutureOps.fromValidated]]
+    */
+  @inline def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
+    IO.suspend(IOOps.fromValidated(value, ctor))
 
   /**
     * Suspend any side-effects that might happen during the creation of this [[Result]].
@@ -1293,7 +1475,7 @@ object IOOps {
     * N.B. this is useless if the [[Result]] was previously assigned to a "val".
     * You might as well use [[IOOps.fromResult]]
     */
-  def suspendResult[T](result: => Result[T]): IO[T] =
+  @inline def suspendResult[T](result: => Result[T]): IO[T] =
     IO.suspend(IOOps.fromResult(result))
 
   /**
@@ -1304,7 +1486,7 @@ object IOOps {
     * If you are certain that this [[Future]] is pure, then you can use
     * this method to lift it into [[IO]].
     */
-  def fromFuturePure[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
+  @inline def fromFuturePure[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
     IO.fromFuture(IO(value))
 
   /**
@@ -1315,7 +1497,7 @@ object IOOps {
     * Usage. N.B. that this only makes sense if the creation of the Future itself
     * is also suspended in the [[IO]].
     * {{{
-    *   def writeToDB(v: Int, s: String): Future[Long] = ???
+    * @inline def writeToDB(v: Int, s: String): Future[Long] = ???
     *   //...
     *   val io = IO.suspendFuture(writeToDB(42, "string"))
     *   //no database writes happened yet, since the future did
@@ -1333,7 +1515,7 @@ object IOOps {
     * }}}
     *
     */
-  def suspendFuture[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
+  @inline def suspendFuture[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
     IO.fromFuture(IO(value))
 
   /**
@@ -1341,7 +1523,7 @@ object IOOps {
     * Transform a monix [[Task]] into an [[IO]]. No gotchas because pure
     * functional programming is awesome.
     */
-  def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
+  @inline def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
     TaskOps.asIO(task)
 
   /**
@@ -1349,7 +1531,7 @@ object IOOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
+  @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
     if (test) IOOps.pure(good) else IOOps.fail(bad)
 
   /**
@@ -1357,7 +1539,7 @@ object IOOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     */
-  def condThr[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
+  @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
     if (test) IOOps.pure(good) else IOOps.failThr(bad)
 
   /**
@@ -1365,7 +1547,7 @@ object IOOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def condWith[T](test: Boolean, good: => IO[T], bad: => Anomaly): IO[T] =
+  @inline def condWith[T](test: Boolean, good: => IO[T], bad: => Anomaly): IO[T] =
     if (test) good else IOOps.fail(bad)
 
   /**
@@ -1373,7 +1555,7 @@ object IOOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     */
-  def condWithThr[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
+  @inline def condWithThr[T](test: Boolean, good: => IO[T], bad: => Throwable): IO[T] =
     if (test) good else IOOps.failThr(bad)
 
   /**
@@ -1382,7 +1564,7 @@ object IOOps {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCond[T](test: IO[Boolean], good: => T, bad: => Anomaly): IO[T] =
+  @inline def flatCond[T](test: IO[Boolean], good: => T, bad: => Anomaly): IO[T] =
     test.flatMap(t => IOOps.cond(t, good, bad))
 
   /**
@@ -1391,7 +1573,7 @@ object IOOps {
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondThr[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
+  @inline def flatCondThr[T](test: IO[Boolean], good: => T, bad: => Throwable): IO[T] =
     test.flatMap(t => IOOps.condThr(t, good, bad))
 
   /**
@@ -1400,7 +1582,7 @@ object IOOps {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondWith[T](test: IO[Boolean], good: => IO[T], bad: => Anomaly): IO[T] =
+  @inline def flatCondWith[T](test: IO[Boolean], good: => IO[T], bad: => Anomaly): IO[T] =
     test.flatMap(t => IOOps.condWith(t, good, bad))
 
   /**
@@ -1409,63 +1591,63 @@ object IOOps {
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondWithThr[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
+  @inline def flatCondWithThr[T](test: IO[Boolean], good: => IO[T], bad: => Throwable): IO[T] =
     test.flatMap(t => IOOps.condWithThr(t, good, bad))
 
   /**
     * @return
     *   Failed effect, if the boolean is true
     */
-  def failOnTrue(test: Boolean, bad: => Anomaly): IO[Unit] =
+  @inline def failOnTrue(test: Boolean, bad: => Anomaly): IO[Unit] =
     if (test) IOOps.fail(bad) else IO.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is true
     */
-  def failOnTrueThr(test: Boolean, bad: => Throwable): IO[Unit] =
+  @inline def failOnTrueThr(test: Boolean, bad: => Throwable): IO[Unit] =
     if (test) IOOps.failThr(bad) else IO.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def failOnFalse(test: Boolean, bad: => Anomaly): IO[Unit] =
+  @inline def failOnFalse(test: Boolean, bad: => Anomaly): IO[Unit] =
     if (!test) IOOps.fail(bad) else IO.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def failOnFalseThr(test: Boolean, bad: => Throwable): IO[Unit] =
+  @inline def failOnFalseThr(test: Boolean, bad: => Throwable): IO[Unit] =
     if (!test) IOOps.failThr(bad) else IO.unit
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
-  def flatFailOnTrue(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
+  @inline def flatFailOnTrue(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
     test.flatMap(t => IOOps.failOnTrue(t, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
-  def flatFailOnTrueThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
+  @inline def flatFailOnTrueThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
     test.flatMap(t => IOOps.failOnTrueThr(t, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
-  def flatFailOnFalse(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
+  @inline def flatFailOnFalse(test: IO[Boolean], bad: => Anomaly): IO[Unit] =
     test.flatMap(t => IOOps.failOnFalse(t, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
-  def flatFailOnFalseThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
+  @inline def flatFailOnFalseThr(test: IO[Boolean], bad: => Throwable): IO[Unit] =
     test.flatMap(t => IOOps.failOnFalseThr(t, bad))
 
   /**
@@ -1473,7 +1655,7 @@ object IOOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
-  def unpackOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
+  @inline def unpackOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
     nopt.flatMap {
       case None    => IOOps.fail(ifNone)
       case Some(v) => IOOps.pure(v)
@@ -1484,7 +1666,7 @@ object IOOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
-  def unpackOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
+  @inline def unpackOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
     nopt.flatMap {
       case None    => IOOps.failThr(ifNone)
       case Some(v) => IOOps.pure(v)
@@ -1495,7 +1677,7 @@ object IOOps {
     *
     * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
     */
-  def unpackResult[T](value: IO[Result[T]]): IO[T] = value.flatMap {
+  @inline def unpackResult[T](value: IO[Result[T]]): IO[T] = value.flatMap {
     case Left(a)  => IOOps.fail(a)
     case Right(a) => IOOps.pure(a)
   }
@@ -1505,7 +1687,7 @@ object IOOps {
     *
     * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
     */
-  def attemptResult[T](value: IO[T]): IO[Result[T]] =
+  @inline def attemptResult[T](value: IO[T]): IO[Result[T]] =
     value.attempt.map((e: Either[Throwable, T]) => Result.fromEitherThr(e))
 
   /**
@@ -1514,13 +1696,13 @@ object IOOps {
     * The moment you call this, the side-effects suspended in this [[IO]] start being
     * executed.
     */
-  def asFutureUnsafe[T](value: IO[T]): Future[T] =
+  @inline def asFutureUnsafe[T](value: IO[T]): Future[T] =
     value.unsafeToFuture()
 
   /**
     * No gotchas. Pure functional programming = <3
     */
-  def asTask[T](value: IO[T]): Task[T] =
+  @inline def asTask[T](value: IO[T]): Task[T] =
     TaskOps.fromIO(value)
 
   /**
@@ -1530,7 +1712,7 @@ object IOOps {
     * call this in your code. You have libraries that do this for you "at the end of the world"
     * parts of your program: e.g. akka-http when waiting for the response value to a request.
     */
-  def unsafeSyncGet[T](value: IO[T]): T =
+  @inline def unsafeSyncGet[T](value: IO[T]): T =
     value.unsafeRunSync()
 
   //=========================================================================
@@ -1548,7 +1730,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnTrue[_](test: Boolean, effect: => IO[_]): IO[Unit] =
+  @inline def effectOnTrue(test: Boolean, effect: => IO[_]): IO[Unit] =
     if (test) IOOps.discardContent(effect) else IO.unit
 
   /**
@@ -1562,7 +1744,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnTrue[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
+  @inline def flatEffectOnTrue(test: IO[Boolean], effect: => IO[_]): IO[Unit] =
     test.flatMap(t => IOOps.effectOnTrue(t, effect))
 
   /**
@@ -1576,7 +1758,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnFalse[_](test: Boolean, effect: => IO[_]): IO[Unit] =
+  @inline def effectOnFalse(test: Boolean, effect: => IO[_]): IO[Unit] =
     if (!test) IOOps.discardContent(effect) else IO.unit
 
   /**
@@ -1590,7 +1772,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnFalse[_](test: IO[Boolean], effect: => IO[_]): IO[Unit] =
+  @inline def flatEffectOnFalse(test: IO[Boolean], effect: => IO[_]): IO[Unit] =
     test.flatMap(t => IOOps.effectOnFalse(t, effect))
 
   /**
@@ -1603,7 +1785,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnFail[T, _](value: Option[T], effect: => IO[_]): IO[Unit] =
+  @inline def effectOnFail[T](value: Option[T], effect: => IO[_]): IO[Unit] =
     if (value.isEmpty) IOOps.discardContent(effect) else IO.unit
 
   /**
@@ -1617,7 +1799,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnNone[T, _](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
+  @inline def flatEffectOnNone[T](value: IO[Option[T]], effect: => IO[_]): IO[Unit] =
     value.flatMap(opt => IOOps.effectOnFail(opt, effect))
 
   /**
@@ -1630,7 +1812,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnPure[T, _](value: Option[T], effect: T => IO[_]): IO[Unit] =
+  @inline def effectOnPure[T](value: Option[T], effect: T => IO[_]): IO[Unit] =
     value match {
       case None    => IO.unit
       case Some(v) => IOOps.discardContent(effect(v))
@@ -1648,7 +1830,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnSome[T, _](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
+  @inline def flatEffectOnSome[T](value: IO[Option[T]], effect: T => IO[_]): IO[Unit] =
     value.flatMap(opt => IOOps.effectOnPure(opt, effect))
 
   /**
@@ -1661,7 +1843,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnFail[T, _](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] = value match {
+  @inline def effectOnFail[T](value: Result[T], effect: Anomaly => IO[_]): IO[Unit] = value match {
     case Correct(_)         => IO.unit
     case Incorrect(anomaly) => IOOps.discardContent(effect(anomaly))
   }
@@ -1677,7 +1859,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnIncorrect[T, _](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
+  @inline def flatEffectOnIncorrect[T](value: IO[Result[T]], effect: Anomaly => IO[_]): IO[Unit] =
     value.flatMap(result => IOOps.effectOnFail(result, effect))
 
   /**
@@ -1690,7 +1872,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnPure[T, _](value: Result[T], effect: T => IO[_]): IO[Unit] =
+  @inline def effectOnPure[T](value: Result[T], effect: T => IO[_]): IO[Unit] =
     value match {
       case Incorrect(_) => IO.unit
       case Correct(v)   => IOOps.discardContent(effect(v))
@@ -1707,7 +1889,7 @@ object IOOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnCorrect[T, _](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
+  @inline def flatEffectOnCorrect[T](value: IO[Result[T]], effect: T => IO[_]): IO[Unit] =
     value.flatMap(result => IOOps.effectOnPure(result, effect))
 
   //=========================================================================
@@ -1719,7 +1901,7 @@ object IOOps {
     * "bi" map, because it also allows you to change both branches of the effect, not just the
     * happy path.
     */
-  def bimap[T, R](value: IO[T], good: T => R, bad: Throwable => Anomaly): IO[R] =
+  @inline def bimap[T, R](value: IO[T], good: T => R, bad: Throwable => Anomaly): IO[R] =
     value.map(good).adaptError {
       case NonFatal(t) => bad(t).asThrowable
     }
@@ -1728,7 +1910,7 @@ object IOOps {
     * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
     * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
     */
-  def bimap[T, R](value: IO[T], result: Result[T] => Result[R]): IO[R] =
+  @inline def bimap[T, R](value: IO[T], result: Result[T] => Result[R]): IO[R] =
     IOOps.attemptResult(value).map(result).flatMap {
       case Correct(v)   => IOOps.pure(v)
       case Incorrect(v) => IOOps.fail(v)
@@ -1740,7 +1922,7 @@ object IOOps {
     *
     * The overload that uses [[Throwable]] instead of [[Anomaly]]
     */
-  def bimapThr[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
+  @inline def bimapThr[T, R](value: IO[T], good: T => R, bad: Throwable => Throwable): IO[R] =
     value.map(good).adaptError {
       case NonFatal(t) => bad(t)
     }
@@ -1762,7 +1944,7 @@ object IOOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
-  def morph[T, R](value: IO[T], good: T => R, bad: Throwable => R): IO[R] =
+  @inline def morph[T, R](value: IO[T], good: T => R, bad: Throwable => R): IO[R] =
     value.map(good).recover {
       case NonFatal(t) => bad(t)
     }
@@ -1773,7 +1955,7 @@ object IOOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
-  def morph[T, R](value: IO[T], result: Result[T] => R): IO[R] =
+  @inline def morph[T, R](value: IO[T], result: Result[T] => R): IO[R] =
     IOOps.attemptResult(value).map(result)
 
   /**
@@ -1784,8 +1966,8 @@ object IOOps {
     * it's just the final value that is discarded
     *
     */
-  def discardContent[_](value: IO[_]): IO[Unit] =
-    value.map(UnitFunction)
+  @inline def discardContent(value: IO[_]): IO[Unit] =
+    value.map(ConstantsAsyncEffects.UnitFunction1)
 
   //=========================================================================
   //=============================== Traversals ==============================
@@ -1796,7 +1978,7 @@ object IOOps {
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
     * {{{
-    *   def indexToFilename(i: Int): IO[String] = ???
+    * @inline def indexToFilename(i: Int): IO[String] = ???
     *
     *   val fileIndex: List[Int] = List(0,1,2,3,4)
     *   val fileNames: IO[List[String]] = IO.traverse(fileIndex){ i =>
@@ -1804,7 +1986,7 @@ object IOOps {
     *   }
     * }}}
     */
-  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): IO[C[B]] = {
@@ -1824,22 +2006,46 @@ object IOOps {
   }
 
   /**
+    * Similar to [[traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[traverse]]
+    *
+    */
+  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): IO[Unit] = IOOps.discardContent(IOOps.traverse(col)(fn))
+
+  /**
     * see:
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
     * Specialized case of [[traverse]]
     *
     * {{{
-    *   def indexToFilename(i: Int): IO[String] = ???
+    * @inline def indexToFilename(i: Int): IO[String] = ???
     *
     *   val fileNamesIO: List[IO[String]] = List(0,1,2,3,4).map(indexToFileName)
     *   val fileNames: IO[List[String]] = IO.sequence(fileNamesIO)
     * }}}
     */
-  def sequence[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
     implicit
     cbf: CanBuildFrom[M[IO[A]], A, M[A]]
   ): IO[M[A]] = IOOps.traverse(in)(identity)
+
+  /**
+    * Similar to [[sequence]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[sequence]]
+    *
+    */
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+    implicit
+    cbf: CanBuildFrom[M[IO[A]], A, M[A]]
+  ): IO[Unit] = IOOps.discardContent(IOOps.sequence(in))
 
   /**
     *
@@ -1863,14 +2069,20 @@ object IOOps {
     *
     *
     */
-  def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+  @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): IO[C[B]] = IOOps.traverse(col)(fn)(cbf)
 
-  //=========================================================================
-  //=============================== Constants ===============================
-  //=========================================================================
-
-  private val UnitFunction: Any => Unit = _ => ()
+  /**
+    * Similar to [[serialize]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[serialize]]
+    *
+    */
+  @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): IO[Unit] = IOOps.discardContent(IOOps.serialize(col)(fn))
 }

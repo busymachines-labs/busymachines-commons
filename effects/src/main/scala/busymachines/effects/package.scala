@@ -20,6 +20,8 @@ package busymachines
 import busymachines.effects.async._
 import busymachines.effects.sync._
 
+import busymachines.effects.sync.validated._
+
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
@@ -42,6 +44,8 @@ package object effects
   object result
       extends ResultTypeDefinitions with ResultCompanionAliases with ResultSyntax.Implicits
       with ResultSyntaxAsync.Implcits
+
+  object validated extends ValidatedTypeDefinitions with ValidatedSyntax.Implicits with ValidatedSyntaxAsync.Implcits
 
   object io extends IOTypeDefinitions with IOSyntax.Implicits
 

@@ -15,13 +15,13 @@ object ResultSyntaxAsync {
     *
     */
   trait Implcits {
-    implicit def bmcResultAsyncCompanionObjectOps(obj: Result.type): CompanionObjectOps =
+    implicit final def bmcResultAsyncCompanionObjectOps(obj: Result.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcResultAsyncReferenceOps[T](value: Result[T]): ReferenceOps[T] =
+    implicit final def bmcResultAsyncReferenceOps[T](value: Result[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcResultAsyncSafeReferenceOps[T](value: => Result[T]): SafeReferenceOps[T] =
+    implicit final def bmcResultAsyncSafeReferenceOps[T](value: => Result[T]): SafeReferenceOps[T] =
       new SafeReferenceOps(value)
   }
 
@@ -30,22 +30,22 @@ object ResultSyntaxAsync {
     */
   final class CompanionObjectOps(val obj: Result.type) extends AnyVal {
 
-    def asFuture[T](value: Result[T]): Future[T] =
+    @inline def asFuture[T](value: Result[T]): Future[T] =
       FutureOps.fromResult(value)
 
-    def asIO[T](value: Result[T]): IO[T] =
+    @inline def asIO[T](value: Result[T]): IO[T] =
       IOOps.fromResult(value)
 
-    def asTask[T](value: Result[T]): Task[T] =
+    @inline def asTask[T](value: Result[T]): Task[T] =
       TaskOps.fromResult(value)
 
-    def suspendInFuture[T](value: => Result[T])(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture[T](value: => Result[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendResult(value)
 
-    def suspendInIO[T](value: => Result[T]): IO[T] =
+    @inline def suspendInIO[T](value: => Result[T]): IO[T] =
       IOOps.suspendResult(value)
 
-    def suspendInTask[T](value: => Result[T]): Task[T] =
+    @inline def suspendInTask[T](value: => Result[T]): Task[T] =
       TaskOps.suspendResult(value)
   }
 
@@ -61,7 +61,7 @@ object ResultSyntaxAsync {
       * [[Correct]] becomes a pure effect
       *
       */
-    def asFuture: Future[T] =
+    @inline def asFuture: Future[T] =
       FutureOps.fromResult(value)
 
     /**
@@ -71,7 +71,7 @@ object ResultSyntaxAsync {
       * [[Correct]] becomes a pure effect
       *
       */
-    def asIO: IO[T] =
+    @inline def asIO: IO[T] =
       IOOps.fromResult(value)
 
     /**
@@ -81,7 +81,7 @@ object ResultSyntaxAsync {
       * [[Correct]] becomes a pure effect
       *
       */
-    def asTask: Task[T] =
+    @inline def asTask: Task[T] =
       TaskOps.fromResult(value)
 
     //=========================================================================
@@ -98,7 +98,7 @@ object ResultSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFailFuture[_](effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnFailFuture(effect: Anomaly => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnFail(value, effect)
 
     /**
@@ -111,7 +111,7 @@ object ResultSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPureFuture[_](effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
+    @inline def effectOnPureFuture(effect: T => Future[_])(implicit ec: ExecutionContext): Future[Unit] =
       FutureOps.effectOnPure(value, effect)
 
     /**
@@ -124,7 +124,7 @@ object ResultSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFailIO[_](effect: Anomaly => IO[_]): IO[Unit] =
+    @inline def effectOnFailIO(effect: Anomaly => IO[_]): IO[Unit] =
       IOOps.effectOnFail(value, effect)
 
     /**
@@ -137,7 +137,7 @@ object ResultSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPureIO[_](effect: T => IO[_]): IO[Unit] =
+    @inline def effectOnPureIO(effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnPure(value, effect)
 
     /**
@@ -150,7 +150,7 @@ object ResultSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFailTask[_](effect: Anomaly => Task[_]): Task[Unit] =
+    @inline def effectOnFailTask(effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.effectOnFail(value, effect)
 
     /**
@@ -163,7 +163,7 @@ object ResultSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPureTask[_](effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPureTask(effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnPure(value, effect)
 
   }
@@ -184,7 +184,7 @@ object ResultSyntaxAsync {
       * N.B. this is useless if the [[Result]] was previously assigned to a "val".
       * You might as well use [[FutureOps.fromResult]]
       */
-    def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendResult(value)
 
     /**
@@ -194,7 +194,7 @@ object ResultSyntaxAsync {
       * N.B. this is useless if the [[Result]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromResult]]
       */
-    def suspendInIO: IO[T] =
+    @inline def suspendInIO: IO[T] =
       IOOps.suspendResult(value)
 
     /**
@@ -204,7 +204,7 @@ object ResultSyntaxAsync {
       * N.B. this is useless if the [[Result]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromResult]]
       */
-    def suspendInTask: Task[T] =
+    @inline def suspendInTask: Task[T] =
       TaskOps.suspendResult(value)
   }
 }

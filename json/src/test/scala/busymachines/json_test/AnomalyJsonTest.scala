@@ -299,7 +299,7 @@ class AnomalyJsonTest extends FlatSpec {
         |""".stripMargin.trim
 
     rawJson.decodeAs[Anomalies] match {
-      case Left(_) => //yey!!!
+      case Left(_)  => //yey!!!
       case Right(_) => fail("should have failed")
     }
   }

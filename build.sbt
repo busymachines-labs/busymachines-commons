@@ -22,17 +22,18 @@ lazy val currentSnapshotVersion = "0.3.0-SNAPSHOT"
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
 addCommandAlias("build",           ";compile;Test/compile")
-addCommandAlias("rebuild",         ";clean;update;compile;Test/compile")
-addCommandAlias("ci",              ";scalafmtCheck;coverageOff;rebuild;test")
+addCommandAlias("rebuild",         ";clean;compile;Test/compile")
+addCommandAlias("rebuild-update",  ";clean;update;compile;Test/compile")
+addCommandAlias("ci",              ";scalafmtCheck;coverageOff;rebuild-update;test")
 addCommandAlias("ci-quick",        ";scalafmtCheck;build;test")
-addCommandAlias("doLocal",         ";rebuild;publishLocal")
-addCommandAlias("doSnapshotLocal", ";rebuild;setSnapshotVersion;publishLocal")
+addCommandAlias("doLocal",         ";rebuild-update;publishLocal")
+addCommandAlias("doSnapshotLocal", ";rebuild-update;setSnapshotVersion;publishLocal")
 
 addCommandAlias("mkSite",        ";docs/makeMicrosite")
 addCommandAlias("doSitePublish", ";docs/publishMicrosite")
 
-addCommandAlias("doCoverage",       ";rebuild;coverage;test;coverageReport;coverageOff")
-addCommandAlias("doCoverage-quick", ";build;coverage;test;coverageReport;coverageOff")
+addCommandAlias("doCoverage",    ";rebuild;coverage;test;coverageReport;coverageOff")
+addCommandAlias("doCoverage-ci", ";rebuild-update;coverage;test;coverageReport;coverageOff")
 
 /**
   * Use with care. Releases a snapshot to sonatype repository.
@@ -64,7 +65,9 @@ lazy val root = Project(id = "busymachines-commons", base = file("."))
   .settings(Settings.commonSettings)
   .aggregate(
     core,
+    duration,
     `effects-sync`,
+    `effects-sync-cats`,
     `effects-async`,
     effects,
     json,
@@ -81,6 +84,15 @@ lazy val core = project
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
     name in ThisProject := "busymachines-commons-core",
+    libraryDependencies +=
+      Dependencies.scalaTest % Test withSources ()
+  )
+
+lazy val duration = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-duration",
     libraryDependencies +=
       Dependencies.scalaTest % Test withSources ()
   )
@@ -103,6 +115,21 @@ lazy val `effects-sync` = project
     core
   )
 
+lazy val `effects-sync-cats` = project
+  .settings(Settings.commonSettings)
+  .settings(PublishingSettings.sonatypeSettings)
+  .settings(
+    name in ThisProject := "busymachines-commons-effects-sync-cats",
+    libraryDependencies ++= Seq(
+      Dependencies.catsCore  withSources (),
+      Dependencies.scalaTest % Test withSources ()
+    )
+  )
+  .dependsOn(
+    core,
+    `effects-sync`
+  )
+
 lazy val `effects-async` = project
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.sonatypeSettings)
@@ -117,7 +144,9 @@ lazy val `effects-async` = project
   )
   .dependsOn(
     core,
-    `effects-sync`
+    duration,
+    `effects-sync`,
+    `effects-sync-cats`
   )
 
 lazy val effects = project

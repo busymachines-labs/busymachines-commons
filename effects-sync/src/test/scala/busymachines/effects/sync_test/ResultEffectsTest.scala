@@ -54,8 +54,8 @@ final class ResultEffectsTest extends FunSpec {
   private val int2str: Int => String = i => i.toString
 
   private val thr2ano: Throwable => Anomaly = thr => ForbiddenFailure
-  private val ano2ano: Anomaly   => Anomaly = thr => ForbiddenFailure
-  private val ano2str: Anomaly   => String  = thr => thr.message
+  private val ano2ano: Anomaly => Anomaly   = thr => ForbiddenFailure
+  private val ano2str: Anomaly => String    = thr => thr.message
 
   private val failV: Result[Int] = Result.fail(ano)
   private val pureV: Result[Int] = Result.pure(42)
@@ -66,7 +66,7 @@ final class ResultEffectsTest extends FunSpec {
 
   //---------------------------------------------------------------------------
 
-  describe("Try — companion object syntax") {
+  describe("Result — companion object syntax") {
 
     describe("constructors") {
       test("pure") {
@@ -597,13 +597,13 @@ final class ResultEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = Result.traverse(input) { i =>
+          val result = Result.traverse(input) { i =>
             Result {
               sideEffect = 42
             }
           }
 
-          assert(eventualResult.r == expected)
+          assert(result.r == expected)
           assert(sideEffect == 0, "nothing should have happened")
         }
 
@@ -611,10 +611,38 @@ final class ResultEffectsTest extends FunSpec {
           val input: Seq[Int] = (1 to 100).toList
           val expected = input.map(_.toString)
 
-          val eventualResult: Result[Seq[String]] = Result.traverse(input) { i =>
+          val result: Result[Seq[String]] = Result.traverse(input) { i =>
             Result.pure(i.toString)
           }
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
+        }
+
+      }
+
+      describe("Result.traverse_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val result = Result.traverse_(input) { i =>
+            Result {
+              sideEffect = 42
+            }
+          }
+
+          assert(result == Result.unit)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("non empty list") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val result: Result[Unit] = Result.traverse_(input) { i =>
+            Result.pure(i.toString)
+          }
+          assert(Result.unit == result)
         }
 
       }
@@ -625,8 +653,8 @@ final class ResultEffectsTest extends FunSpec {
           val input:    Seq[Result[Int]] = List()
           val expected: Seq[Int]         = List()
 
-          val eventualResult = Result.sequence(input)
-          assert(eventualResult.r == expected)
+          val result = Result.sequence(input)
+          assert(result.r == expected)
         }
 
         test("non empty list") {
@@ -634,14 +662,34 @@ final class ResultEffectsTest extends FunSpec {
           val input: Seq[Result[Int]] = (1 to 100).toList.map(Result.pure)
           val expected = nrs.map(_.toString)
 
-          val eventualResult: Result[Seq[String]] = Result.sequence {
+          val result: Result[Seq[String]] = Result.sequence {
             input map { tr =>
               tr.map(i => i.toString)
             }
           }
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
         }
 
+      }
+
+      describe("Result.sequence_") {
+        test("empty list") {
+          val input: Seq[Result[Int]] = List()
+
+          val result = Result.sequence_(input)
+          assert(result == Result.unit)
+        }
+
+        test("non empty list") {
+          val input: Seq[Result[Int]] = (1 to 100).toList.map(Result.pure)
+
+          val result: Result[Unit] = Result.sequence_ {
+            input map { tr =>
+              tr.map(i => i.toString)
+            }
+          }
+          assert(Result.unit == result)
+        }
       }
 
     } // end traversals

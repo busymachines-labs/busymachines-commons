@@ -1,8 +1,15 @@
 package busymachines.effects.async
 
+import monix.{execution => mex}
+import monix.{eval => mev}
+
+import cats.{data => cd}
+
 import busymachines.core._
-import busymachines.duration, duration.FiniteDuration
 import busymachines.effects.sync._
+import busymachines.effects.sync.validated._
+
+import busymachines.duration, duration.FiniteDuration
 
 import scala.collection.generic.CanBuildFrom
 import scala.util.control.NonFatal
@@ -14,10 +21,8 @@ import scala.util.control.NonFatal
   *
   */
 trait TaskTypeDefinitions {
-  import monix.{execution => mex}
-  import monix.{eval      => mev}
 
-  type CancellableFuture[T] = mex.CancelableFuture[T]
+  final type CancellableFuture[T] = mex.CancelableFuture[T]
 
   /**
     * N.B.
@@ -25,11 +30,11 @@ trait TaskTypeDefinitions {
     * which makes this type the only implicit in context necessary to do
     * interop between [[Task]] and [[scala.concurrent.Future]]
     */
-  type Scheduler = mex.Scheduler
-  type Task[T]   = mev.Task[T]
+  final type Scheduler = mex.Scheduler
+  final type Task[T]   = mev.Task[T]
 
-  val Scheduler: mex.Scheduler.type = mex.Scheduler
-  val Task:      mev.Task.type      = mev.Task
+  @inline final def Scheduler: mex.Scheduler.type = mex.Scheduler
+  @inline final def Task:      mev.Task.type      = mev.Task
 
 }
 
@@ -39,44 +44,44 @@ object TaskSyntax {
     *
     */
   trait Implicits {
-    implicit def bmcTaskCompanionObjectOps(obj: Task.type): CompanionObjectOps =
+    implicit final def bmcTaskCompanionObjectOps(obj: mev.Task.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcTaskReferenceOps[T](value: Task[T]): ReferenceOps[T] =
+    implicit final def bmcTaskReferenceOps[T](value: Task[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcTaskNestedOptionOps[T](nopt: Task[Option[T]]): NestedOptionOps[T] =
+    implicit final def bmcTaskNestedOptionOps[T](nopt: Task[Option[T]]): NestedOptionOps[T] =
       new NestedOptionOps(nopt)
 
-    implicit def bmcTaskNestedResultOps[T](result: Task[Result[T]]): NestedResultOps[T] =
+    implicit final def bmcTaskNestedResultOps[T](result: Task[Result[T]]): NestedResultOps[T] =
       new NestedResultOps(result)
 
-    implicit def bmcTaskBooleanOps(test: Boolean): BooleanOps =
+    implicit final def bmcTaskBooleanOps(test: Boolean): BooleanOps =
       new BooleanOps(test)
 
-    implicit def bmcTaskNestedBooleanOps(test: Task[Boolean]): NestedBooleanOps =
+    implicit final def bmcTaskNestedBooleanOps(test: Task[Boolean]): NestedBooleanOps =
       new NestedBooleanOps(test)
   }
 
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Task.type) extends AnyVal {
+  final class CompanionObjectOps(val obj: mev.Task.type) extends AnyVal {
 
     // —— def pure[T](value: T): Task[T] —— already defined on companion object
 
     /**
       * Failed effect but with an [[Anomaly]]
       */
-    @scala.inline
-    def fail[T](bad: Anomaly): Task[T] =
+
+    @inline def fail[T](bad: Anomaly): Task[T] =
       TaskOps.fail(bad)
 
     /**
       * Failed effect but with a [[Throwable]]
       */
-    @scala.inline
-    def failThr[T](bad: Throwable): Task[T] =
+
+    @inline def failThr[T](bad: Throwable): Task[T] =
       TaskOps.failThr(bad)
 
     // —— def unit: Task[Unit] —— already defined on Task object
@@ -84,7 +89,7 @@ object TaskSyntax {
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def fromOption[T](opt: Option[T], ifNone: => Anomaly): Task[T] =
+    @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.fromOption(opt, ifNone)
 
     /**
@@ -95,13 +100,13 @@ object TaskSyntax {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
-    def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): Task[T] =
+    @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(opt, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
       */
-    def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Task[T] =
+    @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Task[T] =
       TaskOps.fromOptionThr(opt, ifNone)
 
     /**
@@ -112,7 +117,7 @@ object TaskSyntax {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
-    def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
+    @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
       TaskOps.suspendOptionThr(opt, ifNone)
 
     // def fromTry[T](tr: Try[T]): Task[T] —— already defined on Task object
@@ -126,14 +131,14 @@ object TaskSyntax {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
-    def suspendTry[T](tr: => Try[T]): Task[T] =
+    @inline def suspendTry[T](tr: => Try[T]): Task[T] =
       TaskOps.suspendTry(tr)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Task[R] =
+    @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Task[R] =
       TaskOps.fromEither(either, transformLeft)
 
     /**
@@ -145,14 +150,14 @@ object TaskSyntax {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
-    def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): Task[R] =
+    @inline def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): Task[R] =
       TaskOps.suspendEither(either, transformLeft)
 
     /**
       * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
       * if it is a [[Throwable]].
       */
-    def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+    @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.fromEitherThr(either)(ev)
 
     /**
@@ -163,14 +168,14 @@ object TaskSyntax {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
-    def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+    @inline def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.suspendEitherThr(either)(ev)
 
     /**
       * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
-    def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] =
+    @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] =
       TaskOps.fromEitherThr(either, transformLeft)
 
     /**
@@ -181,7 +186,7 @@ object TaskSyntax {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
-    def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
+    @inline def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
       TaskOps.suspendEitherThr(either, transformLeft)
 
     /**
@@ -191,7 +196,7 @@ object TaskSyntax {
       * [[Correct]] becomes a pure effect
       *
       */
-    def fromResult[T](result: Result[T]): Task[T] =
+    @inline def fromResult[T](result: Result[T]): Task[T] =
       TaskOps.fromResult(result)
 
     /**
@@ -201,8 +206,83 @@ object TaskSyntax {
       * N.B. this is useless if the [[Result]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromResult]]
       */
-    def suspendResult[T](result: => Result[T]): Task[T] =
+    @inline def suspendResult[T](result: => Result[T]): Task[T] =
       TaskOps.suspendResult(result)
+
+    /**
+      *
+      * Lift the [[Validated]] in this effect
+      * [[Validated.Invalid]] becomes a failed effect
+      * [[Validated.Valid]] becomes a pure effect
+      *
+      * Consider using the overload with an extra constructor parameter
+      * for a custom [[busymachines.core.Anomalies]], otherwise your
+      * all failed cases will be wrapped in a:
+      * [[busymachines.effects.sync.validated.GenericValidationFailures]]
+      */
+
+    @inline def fromValidated[T](value: Validated[T]): Task[T] =
+      TaskOps.fromValidated(value)
+
+    /**
+      *
+      * Lift the [[Validated]] in this effect
+      * [[Validated.Invalid]] becomes a failed effect
+      * [[Validated.Valid]] becomes a pure effect
+      *
+      * Provide the constructor for the specific [[busymachines.core.Anomalies]]
+      * into which the anomalies shall be stored.
+      *
+      * e.g. Creating case classes like bellow, or constructors on companion objects
+      * makes using this method almost completely non-intrusive
+      * {{{
+      * case class TVFs(
+      *   bad:  Anomaly,
+      *   bads: List[Anomaly] = Nil
+      * ) extends AnomalousFailures(
+      *       TVFsID,
+      *       s"Test validation failed with ${bads.length + 1} anomalies",
+      *       bad,
+      *       bads
+      *     )
+      *
+      * case object TVFsID extends AnomalyID {
+      *   override def name = "test_validation_001"
+      * }
+      *
+      * object Test {
+      *   Task.fromValidated(
+      *     Validated.pure(42),
+      *     TVFs
+      *   )
+      *   //in validated postfix notation it's infinitely more concise
+      *   Validated.pure(42).asTask(TVFs)
+      * }
+      * }}}
+      *
+      */
+
+    @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+      TaskOps.fromValidated(value, ctor)
+
+    /**
+      *
+      * Suspend any side-effects that might happen during the creation of this [[Validated]].
+      *
+      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+      * You might as well use [[TaskOps.fromValidated]]
+      */
+    @inline def suspendValidated[T](value: => Validated[T]): Task[T] =
+      TaskOps.suspendValidated(value)
+
+    /**
+      * Suspend any side-effects that might happen during the creation of this [[Validated]].
+      *
+      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+      * You might as well use [[FutureOps.fromValidated]]
+      */
+    @inline def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+      TaskOps.suspendValidated(value, ctor)
 
     /**
       * !!! USE WITH CARE !!!
@@ -212,7 +292,7 @@ object TaskSyntax {
       * If you are certain that this [[Future]] is pure, then you can use
       * this method to lift it into [[Task]].
       */
-    def fromFuturePure[T](value: Future[T]): Task[T] =
+    @inline def fromFuturePure[T](value: Future[T]): Task[T] =
       Task.fromFuture(value)
 
     /**
@@ -223,7 +303,7 @@ object TaskSyntax {
       * Usage. N.B. that this only makes sense if the creation of the Future itself
       * is also suspended in the [[Task]].
       * {{{
-      *   def writeToDB(v: Int, s: String): Future[Long] = ???
+      * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
       *   //...
       *   val task = Task.suspendFuture(writeToDB(42, "string"))
       *   //no database writes happened yet, since the future did
@@ -241,7 +321,7 @@ object TaskSyntax {
       * }}}
       *
       */
-    def suspendFuture[T](result: => Future[T]): Task[T] =
+    @inline def suspendFuture[T](result: => Future[T]): Task[T] =
       TaskOps.suspendFuture(result)
 
     /**
@@ -249,7 +329,7 @@ object TaskSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def cond[T](test: Boolean, good: => T, bad: => Anomaly): Task[T] =
+    @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Task[T] =
       TaskOps.cond(test, good, bad)
 
     /**
@@ -257,7 +337,7 @@ object TaskSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condThr[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
+    @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
       TaskOps.condThr(test, good, bad)
 
     /**
@@ -265,7 +345,7 @@ object TaskSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWith[T](test: Boolean, good: => Task[T], bad: => Anomaly): Task[T] =
+    @inline def condWith[T](test: Boolean, good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.condWith(test, good, bad)
 
     /**
@@ -273,7 +353,7 @@ object TaskSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condWithThr[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
+    @inline def condWithThr[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
       TaskOps.condWithThr(test, good, bad)
 
     /**
@@ -282,7 +362,7 @@ object TaskSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCond[T](test: Task[Boolean], good: => T, bad: => Anomaly): Task[T] =
+    @inline def flatCond[T](test: Task[Boolean], good: => T, bad: => Anomaly): Task[T] =
       TaskOps.flatCond(test, good, bad)
 
     /**
@@ -291,7 +371,7 @@ object TaskSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondThr[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
+    @inline def flatCondThr[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
       TaskOps.flatCondThr(test, good, bad)
 
     /**
@@ -300,7 +380,7 @@ object TaskSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondWith[T](test: Task[Boolean], good: => Task[T], bad: => Anomaly): Task[T] =
+    @inline def flatCondWith[T](test: Task[Boolean], good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.flatCondWith(test, good, bad)
 
     /**
@@ -309,63 +389,63 @@ object TaskSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def flatCondWithThr[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
+    @inline def flatCondWithThr[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
       TaskOps.flatCondWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrue(test: Boolean, bad: => Anomaly): Task[Unit] =
+    @inline def failOnTrue(test: Boolean, bad: => Anomaly): Task[Unit] =
       TaskOps.failOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueThr(test: Boolean, bad: => Throwable): Task[Unit] =
+    @inline def failOnTrueThr(test: Boolean, bad: => Throwable): Task[Unit] =
       TaskOps.failOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalse(test: Boolean, bad: => Anomaly): Task[Unit] =
+    @inline def failOnFalse(test: Boolean, bad: => Anomaly): Task[Unit] =
       TaskOps.failOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseThr(test: Boolean, bad: => Throwable): Task[Unit] =
+    @inline def failOnFalseThr(test: Boolean, bad: => Throwable): Task[Unit] =
       TaskOps.failOnFalseThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def flatFailOnTrue(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
+    @inline def flatFailOnTrue(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
       TaskOps.flatFailOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def flatFailOnTrueThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
+    @inline def flatFailOnTrueThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
       TaskOps.flatFailOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def flatFailOnFalse(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
+    @inline def flatFailOnFalse(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
       TaskOps.flatFailOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def flatFailOnFalseThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
+    @inline def flatFailOnFalseThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
       TaskOps.flatFailOnFalseThr(test, bad)
 
     /**
@@ -373,7 +453,7 @@ object TaskSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
+    @inline def unpackOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
       TaskOps.unpackOption(nopt, ifNone)
 
     /**
@@ -381,7 +461,7 @@ object TaskSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
+    @inline def unpackOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
       TaskOps.unpackOptionThr(nopt, ifNone)
 
     /**
@@ -389,7 +469,7 @@ object TaskSyntax {
       *
       * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
       */
-    def unpackResult[T](value: Task[Result[T]]): Task[T] =
+    @inline def unpackResult[T](value: Task[Result[T]]): Task[T] =
       TaskOps.unpackResult(value)
 
     /**
@@ -397,7 +477,7 @@ object TaskSyntax {
       *
       * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
       */
-    def attemptResult[T](value: Task[T]): Task[Result[T]] =
+    @inline def attemptResult[T](value: Task[T]): Task[Result[T]] =
       TaskOps.attemptResult(value)
 
     /**
@@ -406,13 +486,13 @@ object TaskSyntax {
       * The moment you call this, the side-effects suspended in this [[IO]] start being
       * executed.
       */
-    def asFutureUnsafe[T](value: Task[T])(implicit sc: Scheduler): Future[T] =
+    @inline def asFutureUnsafe[T](value: Task[T])(implicit sc: Scheduler): Future[T] =
       TaskOps.asFutureUnsafe(value)
 
     /**
       * No gotchas. Pure functional programming = <3
       */
-    def asIO[T](value: Task[T])(implicit sc: Scheduler): IO[T] =
+    @inline def asIO[T](value: Task[T])(implicit sc: Scheduler): IO[T] =
       TaskOps.asIO(value)
 
     /**
@@ -422,7 +502,13 @@ object TaskSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    def unsafeSyncGet[T](value: Task[T], atMost: FiniteDuration = TaskOps.defaultDuration)(implicit sc: Scheduler): T =
+    @inline def unsafeSyncGet[T](
+      value:  Task[T],
+      atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration
+    )(
+      implicit
+      sc: Scheduler
+    ): T =
       TaskOps.unsafeSyncGet(value, atMost)
 
     //=========================================================================
@@ -440,7 +526,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnTrue[_](test: Boolean, effect: => Task[_]): Task[Unit] =
+    @inline def effectOnTrue(test: Boolean, effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnTrue(test, effect)
 
     /**
@@ -454,7 +540,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnTrue[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
+    @inline def flatEffectOnTrue(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnTrue(test, effect)
 
     /**
@@ -467,7 +553,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFalse[_](test: Boolean, effect: => Task[_]): Task[Unit] =
+    @inline def effectOnFalse(test: Boolean, effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnFalse(test, effect)
 
     /**
@@ -481,7 +567,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnFalse[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
+    @inline def flatEffectOnFalse(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -494,7 +580,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
+    @inline def effectOnFail[T](value: Option[T], effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnFail(value, effect)
 
     /**
@@ -508,7 +594,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnNone[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
+    @inline def flatEffectOnNone[T](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnNone(value, effect)
 
     /**
@@ -521,7 +607,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPure[T](value: Option[T], effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnPure(value, effect)
 
     /**
@@ -535,7 +621,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnSome[T, _](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
+    @inline def flatEffectOnSome[T](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnSome(value, effect)
 
     /**
@@ -548,7 +634,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[T, _](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] =
+    @inline def effectOnFail[T](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.effectOnFail(value, effect)
 
     /**
@@ -562,7 +648,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnIncorrect[T, _](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
+    @inline def flatEffectOnIncorrect[T](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnIncorrect(value, effect)
 
     /**
@@ -576,7 +662,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def flatEffectOnCorrect[T, _](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
+    @inline def flatEffectOnCorrect[T](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnCorrect(value, effect)
 
     /**
@@ -589,7 +675,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[T, _](value: Result[T], effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPure[T](value: Result[T], effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnPure(value, effect)
 
     //=========================================================================
@@ -601,14 +687,14 @@ object TaskSyntax {
       * "bi" map, because it also allows you to change both branches of the effect, not just the
       * happy path.
       */
-    def bimap[T, R](value: Task[T], good: T => R, bad: Throwable => Anomaly): Task[R] =
+    @inline def bimap[T, R](value: Task[T], good: T => R, bad: Throwable => Anomaly): Task[R] =
       TaskOps.bimap(value, good, bad)
 
     /**
       * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
       * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
       */
-    def bimap[T, R](value: Task[T], result: Result[T] => Result[R]): Task[R] =
+    @inline def bimap[T, R](value: Task[T], result: Result[T] => Result[R]): Task[R] =
       TaskOps.bimap(value, result)
 
     /**
@@ -617,7 +703,7 @@ object TaskSyntax {
       *
       * The overload that uses [[Throwable]] instead of [[Anomaly]]
       */
-    def bimapThr[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
+    @inline def bimapThr[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
       TaskOps.bimapThr(value, good, bad)
 
     /**
@@ -637,7 +723,7 @@ object TaskSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[T, R](value: Task[T], good: T => R, bad: Throwable => R): Task[R] =
+    @inline def morph[T, R](value: Task[T], good: T => R, bad: Throwable => R): Task[R] =
       TaskOps.morph(value, good, bad)
 
     /**
@@ -646,7 +732,7 @@ object TaskSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[T, R](value: Task[T], result: Result[T] => R): Task[R] =
+    @inline def morph[T, R](value: Task[T], result: Result[T] => R): Task[R] =
       TaskOps.morph(value, result)
 
     /**
@@ -657,12 +743,36 @@ object TaskSyntax {
       * it's just the final value that is discarded
       *
       */
-    def discardContent[_](value: Task[_]): Task[Unit] =
+    @inline def discardContent(value: Task[_]): Task[Unit] =
       TaskOps.discardContent(value)
 
     //=========================================================================
     //=============================== Traversals ==============================
     //=========================================================================
+
+    /**
+      * Similar to [[monix.eval.Task.traverse]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[monix.eval.Task.traverse]]
+      *
+      */
+    def traverse_[A, B, M[X] <: TraversableOnce[X]](col: M[A])(fn: A => Task[B])(
+      implicit
+      cbf: CanBuildFrom[M[A], B, M[B]]
+    ): Task[Unit] = TaskOps.traverse_(col)(fn)
+
+    /**
+      * Similar to [[monix.eval.Task.sequence]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[monix.eval.Task.sequence]]
+      *
+      */
+    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Task[A]])(
+      implicit
+      cbf: CanBuildFrom[M[Task[A]], A, M[A]]
+    ): Task[Unit] = TaskOps.sequence_(in)
 
     /**
       *
@@ -686,10 +796,22 @@ object TaskSyntax {
       *
       *
       */
-    def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
+    @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
       implicit
       cbf: CanBuildFrom[C[A], B, C[B]]
     ): Task[C[B]] = TaskOps.serialize(col)(fn)
+
+    /**
+      * Similar to [[serialize]], but discards all content. i.e. used only
+      * for the combined effects.
+      *
+      * @see [[serialize]]
+      *
+      */
+    @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
+      implicit
+      cbf: CanBuildFrom[C[A], B, C[B]]
+    ): Task[Unit] = TaskOps.serialize_(col)(fn)
   }
 
   /**
@@ -702,7 +824,7 @@ object TaskSyntax {
       *
       * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
       */
-    def attempResult: Task[Result[T]] =
+    @inline def attempResult: Task[Result[T]] =
       TaskOps.attemptResult(value)
 
     /**
@@ -711,13 +833,13 @@ object TaskSyntax {
       * The moment you call this, the side-effects suspended in this [[IO]] start being
       * executed.
       */
-    def asFutureUnsafe()(implicit sc: Scheduler): Future[T] =
+    @inline def asFutureUnsafe()(implicit sc: Scheduler): Future[T] =
       TaskOps.asFutureUnsafe(value)
 
     /**
       * No gotchas. Pure functional programming = <3
       */
-    def asIO(implicit sc: Scheduler): IO[T] =
+    @inline def asIO(implicit sc: Scheduler): IO[T] =
       TaskOps.asIO(value)
 
     /**
@@ -727,7 +849,10 @@ object TaskSyntax {
       * call this in your code. You have libraries that do this for you "at the end of the world"
       * parts of your program: e.g. akka-http when waiting for the response value to a request.
       */
-    def unsafeSyncGet(atMost: FiniteDuration = TaskOps.defaultDuration)(implicit sc: Scheduler): T =
+    @inline def unsafeSyncGet(atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration)(
+      implicit
+      sc: Scheduler
+    ): T =
       TaskOps.unsafeSyncGet(value, atMost)
 
     /**
@@ -735,14 +860,14 @@ object TaskSyntax {
       * "bi" map, because it also allows you to change both branches of the effect, not just the
       * happy path.
       */
-    def bimap[R](good: T => R, bad: Throwable => Anomaly): Task[R] =
+    @inline def bimap[R](good: T => R, bad: Throwable => Anomaly): Task[R] =
       TaskOps.bimap(value, good, bad)
 
     /**
       * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
       * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
       */
-    def bimap[R](result: Result[T] => Result[R]): Task[R] =
+    @inline def bimap[R](result: Result[T] => Result[R]): Task[R] =
       TaskOps.bimap(value, result)
 
     /**
@@ -751,7 +876,7 @@ object TaskSyntax {
       *
       * The overload that uses [[Throwable]] instead of [[Anomaly]]
       */
-    def bimapThr[R](good: T => R, bad: Throwable => Throwable): Task[R] =
+    @inline def bimapThr[R](good: T => R, bad: Throwable => Throwable): Task[R] =
       TaskOps.bimapThr(value, good, bad)
 
     /**
@@ -771,7 +896,7 @@ object TaskSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[R](good: T => R, bad: Throwable => R): Task[R] =
+    @inline def morph[R](good: T => R, bad: Throwable => R): Task[R] =
       TaskOps.morph(value, good, bad)
 
     /**
@@ -780,7 +905,7 @@ object TaskSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[R](result: Result[T] => R): Task[R] =
+    @inline def morph[R](result: Result[T] => R): Task[R] =
       TaskOps.morph(value, result)
 
     /**
@@ -791,7 +916,7 @@ object TaskSyntax {
       * it's just the final value that is discarded
       *
       */
-    def discardContent: Task[Unit] =
+    @inline def discardContent: Task[Unit] =
       TaskOps.discardContent(value)
   }
 
@@ -806,7 +931,7 @@ object TaskSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpack(ifNone: => Anomaly): Task[T] =
+    @inline def unpack(ifNone: => Anomaly): Task[T] =
       TaskOps.unpackOption(nopt, ifNone)
 
     /**
@@ -814,7 +939,7 @@ object TaskSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpackThr(ifNone: => Throwable): Task[T] =
+    @inline def unpackThr(ifNone: => Throwable): Task[T] =
       TaskOps.unpackOptionThr(nopt, ifNone)
 
     /**
@@ -828,7 +953,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[_](effect: => Task[_]): Task[Unit] =
+    @inline def effectOnFail(effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnNone(nopt, effect)
 
     /**
@@ -842,7 +967,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[_](effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPure(effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnSome(nopt, effect)
 
   }
@@ -857,7 +982,7 @@ object TaskSyntax {
       *
       * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
       */
-    def unpack: Task[T] =
+    @inline def unpack: Task[T] =
       TaskOps.unpackResult(result)
 
     /**
@@ -871,7 +996,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFail[_](effect: Anomaly => Task[_]): Task[Unit] =
+    @inline def effectOnFail(effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnIncorrect(result, effect)
 
     /**
@@ -885,7 +1010,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnPure[_](effect: T => Task[_]): Task[Unit] =
+    @inline def effectOnPure(effect: T => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnCorrect(result, effect)
   }
 
@@ -900,7 +1025,7 @@ object TaskSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condTask[T](good: => T, bad: => Anomaly): Task[T] =
+    @inline def condTask[T](good: => T, bad: => Anomaly): Task[T] =
       TaskOps.cond(test, good, bad)
 
     /**
@@ -908,7 +1033,7 @@ object TaskSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condTaskThr[T](good: => T, bad: => Throwable): Task[T] =
+    @inline def condTaskThr[T](good: => T, bad: => Throwable): Task[T] =
       TaskOps.condThr(test, good, bad)
 
     /**
@@ -916,7 +1041,7 @@ object TaskSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWithTask[T](good: => Task[T], bad: => Anomaly): Task[T] =
+    @inline def condWithTask[T](good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.condWith(test, good, bad)
 
     /**
@@ -924,35 +1049,35 @@ object TaskSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       */
-    def condWithTaskThr[T](good: => Task[T], bad: => Throwable): Task[T] =
+    @inline def condWithTaskThr[T](good: => Task[T], bad: => Throwable): Task[T] =
       TaskOps.condWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueTask(bad: => Anomaly): Task[Unit] =
+    @inline def failOnTrueTask(bad: => Anomaly): Task[Unit] =
       TaskOps.failOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueTaskThr(bad: => Throwable): Task[Unit] =
+    @inline def failOnTrueTaskThr(bad: => Throwable): Task[Unit] =
       TaskOps.failOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseTask(bad: => Anomaly): Task[Unit] =
+    @inline def failOnFalseTask(bad: => Anomaly): Task[Unit] =
       TaskOps.failOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseTaskThr(bad: => Throwable): Task[Unit] =
+    @inline def failOnFalseTaskThr(bad: => Throwable): Task[Unit] =
       TaskOps.failOnFalseThr(test, bad)
 
     /**
@@ -965,7 +1090,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFalseTask[_](effect: => Task[_]): Task[_] =
+    @inline def effectOnFalseTask(effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnFalse(test, effect)
 
     /**
@@ -979,7 +1104,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnTrueTask[_](effect: => Task[_]): Task[Unit] =
+    @inline def effectOnTrueTask(effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnTrue(test, effect)
 
   }
@@ -996,7 +1121,7 @@ object TaskSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def cond[T](good: => T, bad: => Anomaly): Task[T] =
+    @inline def cond[T](good: => T, bad: => Anomaly): Task[T] =
       TaskOps.flatCond(test, good, bad)
 
     /**
@@ -1005,7 +1130,7 @@ object TaskSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condThr[T](good: => T, bad: => Throwable): Task[T] =
+    @inline def condThr[T](good: => T, bad: => Throwable): Task[T] =
       TaskOps.flatCondThr(test, good, bad)
 
     /**
@@ -1014,7 +1139,7 @@ object TaskSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condWith[T](good: => Task[T], bad: => Anomaly): Task[T] =
+    @inline def condWith[T](good: => Task[T], bad: => Anomaly): Task[T] =
       TaskOps.flatCondWith(test, good, bad)
 
     /**
@@ -1023,35 +1148,35 @@ object TaskSyntax {
       *   failed effect with ``bad`` [[Throwable]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condWithThr[T](good: => Task[T], bad: => Throwable): Task[T] =
+    @inline def condWithThr[T](good: => Task[T], bad: => Throwable): Task[T] =
       TaskOps.flatCondWithThr(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def failOnTrue(bad: => Anomaly): Task[Unit] =
+    @inline def failOnTrue(bad: => Anomaly): Task[Unit] =
       TaskOps.flatFailOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def failOnTrueThr(bad: => Throwable): Task[Unit] =
+    @inline def failOnTrueThr(bad: => Throwable): Task[Unit] =
       TaskOps.flatFailOnTrueThr(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def failOnFalse(bad: => Anomaly): Task[Unit] =
+    @inline def failOnFalse(bad: => Anomaly): Task[Unit] =
       TaskOps.flatFailOnFalse(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def failOnFalseThr(bad: => Throwable): Task[Unit] =
+    @inline def failOnFalseThr(bad: => Throwable): Task[Unit] =
       TaskOps.flatFailOnFalseThr(test, bad)
 
     /**
@@ -1065,7 +1190,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnFalse[_](effect: => Task[_]): Task[_] =
+    @inline def effectOnFalse(effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnFalse(test, effect)
 
     /**
@@ -1079,7 +1204,7 @@ object TaskSyntax {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
-    def effectOnTrue[_](effect: => Task[_]): Task[_] =
+    @inline def effectOnTrue(effect: => Task[_]): Task[Unit] =
       TaskOps.flatEffectOnTrue(test, effect)
 
   }
@@ -1096,22 +1221,22 @@ object TaskOps {
     * N.B. pass only pure values. If you have side effects, then
     * use [[Task.apply]] to suspend them inside this future.
     */
-  @scala.inline
-  def pure[T](value: T): Task[T] =
+
+  @inline def pure[T](value: T): Task[T] =
     Task.pure(value)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
-  def fail[T](bad: Anomaly): Task[T] =
+
+  @inline def fail[T](bad: Anomaly): Task[T] =
     Task.raiseError(bad.asThrowable)
 
   /**
     * Failed effect but with a [[Throwable]]
     */
-  @scala.inline
-  def failThr[T](bad: Throwable): Task[T] =
+
+  @inline def failThr[T](bad: Throwable): Task[T] =
     Task.raiseError(bad)
 
   // —— def unit: Task[Unit] —— already defined on Task object
@@ -1119,7 +1244,7 @@ object TaskOps {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def fromOption[T](opt: Option[T], ifNone: => Anomaly): Task[T] = opt match {
+  @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Task[T] = opt match {
     case None        => TaskOps.fail(ifNone)
     case Some(value) => TaskOps.pure(value)
   }
@@ -1132,13 +1257,13 @@ object TaskOps {
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromOption]]
     */
-  def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): Task[T] =
+  @inline def suspendOption[T](opt: => Option[T], ifNone: => Anomaly): Task[T] =
     Task.suspend(TaskOps.fromOption(opt, ifNone))
 
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Task[T] = opt match {
+  @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): Task[T] = opt match {
     case None        => TaskOps.failThr(ifNone)
     case Some(value) => TaskOps.pure(value)
   }
@@ -1151,7 +1276,7 @@ object TaskOps {
     * N.B. this is useless if the [[Option]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromOption]]
     */
-  def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
+  @inline def suspendOptionThr[T](opt: => Option[T], ifNone: => Throwable): Task[T] =
     Task.suspend(TaskOps.fromOptionThr(opt, ifNone))
 
   // def fromTry[T](tr: Try[T]): Task[T] —— already defined on Task object
@@ -1165,14 +1290,14 @@ object TaskOps {
     * N.B. this is useless if the [[Try]] was previously assigned to a "val".
     * You might as well use [[Task.fromTry]]
     */
-  def suspendTry[T](tr: => Try[T]): Task[T] =
+  @inline def suspendTry[T](tr: => Try[T]): Task[T] =
     Task.suspend(Task.fromTry(tr))
 
   /**
     * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
-  def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Task[R] = either match {
+  @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): Task[R] = either match {
     case Left(value)  => TaskOps.fail(transformLeft(value))
     case Right(value) => TaskOps.pure(value)
   }
@@ -1186,14 +1311,14 @@ object TaskOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromEither]]
     */
-  def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): Task[R] =
+  @inline def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): Task[R] =
     Task.suspend(TaskOps.fromEither(either, transformLeft))
 
   /**
     * Lift this [[Either]] and  sequence its left-hand-side [[Throwable]] within this effect
     * if it is a [[Throwable]].
     */
-  def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] = either match {
+  @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] = either match {
     case Left(value)  => TaskOps.failThr(ev(value))
     case Right(value) => TaskOps.pure(value)
   }
@@ -1206,14 +1331,14 @@ object TaskOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromEither]]
     */
-  def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
+  @inline def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
     Task.suspend(TaskOps.fromEitherThr(either)(ev))
 
   /**
     * Lift this [[Either]] and transform its left-hand side into a [[Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     */
-  def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] = either match {
+  @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] = either match {
     case Left(value)  => TaskOps.failThr(transformLeft(value))
     case Right(value) => TaskOps.pure(value)
   }
@@ -1226,7 +1351,7 @@ object TaskOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromEither]]
     */
-  def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
+  @inline def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
     Task.suspend(TaskOps.fromEitherThr(either, transformLeft))
 
   /**
@@ -1236,7 +1361,7 @@ object TaskOps {
     * [[Correct]] becomes a pure effect
     *
     */
-  def fromResult[T](result: Result[T]): Task[T] = result match {
+  @inline def fromResult[T](result: Result[T]): Task[T] = result match {
     case Left(value)  => TaskOps.fail(value)
     case Right(value) => TaskOps.pure(value)
   }
@@ -1248,8 +1373,88 @@ object TaskOps {
     * N.B. this is useless if the [[Result]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromResult]]
     */
-  def suspendResult[T](result: => Result[T]): Task[T] =
+  @inline def suspendResult[T](result: => Result[T]): Task[T] =
     Task.suspend(TaskOps.fromResult(result))
+
+  /**
+    *
+    * Lift the [[Validated]] in this effect
+    * [[Validated.Invalid]] becomes a failed effect
+    * [[Validated.Valid]] becomes a pure effect
+    *
+    * Consider using the overload with an extra constructor parameter
+    * for a custom [[busymachines.core.Anomalies]], otherwise your
+    * all failed cases will be wrapped in a:
+    * [[busymachines.effects.sync.validated.GenericValidationFailures]]
+    */
+
+  @inline def fromValidated[T](value: Validated[T]): Task[T] = value match {
+    case cd.Validated.Valid(e)   => TaskOps.pure(e)
+    case cd.Validated.Invalid(e) => TaskOps.fail(GenericValidationFailures(e.head, e.tail))
+  }
+
+  /**
+    *
+    * Lift the [[Validated]] in this effect
+    * [[Validated.Invalid]] becomes a failed effect
+    * [[Validated.Valid]] becomes a pure effect
+    *
+    * Provide the constructor for the specific [[busymachines.core.Anomalies]]
+    * into which the anomalies shall be stored.
+    *
+    * e.g. Creating case classes like bellow, or constructors on companion objects
+    * makes using this method almost completely non-intrusive
+    * {{{
+    * case class TVFs(
+    *   bad:  Anomaly,
+    *   bads: List[Anomaly] = Nil
+    * ) extends AnomalousFailures(
+    *       TVFsID,
+    *       s"Test validation failed with ${bads.length + 1} anomalies",
+    *       bad,
+    *       bads
+    *     )
+    *
+    * case object TVFsID extends AnomalyID {
+    *   override def name = "test_validation_001"
+    * }
+    *
+    * object Test {
+    *   Task.fromValidated(
+    *     Validated.pure(42),
+    *     TVFs
+    *   )
+    *   //in validated postfix notation it's infinitely more concise
+    *   Validated.pure(42).asTask(TVFs)
+    * }
+    * }}}
+    *
+    */
+
+  @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+    value match {
+      case cd.Validated.Valid(e)   => TaskOps.pure(e)
+      case cd.Validated.Invalid(e) => TaskOps.fail(ctor(e.head, e.tail))
+    }
+
+  /**
+    *
+    * Suspend any side-effects that might happen during the creation of this [[Validated]].
+    *
+    * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+    * You might as well use [[TaskOps.fromValidated]]
+    */
+  @inline def suspendValidated[T](value: => Validated[T]): Task[T] =
+    Task.suspend(TaskOps.fromValidated(value))
+
+  /**
+    * Suspend any side-effects that might happen during the creation of this [[Validated]].
+    *
+    * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
+    * You might as well use [[FutureOps.fromValidated]]
+    */
+  @inline def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
+    Task.suspend(TaskOps.fromValidated(value, ctor))
 
   /**
     * !!! USE WITH CARE !!!
@@ -1259,7 +1464,7 @@ object TaskOps {
     * If you are certain that this [[Future]] is pure, then you can use
     * this method to lift it into [[Task]].
     */
-  def fromFuturePure[T](value: Future[T]): Task[T] =
+  @inline def fromFuturePure[T](value: Future[T]): Task[T] =
     Task.fromFuture(value)
 
   /**
@@ -1270,7 +1475,7 @@ object TaskOps {
     * Usage. N.B. that this only makes sense if the creation of the Future itself
     * is also suspended in the [[Task]].
     * {{{
-    *   def writeToDB(v: Int, s: String): Future[Long] = ???
+    * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
     *   //...
     *   val task = Task.suspendFuture(writeToDB(42, "string"))
     *   //no database writes happened yet, since the future did
@@ -1288,7 +1493,7 @@ object TaskOps {
     * }}}
     *
     */
-  def suspendFuture[T](value: => Future[T]): Task[T] =
+  @inline def suspendFuture[T](value: => Future[T]): Task[T] =
     Task.deferFuture(value)
 
   /**
@@ -1296,7 +1501,7 @@ object TaskOps {
     * Transform an [[IO]] into a [[Task]]. No gotchas because pure
     * functional programming is awesome.
     */
-  def fromIO[T](value: IO[T]): Task[T] =
+  @inline def fromIO[T](value: IO[T]): Task[T] =
     Task.fromIO(value)
 
   /**
@@ -1304,7 +1509,7 @@ object TaskOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def cond[T](test: Boolean, good: => T, bad: => Anomaly): Task[T] =
+  @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Task[T] =
     if (test) TaskOps.pure(good) else TaskOps.fail(bad)
 
   /**
@@ -1312,7 +1517,7 @@ object TaskOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     */
-  def condThr[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
+  @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
     if (test) TaskOps.pure(good) else TaskOps.failThr(bad)
 
   /**
@@ -1320,7 +1525,7 @@ object TaskOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def condWith[T](test: Boolean, good: => Task[T], bad: => Anomaly): Task[T] =
+  @inline def condWith[T](test: Boolean, good: => Task[T], bad: => Anomaly): Task[T] =
     if (test) good else TaskOps.fail(bad)
 
   /**
@@ -1328,7 +1533,7 @@ object TaskOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     */
-  def condWithThr[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
+  @inline def condWithThr[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
     if (test) good else TaskOps.failThr(bad)
 
   /**
@@ -1337,7 +1542,7 @@ object TaskOps {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCond[T](test: Task[Boolean], good: => T, bad: => Anomaly): Task[T] =
+  @inline def flatCond[T](test: Task[Boolean], good: => T, bad: => Anomaly): Task[T] =
     test.flatMap(t => TaskOps.cond(t, good, bad))
 
   /**
@@ -1346,7 +1551,7 @@ object TaskOps {
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondThr[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
+  @inline def flatCondThr[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
     test.flatMap(t => TaskOps.condThr(t, good, bad))
 
   /**
@@ -1355,7 +1560,7 @@ object TaskOps {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondWith[T](test: Task[Boolean], good: => Task[T], bad: => Anomaly): Task[T] =
+  @inline def flatCondWith[T](test: Task[Boolean], good: => Task[T], bad: => Anomaly): Task[T] =
     test.flatMap(t => TaskOps.condWith(t, good, bad))
 
   /**
@@ -1364,63 +1569,63 @@ object TaskOps {
     *   failed effect with ``bad`` [[Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondWithThr[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
+  @inline def flatCondWithThr[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
     test.flatMap(t => TaskOps.condWithThr(t, good, bad))
 
   /**
     * @return
     *   Failed effect, if the boolean is true
     */
-  def failOnTrue(test: Boolean, bad: => Anomaly): Task[Unit] =
+  @inline def failOnTrue(test: Boolean, bad: => Anomaly): Task[Unit] =
     if (test) TaskOps.fail(bad) else Task.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is true
     */
-  def failOnTrueThr(test: Boolean, bad: => Throwable): Task[Unit] =
+  @inline def failOnTrueThr(test: Boolean, bad: => Throwable): Task[Unit] =
     if (test) TaskOps.failThr(bad) else Task.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def failOnFalse(test: Boolean, bad: => Anomaly): Task[Unit] =
+  @inline def failOnFalse(test: Boolean, bad: => Anomaly): Task[Unit] =
     if (!test) TaskOps.fail(bad) else Task.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def failOnFalseThr(test: Boolean, bad: => Throwable): Task[Unit] =
+  @inline def failOnFalseThr(test: Boolean, bad: => Throwable): Task[Unit] =
     if (!test) TaskOps.failThr(bad) else Task.unit
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
-  def flatFailOnTrue(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
+  @inline def flatFailOnTrue(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
     test.flatMap(t => TaskOps.failOnTrue(t, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
-  def flatFailOnTrueThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
+  @inline def flatFailOnTrueThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
     test.flatMap(t => TaskOps.failOnTrueThr(t, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
-  def flatFailOnFalse(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
+  @inline def flatFailOnFalse(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
     test.flatMap(t => TaskOps.failOnFalse(t, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
-  def flatFailOnFalseThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
+  @inline def flatFailOnFalseThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
     test.flatMap(t => TaskOps.failOnFalseThr(t, bad))
 
   /**
@@ -1428,7 +1633,7 @@ object TaskOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
-  def unpackOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
+  @inline def unpackOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
     nopt.flatMap {
       case None    => TaskOps.fail(ifNone)
       case Some(v) => TaskOps.pure(v)
@@ -1439,7 +1644,7 @@ object TaskOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
-  def unpackOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
+  @inline def unpackOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
     nopt.flatMap {
       case None    => TaskOps.failThr(ifNone)
       case Some(v) => TaskOps.pure(v)
@@ -1450,7 +1655,7 @@ object TaskOps {
     *
     * The failure of this effect takes precedence over the failure of the [[Incorrect]] value.
     */
-  def unpackResult[T](value: Task[Result[T]]): Task[T] = value.flatMap {
+  @inline def unpackResult[T](value: Task[Result[T]]): Task[T] = value.flatMap {
     case Left(a)  => TaskOps.fail(a)
     case Right(a) => TaskOps.pure(a)
   }
@@ -1460,7 +1665,7 @@ object TaskOps {
     *
     * This transforms any failed effect, into a pure one with and [[Incorrect]] value.
     */
-  def attemptResult[T](value: Task[T]): Task[Result[T]] =
+  @inline def attemptResult[T](value: Task[T]): Task[Result[T]] =
     value.attempt.map((e: Either[Throwable, T]) => Result.fromEitherThr(e))
 
   /**
@@ -1469,13 +1674,13 @@ object TaskOps {
     * The moment you call this, the side-effects suspended in this [[IO]] start being
     * executed.
     */
-  def asFutureUnsafe[T](value: Task[T])(implicit sc: Scheduler): CancellableFuture[T] =
+  @inline def asFutureUnsafe[T](value: Task[T])(implicit sc: Scheduler): CancellableFuture[T] =
     value.runAsync
 
   /**
     * No gotchas. Pure functional programming = <3
     */
-  def asIO[T](value: Task[T])(implicit sc: Scheduler): IO[T] =
+  @inline def asIO[T](value: Task[T])(implicit sc: Scheduler): IO[T] =
     value.toIO
 
   /**
@@ -1485,9 +1690,9 @@ object TaskOps {
     * call this in your code. You have libraries that do this for you "at the end of the world"
     * parts of your program: e.g. akka-http when waiting for the response value to a request.
     */
-  def unsafeSyncGet[T](
+  @inline def unsafeSyncGet[T](
     value:  Task[T],
-    atMost: FiniteDuration = defaultDuration
+    atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration
   )(
     implicit sc: Scheduler
   ): T = value.runAsync.unsafeSyncGet(atMost)
@@ -1507,7 +1712,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnTrue[_](test: Boolean, effect: => Task[_]): Task[Unit] =
+  @inline def effectOnTrue(test: Boolean, effect: => Task[_]): Task[Unit] =
     if (test) TaskOps.discardContent(effect) else Task.unit
 
   /**
@@ -1521,7 +1726,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnTrue[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
+  @inline def flatEffectOnTrue(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
     test.flatMap(t => TaskOps.effectOnTrue(t, effect))
 
   /**
@@ -1534,7 +1739,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnFalse[_](test: Boolean, effect: => Task[_]): Task[Unit] =
+  @inline def effectOnFalse(test: Boolean, effect: => Task[_]): Task[Unit] =
     if (!test) TaskOps.discardContent(effect) else Task.unit
 
   /**
@@ -1548,7 +1753,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnFalse[_](test: Task[Boolean], effect: => Task[_]): Task[Unit] =
+  @inline def flatEffectOnFalse(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
     test.flatMap(t => TaskOps.effectOnFalse(t, effect))
 
   /**
@@ -1561,7 +1766,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnFail[T, _](value: Option[T], effect: => Task[_]): Task[Unit] =
+  @inline def effectOnFail[T](value: Option[T], effect: => Task[_]): Task[Unit] =
     if (value.isEmpty) TaskOps.discardContent(effect) else Task.unit
 
   /**
@@ -1575,7 +1780,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnNone[T, _](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
+  @inline def flatEffectOnNone[T](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
     value.flatMap(opt => TaskOps.effectOnFail(opt, effect))
 
   /**
@@ -1588,7 +1793,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnPure[T, _](value: Option[T], effect: T => Task[_]): Task[Unit] =
+  @inline def effectOnPure[T](value: Option[T], effect: T => Task[_]): Task[Unit] =
     value match {
       case None    => Task.unit
       case Some(v) => TaskOps.discardContent(effect(v))
@@ -1606,7 +1811,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnSome[T, _](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
+  @inline def flatEffectOnSome[T](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
     value.flatMap(opt => TaskOps.effectOnPure(opt, effect))
 
   /**
@@ -1619,7 +1824,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnFail[T, _](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] = value match {
+  @inline def effectOnFail[T](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] = value match {
     case Correct(_)         => Task.unit
     case Incorrect(anomaly) => TaskOps.discardContent(effect(anomaly))
   }
@@ -1635,7 +1840,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnIncorrect[T, _](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
+  @inline def flatEffectOnIncorrect[T](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
     value.flatMap(result => TaskOps.effectOnFail(result, effect))
 
   /**
@@ -1648,7 +1853,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def effectOnPure[T, _](value: Result[T], effect: T => Task[_]): Task[Unit] =
+  @inline def effectOnPure[T](value: Result[T], effect: T => Task[_]): Task[Unit] =
     value match {
       case Incorrect(_) => Task.unit
       case Correct(v)   => TaskOps.discardContent(effect(v))
@@ -1665,7 +1870,7 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
-  def flatEffectOnCorrect[T, _](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
+  @inline def flatEffectOnCorrect[T](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
     value.flatMap(result => TaskOps.effectOnPure(result, effect))
 
   //=========================================================================
@@ -1677,7 +1882,7 @@ object TaskOps {
     * "bi" map, because it also allows you to change both branches of the effect, not just the
     * happy path.
     */
-  def bimap[T, R](value: Task[T], good: T => R, bad: Throwable => Anomaly): Task[R] =
+  @inline def bimap[T, R](value: Task[T], good: T => R, bad: Throwable => Anomaly): Task[R] =
     value.map(good).adaptError {
       case NonFatal(t) => bad(t).asThrowable
     }
@@ -1686,7 +1891,7 @@ object TaskOps {
     * Similar to the overload, but the [[Correct]] branch of the result is used to change the "pure" branch of this
     * effect, and [[Incorrect]] branch is used to change the "fail" branch of the effect.
     */
-  def bimap[T, R](value: Task[T], result: Result[T] => Result[R]): Task[R] =
+  @inline def bimap[T, R](value: Task[T], result: Result[T] => Result[R]): Task[R] =
     TaskOps.attemptResult(value).map(result).flatMap {
       case Correct(v)   => TaskOps.pure(v)
       case Incorrect(v) => TaskOps.fail(v)
@@ -1698,7 +1903,7 @@ object TaskOps {
     *
     * The overload that uses [[Throwable]] instead of [[Anomaly]]
     */
-  def bimapThr[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
+  @inline def bimapThr[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
     value.map(good).adaptError {
       case NonFatal(t) => bad(t)
     }
@@ -1720,7 +1925,7 @@ object TaskOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
-  def morph[T, R](value: Task[T], good: T => R, bad: Throwable => R): Task[R] =
+  @inline def morph[T, R](value: Task[T], good: T => R, bad: Throwable => R): Task[R] =
     value.map(good).recover {
       case NonFatal(t) => bad(t)
     }
@@ -1731,7 +1936,7 @@ object TaskOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
-  def morph[T, R](value: Task[T], result: Result[T] => R): Task[R] =
+  @inline def morph[T, R](value: Task[T], result: Result[T] => R): Task[R] =
     TaskOps.attemptResult(value).map(result)
 
   /**
@@ -1742,12 +1947,36 @@ object TaskOps {
     * it's just the final value that is discarded
     *
     */
-  def discardContent[_](value: Task[_]): Task[Unit] =
-    value.map(UnitFunction)
+  @inline def discardContent(value: Task[_]): Task[Unit] =
+    value.map(ConstantsAsyncEffects.UnitFunction1)
 
   //=========================================================================
   //=============================== Traversals ==============================
   //=========================================================================
+
+  /**
+    * Similar to [[monix.eval.Task.traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[monix.eval.Task.traverse]]
+    *
+    */
+  def traverse_[A, B, M[X] <: TraversableOnce[X]](col: M[A])(fn: A => Task[B])(
+    implicit
+    cbf: CanBuildFrom[M[A], B, M[B]]
+  ): Task[Unit] = TaskOps.discardContent(Task.traverse(col)(fn))
+
+  /**
+    * Similar to [[monix.eval.Task.sequence]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[monix.eval.Task.sequence]]
+    *
+    */
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Task[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Task[A]], A, M[A]]
+  ): Task[Unit] = TaskOps.discardContent(Task.sequence(in))
 
   /**
     *
@@ -1771,15 +2000,21 @@ object TaskOps {
     *
     *
     */
-  def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
+  @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): Task[C[B]] = Task.traverse(col)(fn)(cbf)
-  //=========================================================================
-  //=============================== Constants ===============================
-  //=========================================================================
 
-  private val UnitFunction: Any => Unit = _ => ()
+  /**
+    * Similar to [[serialize]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * @see [[serialize]]
+    *
+    */
+  @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Task[Unit] = TaskOps.discardContent(TaskOps.serialize(col)(fn))
 
-  private[async] val defaultDuration: FiniteDuration = duration.minutes(1)
 }

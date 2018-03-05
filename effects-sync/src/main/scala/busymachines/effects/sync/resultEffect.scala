@@ -30,15 +30,15 @@ import scala.util.control.NonFatal
   *
   */
 trait ResultTypeDefinitions {
-  type Result[T]    = Either[Anomaly, T]
-  type Correct[T]   = Right[Anomaly,  T]
-  type Incorrect[T] = Left[Anomaly,   T]
+  final type Result[T]    = Either[Anomaly, T]
+  final type Correct[T]   = Right[Anomaly,  T]
+  final type Incorrect[T] = Left[Anomaly,   T]
 }
 
 trait ResultCompanionAliases {
-  val Result:    busymachines.effects.sync.Result.type    = busymachines.effects.sync.Result
-  val Correct:   busymachines.effects.sync.Correct.type   = busymachines.effects.sync.Correct
-  val Incorrect: busymachines.effects.sync.Incorrect.type = busymachines.effects.sync.Incorrect
+  @inline final def Result:    busymachines.effects.sync.Result.type    = busymachines.effects.sync.Result
+  @inline final def Correct:   busymachines.effects.sync.Correct.type   = busymachines.effects.sync.Correct
+  @inline final def Incorrect: busymachines.effects.sync.Incorrect.type = busymachines.effects.sync.Incorrect
 }
 
 object ResultSyntax {
@@ -48,21 +48,21 @@ object ResultSyntax {
     */
   trait Implicits {
 
-    implicit def bmcResultReferenceOps[T](value: Result[T]): ReferenceOps[T] =
+    implicit final def bmcResultReferenceOps[T](value: Result[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcResultNestedOptionOps[T](nopt: Result[Option[T]]): NestedOptionOps[T] =
+    implicit final def bmcResultNestedOptionOps[T](nopt: Result[Option[T]]): NestedOptionOps[T] =
       new NestedOptionOps(nopt)
 
-    implicit def bmcResultBooleanOps(test: Boolean): BooleanOps =
+    implicit final def bmcResultBooleanOps(test: Boolean): BooleanOps =
       new BooleanOps(test)
 
-    implicit def bmcResultNestedBooleanOps(test: Result[Boolean]): NestedBooleanOps =
+    implicit final def bmcResultNestedBooleanOps(test: Result[Boolean]): NestedBooleanOps =
       new NestedBooleanOps(test)
 
   }
 
-  // —— final class CompationObjectOps(val obj: Result.type) —— is not necessary, because we reference the Result
+  // —— final class CompanionObjectOps(val obj: Result.type) —— is not necessary, because we reference the Result
   // object directly in this case. A clever slight of hand
 
   /**
@@ -76,8 +76,7 @@ object ResultSyntax {
       * Throws exceptions into your face
       *
       */
-    @scala.inline
-    def asOptionUnsafe(): Option[T] =
+    @inline def asOptionUnsafe(): Option[T] =
       Result.asOptionUnsafe(value)
 
     /**
@@ -86,8 +85,7 @@ object ResultSyntax {
       * Throws exceptions into your face
       *
       */
-    @scala.inline
-    def asListUnsafe(): List[T] =
+    @inline def asListUnsafe(): List[T] =
       Result.asListUnsafe(value)
 
     /**
@@ -95,8 +93,7 @@ object ResultSyntax {
       * hand side is converted into a [[Throwable]] and corresponds to a
       * failed [[Try]]
       */
-    @scala.inline
-    def asTry: Try[T] =
+    @inline def asTry: Try[T] =
       Result.asTry(value)
 
     /**
@@ -104,8 +101,7 @@ object ResultSyntax {
       *
       * Will throw exceptions in your face if the underlying effect is failed
       */
-    @scala.inline
-    def unsafeGet(): T =
+    @inline def unsafeGet(): T =
       Result.unsafeGet(value)
 
     /**
@@ -113,7 +109,7 @@ object ResultSyntax {
       * "bi" map, because it also allows you to change both branches of the effect, not just the
       * happy path.
       */
-    def bimap[R](good: T => R, bad: Anomaly => Anomaly): Result[R] =
+    @inline def bimap[R](good: T => R, bad: Anomaly => Anomaly): Result[R] =
       Result.bimap(value, good, bad)
 
     /**
@@ -133,7 +129,7 @@ object ResultSyntax {
       *
       * Undefined behavior if you throw exceptions in the method. DO NOT do that!
       */
-    def morph[R](good: T => R, bad: Anomaly => R): Result[R] =
+    @inline def morph[R](good: T => R, bad: Anomaly => R): Result[R] =
       Result.morph(value, good, bad)
 
     /**
@@ -141,7 +137,7 @@ object ResultSyntax {
       * If this effect is [[Incorrect]] then it tries to transform it into a [[Correct]] one using
       * the given function
       */
-    def recover[R >: T](pf: PartialFunction[Anomaly, R]): Result[R] =
+    @inline def recover[R >: T](pf: PartialFunction[Anomaly, R]): Result[R] =
       Result.recover(value, pf)
 
     /**
@@ -149,19 +145,18 @@ object ResultSyntax {
       * If this effect is [[Incorrect]] then it brings the final effect into the state returned by the
       * ``pf`` function.
       */
-    def recoverWith[R >: T](pf: PartialFunction[Anomaly, Result[R]]): Result[R] =
+    @inline def recoverWith[R >: T](pf: PartialFunction[Anomaly, Result[R]]): Result[R] =
       Result.recoverWith(value, pf)
 
     /**
       *
       * Explicitely discard the contents of this effect, and return [[Unit]] instead.
       *
-      * N.B. thecomputation captured within this effect are still executed,
+      * N.B. the computation captured within this effect are still executed,
       * it's just the final value that is discarded
       *
       */
-    @scala.inline
-    def discardContent: Result[Unit] =
+    @inline def discardContent: Result[Unit] =
       Result.discardContent(value)
   }
 
@@ -176,7 +171,7 @@ object ResultSyntax {
       *
       * The failure of this effect takes precedence over the given failure
       */
-    def unpack(ifNone: => Anomaly): Result[T] =
+    @inline def unpack(ifNone: => Anomaly): Result[T] =
       Result.unpackOption(nopt, ifNone)
   }
 
@@ -191,7 +186,7 @@ object ResultSyntax {
       *   pure effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condResult[T](good: => T, bad: => Anomaly): Result[T] =
+    @inline def condResult[T](good: => T, bad: => Anomaly): Result[T] =
       Result.cond(test, good, bad)
 
     /**
@@ -199,21 +194,21 @@ object ResultSyntax {
       *   effect from ``good`` if the boolean is true
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       */
-    def condWithResult[T](good: => Result[T], bad: => Anomaly): Result[T] =
+    @inline def condWithResult[T](good: => Result[T], bad: => Anomaly): Result[T] =
       Result.condWith(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is true
       */
-    def failOnTrueResult(bad: => Anomaly): Result[Unit] =
+    @inline def failOnTrueResult(bad: => Anomaly): Result[Unit] =
       Result.failOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boolean is false
       */
-    def failOnFalseResult(bad: => Anomaly): Result[Unit] =
+    @inline def failOnFalseResult(bad: => Anomaly): Result[Unit] =
       Result.failOnFalse(test, bad)
 
   }
@@ -230,7 +225,7 @@ object ResultSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def cond[T](good: => T, bad: => Anomaly): Result[T] =
+    @inline def cond[T](good: => T, bad: => Anomaly): Result[T] =
       Result.flatCond(test, good, bad)
 
     /**
@@ -239,21 +234,21 @@ object ResultSyntax {
       *   failed effect with ``bad`` [[Anomaly]] if boolean is false
       *   failed effect if the effect wrapping the boolean is already failed
       */
-    def condWith[T](good: => Result[T], bad: => Anomaly): Result[T] =
+    @inline def condWith[T](good: => Result[T], bad: => Anomaly): Result[T] =
       Result.flatCondWith(test, good, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is true, or if the original effect is failed
       */
-    def failOnTrue(bad: => Anomaly): Result[Unit] =
+    @inline def failOnTrue(bad: => Anomaly): Result[Unit] =
       Result.flatFailOnTrue(test, bad)
 
     /**
       * @return
       *   Failed effect, if the boxed boolean is false, or if the original effect is failed
       */
-    def failOnFalse(bad: => Anomaly): Result[Unit] =
+    @inline def failOnFalse(bad: => Anomaly): Result[Unit] =
       Result.flatFailOnFalse(test, bad)
 
   }
@@ -292,23 +287,22 @@ object Result {
   /**
     * N.B. pass only pure values. Otherwise use [[Result.apply]]
     */
-  @scala.inline
-  def pure[T](t: T): Result[T] =
+
+  @inline def pure[T](t: T): Result[T] =
     Correct(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
-  def fail[T](bad: Anomaly): Result[T] =
+
+  @inline def fail[T](bad: Anomaly): Result[T] =
     Incorrect(bad)
 
   /**
     * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
     * if it is not also an [[Anomaly]]
     */
-  @scala.inline
-  def failThr[T](bad: Throwable): Result[T] = bad match {
+  @inline def failThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))
   }
@@ -316,23 +310,20 @@ object Result {
   /**
     * N.B. pass only pure values. Otherwise use [[Result.apply]]
     */
-  @scala.inline
-  def correct[T](t: T): Result[T] =
+  @inline def correct[T](t: T): Result[T] =
     Correct(t)
 
   /**
     * Failed effect but with an [[Anomaly]]
     */
-  @scala.inline
-  def incorrect[T](bad: Anomaly): Result[T] =
+  @inline def incorrect[T](bad: Anomaly): Result[T] =
     Incorrect(bad)
 
   /**
     * Failed effect but with a [[Throwable]]. Wraps in a [[CatastrophicError]]
     * if it is not also an [[Anomaly]]
     */
-  @scala.inline
-  def incorrectThr[T](bad: Throwable): Result[T] = bad match {
+  @inline def incorrectThr[T](bad: Throwable): Result[T] = bad match {
     case a: Anomaly => Result.fail(a)
     case NonFatal(t) => Result.fail(CatastrophicError(t))
   }
@@ -345,7 +336,7 @@ object Result {
     * also a [[Anomaly]] then keep it as is, but if it is not then wrap it into
     * a [[CatastrophicError]].
     */
-  def apply[T](thunk: => T): Result[T] = {
+  @inline def apply[T](thunk: => T): Result[T] = {
     try {
       Result.pure(thunk)
     } catch {
@@ -361,7 +352,7 @@ object Result {
   /**
     * Lift this [[Option]] and transform it into a failed effect if it is [[None]]
     */
-  def fromOption[T](opt: Option[T], ifNone: => Anomaly): Result[T] = opt match {
+  @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): Result[T] = opt match {
     case None    => Result.incorrect(ifNone)
     case Some(v) => Result.pure(v)
   }
@@ -371,7 +362,7 @@ object Result {
     * If the [[Throwable]] is also an [[Anomaly]] then it is used as is for the [[Incorrect]] case,
     * but if it is not, then it is wrapped inside of a [[CatastrophicError]] anomaly.
     */
-  def fromTry[T](t: Try[T]): Result[T] = t match {
+  @inline def fromTry[T](t: Try[T]): Result[T] = t match {
     case Failure(a: Anomaly) => Result.incorrect(a)
     case Failure(NonFatal(r)) => Result.incorrect(CatastrophicError(r))
     case Success(value)       => Result.pure(value)
@@ -381,7 +372,7 @@ object Result {
     * Lift this [[Either]] and transform its left-hand side into a [[Anomaly]] and sequence it within
     * this effect, yielding a failed effect.
     */
-  def fromEither[L, R](elr: Either[L, R], transformLeft: L => Anomaly): Result[R] = elr match {
+  @inline def fromEither[L, R](elr: Either[L, R], transformLeft: L => Anomaly): Result[R] = elr match {
     case Left(left)   => Result.incorrect(transformLeft(left))
     case Right(value) => Result.pure(value)
   }
@@ -392,7 +383,7 @@ object Result {
     * used as is for the [[Incorrect]] case, but if it is not, then it is wrapped inside
     * of a [[CatastrophicError]] anomaly.
     */
-  def fromEitherThr[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = elr match {
+  @inline def fromEitherThr[L, R](elr: Either[L, R])(implicit ev: L <:< Throwable): Result[R] = elr match {
     case Left(left) =>
       ev(left) match {
         case a: Anomaly => Result.incorrect(a)
@@ -410,7 +401,7 @@ object Result {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def cond[T](test: Boolean, good: => T, bad: => Anomaly): Result[T] =
+  @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Result[T] =
     if (test) Result.pure(good) else Result.fail(bad)
 
   /**
@@ -418,21 +409,21 @@ object Result {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     */
-  def condWith[T](test: Boolean, good: => Result[T], bad: => Anomaly): Result[T] =
+  @inline def condWith[T](test: Boolean, good: => Result[T], bad: => Anomaly): Result[T] =
     if (test) good else Result.fail(bad)
 
   /**
     * @return
     *   Failed effect, if the boolean is true
     */
-  def failOnTrue(test: Boolean, bad: => Anomaly): Result[Unit] =
+  @inline def failOnTrue(test: Boolean, bad: => Anomaly): Result[Unit] =
     if (test) Result.fail(bad) else Result.unit
 
   /**
     * @return
     *   Failed effect, if the boolean is false
     */
-  def failOnFalse(test: Boolean, bad: => Anomaly): Result[Unit] =
+  @inline def failOnFalse(test: Boolean, bad: => Anomaly): Result[Unit] =
     if (!test) Result.fail(bad) else Result.unit
 
   /**
@@ -441,7 +432,7 @@ object Result {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCond[T](test: Result[Boolean], good: => T, bad: => Anomaly): Result[T] =
+  @inline def flatCond[T](test: Result[Boolean], good: => T, bad: => Anomaly): Result[T] =
     test.flatMap(b => Result.cond(b, good, bad))
 
   /**
@@ -450,21 +441,21 @@ object Result {
     *   failed effect with ``bad`` [[Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
-  def flatCondWith[T](test: Result[Boolean], good: => Result[T], bad: => Anomaly): Result[T] =
+  @inline def flatCondWith[T](test: Result[Boolean], good: => Result[T], bad: => Anomaly): Result[T] =
     test.flatMap(b => Result.condWith(b, good, bad))
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
-  def flatFailOnTrue(test: Result[Boolean], bad: => Anomaly): Result[Unit] =
+  @inline def flatFailOnTrue(test: Result[Boolean], bad: => Anomaly): Result[Unit] =
     test.flatMap(b => if (b) Result.fail(bad) else Result.unit)
 
   /**
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
-  def flatFailOnFalse(test: Result[Boolean], bad: => Anomaly): Result[Unit] =
+  @inline def flatFailOnFalse(test: Result[Boolean], bad: => Anomaly): Result[Unit] =
     test.flatMap(b => if (!b) Result.fail(bad) else Result.unit)
 
   /**
@@ -472,7 +463,7 @@ object Result {
     *
     * The failure of this effect takes precedence over the given failure
     */
-  def unpackOption[T](nopt: Result[Option[T]], ifNone: => Anomaly): Result[T] =
+  @inline def unpackOption[T](nopt: Result[Option[T]], ifNone: => Anomaly): Result[T] =
     nopt.flatMap(opt => Result.fromOption(opt, ifNone))
 
   //===========================================================================
@@ -485,7 +476,7 @@ object Result {
     * Throws exceptions into your face
     *
     */
-  def asOptionUnsafe[T](value: Result[T]): Option[T] = value match {
+  @inline def asOptionUnsafe[T](value: Result[T]): Option[T] = value match {
     case Left(value)  => throw value.asThrowable
     case Right(value) => Option(value)
   }
@@ -496,7 +487,7 @@ object Result {
     * Throws exceptions into your face
     *
     */
-  def asListUnsafe[T](value: Result[T]): List[T] = value match {
+  @inline def asListUnsafe[T](value: Result[T]): List[T] = value match {
     case Left(value)  => throw value.asThrowable
     case Right(value) => List(value)
   }
@@ -506,7 +497,7 @@ object Result {
     * hand side is converted into a [[Throwable]] and corresponds to a
     * failed [[Try]]
     */
-  def asTry[T](value: Result[T]): Try[T] = value match {
+  @inline def asTry[T](value: Result[T]): Try[T] = value match {
     case Left(value)  => scala.util.Failure(value.asThrowable)
     case Right(value) => scala.util.Success(value)
   }
@@ -516,7 +507,7 @@ object Result {
     *
     * Will throw exceptions in your face if the underlying effect is failed
     */
-  def unsafeGet[T](value: Result[T]): T = value match {
+  @inline def unsafeGet[T](value: Result[T]): T = value match {
     case Left(value)  => throw value.asThrowable
     case Right(value) => value
   }
@@ -530,7 +521,7 @@ object Result {
     * "bi" map, because it also allows you to change both branches of the effect, not just the
     * happy path.
     */
-  def bimap[T, R](value: Result[T], good: T => R, bad: Anomaly => Anomaly): Result[R] =
+  @inline def bimap[T, R](value: Result[T], good: T => R, bad: Anomaly => Anomaly): Result[R] =
     value.right.map(good).left.map(bad)
 
   /**
@@ -550,7 +541,7 @@ object Result {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
-  def morph[T, R](value: Result[T], good: T => R, bad: Anomaly => R): Result[R] = value match {
+  @inline def morph[T, R](value: Result[T], good: T => R, bad: Anomaly => R): Result[R] = value match {
     case Left(value)  => Result.pure(bad(value))
     case Right(value) => Result.pure(good(value))
   }
@@ -560,7 +551,7 @@ object Result {
     * If this effect is [[Incorrect]] then it tries to transform it into a [[Correct]] one using
     * the given function
     */
-  def recover[T, R >: T](value: Result[T], pf: PartialFunction[Anomaly, R]): Result[R] = value match {
+  @inline def recover[T, R >: T](value: Result[T], pf: PartialFunction[Anomaly, R]): Result[R] = value match {
     case Left(a: Anomaly) if pf.isDefinedAt(a) => Result.pure(pf(a))
     case _ => value
   }
@@ -570,28 +561,29 @@ object Result {
     * If this effect is [[Incorrect]] then it brings the final effect into the state returned by the
     * ``pf`` function.
     */
-  def recoverWith[T, R >: T](value: Result[T], pf: PartialFunction[Anomaly, Result[R]]): Result[R] = value match {
-    case Left(a: Anomaly) if pf.isDefinedAt(a) => pf(a)
-    case _ => value
-  }
+  @inline def recoverWith[T, R >: T](value: Result[T], pf: PartialFunction[Anomaly, Result[R]]): Result[R] =
+    value match {
+      case Left(a: Anomaly) if pf.isDefinedAt(a) => pf(a)
+      case _ => value
+    }
 
   /**
     *
     * Explicitely discard the contents of this effect, and return [[Unit]] instead.
     *
-    * N.B. thecomputation captured within this effect are still executed,
+    * N.B. the computation captured within this effect are still executed,
     * it's just the final value that is discarded
     *
     */
-  def discardContent[T](value: Result[T]): Result[Unit] =
-    value.map(UnitFunction)
+  @inline def discardContent[T](value: Result[T]): Result[Unit] =
+    value.map(ConstantsSyncEffects.UnitFunction1)
 
   /**
     * see:
     * https://typelevel.org/cats/api/cats/Traverse.html
     *
     * {{{
-    *   def indexToFilename(i: Int): Result[String] = ???
+    * @inline def indexToFilename(i: Int): Result[String] = ???
     *
     *   val fileIndex: List[Int] = List(0,1,2,3,4)
     *   val fileNames: Result[List[String]] = Result.traverse(fileIndex){ i =>
@@ -599,7 +591,7 @@ object Result {
     *   }
     * }}}
     */
-  def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
+  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]]
   ): Result[C[B]] = {
@@ -630,6 +622,25 @@ object Result {
     }
   }
 
+  /**
+    * Similar to [[traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * {{{
+    *   def indexExists(i: Int): Result[Unit] = ???
+
+    *   val fileIndex: List[Int] = List(0,1,2,3,4)
+    *   val result: Result[Unit] = Result.traverse_(fileIndex)(indexExists)
+    * }}}
+    */
+  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
+    implicit
+    cbf: CanBuildFrom[C[A], B, C[B]]
+  ): Result[Unit] = Result.discardContent(Result.traverse(col)(fn))
+
   //=========================================================================
   //=============================== Traversals ==============================
   //=========================================================================
@@ -641,23 +652,37 @@ object Result {
     * Specialized case of [[traverse]]
     *
     * {{{
-    *   def indexToFilename(i: Int): Result[String] = ???
+    * @inline def indexToFilename(i: Int): Result[String] = ???
     *
     *   val fileNamesResult: List[Result[String]] = List(0,1,2,3,4).map(indexToFileName)
     *   val fileNames:       Result[List[String]] = Result.sequence(fileNamesTry)
     * }}}
     */
-  def sequence[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
+  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
     implicit
     cbf: CanBuildFrom[M[Result[A]], A, M[A]]
   ): Result[M[A]] = Result.traverse(in)(identity)
 
-  //=========================================================================
-  //=============================== Constants ===============================
-  //=========================================================================
-
-  private val UnitFunction: Any => Unit = _ => ()
-
+  /**
+    * Similar to [[traverse]], but discards all content. i.e. used only
+    * for the combined effects.
+    *
+    * see:
+    * https://typelevel.org/cats/api/cats/Traverse.html
+    *
+    * Specialized case of [[traverse]]
+    *
+    * {{{
+    * @inline def indexToFilename(i: Int): Result[String] = ???
+    *
+    *   val fileNamesResult: List[Result[String]] = List(0,1,2,3,4).map(indexToFileName)
+    *   val fileNames:       Result[Unit] = Result.sequence_(fileNamesTry)
+    * }}}
+    */
+  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
+    implicit
+    cbf: CanBuildFrom[M[Result[A]], A, M[A]]
+  ): Result[Unit] = Result.discardContent(Result.sequence(in))
 }
 
 /**

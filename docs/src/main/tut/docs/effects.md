@@ -10,11 +10,24 @@ title: effects
 * latest: `0.3.0-RC5`
 
 ```scala
-"com.busymachines" %% "busymachines-commons-effects"       % "0.3.0-RC5"
-//the above module is actually a composite of the following two modules
-"com.busymachines" %% "busymachines-commons-effects-sync"  % "0.3.0-RC5"
-"com.busymachines" %% "busymachines-commons-effects-async" % "0.3.0-RC5"
+"com.busymachines" %% "busymachines-commons-effects"            % "0.3.0-RC5"
+//the above module is actually a composite of the following three modules
+"com.busymachines" %% "busymachines-commons-effects-sync"       % "0.3.0-RC5"
+"com.busymachines" %% "busymachines-commons-effects-sync-cats"  % "0.3.0-RC5"
+"com.busymachines" %% "busymachines-commons-effects-async"      % "0.3.0-RC5"
 ```
+
+## Recommended usage
+```
+libraryDependencies += "com.busymachines" %% "busymachines-commons-effects" % "0.3.0-RC5"
+```
+
+```scala
+import busymachines.effects._
+import busymachines.effects.validated._ //only if you need Validated (see below)
+```
+
+If you need fine grained control then you can still pick and choose the modules you depend on and the imports you make.
 
 ## How it works
 
@@ -56,16 +69,19 @@ That's a `List`.
 Or, put bluntly, model "failures", "exceptions", or other such things.
 That's a `Result`. This can also be achieved with a `Try`, or `Either`, but the usage of the former is discouraged, while the latter is not specialized enough.
 
+##### 4. Do you want to accumulate all errors while processing some data?
 
-##### 4. Does your computation have a side-effect?
+That's a `Validated` _Applicative_. Unlike the other effects, this one is not a `Monad`.
+
+##### 5. Does your computation have a side-effect?
 
 All effects in the `sync` should be used for pure operations *only*. Therefore do not, under absolutely any circumstances model "writing a file" as a `Result`, `Try`. That would be absolutely horrible. Use effects that actually are meant to encapsulate side-effects. You should definitely use one of: `IO`, `Task`, `Future`, or some other effect not in here (e.g. slick's [DBIOAction](http://slick.lightbend.com/doc/3.0.0/api/index.html#slick.dbio.DBIOAction))
 
-##### 5. Do you suspect your computation might have side-effects but don't know for sure?
+##### 6. Do you suspect your computation might have side-effects but don't know for sure?
 
 Then use of of the `suspendIn{Eff}` methods to be extra careful.
 
-##### 6. Need concurrency?
+##### 7. Need concurrency?
 
 Use `Task`. The usage of `Future` is discouraged because of it does not let you manage side-effects at all. See the section in [learning](learning.html#referential-transparency) about it.
 
@@ -144,6 +160,152 @@ val nay2 = for {
 ```
 
 Standard monadic behavior, leveraging `Either`'s [right bias](https://typelevel.org/cats/datatypes/either.html), but with a fixed type for the left-hand side to considerably reduce the boilerplate for 99% percent of the cases.
+
+## busymachines-commons-sync-cats
+
+This module synthesized cats' `Validated` and [core](core/). You _definitely_ have to read the associated [cats docs](https://typelevel.org/cats/datatypes/validated.html) to properly understand this.
+
+This is a bit of a stray cat compared to the other modules. The reason is that it brings to the table the `Validated` data-type which allows you to accumulate the anomalies of your various effectful computations. The reason that this is slightly off syntax-wise compared to the other modules is because `Validated` is _only_ an `Applicative`, and not also a `Monad`. Meaning that you do not have a `flatMap` method, ergo you cannot use it in `for` comprehensions.
+
+### Validated
+
+Ought to be used as an "anomaly accumulating" version of `Result`, as opposed to having fail first semantics.
+
+The types and syntax are not immediately available with the usual `import busymachines.effects.sync_`, but rather have to be brought in via the `import busymachines.effects.sync.validated._`. This decision was made through empirical observation, the vast majority of time the semantics of `Result` are better suited than `Validated`, and the use of the latter is a special case.
+
+The best examples are in the aforementioned cats docs, and in our tests:
+```scala
+package busymachines.effects.sync.validation_test
+
+import org.scalatest._
+
+import busymachines.core._
+import busymachines.effects.sync._
+import busymachines.effects.sync.validated._
+
+/**
+  *
+  * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com
+  * @since 26 Feb 2018
+  *
+  */
+private[validation_test] object PWDValidator {
+  private type Password = String
+
+  def apply(s: Password): Validated[Unit] = Validated.sequence_(
+    validateSpaces(s),
+    validateSize(s)
+  )
+
+  private def validateSpaces(s: Password): Validated[Unit] = {
+    s.contains(" ").invalidOnTrue(InvSpaces)
+  }
+
+  private def validateSize(s: Password): Validated[Unit] = {
+    (s.length < 4).invalidOnTrue(InvSize)
+  }
+
+  case object InvSpaces extends InvalidInputFailure("cannot contain spaces")
+  case object InvSize extends InvalidInputFailure("must have size of at least 4")
+}
+
+class ValidatedEffectsTest extends FunSpec {
+  //prevents atrocious English
+  private def test: ItWord = it
+
+  private val valid     = "test"
+  private val invSpaces = "te st"
+  private val invSize   = "te"
+  private val invBoth   = "t s"
+
+  describe("validation") {
+
+    test("it should accept valid password") {
+      val v = PWDValidator(valid)
+      assert(v == Validated.unit)
+    }
+
+    test("reject invSpaces") {
+      val v = PWDValidator(invSpaces)
+      assert(v == Validated.fail(PWDValidator.InvSpaces))
+    }
+
+    test("reject invSize") {
+      val v = PWDValidator(invSize)
+      assert(v == Validated.fail(PWDValidator.InvSize))
+    }
+
+    test("reject both") {
+      val v = PWDValidator(invBoth)
+      assert(v == Validated.fail(PWDValidator.InvSpaces, PWDValidator.InvSize), "failed")
+
+      assert(
+        v.asResult == Result.fail(GenericValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))),
+        "as result — normal"
+      )
+
+      assert(
+        v.asResult(TestValidationFailures) == Result.fail(TestValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))),
+        "as result — ctor"
+      )
+    }
+
+  }
+
+}
+
+
+```
+
+#### Conversion to other effects
+
+Conversion to other effects forces all `n` `busymachines.core.Anomaly`s accumulated by this `Validated` to be transformed into one single `busymachines.core.Anomalies` type.
+
+Take for instance the previous example from the tests:
+```
+    test("reject both") {
+      val v = PWDValidator(invBoth)
+      assert(v == Validated.fail(PWDValidator.InvSpaces, PWDValidator.InvSize), "failed")
+
+      assert(
+        v.asResult == Result.fail(GenericValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))),
+        "as result — normal"
+      )
+
+      assert(
+        v.asResult(TestValidationFailures) == Result.fail(TestValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))),
+        "as result — ctor"
+      )
+    }
+```
+
+Where `TestValidationFailures` is defined as:
+```scala
+package busymachines.effects.sync.validation_test
+
+import busymachines.core._
+
+private[validation_test] case class TestValidationFailures(
+  bad:  Anomaly,
+  bads: List[Anomaly] = Nil
+) extends AnomalousFailures(
+      TVFsID,
+      s"Test validation failed with ${bads.length + 1} anomalies",
+      bad,
+      bads
+    )
+
+private[validation_test] case object TVFsID extends AnomalyID {
+  override def name = "test_validation_001"
+}
+
+```
+
+There are always two methods available when converting to other effects:
+  1. a no-arg one where we get back all anomalies wrapped in a `busymachines.effects.sync.validated.GenericValidationFailures`
+  2. one of the form: `as{Eff}(ctor: (Anomaly, List[Anomaly]) => Anomalies): {Eff}[T]`, which allows you to specify your domain specific anomalies
+
+
 
 ## busymachines-commons-async
 

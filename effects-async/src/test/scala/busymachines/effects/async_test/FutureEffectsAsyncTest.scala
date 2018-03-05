@@ -3,6 +3,10 @@ package busymachines.effects.async_test
 import busymachines.core._
 import busymachines.effects.sync._
 import busymachines.effects.async._
+
+import busymachines.effects.sync.validated._
+import busymachines.effects.async.validated._
+
 import org.scalatest._
 
 /**
@@ -39,6 +43,9 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
   private val correct:   Result[Int] = Result(42)
   private val incorrect: Result[Int] = Result.fail(ano)
+
+  private val valid:   Validated[Int] = Validated.pure(42)
+  private val invalid: Validated[Int] = Validated.fail(ano)
 
   private val int2str: Int => String = i => i.toString
   private val res2str: Result[Int] => String = {
@@ -147,6 +154,25 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("correct") {
             assert(Future.fromResult(correct).r == 42)
           }
+        }
+
+        describe("fromValidated") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](Future.fromValidated(invalid).r)
+          }
+
+          test("valid") {
+            assert(Future.fromValidated(valid).r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](Future.fromValidated(invalid, TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(Future.fromValidated(valid, TVFs).r == 42)
+          }
+
         }
 
       } //end constructors
@@ -770,6 +796,24 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("pure") {
             assert(Result.asFuture(correct).r == 42)
+          }
+        }
+
+        describe("validated asFuture") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](Validated.asFuture(invalid).r)
+          }
+
+          test("valid") {
+            assert(Validated.asFuture(valid).r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](Validated.asFuture(invalid, TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(Validated.asFuture(valid, TVFs).r == 42)
           }
         }
 
@@ -1464,6 +1508,24 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
+        describe("validated asFuture") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](invalid.asFuture.r)
+          }
+
+          test("valid") {
+            assert(valid.asFuture.r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](invalid.asFuture(TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(valid.asFuture(TVFs).r == 42)
+          }
+        }
+
         describe("io asFutureUnsafe()") {
           test("fail") {
             assertThrows[InvalidInputFailure](IO.fail(ano).asFutureUnsafe().r)
@@ -1687,6 +1749,23 @@ final class FutureEffectsAsyncTest extends FunSpec {
             Result.pure(throw thr)
           )
           assertThrows[RuntimeException](f.r)
+        }
+
+        describe("suspendValidated") {
+          test("normal") {
+            val f = Future.suspendValidated(
+              Validated.pure(throw thr)
+            )
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("ano") {
+            val f = Future.suspendValidated(
+              Validated.pure(throw thr),
+              TVFs
+            )
+            assertThrows[RuntimeException](f.r)
+          }
         }
 
       } //end suspend
@@ -2231,6 +2310,18 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val f = Result.pure(throw thr).suspendInFuture
             assertThrows[RuntimeException](f.r)
           }
+
+          describe("suspendValidated") {
+            test("normal") {
+              val f = Validated.pure(throw thr).suspendInFuture
+              assertThrows[RuntimeException](f.r)
+            }
+
+            test("ano") {
+              val f = Validated.pure(throw thr).suspendInFuture(TVFs)
+              assertThrows[RuntimeException](f.r)
+            }
+          }
         }
 
         describe("companion") {
@@ -2269,6 +2360,19 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val f = Result.suspendInFuture(Result.pure(throw thr))
             assertThrows[RuntimeException](f.r)
           }
+
+          describe("suspendValidated") {
+            test("normal") {
+              val f = Validated.suspendInFuture(Validated.pure(throw thr))
+              assertThrows[RuntimeException](f.r)
+            }
+
+            test("ano") {
+              val f = Validated.suspendInFuture(Validated.pure(throw thr), TVFs)
+              assertThrows[RuntimeException](f.r)
+            }
+          }
+
         }
 
       } //end suspend
@@ -2762,52 +2866,139 @@ final class FutureEffectsAsyncTest extends FunSpec {
       }
     }
 
-    describe("Future.serialize") {
+    describe("traversals") {
 
-      test("empty list") {
-        val input:    Seq[Int] = List()
-        val expected: Seq[Int] = List()
+      describe("Future.serialize") {
 
-        var sideEffect: Int = 0
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
 
-        val eventualResult = Future.serialize(input) { i =>
-          Future {
-            sideEffect = 42
-          }
-        }
+          var sideEffect: Int = 0
 
-        assert(eventualResult.r == expected)
-        assert(sideEffect == 0, "nothing should have happened")
-      }
-
-      test("no two futures should run in parallel") {
-        val input: Seq[Int] = (1 to 100).toList
-        val expected = input.map(_.toString)
-
-        var previouslyProcessed: Option[Int] = None
-        var startedFlag:         Option[Int] = None
-
-        val eventualResult: Future[Seq[String]] = Future.serialize(input) { i =>
-          Future {
-            assert(
-              startedFlag.isEmpty,
-              s"started flag should have been empty at the start of each future but was: $startedFlag"
-            )
-            previouslyProcessed foreach { previous =>
-              assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
-                actual = previous
-              )
+          val eventualResult = Future.serialize(input) { i =>
+            Future {
+              sideEffect = 42
             }
-            startedFlag         = Some(i)
-            startedFlag         = None
-            previouslyProcessed = Some(i)
-            i.toString
           }
+
+          assert(eventualResult.r == expected)
+          assert(sideEffect == 0, "nothing should have happened")
         }
-        assert(expected == eventualResult.r)
+
+        test("no two futures should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: Future[Seq[String]] = Future.serialize(input) { i =>
+            Future {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each future but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          assert(expected == eventualResult.r)
+          assert(previouslyProcessed == Option(100))
+        }
       }
 
+      describe("Future.serialize_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = Future.serialize_(input) { i =>
+            Future {
+              sideEffect = 42
+            }
+          }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("no two futures should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: Future[Unit] = Future.serialize_(input) { i =>
+            Future {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each future but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          eventualResult.r
+          assert(previouslyProcessed == Option(100))
+        }
+      }
+
+      describe("Future.traverse_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult: Future[Unit] = Future.traverse_(input) { i =>
+            Future {
+              sideEffect = 42
+            }
+          }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+      }
+
+      describe("Future.sequence_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult: Future[Unit] = Future.sequence_ {
+            input.map { i =>
+              Future {
+                sideEffect = 42
+              }
+            }
+          }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+      }
     }
+
   }
 
 } //end test

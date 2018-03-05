@@ -62,7 +62,7 @@ final class OptionEffectsTest extends FunSpec {
 
   //---------------------------------------------------------------------------
 
-  describe("Try — companion object syntax") {
+  describe("Option — companion object syntax") {
 
     describe("constructors") {
       test("pure") {
@@ -376,6 +376,17 @@ final class OptionEffectsTest extends FunSpec {
         }
       }
 
+      describe("discardContent") {
+
+        test("fail") {
+          assert(Option.discardContent(failV) == None)
+        }
+
+        test("pure") {
+          assert(Option.discardContent(pureV) == Option.unit)
+        }
+      }
+
     } //end transformers
 
     describe("traversals") {
@@ -388,13 +399,13 @@ final class OptionEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = Option.traverse(input) { i =>
+          val result = Option.traverse(input) { i =>
             Option {
               sideEffect = 42
             }
           }
 
-          assert(eventualResult.r == expected)
+          assert(result.r == expected)
           assert(sideEffect == 0, "nothing should have happened")
         }
 
@@ -402,10 +413,38 @@ final class OptionEffectsTest extends FunSpec {
           val input: Seq[Int] = (1 to 100).toList
           val expected = input.map(_.toString)
 
-          val eventualResult: Option[Seq[String]] = Option.traverse(input) { i =>
+          val result: Option[Seq[String]] = Option.traverse(input) { i =>
             Option.pure(i.toString)
           }
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
+        }
+
+      }
+
+      describe("Option.traverse_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val result = Option.traverse_(input) { i =>
+            Option {
+              sideEffect = 42
+            }
+          }
+
+          assert(result == Option.unit)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("non empty list") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val result = Option.traverse_(input) { i =>
+            Option.pure(i.toString)
+          }
+          assert(Option.unit == result)
         }
 
       }
@@ -416,8 +455,8 @@ final class OptionEffectsTest extends FunSpec {
           val input:    Seq[Option[Int]] = List()
           val expected: Seq[Int]         = List()
 
-          val eventualResult = Option.sequence(input)
-          assert(eventualResult.r == expected)
+          val result = Option.sequence(input)
+          assert(result.r == expected)
         }
 
         test("non empty list") {
@@ -425,12 +464,34 @@ final class OptionEffectsTest extends FunSpec {
           val input: Seq[Option[Int]] = (1 to 100).toList.map(Option.pure)
           val expected = nrs.map(_.toString)
 
-          val eventualResult: Option[Seq[String]] = Option.sequence {
+          val result: Option[Seq[String]] = Option.sequence {
             input map { tr =>
               tr.map(i => i.toString)
             }
           }
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
+        }
+
+      }
+
+      describe("Option.sequence_") {
+
+        test("empty list") {
+          val input: Seq[Option[Int]] = List()
+
+          val result = Option.sequence_(input)
+          assert(result == Option.unit)
+        }
+
+        test("non empty list") {
+          val input: Seq[Option[Int]] = (1 to 100).toList.map(Option.pure)
+
+          val result: Option[Unit] = Option.sequence_ {
+            input map { tr =>
+              tr.map(i => i.toString)
+            }
+          }
+          assert(Option.unit == result)
         }
 
       }
@@ -443,7 +504,7 @@ final class OptionEffectsTest extends FunSpec {
   //===========================================================================
   //===========================================================================
 
-  describe("Try — reference syntax") {
+  describe("Option — reference syntax") {
 
     describe("boolean") {
 
@@ -658,6 +719,17 @@ final class OptionEffectsTest extends FunSpec {
 
         test("pure — fail") {
           assert(pureV.recoverWith(Option.none) == pureV)
+        }
+      }
+
+      describe("discardContent") {
+
+        test("fail") {
+          assert(failV.discardContent == None)
+        }
+
+        test("pure") {
+          assert(pureV.discardContent == Option.unit)
         }
       }
 

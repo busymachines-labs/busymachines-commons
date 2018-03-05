@@ -14,40 +14,40 @@ object TrySyntaxAsync {
     *
     */
   trait Implcits {
-    implicit def bmcTryAsyncCompanionObjectOps(obj: Try.type): CompanionObjectOps =
+    implicit final def bmcTryAsyncCompanionObjectOps(obj: scala.util.Try.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
-    implicit def bmcTryAsyncReferenceOps[T](value: Try[T]): ReferenceOps[T] =
+    implicit final def bmcTryAsyncReferenceOps[T](value: Try[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
-    implicit def bmcTryAsyncSafeReferenceOps[T](value: => Try[T]): SafeReferenceOps[T] =
+    implicit final def bmcTryAsyncSafeReferenceOps[T](value: => Try[T]): SafeReferenceOps[T] =
       new SafeReferenceOps(value)
   }
 
   /**
     *
     */
-  final class CompanionObjectOps(val obj: Try.type) extends AnyVal {
+  final class CompanionObjectOps(val obj: scala.util.Try.type) extends AnyVal {
 
     /**
       * [[scala.util.Failure]] is sequenced into this effect
       * [[scala.util.Success]] is the pure value of this effect
       */
-    def asFuture[T](value: Try[T]): Future[T] =
+    @inline def asFuture[T](value: Try[T]): Future[T] =
       Future.fromTry(value)
 
     /**
       * [[scala.util.Failure]] is sequenced into this effect
       * [[scala.util.Success]] is the pure value of this effect
       */
-    def asIO[T](value: Try[T]): IO[T] =
+    @inline def asIO[T](value: Try[T]): IO[T] =
       IOOps.fromTry(value)
 
     /**
       * [[scala.util.Failure]] is sequenced into this effect
       * [[scala.util.Success]] is the pure value of this effect
       */
-    def asTask[T](value: Try[T]): Task[T] =
+    @inline def asTask[T](value: Try[T]): Task[T] =
       Task.fromTry(value)
 
     /**
@@ -63,7 +63,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Future.fromTry]]
       */
-    def suspendInFuture[T](value: => Try[T])(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture[T](value: => Try[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendTry(value)
 
     /**
@@ -75,7 +75,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromTry]]
       */
-    def suspendInIO[T](value: => Try[T]): IO[T] =
+    @inline def suspendInIO[T](value: => Try[T]): IO[T] =
       IOOps.suspendTry(value)
 
     /**
@@ -87,7 +87,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
-    def suspendInTask[T](value: => Try[T]): Task[T] =
+    @inline def suspendInTask[T](value: => Try[T]): Task[T] =
       TaskOps.suspendTry(value)
   }
 
@@ -100,21 +100,21 @@ object TrySyntaxAsync {
       * [[scala.util.Failure]] is sequenced into this effect
       * [[scala.util.Success]] is the pure value of this effect
       */
-    def asFuture: Future[T] =
+    @inline def asFuture: Future[T] =
       Future.fromTry(value)
 
     /**
       * [[scala.util.Failure]] is sequenced into this effect
       * [[scala.util.Success]] is the pure value of this effect
       */
-    def asIO: IO[T] =
+    @inline def asIO: IO[T] =
       IOOps.fromTry(value)
 
     /**
       * [[scala.util.Failure]] is sequenced into this effect
       * [[scala.util.Success]] is the pure value of this effect
       */
-    def asTask: Task[T] =
+    @inline def asTask: Task[T] =
       Task.fromTry(value)
   }
 
@@ -136,7 +136,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Future.fromTry]]
       */
-    def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
+    @inline def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendTry(value)
 
     /**
@@ -148,7 +148,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[IOOps.fromTry]]
       */
-    def suspendInIO: IO[T] =
+    @inline def suspendInIO: IO[T] =
       IOOps.suspendTry(value)
 
     /**
@@ -160,7 +160,7 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
-    def suspendInTask: Task[T] =
+    @inline def suspendInTask: Task[T] =
       TaskOps.suspendTry(value)
   }
 }

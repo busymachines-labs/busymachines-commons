@@ -3,6 +3,10 @@ package busymachines.effects.async_test
 import busymachines.core._
 import busymachines.effects.async._
 import busymachines.effects.sync._
+
+import busymachines.effects.async.validated._
+import busymachines.effects.sync.validated._
+
 import org.scalatest._
 
 /**
@@ -41,6 +45,9 @@ final class IOEffectsAsyncTest extends FunSpec {
 
   private val correct:   Result[Int] = Result(42)
   private val incorrect: Result[Int] = Result.fail(ano)
+
+  private val valid:   Validated[Int] = Validated.pure(42)
+  private val invalid: Validated[Int] = Validated.fail(ano)
 
   private val failedF:  Future[Int] = Future.fail(ano)
   private val successF: Future[Int] = Future.pure(42)
@@ -152,6 +159,25 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("correct") {
             assert(IO.fromResult(correct).r == 42)
           }
+        }
+
+        describe("fromValidated") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](IO.fromValidated(invalid).r)
+          }
+
+          test("valid") {
+            assert(IO.fromValidated(valid).r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](IO.fromValidated(invalid, TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(IO.fromValidated(valid, TVFs).r == 42)
+          }
+
         }
 
         describe("fromFuturePure") {
@@ -795,6 +821,24 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("pure") {
             assert(Result.asIO(correct).r == 42)
+          }
+        }
+
+        describe("validated asIO") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](Validated.asIO(invalid).r)
+          }
+
+          test("valid") {
+            assert(Validated.asIO(valid).r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](Validated.asIO(invalid, TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(Validated.asIO(valid, TVFs).r == 42)
           }
         }
 
@@ -1489,6 +1533,24 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
+        describe("validated asFuture") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](invalid.asIO.r)
+          }
+
+          test("valid") {
+            assert(valid.asIO.r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](invalid.asIO(TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(valid.asIO(TVFs).r == 42)
+          }
+        }
+
         describe("future asIO") {
           test("fail") {
             assertThrows[InvalidInputFailure](failedF.asIO.r)
@@ -1693,6 +1755,23 @@ final class IOEffectsAsyncTest extends FunSpec {
             Result.pure(throw thr)
           )
           assertThrows[RuntimeException](f.r)
+        }
+
+        describe("suspendValidated") {
+          test("normal") {
+            val f = IO.suspendValidated(
+              Validated.pure(throw thr)
+            )
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("ano") {
+            val f = IO.suspendValidated(
+              Validated.pure(throw thr),
+              TVFs
+            )
+            assertThrows[RuntimeException](f.r)
+          }
         }
 
         test("suspendFuture") {
@@ -2250,6 +2329,18 @@ final class IOEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
+          describe("suspendValidated") {
+            test("normal") {
+              val f = Validated.pure(throw thr).suspendInIO
+              assertThrows[RuntimeException](f.r)
+            }
+
+            test("ano") {
+              val f = Validated.pure(throw thr).suspendInIO(TVFs)
+              assertThrows[RuntimeException](f.r)
+            }
+          }
+
           test("suspendFuture") {
             var sideEffect: Int = 0
             val f = Future[Int] {
@@ -2298,6 +2389,18 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("suspendResult") {
             val f = Result.suspendInIO(Result.pure(throw thr))
             assertThrows[RuntimeException](f.r)
+          }
+
+          describe("suspendValidated") {
+            test("normal") {
+              val f = Validated.suspendInIO(Validated.pure(throw thr))
+              assertThrows[RuntimeException](f.r)
+            }
+
+            test("ano") {
+              val f = Validated.suspendInIO(Validated.pure(throw thr), TVFs)
+              assertThrows[RuntimeException](f.r)
+            }
           }
 
           test("suspendFuture") {
@@ -2809,139 +2912,189 @@ final class IOEffectsAsyncTest extends FunSpec {
       }
     }
 
-    describe("IO.traverse") {
+    describe("traversals") {
+      describe("IO.traverse") {
 
-      test("empty list") {
-        val input:    Seq[Int] = List()
-        val expected: Seq[Int] = List()
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
 
-        var sideEffect: Int = 0
+          var sideEffect: Int = 0
 
-        val eventualResult = IO.traverse(input) { i =>
-          IO {
-            sideEffect = 42
-          }
-        }
-
-        assert(eventualResult.r == expected)
-        assert(sideEffect == 0, "nothing should have happened")
-      }
-
-      test("no two tasks should run in parallel") {
-        val input: Seq[Int] = (1 to 100).toList
-        val expected = input.map(_.toString)
-
-        var previouslyProcessed: Option[Int] = None
-        var startedFlag:         Option[Int] = None
-
-        val eventualResult: IO[Seq[String]] = IO.traverse(input) { i =>
-          IO {
-            assert(
-              startedFlag.isEmpty,
-              s"started flag should have been empty at the start of each tasks but was: $startedFlag"
-            )
-            previouslyProcessed foreach { previous =>
-              assertResult(expected = i - 1, "... the task were not executed in the correct order.")(
-                actual = previous
-              )
+          val eventualResult = IO.traverse(input) { i =>
+            IO {
+              sideEffect = 42
             }
-            startedFlag         = Some(i)
-            startedFlag         = None
-            previouslyProcessed = Some(i)
-            i.toString
           }
+
+          assert(eventualResult.r == expected)
+          assert(sideEffect == 0, "nothing should have happened")
         }
-        assert(expected == eventualResult.r)
+
+        test("no two IOs should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: IO[Seq[String]] = IO.traverse(input) { i =>
+            IO {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each IO but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the IOs were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          assert(expected == eventualResult.r)
+        }
+
       }
 
+      describe("IO.traverse_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = IO.traverse_(input) { i =>
+            IO {
+              sideEffect = 42
+            }
+          }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+      }
+
+      describe("IO.sequence") {
+
+        test("empty list") {
+          val input:    Seq[IO[Int]] = List()
+          val expected: Seq[Int]     = List()
+
+          val eventualResult = IO.sequence(input)
+          assert(eventualResult.r == expected)
+        }
+
+        test("no two IOs should run in parallel") {
+          val nrs = (1 to 100).toList
+          val input: Seq[IO[Int]] = (1 to 100).toList.map(IO.pure)
+          val expected = nrs.map(_.toString)
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: IO[Seq[String]] = IO.sequence(input map { io =>
+            io.map { i =>
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each IO but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the IOs were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          })
+          assert(expected == eventualResult.r)
+        }
+
+      }
+
+      describe("IO.sequence_") {
+
+        test("empty list") {
+          val input:    Seq[IO[Int]] = List()
+
+          val eventualResult = IO.sequence_(input)
+          eventualResult.r
+        }
+      }
+
+      describe("IO.serialize") {
+
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = IO.serialize(input) { i =>
+            IO {
+              sideEffect = 42
+            }
+          }
+
+          assert(eventualResult.r == expected)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("no two IOs should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: IO[Seq[String]] = IO.serialize(input) { i =>
+            IO {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each IO but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the IOs were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          assert(expected == eventualResult.r)
+        }
+
+      }
+
+      describe("IO.serialize_") {
+
+        test("empty list") {
+          val input:    Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = IO.serialize_(input) { i =>
+            IO {
+              sideEffect = 42
+            }
+          }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+      }
     }
 
-    describe("IO.sequence") {
-
-      test("empty list") {
-        val input:    Seq[IO[Int]] = List()
-        val expected: Seq[Int]     = List()
-
-        val eventualResult = IO.sequence(input)
-        assert(eventualResult.r == expected)
-      }
-
-      test("no two IOs should run in parallel") {
-        val nrs = (1 to 100).toList
-        val input: Seq[IO[Int]] = (1 to 100).toList.map(IO.pure)
-        val expected = nrs.map(_.toString)
-
-        var previouslyProcessed: Option[Int] = None
-        var startedFlag:         Option[Int] = None
-
-        val eventualResult: IO[Seq[String]] = IO.sequence(input map { io =>
-          io.map { i =>
-            assert(
-              startedFlag.isEmpty,
-              s"started flag should have been empty at the start of each tasks but was: $startedFlag"
-            )
-            previouslyProcessed foreach { previous =>
-              assertResult(expected = i - 1, "... the task were not executed in the correct order.")(
-                actual = previous
-              )
-            }
-            startedFlag         = Some(i)
-            startedFlag         = None
-            previouslyProcessed = Some(i)
-            i.toString
-          }
-        })
-        assert(expected == eventualResult.r)
-      }
-
-    }
-
-    describe("IO.serialize") {
-
-      test("empty list") {
-        val input:    Seq[Int] = List()
-        val expected: Seq[Int] = List()
-
-        var sideEffect: Int = 0
-
-        val eventualResult = IO.serialize(input) { i =>
-          IO {
-            sideEffect = 42
-          }
-        }
-
-        assert(eventualResult.r == expected)
-        assert(sideEffect == 0, "nothing should have happened")
-      }
-
-      test("no two tasks should run in parallel") {
-        val input: Seq[Int] = (1 to 100).toList
-        val expected = input.map(_.toString)
-
-        var previouslyProcessed: Option[Int] = None
-        var startedFlag:         Option[Int] = None
-
-        val eventualResult: IO[Seq[String]] = IO.serialize(input) { i =>
-          IO {
-            assert(
-              startedFlag.isEmpty,
-              s"started flag should have been empty at the start of each tasks but was: $startedFlag"
-            )
-            previouslyProcessed foreach { previous =>
-              assertResult(expected = i - 1, "... the task were not executed in the correct order.")(
-                actual = previous
-              )
-            }
-            startedFlag         = Some(i)
-            startedFlag         = None
-            previouslyProcessed = Some(i)
-            i.toString
-          }
-        }
-        assert(expected == eventualResult.r)
-      }
-
-    }
   }
 
 } //end test

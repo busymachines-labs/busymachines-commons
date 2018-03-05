@@ -47,10 +47,10 @@ trait SemiAutoDerivation {
   final def deriveFor[A]: DerivationHelper[A] =
     circeSemiAuto.deriveFor[A]
 
-  def enumerationDecoder[A](implicit decode: Lazy[decoding.EnumerationDecoder[A]]): Decoder[A] =
+  final def enumerationDecoder[A](implicit decode: Lazy[decoding.EnumerationDecoder[A]]): Decoder[A] =
     circeSemiAuto.deriveEnumerationDecoder[A]
 
-  def enumerationEncoder[A](implicit encode: Lazy[encoding.EnumerationEncoder[A]]): Encoder[A] =
+  final def enumerationEncoder[A](implicit encode: Lazy[encoding.EnumerationEncoder[A]]): Encoder[A] =
     circeSemiAuto.deriveEnumerationEncoder[A]
 
   final def enumerationCodec[A](

@@ -36,7 +36,7 @@ package busymachines.json
   * @since 19 Oct 2017
   *
   */
-object syntax extends JsonSyntaxImplicits
+object syntax extends JsonSyntax.Implicits
 
 object derive extends SemiAutoDerivation
 

@@ -849,13 +849,13 @@ final class TryEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = Try.traverse(input) { i =>
+          val result = Try.traverse(input) { i =>
             Try {
               sideEffect = 42
             }
           }
 
-          assert(eventualResult.r == expected)
+          assert(result.r == expected)
           assert(sideEffect == 0, "nothing should have happened")
         }
 
@@ -863,10 +863,38 @@ final class TryEffectsTest extends FunSpec {
           val input: Seq[Int] = (1 to 100).toList
           val expected = input.map(_.toString)
 
-          val eventualResult: Try[Seq[String]] = Try.traverse(input) { i =>
+          val result: Try[Seq[String]] = Try.traverse(input) { i =>
             Try.pure(i.toString)
           }
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
+        }
+
+      }
+
+      describe("Try.traverse_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val result = Try.traverse_(input) { i =>
+            Try {
+              sideEffect = 42
+            }
+          }
+
+          assert(result == Try.unit)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("non empty list") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          val result: Try[Unit] = Try.traverse_(input) { i =>
+            Try.pure(i.toString)
+          }
+          assert(Try.unit == result)
         }
 
       }
@@ -877,8 +905,8 @@ final class TryEffectsTest extends FunSpec {
           val input:    Seq[Try[Int]] = List()
           val expected: Seq[Int]      = List()
 
-          val eventualResult = Try.sequence(input)
-          assert(eventualResult.r == expected)
+          val result = Try.sequence(input)
+          assert(result.r == expected)
         }
 
         test("non empty list") {
@@ -886,12 +914,34 @@ final class TryEffectsTest extends FunSpec {
           val input: Seq[Try[Int]] = (1 to 100).toList.map(Try.pure)
           val expected = nrs.map(_.toString)
 
-          val eventualResult: Try[Seq[String]] = Try.sequence {
+          val result: Try[Seq[String]] = Try.sequence {
             input map { tr =>
               tr.map(i => i.toString)
             }
           }
-          assert(expected == eventualResult.r)
+          assert(expected == result.r)
+        }
+
+      }
+
+      describe("Try.sequence_") {
+
+        test("empty list") {
+          val input: Seq[Try[Int]] = List()
+
+          val result = Try.sequence_(input)
+          assert(result == Try.unit)
+        }
+
+        test("non empty list") {
+          val input: Seq[Try[Int]] = (1 to 100).toList.map(Try.pure)
+
+          val result: Try[Unit] = Try.sequence_ {
+            input map { tr =>
+              tr.map(i => i.toString)
+            }
+          }
+          assert(Try.unit == result)
         }
 
       }

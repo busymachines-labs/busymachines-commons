@@ -3,6 +3,10 @@ package busymachines.effects.async_test
 import busymachines.core._
 import busymachines.effects.async._
 import busymachines.effects.sync._
+
+import busymachines.effects.sync.validated._
+import busymachines.effects.async.validated._
+
 import org.scalatest._
 
 /**
@@ -42,6 +46,9 @@ final class TaskEffectsAsyncTest extends FunSpec {
   private val correct:   Result[Int] = Result(42)
   private val incorrect: Result[Int] = Result.fail(ano)
 
+  private val valid:   Validated[Int] = Validated.pure(42)
+  private val invalid: Validated[Int] = Validated.fail(ano)
+
   private val failedF:  Future[Int] = Future.fail(ano)
   private val successF: Future[Int] = Future.pure(42)
 
@@ -67,6 +74,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
   private val bfail:  Task[Boolean] = Task.failThr(iae)
 
   //---------------------------------------------------------------------------
+
   describe("sync + pure") {
 
     describe("Task — companion object syntax") {
@@ -152,6 +160,25 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("correct") {
             assert(Task.fromResult(correct).r == 42)
           }
+        }
+
+        describe("fromValidated") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](Task.fromValidated(invalid).r)
+          }
+
+          test("valid") {
+            assert(Task.fromValidated(valid).r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](Task.fromValidated(invalid, TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(Task.fromValidated(valid, TVFs).r == 42)
+          }
+
         }
 
         describe("fromFuturePure") {
@@ -778,7 +805,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asIOThr") {
+        describe("either asTaskThr") {
           test("fail") {
             assertThrows[RuntimeException](Either.asTaskThr(left).r)
           }
@@ -788,13 +815,31 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("result asIO") {
+        describe("result asTask") {
           test("fail") {
             assertThrows[InvalidInputFailure](Result.asTask(incorrect).r)
           }
 
           test("pure") {
             assert(Result.asTask(correct).r == 42)
+          }
+        }
+
+        describe("validated asFuture") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](Validated.asTask(invalid).r)
+          }
+
+          test("valid") {
+            assert(Validated.asTask(valid).r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](Validated.asTask(invalid, TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(Validated.asTask(valid, TVFs).r == 42)
           }
         }
 
@@ -1469,7 +1514,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("either asIOThr") {
+        describe("either asTaskThr") {
           test("fail") {
             assertThrows[RuntimeException](left.asTaskThr.r)
           }
@@ -1479,13 +1524,31 @@ final class TaskEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("result asIO") {
+        describe("result asTask") {
           test("fail") {
             assertThrows[InvalidInputFailure](incorrect.asTask.r)
           }
 
           test("pure") {
             assert(correct.asTask.r == 42)
+          }
+        }
+
+        describe("validated asTask") {
+          test("invalid") {
+            assertThrows[GenericValidationFailures](invalid.asTask.r)
+          }
+
+          test("valid") {
+            assert(valid.asTask.r == 42)
+          }
+
+          test("invalid — ano") {
+            assertThrows[TVFs](invalid.asTask(TVFs).r)
+          }
+
+          test("valid — ano") {
+            assert(valid.asTask(TVFs).r == 42)
           }
         }
 
@@ -1693,6 +1756,23 @@ final class TaskEffectsAsyncTest extends FunSpec {
             Result.pure(throw thr)
           )
           assertThrows[RuntimeException](f.r)
+        }
+
+        describe("suspendValidated") {
+          test("normal") {
+            val f = Task.suspendValidated(
+              Validated.pure(throw thr)
+            )
+            assertThrows[RuntimeException](f.r)
+          }
+
+          test("ano") {
+            val f = Task.suspendValidated(
+              Validated.pure(throw thr),
+              TVFs
+            )
+            assertThrows[RuntimeException](f.r)
+          }
         }
 
         test("suspendFuture") {
@@ -2251,6 +2331,18 @@ final class TaskEffectsAsyncTest extends FunSpec {
             assertThrows[RuntimeException](f.r)
           }
 
+          describe("suspendValidated") {
+            test("normal") {
+              val f = Validated.pure(throw thr).suspendInTask
+              assertThrows[RuntimeException](f.r)
+            }
+
+            test("ano") {
+              val f = Validated.pure(throw thr).suspendInTask(TVFs)
+              assertThrows[RuntimeException](f.r)
+            }
+          }
+
           test("suspendFuture") {
             var sideEffect: Int = 0
             val f = Future[Int] {
@@ -2299,6 +2391,18 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("suspendResult") {
             val f = Result.suspendInTask(Result.pure(throw thr))
             assertThrows[RuntimeException](f.r)
+          }
+
+          describe("suspendValidated") {
+            test("normal") {
+              val f = Validated.suspendInTask(Validated.pure(throw thr))
+              assertThrows[RuntimeException](f.r)
+            }
+
+            test("ano") {
+              val f = Validated.suspendInTask(Validated.pure(throw thr), TVFs)
+              assertThrows[RuntimeException](f.r)
+            }
           }
 
           test("suspendFuture") {
@@ -2812,53 +2916,144 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
       }
     }
+    describe("traversals") {
 
-    describe("Task.serialize") {
+      describe("Task.traverse_") {
 
-      test("empty list") {
-        val input:    Seq[Int] = List()
-        val expected: Seq[Int] = List()
+        test("empty list") {
+          val input: Seq[Int] = List()
 
-        var sideEffect: Int = 0
+          var sideEffect: Int = 0
 
-        val eventualResult = Task.serialize(input) { i =>
-          Task {
-            sideEffect = 42
+          val eventualResult = Task.traverse_(input) { i =>
+            Task {
+              sideEffect = 42
+            }
           }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
         }
 
-        assert(eventualResult.r == expected)
-        assert(sideEffect == 0, "nothing should have happened")
       }
 
-      test("no two tasks should run in parallel") {
-        val input: Seq[Int] = (1 to 100).toList
-        val expected = input.map(_.toString)
+      describe("Task.sequence_") {
 
-        var previouslyProcessed: Option[Int] = None
-        var startedFlag:         Option[Int] = None
+        test("empty list") {
+          val input: Seq[Int] = List()
 
-        val eventualResult: Task[Seq[String]] = Task.serialize(input) { i =>
-          Task {
-            assert(
-              startedFlag.isEmpty,
-              s"started flag should have been empty at the start of each tasks but was: $startedFlag"
-            )
-            previouslyProcessed foreach { previous =>
-              assertResult(expected = i - 1, "... the task were not executed in the correct order.")(
-                actual = previous
-              )
+          var sideEffect: Int = 0
+
+          val eventualResult = Task.sequence_ {
+            input.map { i =>
+              Task {
+                sideEffect = 42
+              }
             }
-            startedFlag         = Some(i)
-            startedFlag         = None
-            previouslyProcessed = Some(i)
-            i.toString
           }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
         }
-        assert(expected == eventualResult.r)
+
+      }
+
+      describe("Task.serialize") {
+
+        test("empty list") {
+          val input:    Seq[Int] = List()
+          val expected: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = Task.serialize(input) { i =>
+            Task {
+              sideEffect = 42
+            }
+          }
+
+          assert(eventualResult.r == expected)
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("no two tasks should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+          val expected = input.map(_.toString)
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: Task[Seq[String]] = Task.serialize(input) { i =>
+            Task {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each task but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the tasks were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          assert(expected == eventualResult.r)
+          assert(previouslyProcessed == Option(100))
+        }
+
+      }
+
+      describe("Task.serialize_") {
+
+        test("empty list") {
+          val input: Seq[Int] = List()
+
+          var sideEffect: Int = 0
+
+          val eventualResult = Task.serialize_(input) { i =>
+            Task {
+              sideEffect = 42
+            }
+          }
+
+          eventualResult.r
+          assert(sideEffect == 0, "nothing should have happened")
+        }
+
+        test("no two tasks should run in parallel") {
+          val input: Seq[Int] = (1 to 100).toList
+
+          var previouslyProcessed: Option[Int] = None
+          var startedFlag:         Option[Int] = None
+
+          val eventualResult: Task[Unit] = Task.serialize_(input) { i =>
+            Task {
+              assert(
+                startedFlag.isEmpty,
+                s"started flag should have been empty at the start of each task but was: $startedFlag"
+              )
+              previouslyProcessed foreach { previous =>
+                assertResult(expected = i - 1, "... the tasks were not executed in the correct order.")(
+                  actual = previous
+                )
+              }
+              startedFlag         = Some(i)
+              startedFlag         = None
+              previouslyProcessed = Some(i)
+              i.toString
+            }
+          }
+          eventualResult.r
+          assert(previouslyProcessed == Option(100))
+        }
+
       }
 
     }
+
   }
 
 } //end test
