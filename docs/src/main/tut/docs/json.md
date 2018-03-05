@@ -7,7 +7,7 @@ title: json
 # busymachines-commons-json
 
 * stable: `0.2.0`
-* latest: `0.3.0-RC5`
+* latest: `0.3.0-RC6`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-json" % "0.2.0"
