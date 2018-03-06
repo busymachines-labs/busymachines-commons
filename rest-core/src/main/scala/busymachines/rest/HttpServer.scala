@@ -148,8 +148,8 @@ final class HttpServer private (
     * is to terminate the [[actorSystem]] if you wish do terminate it.
     *
     * @param waitForShutdownIO
-    * The IO specifying what exactly the waiting for cleanup
-    *
+    *   The IO specifying what exactly the waiting for cleanup is
+    *   @see [[waitForExternalSIGKILLSignal]] as an example
     */
   def startThenWaitUntilShutdownDoCustomCleanup(
     waitForShutdownIO: HttpServer.Context => IO[Unit],
