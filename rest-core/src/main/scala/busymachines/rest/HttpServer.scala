@@ -214,7 +214,7 @@ final class HttpServer private (
 
   private def step3_unbind(binding: ServerBinding): IO[Unit] = {
     logNormalIO(show"unbinding @ $config") >>
-      IO.fromFuture(IO(binding.unbind()))
+      IO.fromFuture(IO(binding.unbind())) map (_ => ())
   }
 
   private def waitForExternalSIGKILLSignal: IO[Unit] = {

@@ -513,7 +513,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    @inline def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
+    @inline def asIO[T](value: Future[T]): IO[T] =
       FutureOps.asIO(value)
 
     /**
@@ -554,7 +554,7 @@ object FutureSyntax {
       * }}}
       *
       */
-    @inline def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
+    @inline def suspendInIO[T](value: => Future[T]): IO[T] =
       FutureOps.suspendInIO(value)
 
     /**
@@ -959,7 +959,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    @inline def asIO(implicit ec: ExecutionContext): IO[T] =
+    @inline def asIO: IO[T] =
       FutureOps.asIO(value)
 
     /**
@@ -1080,7 +1080,7 @@ object FutureSyntax {
       * }}}
       *
       */
-    @inline def suspendInIO(implicit ec: ExecutionContext): IO[T] =
+    @inline def suspendInIO: IO[T] =
       FutureOps.suspendInIO(value)
 
     /**
@@ -1884,7 +1884,7 @@ object FutureOps {
     * Having to care about such val/def distinctions shows why Future is an
     * imperative programming mess.
     */
-  @inline def asIO[T](value: Future[T])(implicit ec: ExecutionContext): IO[T] =
+  @inline def asIO[T](value: Future[T]): IO[T] =
     IOOps.fromFuturePure(value)
 
   /**
@@ -1925,7 +1925,7 @@ object FutureOps {
     * }}}
     *
     */
-  @inline def suspendInIO[T](value: => Future[T])(implicit ec: ExecutionContext): IO[T] =
+  @inline def suspendInIO[T](value: => Future[T]): IO[T] =
     IOOps.suspendFuture(value)
 
   /**
