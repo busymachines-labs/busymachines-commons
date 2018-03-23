@@ -10,7 +10,7 @@ Thin wrapper around `scala.concurrent.duration` and `java.util.concurrent.TimeUn
 
 ## artifacts
 
-This module is vanilla scala _*only*_, compiled for scala version `2.12.4`
+This module is vanilla scala _*only*_, compiled for scala version `2.12.5`
 
 * stable: `N/A`
 * latest: `0.3.0-RC6`
