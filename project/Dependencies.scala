@@ -28,7 +28,7 @@ object Dependencies {
   //====================================== Scala things ========================================
   //============================================================================================
 
-  lazy val scalaReflect: ModuleID = "org.scala-lang" % "scala-reflect" % mainScalaVersion
+  //lazy val scalaReflect: ModuleID = "org.scala-lang" % "scala-reflect" % mainScalaVersion
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================

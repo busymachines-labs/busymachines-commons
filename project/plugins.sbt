@@ -59,7 +59,7 @@ addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.4.0")
   *
   * }}}
   */
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.5.9")
+//addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.6.0-M1")
 
 /**
   * Used to build the documentation.

@@ -284,7 +284,7 @@ lazy val docs = project
   .enablePlugins(MicrositesPlugin)
   .enablePlugins(TutPlugin)
   .disablePlugins(ScalafmtPlugin)
-  .disablePlugins(ScalafixPlugin)
+  //.disablePlugins(ScalafixPlugin)
   .settings(Settings.commonSettings)
   .settings(PublishingSettings.noPublishSettings)
   .settings(micrositeTasksSettings)
