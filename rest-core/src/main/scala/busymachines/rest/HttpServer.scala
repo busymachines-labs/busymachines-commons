@@ -201,7 +201,7 @@ final class HttpServer private (
     } yield serverBinding
   }
 
-  private def step1_1_bindErrorRecovery: PartialFunction[Throwable, IO[Unit]] = PartialFunction[Throwable, IO[Unit]] {
+  private def step1_1_bindErrorRecovery: PartialFunction[Throwable, IO[Unit]] = {
     case e: java.net.BindException =>
       logErrorIO(show"failed to bind port @ $config — reason: ${e.getLocalizedMessage}") >>
         logErrorIO(s"waiting for shutdown signal of JVM — please kill me")
