@@ -47,29 +47,6 @@ class JsonDefaultAutoDerivationTest extends FlatSpec {
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... fail to compile when there is no explicitly defined codec for a type down in the hierarchy" in {
-    withClue("... decoding part") {
-      assertDoesNotCompile(
-        """
-          |val rawJson = "{}"
-          |rawJson.unsafeDecodeAs[WinterMelon]
-        """.stripMargin
-      )
-    }
-
-    withClue("... encoding part") {
-      assertDoesNotCompile(
-        """
-          |val winterMelon: WinterMelon = WinterMelon(fuzzy = true, weight = 45)
-          |winterMelon.asJson
-        """.stripMargin
-      )
-    }
-
-  }
-
-  //-----------------------------------------------------------------------------------------------
-
   it should "... be able to serialize/deserialize a case class from hierarchy when it is referred to as its super-type" in {
     val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
     val rawJson = winterMelon.asJson.spaces2
