@@ -1,6 +1,6 @@
 # busymachines-commons
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12) [![Sonatype](https://img.shields.io/nexus/r/https/oss.sonatype.org/com.busymachines/busymachines-commons-core_2.12.svg)](https://oss.sonatype.org/#nexus-search;quick~busymachines-commons-core_2.12)  [![Scala](https://img.shields.io/badge/scala-2.12.5-brightgreen.svg)](https://github.com/scala/scala/releases/tag/v2.12.4)
+[![Maven Central](https://img.shields.io/maven-central/v/com.busymachines/busymachines-commons-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.busymachines/busymachines-commons-core_2.12) [![Sonatype](https://img.shields.io/nexus/r/https/oss.sonatype.org/com.busymachines/busymachines-commons-core_2.12.svg)](https://oss.sonatype.org/#nexus-search;quick~busymachines-commons-core_2.12)  [![Scala](https://img.shields.io/badge/scala-2.12.5-brightgreen.svg)](https://github.com/scala/scala/releases/tag/v2.12.5)
 
 Light-weight, modular eco-system of libraries needed to build http web apps, built _primarily_ on top of the [typelevel.scala](https://github.com/typelevel) ecosystem.
 
