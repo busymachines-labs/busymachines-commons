@@ -75,20 +75,20 @@ object Dependencies {
   lazy val akkaActor:  ModuleID = "com.typesafe.akka" %% "akka-actor"  % akkaVersion
   lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
 
-  lazy val akkaHttpVersion: String   = "10.1.0"
+  lazy val akkaHttpVersion: String   = "10.1.1"
   lazy val akkaHttp:        ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 
   /**
     * https://github.com/hseeberger/akka-http-json
     */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.20.0"
+  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.20.1"
 
   //============================================================================================
   //=========================================  testing =========================================
   //============================================================================================
 
   lazy val scalaTest:  ModuleID = "org.scalatest"  %% "scalatest"  % "3.0.4"
-  lazy val scalaCheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.4"
+  lazy val scalaCheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.5"
 
   lazy val akkaTestKit:       ModuleID = "com.typesafe.akka" %% "akka-testkit"        % akkaVersion
   lazy val akkaStreamTestKit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
