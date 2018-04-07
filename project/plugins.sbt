@@ -17,7 +17,9 @@
   */
 /**
   * Helps us publish the artifacts to sonatype, which in turn
-  * pushes to maven central.
+  * pushes to maven central. Please follow instructions of setting
+  * up as described in:
+  * http://busymachines.github.io/busymachines-commons/docs/publishing-artifacts.html
   *
   * https://github.com/xerial/sbt-sonatype
   */
@@ -25,11 +27,14 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.3")
 
 /**
   *
-  * Signs all the jars, used in conjunction with sbt-sonatype
+  * Signs all the jars, used in conjunction with sbt-sonatype.
+  *
+  * Do not forget to include this in your global plugins as described in:
+  * http://busymachines.github.io/busymachines-commons/docs/publishing-artifacts.html
   *
   * https://github.com/sbt/sbt-pgp
   */
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.1")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
 
 /**
   * build configured in ``project/ReleaseProcess``

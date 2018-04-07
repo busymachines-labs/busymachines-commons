@@ -8,22 +8,41 @@ All references to a "folder" refer to the [z-publishing-artifacts](https://githu
 
 This folder is useful to you _only_ if you are responsible for publishing this library to the Sonatype repository, otherwise it can be completely ignored.
 
-The contents of this folder ought to be copied to your `~/.sbt/1.0` folder. And the appropriate values assigned to each sbt key.
+The contents of this folder ought to be copied to your `~/.sbt/1.0` folder. And the appropriate values assigned to each sbt key, as described below.
 
-## [plugins/plugins.sbt](plugins/plugins.sbt)
+Each of the following sections describes the purpose of the files in the `z-publishing-artifacts` folder *once copied to `~/.sbt/1.0`*.
+```
+$ tree
+.
+├── README.md
+├── pgp.sbt
+├── plugins
+│   └── plugins.sbt
+└── sonatype.sbt
+```
 
-Note that for this to work you need to have [PGP installed](https://gpgtools.org/) on your machine! By defauly this build will look that it has a `pgp` command available in your `$PATH`.
+## [plugins/plugins.sbt](https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/plugins/plugins.sbt)
 
+If copied in your global `sbt` config this will load the [sbt-pgp](https://github.com/sbt/sbt-pgp) as a global plugin for you machine.
 
-Loads the [sbt-pgp](https://github.com/sbt/sbt-pgp) as a global plugin for you machine, and [pgp.sbt](pgp.sbt) contains the paths to your PGP keys, and—optionally—the path to the `gpg` command on your system if it's not available in your global `$PATH` variable`:
+Note that for this to work you need to have [PGP tools](https://gpgtools.org/) installed on your machine! By defauly this build will look that it has a `pgp` command available in your `$PATH`.
 
+Content:
+```scala
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
+```
+
+## [pgp.sbt](https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/pgp.sbt)
+As required by the `sbt-pgp` pluging required above, this file contains the paths to your PGP keys, and—optionally—the path to the `gpg` command on your system if it's not available in your global `$PATH` variable`:
+
+Content:
 ```scala
 com.typesafe.sbt.pgp.PgpKeys.pgpSecretRing := file("~/.gnupg/secring.gpg")
 com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupg/pubring.gpg")
 // com.typesafe.sbt.pgp.PgpKeys.gpgCommand := "/path/to/gpg"
 ```
 
-## [sonatype.sbt](sonatype.sbt)
+## [sonatype.sbt](https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/sonatype.sbt)
 
 This file contains the username and passwords for the Sonatype repository:
 
@@ -37,23 +56,32 @@ credentials += Credentials(
 ```
 
 Currently we have only one sonatype user who uses this account, as can be seen in this issue on their JIRA:
-[https://issues.sonatype.org/browse/OSSRH-33718](https://issues.sonatype.org/browse/OSSRH-33718)
+[https://issues.sonatype.org/browse/OSSRH-33718](https://issues.sonatype.org/browse/OSSRH-33718).
+
+More users can be given access by commenting on the above JIRA issue.
 
 ## After everything is setup
 
 You ought to follow the instructions here to create your PGP file:
 [http://www.scala-sbt.org/release/docs/Using-Sonatype.html#PGP+Tips%E2%80%99n%E2%80%99tricks](http://www.scala-sbt.org/release/docs/Using-Sonatype.html#PGP+Tips%E2%80%99n%E2%80%99tricks)
 
-## Publishing
+## Publishing — the easy way
 
-The general steps for publishing your artifact to the Central Repository are as follows:
+simply run the sbt command:
+1. `doRelase`
+
+It's an alias for the hard way described bellow if you wish to learn the details.
+
+## Publishing — the hard way
+
+The verbose way of publishing your artifact to the Central Repository is as follows:
 1. `publishSigned`
 2. `sonatypeRelease`
 If this doesn't work for some reason, then read further to understand the entire process.
 
 ### Full-workflow
 
-Full workflow to [publish to sonatype](http://www.scala-sbt.org/release/docs/Using-Sonatype.html#Using+Sonatype) can be found on the sbt website, and you really need to read it all. _DO NOT FORGET_ to distribute your PGP keys to the keyserver pool by running the sbt task from `PGP Tips'n'tricks` section from the aforementione guide.
+Full workflow to [publish to sonatype](http://www.scala-sbt.org/release/docs/Using-Sonatype.html#Using+Sonatype) can be found on the sbt website, and you really need to read it all. _DO NOT FORGET_ to distribute your PGP keys to the keyserver pool by running the sbt task from [PGP Tips'n'tricks](https://www.scala-sbt.org/release/docs/Using-Sonatype.html#PGP+Tips%E2%80%99n%E2%80%99tricks) section from the aforementione guide.
 
 ### Open staging profile
 
