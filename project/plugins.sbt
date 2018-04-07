@@ -15,14 +15,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-
 /**
   * Helps us publish the artifacts to sonatype, which in turn
   * pushes to maven central.
   *
   * https://github.com/xerial/sbt-sonatype
   */
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.0")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.3")
 
 /**
   *
@@ -30,7 +29,14 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.0")
   *
   * https://github.com/sbt/sbt-pgp
   */
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.1")
+
+/**
+  * build configured in ``project/ReleaseProcess``
+  *
+  * https://github.com/sbt/sbt-release
+  */
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.8")
 
 /**
   * The best thing since sliced bread.
@@ -66,7 +72,7 @@ addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.4.0")
   *
   * https://github.com/47deg/sbt-microsites
   */
-addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.15")
+addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.18")
 
 /**
   *
