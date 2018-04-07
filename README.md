@@ -11,7 +11,7 @@ Head over to the microsite for more information:
 
 Currently built only against Scala `2.12.5`.
 
-Latest version of the library is `0.3.0-RC6`
+Latest version of the library is `0.3.0-RC7`
 
 ## Copyright and License
 

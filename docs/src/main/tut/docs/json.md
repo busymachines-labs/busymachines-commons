@@ -7,7 +7,7 @@ title: json
 # busymachines-commons-json
 
 * stable: `0.2.0`
-* latest: `0.3.0-RC6`
+* latest: `0.3.0-RC7`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-json" % "0.2.0"
@@ -19,9 +19,9 @@ This module is a thin layer over [circe](https://circe.github.io/circe/), additi
 You can glean 99% of what's going on here by first understanding `circe`. This module provides just convenience and a principled way of using it. The only "real" contribution of this is that provides a `Codec` type class, which is lacking from `circe`, although there is an open [pull-request against circe](https://github.com/circe/circe/pull/811) to introduce it there as well.
 
 ### Transitive dependencies
-- circe 0.9.0 (with all its modules)
+- circe 0.9.3 (with all its modules)
 - shapeless 2.3.3
-- cats 1.0.1
+- cats 1.1.0
 
 ## Gotchas!!
 

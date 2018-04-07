@@ -25,7 +25,7 @@ import busymachines.effects.sync.Result
   * @since 19 Oct 2017
   *
   */
-@scala.deprecated("use JsonSyntax.Implicits instead. Will be removed in 0.3.0", "0.3.0-RC6")
+@scala.deprecated("use JsonSyntax.Implicits instead. Will be removed in 0.3.0", "0.3.0-RC7")
 trait JsonSyntaxImplicits {
 
   implicit final class EncoderOps[A](val wrappedEncodeable: A) {

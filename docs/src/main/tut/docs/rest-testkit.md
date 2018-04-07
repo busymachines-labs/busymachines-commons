@@ -15,7 +15,7 @@ This is the joint documentation for of modules:
 ## artifacts
 
 * stable: `0.2.0`
-* latest: `0.3.0-RC6`
+* latest: `0.3.0-RC7`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-rest-json-testkit" % "0.2.0" % test
@@ -31,14 +31,14 @@ N.B. that this is a testing library, and you should only depend on it in test. B
 - busymachines-commons-core
 - busymachines-commons-rest-core
 - busymachines-commons-rest-json
-- akka-http 10.0.11
-- akka-actor 2.5.8
-- akka-stream 2.5.8
-- cats 1.0.1
-- circe 0.9.0
-- akka-http-circe 1.19.0
-- akka-http-testkit 10.0.11
-- scalatest 3.0.4
+- akka-http 10.1.1
+- akka-actor 2.5.11
+- akka-stream 2.5.11
+- cats 1.1.0
+- circe 0.9.3
+- akka-http-circe 1.20.1
+- akka-http-testkit 10.1.1
+- scalatest 3.0.5
 
 ## Description
 

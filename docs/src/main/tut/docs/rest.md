@@ -12,7 +12,7 @@ This is the joint documentation for of modules:
 ## artifacts
 
 * stable: `0.2.0`
-* latest: `0.3.0-RC6`
+* latest: `0.3.0-RC7`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0"
@@ -25,13 +25,13 @@ You do not need to depend explicitely on core, because rest-json already does.
 ### Transitive dependencies
 - busymachines-commons-core
 - busymachines-commons-json
-- akka-http 10.0.11
-- akka-actor 2.5.8
-- akka-stream 2.5.8
+- akka-http 10.1.1
+- akka-actor 2.5.11
+- akka-stream 2.5.11
 - cats-effects 0.8.0
 - cats-core 1.0.1
-- circe 0.9.0
-- akka-http-circe 1.19.0
+- circe 0.9.3
+- akka-http-circe 1.20.1
 
 ## Description
 
