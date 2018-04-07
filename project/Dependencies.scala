@@ -47,7 +47,7 @@ object Dependencies {
 
   lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "0.10"
 
-  lazy val circeVersion: String = "0.9.2"
+  lazy val circeVersion: String = "0.9.3"
 
   lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % circeVersion
   lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeVersion
