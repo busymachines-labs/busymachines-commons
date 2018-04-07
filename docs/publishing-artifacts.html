@@ -4,21 +4,41 @@
 
 <p>This folder is useful to you <em>only</em> if you are responsible for publishing this library to the Sonatype repository, otherwise it can be completely ignored.</p>
 
-<p>The contents of this folder ought to be copied to your <code class="highlighter-rouge">~/.sbt/1.0</code> folder. And the appropriate values assigned to each sbt key.</p>
+<p>The contents of this folder ought to be copied to your <code class="highlighter-rouge">~/.sbt/1.0</code> folder. And the appropriate values assigned to each sbt key, as described below.</p>
 
-<h2 id="pluginspluginssbt"><a href="plugins/plugins.sbt">plugins/plugins.sbt</a></h2>
+<p>Each of the following sections describes the purpose of the files in the <code class="highlighter-rouge">z-publishing-artifacts</code> folder <em>once copied to <code class="highlighter-rouge">~/.sbt/1.0</code></em>.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ tree
+.
+├── README.md
+├── pgp.sbt
+├── plugins
+│   └── plugins.sbt
+└── sonatype.sbt
+</code></pre>
+</div>
 
-<p>Note that for this to work you need to have <a href="https://gpgtools.org/">PGP installed</a> on your machine! By defauly this build will look that it has a <code class="highlighter-rouge">pgp</code> command available in your <code class="highlighter-rouge">$PATH</code>.</p>
+<h2 id="pluginspluginssbt"><a href="https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/plugins/plugins.sbt">plugins/plugins.sbt</a></h2>
 
-<p>Loads the <a href="https://github.com/sbt/sbt-pgp">sbt-pgp</a> as a global plugin for you machine, and <a href="pgp.sbt">pgp.sbt</a> contains the paths to your PGP keys, and—optionally—the path to the <code class="highlighter-rouge">gpg</code> command on your system if it’s not available in your global <code class="highlighter-rouge">$PATH</code> variable`:</p>
+<p>If copied in your global <code class="highlighter-rouge">sbt</code> config this will load the <a href="https://github.com/sbt/sbt-pgp">sbt-pgp</a> as a global plugin for you machine.</p>
 
+<p>Note that for this to work you need to have <a href="https://gpgtools.org/">PGP tools</a> installed on your machine! By defauly this build will look that it has a <code class="highlighter-rouge">pgp</code> command available in your <code class="highlighter-rouge">$PATH</code>.</p>
+
+<p>Content:</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">"com.jsuereth"</span> <span class="o">%</span> <span class="s">"sbt-pgp"</span> <span class="o">%</span> <span class="s">"1.1.0"</span><span class="o">)</span>
+</code></pre>
+</div>
+
+<h2 id="pgpsbt"><a href="https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/pgp.sbt">pgp.sbt</a></h2>
+<p>As required by the <code class="highlighter-rouge">sbt-pgp</code> pluging required above, this file contains the paths to your PGP keys, and—optionally—the path to the <code class="highlighter-rouge">gpg</code> command on your system if it’s not available in your global <code class="highlighter-rouge">$PATH</code> variable`:</p>
+
+<p>Content:</p>
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">com</span><span class="o">.</span><span class="n">typesafe</span><span class="o">.</span><span class="n">sbt</span><span class="o">.</span><span class="n">pgp</span><span class="o">.</span><span class="nc">PgpKeys</span><span class="o">.</span><span class="n">pgpSecretRing</span> <span class="o">:=</span> <span class="n">file</span><span class="o">(</span><span class="s">"~/.gnupg/secring.gpg"</span><span class="o">)</span>
 <span class="n">com</span><span class="o">.</span><span class="n">typesafe</span><span class="o">.</span><span class="n">sbt</span><span class="o">.</span><span class="n">pgp</span><span class="o">.</span><span class="nc">PgpKeys</span><span class="o">.</span><span class="n">pgpPublicRing</span> <span class="o">:=</span> <span class="n">file</span><span class="o">(</span><span class="s">"~/.gnupg/pubring.gpg"</span><span class="o">)</span>
 <span class="c1">// com.typesafe.sbt.pgp.PgpKeys.gpgCommand := "/path/to/gpg"
 </span></code></pre>
 </div>
 
-<h2 id="sonatypesbt"><a href="sonatype.sbt">sonatype.sbt</a></h2>
+<h2 id="sonatypesbt"><a href="https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/sonatype.sbt">sonatype.sbt</a></h2>
 
 <p>This file contains the username and passwords for the Sonatype repository:</p>
 
@@ -32,16 +52,27 @@
 </div>
 
 <p>Currently we have only one sonatype user who uses this account, as can be seen in this issue on their JIRA:
-<a href="https://issues.sonatype.org/browse/OSSRH-33718">https://issues.sonatype.org/browse/OSSRH-33718</a></p>
+<a href="https://issues.sonatype.org/browse/OSSRH-33718">https://issues.sonatype.org/browse/OSSRH-33718</a>.</p>
+
+<p>More users can be given access by commenting on the above JIRA issue.</p>
 
 <h2 id="after-everything-is-setup">After everything is setup</h2>
 
 <p>You ought to follow the instructions here to create your PGP file:
 <a href="http://www.scala-sbt.org/release/docs/Using-Sonatype.html#PGP+Tips%E2%80%99n%E2%80%99tricks">http://www.scala-sbt.org/release/docs/Using-Sonatype.html#PGP+Tips%E2%80%99n%E2%80%99tricks</a></p>
 
-<h2 id="publishing">Publishing</h2>
+<h2 id="publishing--the-easy-way">Publishing — the easy way</h2>
 
-<p>The general steps for publishing your artifact to the Central Repository are as follows:</p>
+<p>simply run the sbt command:</p>
+<ol>
+  <li><code class="highlighter-rouge">doRelase</code></li>
+</ol>
+
+<p>It’s an alias for the hard way described bellow if you wish to learn the details.</p>
+
+<h2 id="publishing--the-hard-way">Publishing — the hard way</h2>
+
+<p>The verbose way of publishing your artifact to the Central Repository is as follows:</p>
 <ol>
   <li><code class="highlighter-rouge">publishSigned</code></li>
   <li><code class="highlighter-rouge">sonatypeRelease</code>
@@ -50,7 +81,7 @@ If this doesn’t work for some reason, then read further to understand the enti
 
 <h3 id="full-workflow">Full-workflow</h3>
 
-<p>Full workflow to <a href="http://www.scala-sbt.org/release/docs/Using-Sonatype.html#Using+Sonatype">publish to sonatype</a> can be found on the sbt website, and you really need to read it all. <em>DO NOT FORGET</em> to distribute your PGP keys to the keyserver pool by running the sbt task from <code class="highlighter-rouge">PGP Tips'n'tricks</code> section from the aforementione guide.</p>
+<p>Full workflow to <a href="http://www.scala-sbt.org/release/docs/Using-Sonatype.html#Using+Sonatype">publish to sonatype</a> can be found on the sbt website, and you really need to read it all. <em>DO NOT FORGET</em> to distribute your PGP keys to the keyserver pool by running the sbt task from <a href="https://www.scala-sbt.org/release/docs/Using-Sonatype.html#PGP+Tips%E2%80%99n%E2%80%99tricks">PGP Tips’n’tricks</a> section from the aforementione guide.</p>
 
 <h3 id="open-staging-profile">Open staging profile</h3>
 
