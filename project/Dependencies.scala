@@ -61,7 +61,7 @@ object Dependencies {
     circeParser
   )
 
-  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.1"
+  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.2"
 
   lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC1"
 
