@@ -110,8 +110,8 @@ object Settings {
   )
 
   /**
-    * These are flags specific to the
-    * @return
+    * These are flags specific to the "better-monadic-for" plugin:
+    * https://github.com/oleg-py/better-monadic-for
     */
   def betterForPluginCompilerFlags: Seq[String] = Seq(
     "-P:bm4:no-filtering:y", // see https://github.com/oleg-py/better-monadic-for#desugaring-for-patterns-without-withfilters--pbm4no-filteringy
