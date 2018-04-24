@@ -101,7 +101,7 @@ trait AnomalyJsonCodec {
       }
     }
 
-  final implicit val AnomalyCodec: Codec[Anomaly] = new Codec[Anomaly] {
+  implicit final val AnomalyCodec: Codec[Anomaly] = new Codec[Anomaly] {
     override def apply(c: HCursor): DecoderResult[Anomaly] = {
       for {
         id     <- c.get[AnomalyID](CoreJsonConstants.id)
@@ -130,7 +130,7 @@ trait AnomalyJsonCodec {
     }
   }
 
-  final implicit val AnomaliesCodec: Codec[Anomalies] = new Codec[Anomalies] {
+  implicit final val AnomaliesCodec: Codec[Anomalies] = new Codec[Anomalies] {
     override def apply(a: Anomalies): Json = {
       val fm          = AnomalyCodec.apply(a)
       val arr         = a.messages.map(AnomalyCodec.apply)

@@ -50,7 +50,7 @@ import scala.language.postfixOps
 private[rest] trait RestAPIRequestBuildingSugar {
   this: ScalatestRouteTest =>
 
-  implicit protected def testedRoute: Route
+  protected implicit def testedRoute: Route
 
   protected[this] def requestRunner: RequestRunner
 

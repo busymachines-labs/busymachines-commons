@@ -57,7 +57,7 @@ private[rest_json_test] class BasicAuthenticatedRoutesRestAPIForTesting
   //  Alternatively, if none of the above:
   //  import SomeTestDTOJsonCodec._
 
-  override protected def routeDefinition: Route = {
+  protected override def routeDefinition: Route = {
     pathPrefix("basic_authentication") {
       authentication { basicAuth: String =>
         pathEndOrSingleSlash {

@@ -29,7 +29,7 @@ import org.scalatest.FlatSpec
   *
   */
 class DefaultExceptionHandlerTest extends FlatSpec with JsonRestAPITest {
-  override implicit val testedRoute: Route                                    = RestAPI.seal(defApi).route
+  implicit override val testedRoute: Route                                    = RestAPI.seal(defApi).route
   implicit lazy val context:         CallerContext                            = Contexts.none
   private lazy val defApi:           DefaultExceptionHandlerRestAPIForTesting = new DefaultExceptionHandlerRestAPIForTesting()
 

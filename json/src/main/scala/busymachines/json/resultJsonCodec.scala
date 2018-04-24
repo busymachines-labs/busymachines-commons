@@ -41,21 +41,21 @@ import scala.util.control.NonFatal
 object ResultJsonCodec extends ResultJsonCodec
 
 trait ResultJsonCodec {
-  final implicit def bmCommonsResultEncoder[T](implicit encode: Encoder[T]): Encoder[Result[T]] =
+  implicit final def bmCommonsResultEncoder[T](implicit encode: Encoder[T]): Encoder[Result[T]] =
     new ResultJsonEncoderImpl[T](
       encode,
       AnomalyJsonCodec.AnomalyCodec,
       AnomalyJsonCodec.AnomaliesCodec
     )
 
-  final implicit def bmCommonsResultDecoder[T](implicit decode: Decoder[T]): Decoder[Result[T]] =
+  implicit final def bmCommonsResultDecoder[T](implicit decode: Decoder[T]): Decoder[Result[T]] =
     new ResultJsonDecoderImpl[T](
       decode,
       AnomalyJsonCodec.AnomalyCodec,
       AnomalyJsonCodec.AnomaliesCodec
     )
 
-  final implicit def bmCommonsResultCodec[T](implicit codec: Codec[T]): Codec[Result[T]] =
+  implicit final def bmCommonsResultCodec[T](implicit codec: Codec[T]): Codec[Result[T]] =
     new ResultJsonCodecImpl[T](
       codec,
       AnomalyJsonCodec.AnomalyCodec,

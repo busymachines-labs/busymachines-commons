@@ -29,7 +29,7 @@ import org.scalatest.FlatSpec
   */
 class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
   private lazy val crudAPI:          CRUDRoutesRestAPIForTesting = new CRUDRoutesRestAPIForTesting()
-  override implicit val testedRoute: Route                       = RestAPI.seal(crudAPI).route
+  implicit override val testedRoute: Route                       = RestAPI.seal(crudAPI).route
   private implicit val cc:           CallerContext               = Contexts.none
 
   import SomeTestDTOJsonCodec._

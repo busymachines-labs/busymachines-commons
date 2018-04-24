@@ -47,10 +47,10 @@ trait RestAPITest
     extends ScalatestRouteTest with RestAPIRequestBuildingSugar with DefaultRequestRunners with ProvidedContexts {
   this: Suite with Assertions =>
 
-  implicit protected def testRoutingSettings: RoutingSettings =
+  protected implicit def testRoutingSettings: RoutingSettings =
     RoutingSettings.apply(testConfig)
 
-  implicit protected def testedRoute: Route
+  protected implicit def testedRoute: Route
 
   protected def printingTimeoutDuration: FiniteDuration = 2 minutes
 

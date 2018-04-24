@@ -38,7 +38,7 @@ private[rest] trait JsonRequestRunners extends DefaultRequestRunners {
 
   import busymachines.json._
 
-  override protected def transformEntityString(entityString: String): String = {
+  protected override def transformEntityString(entityString: String): String = {
     JsonParsing.parseString(entityString) match {
       case Left(_)      => entityString
       case Right(value) => value.spaces2NoNulls

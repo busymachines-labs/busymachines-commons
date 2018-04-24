@@ -3022,7 +3022,7 @@ final class IOEffectsAsyncTest extends FunSpec {
       describe("IO.sequence_") {
 
         test("empty list") {
-          val input:    Seq[IO[Int]] = List()
+          val input: Seq[IO[Int]] = List()
 
           val eventualResult = IO.sequence_(input)
           eventualResult.r
@@ -3079,7 +3079,7 @@ final class IOEffectsAsyncTest extends FunSpec {
       describe("IO.serialize_") {
 
         test("empty list") {
-          val input:    Seq[Int] = List()
+          val input: Seq[Int] = List()
 
           var sideEffect: Int = 0
 

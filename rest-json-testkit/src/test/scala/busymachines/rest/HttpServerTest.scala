@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext
 class HttpServerTest extends FlatSpec {
 
   private lazy val restAPI: RestAPI = new JsonRestAPI with Directives {
-    override protected def routeDefinition: Route = {
+    protected override def routeDefinition: Route = {
       path("hello") {
         get {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Hello commons!</h1>"))

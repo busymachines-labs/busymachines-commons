@@ -36,7 +36,7 @@ trait DefaultTypeDiscriminatorConfig {
     * "_type" field, leaving JSON-value APIs vulnerable to rename refactorings.
     *
     */
-  final implicit val defaultDerivationConfiguration: io.circe.generic.extras.Configuration =
+  implicit final val defaultDerivationConfiguration: io.circe.generic.extras.Configuration =
     io.circe.generic.extras.Configuration.default
       .withDiscriminator(JsonTypeString)
 

@@ -68,7 +68,9 @@ class ValidatedEffectsTest extends FunSpec {
       )
 
       assert(
-        v.asResult(TestValidationFailures) == Result.fail(TestValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))),
+        v.asResult(TestValidationFailures) == Result.fail(
+          TestValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))
+        ),
         "as result — ctor"
       )
     }
