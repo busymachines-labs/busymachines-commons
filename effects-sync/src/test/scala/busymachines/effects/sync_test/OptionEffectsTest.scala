@@ -31,7 +31,7 @@ final class OptionEffectsTest extends FunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 
-  private implicit class TestSyntax[T](value: Option[T]) {
+  implicit private class TestSyntax[T](value: Option[T]) {
     //short for "run"
     def r: T = value.unsafeGet()
   }

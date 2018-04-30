@@ -29,7 +29,7 @@ private[validation_test] object PWDValidator {
   }
 
   case object InvSpaces extends InvalidInputFailure("cannot contain spaces")
-  case object InvSize extends InvalidInputFailure("must have size of at least 4")
+  case object InvSize   extends InvalidInputFailure("must have size of at least 4")
 }
 
 class ValidatedEffectsTest extends FunSpec {

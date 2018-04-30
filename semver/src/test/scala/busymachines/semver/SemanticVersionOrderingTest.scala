@@ -28,7 +28,7 @@ import org.scalatest.{Assertion, FlatSpec, Matchers}
 class SemanticVersionOrderingTest extends FlatSpec with Matchers {
 
   //technically I could have used >, ==, < operators as well
-  private implicit class SemVerTestOps(sv: SemanticVersion) {
+  implicit private class SemVerTestOps(sv: SemanticVersion) {
 
     def assertGT(that: SemanticVersion): Assertion = {
       assert(sv.compareTo(that) > 0, s"$sv should be greater than $that")

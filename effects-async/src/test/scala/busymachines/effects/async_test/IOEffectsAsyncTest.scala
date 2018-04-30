@@ -20,7 +20,7 @@ final class IOEffectsAsyncTest extends FunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 
-  private implicit class TestSyntax[T](value: IO[T]) {
+  implicit private class TestSyntax[T](value: IO[T]) {
     //short for "run"
     def r: T = value.unsafeSyncGet()
   }

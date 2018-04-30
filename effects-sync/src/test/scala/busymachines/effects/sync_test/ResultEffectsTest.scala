@@ -31,7 +31,7 @@ final class ResultEffectsTest extends FunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 
-  private implicit class TestSyntax[T](value: Result[T]) {
+  implicit private class TestSyntax[T](value: Result[T]) {
     //short for "run"
     def r: T = value.unsafeGet()
   }

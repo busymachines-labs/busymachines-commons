@@ -28,7 +28,7 @@ import org.scalatest.{Assertion, FlatSpec, Matchers}
 class SemanticVersionLabelOrderingTest extends FlatSpec with Matchers {
 
   //technically I could have used >, ==, < operators as well
-  private implicit class LabelTestOps(label: Label) {
+  implicit private class LabelTestOps(label: Label) {
 
     def assertGT(that: Label): Assertion = {
       assert(label.compareTo(that) > 0, s"$label should be greater than $that")

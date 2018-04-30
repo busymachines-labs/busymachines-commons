@@ -82,10 +82,10 @@ object RestAPI {
 
   private class ReifiedRestAPI(
     private val r:                              Route,
-    protected override val anomalyMarshaller:   ToEntityMarshaller[Anomaly],
-    protected override val anomaliesMarshaller: ToEntityMarshaller[Anomalies],
+    override protected val anomalyMarshaller:   ToEntityMarshaller[Anomaly],
+    override protected val anomaliesMarshaller: ToEntityMarshaller[Anomalies],
   ) extends RestAPI {
-    protected override def routeDefinition: Route = r
+    override protected def routeDefinition: Route = r
 
     //no point in "handling exceptions again"
     override def route: Route = routeDefinition

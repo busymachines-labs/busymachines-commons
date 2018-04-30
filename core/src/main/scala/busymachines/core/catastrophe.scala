@@ -41,7 +41,7 @@ abstract class CatastrophicError(
 ) extends Error(message, causedBy.orNull) with Catastrophe with Product with Serializable {
   override def id: AnomalyID = CatastrophicErrorID
 
-  final override def asThrowable: Throwable = this
+  override final def asThrowable: Throwable = this
 }
 
 object CatastrophicError extends CatastrophicErrorConstructors[CatastrophicError] {

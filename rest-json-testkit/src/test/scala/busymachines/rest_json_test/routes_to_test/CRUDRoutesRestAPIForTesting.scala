@@ -57,7 +57,7 @@ private[rest_json_test] class CRUDRoutesRestAPIForTesting
   //  Alternatively, if none of the above:
   //  import SomeTestDTOJsonCodec._
 
-  protected override def routeDefinition: Route =
+  override protected def routeDefinition: Route =
     pathPrefix("crud") {
       pathEndOrSingleSlash {
         post {

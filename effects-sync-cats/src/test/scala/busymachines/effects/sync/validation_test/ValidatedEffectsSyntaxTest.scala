@@ -32,7 +32,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 
-  private implicit class TestSyntax[T](value: Validated[T]) {
+  implicit private class TestSyntax[T](value: Validated[T]) {
     //short for "run"
     def r: T = value.unsafeGet()
     def r(ctor: (Anomaly, List[Anomaly]) => Anomalies): T = value.unsafeGet(ctor)

@@ -57,7 +57,7 @@ private[rest_json_test] class BearerAuthenticatedRoutesRestAPIForTesting
   //  Alternatively, if none of the above:
   //  import SomeTestDTOJsonCodec._
 
-  protected override def routeDefinition: Route = {
+  override protected def routeDefinition: Route = {
     pathPrefix("bearer_authentication") {
       RestAPIAuthentications.TokenBearer.authentication { basicAuth: String =>
         pathEndOrSingleSlash {

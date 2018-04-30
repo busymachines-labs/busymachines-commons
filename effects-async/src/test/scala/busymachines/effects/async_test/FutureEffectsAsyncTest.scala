@@ -20,7 +20,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 
-  private implicit class TestSyntax[T](value: Future[T]) {
+  implicit private class TestSyntax[T](value: Future[T]) {
     //short for "run"
     def r: T = value.unsafeSyncGet()
   }

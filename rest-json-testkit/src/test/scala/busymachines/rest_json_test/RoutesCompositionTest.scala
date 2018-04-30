@@ -36,8 +36,8 @@ class RoutesCompositionTest extends FlatSpec with JsonRestAPITest {
     RestAPI.seal(eh, crud, au)
   }
 
-  protected implicit override val testedRoute: Route         = combinedAPI.route
-  private implicit val cc:                     CallerContext = Contexts.none
+  implicit override protected val testedRoute: Route         = combinedAPI.route
+  implicit private val cc:                     CallerContext = Contexts.none
 
   import SomeTestDTOJsonCodec._
   import busymachines.json.AnomalyJsonCodec._

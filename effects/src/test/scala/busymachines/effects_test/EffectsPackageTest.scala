@@ -30,7 +30,7 @@ import org.scalatest.FunSpec
 final class EffectsPackageTest extends FunSpec {
   private def test: ItWord = it
 
-  private implicit val sch: effects.Scheduler = effects.Scheduler.global
+  implicit private val sch: effects.Scheduler = effects.Scheduler.global
 
   describe("effects") {
 

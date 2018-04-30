@@ -73,11 +73,11 @@ trait Anomaly extends Product with Serializable {
 trait AnomalyID extends Product with Serializable with Equals {
   def name: String
 
-  final override def canEqual(that: Any): Boolean = that.isInstanceOf[AnomalyID]
+  override final def canEqual(that: Any): Boolean = that.isInstanceOf[AnomalyID]
 
-  final override def equals(obj: Any): Boolean = canEqual(obj) && this.hashCode() == obj.hashCode()
+  override final def equals(obj: Any): Boolean = canEqual(obj) && this.hashCode() == obj.hashCode()
 
-  final override def hashCode(): Int = name.hashCode * 13
+  override final def hashCode(): Int = name.hashCode * 13
 
   override def toString: String = name
 }
@@ -168,7 +168,7 @@ abstract class AnomalousFailure(
   override val message: String,
   causedBy:             Option[Throwable] = None
 ) extends Exception(message, causedBy.orNull) with Anomaly {
-  final override def asThrowable: Throwable = this
+  override final def asThrowable: Throwable = this
 }
 
 private[core] case object AnomalousFailureID extends AnomalyID {

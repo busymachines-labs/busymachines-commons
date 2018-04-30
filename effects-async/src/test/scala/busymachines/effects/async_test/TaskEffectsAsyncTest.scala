@@ -20,7 +20,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 
-  private implicit class TestSyntax[T](value: Task[T]) {
+  implicit private class TestSyntax[T](value: Task[T]) {
     //short for "run"
     def r: T = value.unsafeSyncGet()
   }

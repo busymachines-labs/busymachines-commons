@@ -32,10 +32,10 @@ import busymachines.json.AnomalyJsonCodec
   */
 trait JsonRestAPI extends RestAPI with jsonrest.JsonSupport {
 
-  protected override val anomalyMarshaller: ToEntityMarshaller[Anomaly] =
+  override protected val anomalyMarshaller: ToEntityMarshaller[Anomaly] =
     JsonRestAPI.anomalyMarshaller
 
-  protected override val anomaliesMarshaller: ToEntityMarshaller[Anomalies] =
+  override protected val anomaliesMarshaller: ToEntityMarshaller[Anomalies] =
     JsonRestAPI.anomaliesMarshaller
 }
 
