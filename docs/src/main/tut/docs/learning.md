@@ -18,7 +18,7 @@ Going down the pure functional programming rabbit hole is not easy, and cannot b
 * Alexandru Nedelcu's blog post ["What is Functional Programming?"](https://alexn.org/blog/2017/10/15/functional-programming.html) neatly summarizez the question, while providing _vital_ references, please follow up on everything in that blog post
 
 ### referential transparency
-* [referential transperency](https://wiki.haskell.org/Referential_transparency) is one of the cornerstones of functional programming
+* [referential transparency](https://wiki.haskell.org/Referential_transparency) is one of the cornerstones of functional programming
 * [purity](https://en.wikipedia.org/wiki/Pure_function#Pure_functions) is sometimesused interchangeably with "referentially transparent" — justifiably so
 * note here is that Scala's standard `Future` is not referentially transparent. Check out [@tpolecat's answer why](https://www.reddit.com/r/scala/comments/3zofjl/why_is_future_totally_unusable/cyns21h/)!
 * while you can build decent applications that are almost pure using `Future`, you sacrifice a lot of composability and control over side-effects by doing it
