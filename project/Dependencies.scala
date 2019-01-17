@@ -37,7 +37,7 @@ object Dependencies {
 
   lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3"
 
-  lazy val catsVersion: String = "1.1.0"
+  lazy val catsVersion: String = "1.5.0"
 
   lazy val catsCore:    ModuleID = "org.typelevel" %% "cats-core"    % catsVersion
   lazy val catsMacros:  ModuleID = "org.typelevel" %% "cats-macros"  % catsVersion
@@ -45,9 +45,9 @@ object Dependencies {
   lazy val catsLaws:    ModuleID = "org.typelevel" %% "cats-laws"    % catsVersion
   lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
 
-  lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "0.10.1"
+  lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.1.0"
 
-  lazy val circeVersion: String = "0.9.3"
+  lazy val circeVersion: String = "0.11.1"
 
   lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % circeVersion
   lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeVersion
@@ -61,27 +61,27 @@ object Dependencies {
     circeParser
   )
 
-  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.2"
+  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.4"
 
-  lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC1"
+  lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC2"
 
   //============================================================================================
   //================================= http://akka.io/docs/ =====================================
   //======================================== akka ==============================================
   //============================================================================================
 
-  lazy val akkaVersion: String = "2.5.11"
+  lazy val akkaVersion: String = "2.5.19"
 
   lazy val akkaActor:  ModuleID = "com.typesafe.akka" %% "akka-actor"  % akkaVersion
   lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
 
-  lazy val akkaHttpVersion: String   = "10.1.1"
+  lazy val akkaHttpVersion: String   = "10.1.7"
   lazy val akkaHttp:        ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 
   /**
     * https://github.com/hseeberger/akka-http-json
     */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.20.1"
+  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.23.0"
 
   //============================================================================================
   //=========================================  testing =========================================
