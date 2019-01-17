@@ -24,7 +24,7 @@
   *
   * https://github.com/xerial/sbt-sonatype
   */
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.3")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.4")
 
 /**
   *
@@ -35,14 +35,14 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.3")
   *
   * https://github.com/sbt/sbt-pgp
   */
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.2")
 
 /**
   * build configured in ``project/ReleaseProcess``
   *
   * https://github.com/sbt/sbt-release
   */
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.8")
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.11")
 
 /**
   * The best thing since sliced bread.
