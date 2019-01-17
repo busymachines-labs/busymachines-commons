@@ -1675,7 +1675,7 @@ object TaskOps {
     * executed.
     */
   @inline def asFutureUnsafe[T](value: Task[T])(implicit sc: Scheduler): CancellableFuture[T] =
-    value.runAsync
+    value.runToFuture
 
   /**
     * No gotchas. Pure functional programming = <3
@@ -1695,7 +1695,7 @@ object TaskOps {
     atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration
   )(
     implicit sc: Scheduler
-  ): T = value.runAsync.unsafeSyncGet(atMost)
+  ): T = value.runToFuture.unsafeSyncGet(atMost)
 
   //=========================================================================
   //================= Run side-effects in varrying scenarios ================
