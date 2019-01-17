@@ -88,7 +88,7 @@ object Dependencies {
   //============================================================================================
 
   lazy val scalaTest:  ModuleID = "org.scalatest"  %% "scalatest"  % "3.0.5"
-  lazy val scalaCheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.5"
+  lazy val scalaCheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.14.0"
 
   lazy val akkaTestKit:       ModuleID = "com.typesafe.akka" %% "akka-testkit"        % akkaVersion
   lazy val akkaStreamTestKit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
