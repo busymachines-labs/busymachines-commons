@@ -55,8 +55,8 @@ final class TryEffectsTest extends FunSpec {
   private val int2str: Int => String = i => i.toString
 
   private val thr2str: Throwable => String    = thr => thr.getMessage
-  private val thr2ano: Throwable => Anomaly   = thr => ForbiddenFailure
-  private val thr2thr: Throwable => Throwable = thr => iae
+  private val thr2ano: Throwable => Anomaly   = _ => ForbiddenFailure
+  private val thr2thr: Throwable => Throwable = _ => iae
 
   private val failV: Try[Int] = Try.fail(ano)
   private val pureV: Try[Int] = Try.pure(42)
@@ -144,11 +144,11 @@ final class TryEffectsTest extends FunSpec {
 
       describe("fromEitherThr") {
         test("left — transform") {
-          assertThrows[IllegalArgumentException](Try.fromEitherThr(left, (t: Throwable) => iae).r)
+          assertThrows[IllegalArgumentException](Try.fromEitherThr(left, (_: Throwable) => iae).r)
         }
 
         test("right") {
-          assert(Try.fromEitherThr(right, (t: Throwable) => iae).r == 42)
+          assert(Try.fromEitherThr(right, (_: Throwable) => iae).r == 42)
         }
       }
 
@@ -849,7 +849,7 @@ final class TryEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val result = Try.traverse(input) { i =>
+          val result = Try.traverse(input) { _ =>
             Try {
               sideEffect = 42
             }
@@ -878,7 +878,7 @@ final class TryEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val result = Try.traverse_(input) { i =>
+          val result = Try.traverse_(input) { _ =>
             Try {
               sideEffect = 42
             }

@@ -54,8 +54,8 @@ final class FutureEffectsAsyncTest extends FunSpec {
   }
 
   private val thr2str: Throwable => String    = thr => thr.getMessage
-  private val thr2ano: Throwable => Anomaly   = thr => ForbiddenFailure
-  private val thr2thr: Throwable => Throwable = thr => iae
+  private val thr2ano: Throwable => Anomaly   = _ => ForbiddenFailure
+  private val thr2thr: Throwable => Throwable = _ => iae
   private val res2res: Result[Int] => Result[String] = {
     case Correct(i)   => Correct(i.toString)
     case Incorrect(_) => Incorrect(ForbiddenFailure)
@@ -138,11 +138,11 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         describe("fromEitherThr") {
           test("left — transform") {
-            assertThrows[IllegalArgumentException](Future.fromEitherThr(left, (t: Throwable) => iae).r)
+            assertThrows[IllegalArgumentException](Future.fromEitherThr(left, (_: Throwable) => iae).r)
           }
 
           test("right") {
-            assert(Future.fromEitherThr(right, (t: Throwable) => iae).r == 42)
+            assert(Future.fromEitherThr(right, (_: Throwable) => iae).r == 42)
           }
         }
 
@@ -2097,7 +2097,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Future.effectOnFail(
               incorrect,
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Future {
                   sideEffect = 42
                   sideEffect
@@ -2112,7 +2112,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Future.effectOnFail(
               correct,
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Future {
                   sideEffect = 42
                   sideEffect
@@ -2163,7 +2163,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Future.flatEffectOnIncorrect(
               Future.pure(incorrect),
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Future {
                   sideEffect = 42
                   sideEffect
@@ -2177,7 +2177,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Future.flatEffectOnIncorrect(
               Future.pure(correct),
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Future {
                   sideEffect = 42
                   sideEffect
@@ -2192,7 +2192,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Future.flatEffectOnIncorrect(
               Future.fail[Result[Int]](ano),
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Future {
                   sideEffect = 42
                   sideEffect
@@ -2700,7 +2700,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("incorrect") {
             var sideEffect: Int = 0
             val f = incorrect.effectOnFailFuture(
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Future {
                   sideEffect = 42
                   sideEffect
@@ -2714,7 +2714,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("correct") {
             var sideEffect: Int = 0
             val f = correct.effectOnFailFuture(
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Future {
                   sideEffect = 42
                   sideEffect
@@ -2765,7 +2765,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future
                 .pure(incorrect)
                 .effectOnFail(
-                  (a: Anomaly) =>
+                  (_: Anomaly) =>
                     Future {
                       sideEffect = 42
                       sideEffect
@@ -2780,7 +2780,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val f = Future
               .pure(correct)
               .effectOnFail(
-                (a: Anomaly) =>
+                (_: Anomaly) =>
                   Future {
                     sideEffect = 42
                     sideEffect
@@ -2796,7 +2796,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val f = Future
               .fail[Result[Int]](ano)
               .effectOnFail(
-                (a: Anomaly) =>
+                (_: Anomaly) =>
                   Future {
                     sideEffect = 42
                     sideEffect
@@ -2876,7 +2876,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = Future.serialize(input) { i =>
+          val eventualResult = Future.serialize(input) { _ =>
             Future {
               sideEffect = 42
             }
@@ -2922,7 +2922,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = Future.serialize_(input) { i =>
+          val eventualResult = Future.serialize_(input) { _ =>
             Future {
               sideEffect = 42
             }
@@ -2967,7 +2967,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult: Future[Unit] = Future.traverse_(input) { i =>
+          val eventualResult: Future[Unit] = Future.traverse_(input) { _ =>
             Future {
               sideEffect = 42
             }
@@ -2986,7 +2986,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           var sideEffect: Int = 0
 
           val eventualResult: Future[Unit] = Future.sequence_ {
-            input.map { i =>
+            input.map { _ =>
               Future {
                 sideEffect = 42
               }

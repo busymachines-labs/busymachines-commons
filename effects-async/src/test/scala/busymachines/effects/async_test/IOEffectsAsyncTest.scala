@@ -59,8 +59,8 @@ final class IOEffectsAsyncTest extends FunSpec {
   }
 
   private val thr2str: Throwable => String    = thr => thr.getMessage
-  private val thr2ano: Throwable => Anomaly   = thr => ForbiddenFailure
-  private val thr2thr: Throwable => Throwable = thr => iae
+  private val thr2ano: Throwable => Anomaly   = _ => ForbiddenFailure
+  private val thr2thr: Throwable => Throwable = _ => iae
   private val res2res: Result[Int] => Result[String] = {
     case Correct(i)   => Correct(i.toString)
     case Incorrect(_) => Incorrect(ForbiddenFailure)
@@ -143,11 +143,11 @@ final class IOEffectsAsyncTest extends FunSpec {
 
         describe("fromEitherThr") {
           test("left — transform") {
-            assertThrows[IllegalArgumentException](IO.fromEitherThr(left, (t: Throwable) => iae).r)
+            assertThrows[IllegalArgumentException](IO.fromEitherThr(left, (_: Throwable) => iae).r)
           }
 
           test("right") {
-            assert(IO.fromEitherThr(right, (t: Throwable) => iae).r == 42)
+            assert(IO.fromEitherThr(right, (_: Throwable) => iae).r == 42)
           }
         }
 
@@ -2125,7 +2125,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = IO.effectOnFail(
               incorrect,
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 IO {
                   sideEffect = 42
                   sideEffect
@@ -2141,7 +2141,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = IO.effectOnFail(
               correct,
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 IO {
                   sideEffect = 42
                   sideEffect
@@ -2193,7 +2193,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = IO.flatEffectOnIncorrect(
               IO.pure(incorrect),
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 IO {
                   sideEffect = 42
                   sideEffect
@@ -2208,7 +2208,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = IO.flatEffectOnIncorrect(
               IO.pure(correct),
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 IO {
                   sideEffect = 42
                   sideEffect
@@ -2223,7 +2223,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = IO.flatEffectOnIncorrect(
               IO.fail[Result[Int]](ano),
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 IO {
                   sideEffect = 42
                   sideEffect
@@ -2746,7 +2746,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("incorrect") {
             var sideEffect: Int = 0
             val f = incorrect.effectOnFailIO(
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 IO {
                   sideEffect = 42
                   sideEffect
@@ -2761,7 +2761,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("correct") {
             var sideEffect: Int = 0
             val f = correct.effectOnFailIO(
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 IO {
                   sideEffect = 42
                   sideEffect
@@ -2812,7 +2812,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             val f = IO
               .pure(incorrect)
               .effectOnFail(
-                (a: Anomaly) =>
+                (_: Anomaly) =>
                   IO {
                     sideEffect = 42
                     sideEffect
@@ -2828,7 +2828,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             val f = IO
               .pure(correct)
               .effectOnFail(
-                (a: Anomaly) =>
+                (_: Anomaly) =>
                   IO {
                     sideEffect = 42
                     sideEffect
@@ -2844,7 +2844,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             val f = IO
               .fail[Result[Int]](ano)
               .effectOnFail(
-                (a: Anomaly) =>
+                (_: Anomaly) =>
                   IO {
                     sideEffect = 42
                     sideEffect
@@ -2921,7 +2921,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = IO.traverse(input) { i =>
+          val eventualResult = IO.traverse(input) { _ =>
             IO {
               sideEffect = 42
             }
@@ -2967,7 +2967,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = IO.traverse_(input) { i =>
+          val eventualResult = IO.traverse_(input) { _ =>
             IO {
               sideEffect = 42
             }
@@ -3037,7 +3037,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = IO.serialize(input) { i =>
+          val eventualResult = IO.serialize(input) { _ =>
             IO {
               sideEffect = 42
             }
@@ -3083,7 +3083,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = IO.serialize_(input) { i =>
+          val eventualResult = IO.serialize_(input) { _ =>
             IO {
               sideEffect = 42
             }

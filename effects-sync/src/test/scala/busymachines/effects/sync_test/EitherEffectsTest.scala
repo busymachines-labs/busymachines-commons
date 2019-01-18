@@ -76,15 +76,15 @@ class EitherEffectsTest extends FunSpec {
 
     describe("asTry") {
       test("left — throwable") {
-        assert(failThr.asTry(t => ForbiddenFailure) == Try.fail(ForbiddenFailure))
+        assert(failThr.asTry(_ => ForbiddenFailure) == Try.fail(ForbiddenFailure))
       }
 
       test("left — anomaly") {
-        assert(failAno.asTry(t => ForbiddenFailure) == Try.fail(ForbiddenFailure))
+        assert(failAno.asTry(_ => ForbiddenFailure) == Try.fail(ForbiddenFailure))
       }
 
       test("right") {
-        assert(failThr.asTry(t => ano) == Try.fail(ano))
+        assert(failThr.asTry(_ => ano) == Try.fail(ano))
       }
     }
 
@@ -104,29 +104,29 @@ class EitherEffectsTest extends FunSpec {
 
     describe("asTryThr — transform") {
       test("left — throwable") {
-        assertThrows[IllegalArgumentException](failThr.asTryThr(t => iae).unsafeGet())
+        assertThrows[IllegalArgumentException](failThr.asTryThr(_ => iae).unsafeGet())
       }
 
       test("left — anomaly") {
-        assertThrows[IllegalArgumentException](failAno.asTryThr(t => iae).unsafeGet())
+        assertThrows[IllegalArgumentException](failAno.asTryThr(_ => iae).unsafeGet())
       }
 
       test("right") {
-        assert(pureV.asTryThr(t => iae).unsafeGet() == 42)
+        assert(pureV.asTryThr(_ => iae).unsafeGet() == 42)
       }
     }
 
     describe("asResult") {
       test("left — throwable") {
-        assertThrows[InvalidInputFailure](failThr.asResult(t => ano).unsafeGet())
+        assertThrows[InvalidInputFailure](failThr.asResult(_ => ano).unsafeGet())
       }
 
       test("left — anomaly") {
-        assertThrows[ForbiddenFailure](failAno.asResult(t => ForbiddenFailure).unsafeGet())
+        assertThrows[ForbiddenFailure](failAno.asResult(_ => ForbiddenFailure).unsafeGet())
       }
 
       test("right") {
-        assert(pureV.asResult(t => ForbiddenFailure).unsafeGet() == 42)
+        assert(pureV.asResult(_ => ForbiddenFailure).unsafeGet() == 42)
       }
     }
 
@@ -146,7 +146,9 @@ class EitherEffectsTest extends FunSpec {
 
     describe("unsafeGetLeft") {
       test("left") {
-        assert(failAno.unsafeGetLeft() == ano)
+        val thr = failAno.unsafeGetLeft()
+        assert(thr.isInstanceOf[InvalidInputAnomaly], "invalid anomaly type")
+        assert(thr.asInstanceOf[InvalidInputAnomaly] == ano)
       }
 
       test("right") {

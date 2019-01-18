@@ -36,7 +36,7 @@ trait RestAPIAuthentication[AuthResult] {
   def authentication: Directive1[AuthResult]
 
   lazy val optionalAuthentication: Directive1[Option[AuthResult]] =
-    authentication.map(r => Option[AuthResult](r)).recover { rej =>
+    authentication.map(r => Option[AuthResult](r)).recover { _ =>
       provide(Option.empty[AuthResult])
     }
 }

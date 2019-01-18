@@ -59,8 +59,8 @@ final class TaskEffectsAsyncTest extends FunSpec {
   }
 
   private val thr2str: Throwable => String    = thr => thr.getMessage
-  private val thr2ano: Throwable => Anomaly   = thr => ForbiddenFailure
-  private val thr2thr: Throwable => Throwable = thr => iae
+  private val thr2ano: Throwable => Anomaly   = _ => ForbiddenFailure
+  private val thr2thr: Throwable => Throwable = _ => iae
   private val res2res: Result[Int] => Result[String] = {
     case Correct(i)   => Correct(i.toString)
     case Incorrect(_) => Incorrect(ForbiddenFailure)
@@ -144,11 +144,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         describe("fromEitherThr") {
           test("left — transform") {
-            assertThrows[IllegalArgumentException](Task.fromEitherThr(left, (t: Throwable) => iae).r)
+            assertThrows[IllegalArgumentException](Task.fromEitherThr(left, (_: Throwable) => iae).r)
           }
 
           test("right") {
-            assert(Task.fromEitherThr(right, (t: Throwable) => iae).r == 42)
+            assert(Task.fromEitherThr(right, (_: Throwable) => iae).r == 42)
           }
         }
 
@@ -2126,7 +2126,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task.effectOnFail(
               incorrect,
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2142,7 +2142,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task.effectOnFail(
               correct,
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2194,7 +2194,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task.flatEffectOnIncorrect(
               Task.pure(incorrect),
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2209,7 +2209,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task.flatEffectOnIncorrect(
               Task.pure(correct),
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2224,7 +2224,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             var sideEffect: Int = 0
             val f = Task.flatEffectOnIncorrect(
               Task.fail[Result[Int]](ano),
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2749,7 +2749,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("incorrect") {
             var sideEffect: Int = 0
             val f = incorrect.effectOnFailTask(
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2764,7 +2764,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("correct") {
             var sideEffect: Int = 0
             val f = correct.effectOnFailTask(
-              (a: Anomaly) =>
+              (_: Anomaly) =>
                 Task {
                   sideEffect = 42
                   sideEffect
@@ -2815,7 +2815,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val f = Task
               .pure(incorrect)
               .effectOnFail(
-                (a: Anomaly) =>
+                (_: Anomaly) =>
                   Task {
                     sideEffect = 42
                     sideEffect
@@ -2831,7 +2831,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val f = Task
               .pure(correct)
               .effectOnFail(
-                (a: Anomaly) =>
+                (_: Anomaly) =>
                   Task {
                     sideEffect = 42
                     sideEffect
@@ -2847,7 +2847,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val f = Task
               .fail[Result[Int]](ano)
               .effectOnFail(
-                (a: Anomaly) =>
+                (_: Anomaly) =>
                   Task {
                     sideEffect = 42
                     sideEffect
@@ -2925,7 +2925,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = Task.traverse_(input) { i =>
+          val eventualResult = Task.traverse_(input) { _ =>
             Task {
               sideEffect = 42
             }
@@ -2945,7 +2945,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           var sideEffect: Int = 0
 
           val eventualResult = Task.sequence_ {
-            input.map { i =>
+            input.map { _ =>
               Task {
                 sideEffect = 42
               }
@@ -2966,7 +2966,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = Task.serialize(input) { i =>
+          val eventualResult = Task.serialize(input) { _ =>
             Task {
               sideEffect = 42
             }
@@ -3013,7 +3013,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val eventualResult = Task.serialize_(input) { i =>
+          val eventualResult = Task.serialize_(input) { _ =>
             Task {
               sideEffect = 42
             }

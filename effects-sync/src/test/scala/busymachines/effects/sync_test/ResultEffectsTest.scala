@@ -53,8 +53,8 @@ final class ResultEffectsTest extends FunSpec {
 
   private val int2str: Int => String = i => i.toString
 
-  private val thr2ano: Throwable => Anomaly = thr => ForbiddenFailure
-  private val ano2ano: Anomaly => Anomaly   = thr => ForbiddenFailure
+  private val thr2ano: Throwable => Anomaly = _ => ForbiddenFailure
+  private val ano2ano: Anomaly => Anomaly   = _ => ForbiddenFailure
   private val ano2str: Anomaly => String    = thr => thr.message
 
   private val failV: Result[Int] = Result.fail(ano)
@@ -597,7 +597,7 @@ final class ResultEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val result = Result.traverse(input) { i =>
+          val result = Result.traverse(input) { _ =>
             Result {
               sideEffect = 42
             }
@@ -626,7 +626,7 @@ final class ResultEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val result = Result.traverse_(input) { i =>
+          val result = Result.traverse_(input) { _ =>
             Result {
               sideEffect = 42
             }

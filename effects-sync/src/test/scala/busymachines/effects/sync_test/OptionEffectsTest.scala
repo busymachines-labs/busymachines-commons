@@ -399,7 +399,7 @@ final class OptionEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val result = Option.traverse(input) { i =>
+          val result = Option.traverse(input) { _ =>
             Option {
               sideEffect = 42
             }
@@ -428,7 +428,7 @@ final class OptionEffectsTest extends FunSpec {
 
           var sideEffect: Int = 0
 
-          val result = Option.traverse_(input) { i =>
+          val result = Option.traverse_(input) { _ =>
             Option {
               sideEffect = 42
             }
