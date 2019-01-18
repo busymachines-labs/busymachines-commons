@@ -10,10 +10,10 @@ A simple library containing one type, `SemanticVersion` with a defined natural o
 
 ## artifacts
 
-This module is vanilla scala _*only*_, compiled for scala version `2.12.5`
+This module is vanilla scala _*only*_, compiled for scala version `2.12.8`
 
 * stable: `0.2.0`
-* latest: `0.3.0-RC8`
+* latest: `0.3.0-RC9`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-semver" % "0.2.0"

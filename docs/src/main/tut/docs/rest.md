@@ -12,7 +12,7 @@ This is the joint documentation for of modules:
 ## artifacts
 
 * stable: `0.2.0`
-* latest: `0.3.0-RC8`
+* latest: `0.3.0-RC9`
 
 ```scala
 "com.busymachines" %% "busymachines-commons-rest-json" % "0.2.0"

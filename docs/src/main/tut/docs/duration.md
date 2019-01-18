@@ -10,13 +10,13 @@ Thin wrapper around `scala.concurrent.duration` and `java.util.concurrent.TimeUn
 
 ## artifacts
 
-This module is vanilla scala _*only*_, compiled for scala version `2.12.5`
+This module is vanilla scala _*only*_, compiled for scala version `2.12.8`
 
 * stable: `N/A`
-* latest: `0.3.0-RC8`
+* latest: `0.3.0-RC9`
 
 ```scala
-"com.busymachines" %% "busymachines-commons-duration" % "0.3.0-RC8"
+"com.busymachines" %% "busymachines-commons-duration" % "0.3.0-RC9"
 ```
 
 ### Transitive dependencies
