@@ -206,6 +206,7 @@ lazy val `rest-core-testkit` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-core-testkit",
     libraryDependencies ++= Seq(
+      Dependencies.akkaTestKit     withSources (),
       Dependencies.akkaHttpTestKit withSources (),
       Dependencies.scalaTest       withSources (),
       Dependencies.scalaTest       % Test withSources ()
