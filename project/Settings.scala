@@ -46,7 +46,7 @@ object Settings {
        *
        * https://github.com/oleg-py/better-monadic-for
        */
-      addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.0"),
+      addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0-M4"),
       scalacOptions ++= customScalaCompileFlagList ++ betterForPluginCompilerFlags
     )
 
