@@ -67,7 +67,7 @@ object PublishingSettings {
     ),
     developers := List(
       Developer(
-        id    = "lorandbm",
+        id    = "lorandszakacs",
         name  = "Lorand Szakacs",
         email = "lorand.szakacs@busymachines.com",
         url   = url("https://github.com/lorandszakacs")
