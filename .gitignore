@@ -3,6 +3,10 @@
 ### CUSTOM ###
 playground/
 
+### Metals ###
+.bloop
+.metals
+
 ### Eclipse ###
 
 .metadata
