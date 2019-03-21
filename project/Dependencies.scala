@@ -37,7 +37,7 @@ object Dependencies {
 
   lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3"
 
-  lazy val catsVersion: String = "1.5.0"
+  lazy val catsVersion: String = "1.6.0"
 
   lazy val catsCore:    ModuleID = "org.typelevel" %% "cats-core"    % catsVersion
   lazy val catsMacros:  ModuleID = "org.typelevel" %% "cats-macros"  % catsVersion
@@ -45,7 +45,7 @@ object Dependencies {
   lazy val catsLaws:    ModuleID = "org.typelevel" %% "cats-laws"    % catsVersion
   lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
 
-  lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.1.0"
+  lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.2.0"
 
   lazy val circeVersion: String = "0.11.1"
 
@@ -61,7 +61,7 @@ object Dependencies {
     circeParser
   )
 
-  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.4"
+  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.5"
 
   lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC2"
 
