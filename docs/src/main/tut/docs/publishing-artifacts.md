@@ -23,17 +23,17 @@ $ tree
 
 ## [plugins/plugins.sbt](https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/plugins/plugins.sbt)
 
-If copied in your global `sbt` config this will load the [sbt-pgp](https://github.com/sbt/sbt-pgp) as a global plugin for you machine.
+If copied in your global `sbt` config this will load the [sbt-pgp](https://github.com/sbt/sbt-pgp) as a global plugin for your machine.
 
-Note that for this to work you need to have [PGP tools](https://gpgtools.org/) installed on your machine! By defauly this build will look that it has a `pgp` command available in your `$PATH`.
+Note that for this to work you need to have [PGP tools](https://gpgtools.org/) installed on your machine! By default this build will look that it has a `pgp` command available in your `$PATH`.
 
 Content:
 ```scala
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.0-M2")
 ```
 
 ## [pgp.sbt](https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/pgp.sbt)
-As required by the `sbt-pgp` pluging required above, this file contains the paths to your PGP keys, and—optionally—the path to the `gpg` command on your system if it's not available in your global `$PATH` variable`:
+As required by the `sbt-pgp` plugin required above, this file contains the paths to your PGP keys, and — optionally — the path to the `gpg` command on your system if it's not available in your global `$PATH` variable`:
 
 Content:
 ```scala

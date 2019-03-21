@@ -15,8 +15,8 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-com.typesafe.sbt.pgp.PgpKeys.pgpSecretRing := file("~/.gnupg/secring.gpg")
-com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupg/pubring.gpg")
+// com.typesafe.sbt.pgp.PgpKeys.pgpSecretRing := file("~/.gnupg/secring.gpg")
+com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupg/pubring.kbx")
 // com.typesafe.sbt.pgp.PgpKeys.gpgCommand := "/path/to/gpg"
 
 //for easy copy pasting just run this in your sbt scala REPL (invoked by > console):
