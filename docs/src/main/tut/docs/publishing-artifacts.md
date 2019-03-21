@@ -68,7 +68,7 @@ You ought to follow the instructions here to create your PGP file:
 ## Publishing — the easy way
 
 simply run the sbt command:
-1. `doRelase`
+1. `doRelease`
 
 It's an alias for the hard way described bellow if you wish to learn the details.
 
@@ -116,3 +116,7 @@ Do close and promote at once:
 $ sbt sonatypeRelease
 ```
 This command accesses [Sonatype Nexus REST API](https://oss.sonatype.org/nexus-staging-plugin/default/docs/index.html), then sends close and promote commands.
+
+#### Publish docs
+
+Don't forget to run the `doSitePublish` task to publish your newly updated docs.
