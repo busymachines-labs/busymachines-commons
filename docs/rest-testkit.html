@@ -14,16 +14,14 @@
 
 <ul>
   <li>stable: <code class="highlighter-rouge">0.2.0</code></li>
-  <li>latest: <code class="highlighter-rouge">0.3.0-RC8</code></li>
+  <li>latest: <code class="highlighter-rouge">0.3.0-RC9</code></li>
 </ul>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-rest-json-testkit"</span> <span class="o">%</span> <span class="s">"0.2.0"</span> <span class="o">%</span> <span class="n">test</span>
-</code></pre>
-</div>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-rest-json-testkit"</span> <span class="o">%</span> <span class="s">"0.2.0"</span> <span class="o">%</span> <span class="n">test</span>
+</code></pre></div></div>
 <p>You do not need to depend on <code class="highlighter-rouge">core-testkit</code> explicitely because the above module already does:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-rest-core-testkit"</span> <span class="o">%</span> <span class="s">"0.2.0"</span> <span class="o">%</span> <span class="n">test</span>
-</code></pre>
-</div>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-rest-core-testkit"</span> <span class="o">%</span> <span class="s">"0.2.0"</span> <span class="o">%</span> <span class="n">test</span>
+</code></pre></div></div>
 
 <p>N.B. that this is a testing library, and you should only depend on it in test. Because otherwise you wind up with scalatest and akka http testing libraries on your runtime classpath.</p>
 
@@ -52,7 +50,7 @@
 
 <p>The coolest thing in the testing DSL is the <code class="highlighter-rouge">debug</code> method that you use roughly like:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">it</span> <span class="n">should</span> <span class="s">"... return 200 OK when providing proper Basic authentication"</span> <span class="n">in</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">it</span> <span class="n">should</span> <span class="s">"... return 200 OK when providing proper Basic authentication"</span> <span class="n">in</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span>
 
   <span class="n">context</span><span class="o">(</span><span class="nc">BasicAuthenticationContextForTesting</span><span class="o">)</span> <span class="o">{</span> <span class="k">implicit</span> <span class="n">cc</span> <span class="k">=&gt;</span>
     <span class="n">debug</span> <span class="o">{</span>
@@ -71,11 +69,10 @@
     <span class="o">}</span>
   <span class="o">}</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>By running the above, it will print the request/responses of each request within the <code class="highlighter-rouge">debug</code> block:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>GET /authentication
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET /authentication
 --
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=--
 ----&gt; Response &lt;----
@@ -95,8 +92,7 @@ Status: 404
 ==
 The requested resource could not be found.
 ===================================================
-</code></pre>
-</div>
+</code></pre></div></div>
 <p>This is really helpful when:</p>
 <ul>
   <li>you have system tests with tens of requests, but only want to inspect one single one, instead of being flooded with a bunch of spam output from a logger</li>
@@ -108,7 +104,7 @@ The requested resource could not be found.
 <p>Check out the complete version in <a href="https://github.com/busymachines/busymachines-commons/tree/master/rest-json-testkit/src/test/scala/busymachines/rest_json_test">the tests of this module</a>.</p>
 
 <p>The final results looks roughly like:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.rest._</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.rest._</span>
 
 <span class="k">private</span><span class="o">[</span><span class="kt">rest_json_test</span><span class="o">]</span> <span class="k">object</span> <span class="nc">AuthenticationsForTest</span> <span class="o">{</span>
   <span class="k">private</span><span class="o">[</span><span class="kt">rest_json_test</span><span class="o">]</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">basic</span> <span class="k">=</span> <span class="nc">CallerContexts</span><span class="o">.</span><span class="n">basic</span><span class="o">(</span><span class="s">"username"</span><span class="o">,</span> <span class="s">"password"</span><span class="o">)</span>
@@ -188,8 +184,7 @@ The requested resource could not be found.
   <span class="c1">//===========================================================================
 </span><span class="o">}</span>
 
-</code></pre>
-</div>
+</code></pre></div></div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/busymachines-commons/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });

@@ -5,9 +5,8 @@
 <h3 id="obtuse-implicit-resolution-compilation-errors">obtuse implicit resolution compilation errors</h3>
 
 <p>Probably due to an missing implicit — probably automatic derivation of some type class. You should just add explicit implicit for one type at a time:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">implicit</span> <span class="k">val</span> <span class="n">x</span><span class="k">:</span> <span class="kt">SomeTypeClass</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
-</code></pre>
-</div>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">implicit</span> <span class="k">val</span> <span class="n">x</span><span class="k">:</span> <span class="kt">SomeTypeClass</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
+</code></pre></div></div>
 <p>Until you localize the problem — then good luck fixing it.</p>
 
 <h3 id="compilersbt-bugs">compiler/sbt bugs</h3>
@@ -18,7 +17,7 @@
       <li>no idea what exactly causes it, but moving code where json codec derivation is done, in a separate file from where the case class definitions are done should do the trick. If not, good luck, lol.</li>
     </ul>
   </li>
-  <li>compilation error <code class="highlighter-rouge">package cats contains object and package with same name: implicits</code>
+  <li>compilation error <code class="highlighter-rouge"><span class="k">package</span> <span class="n">cats</span> <span class="n">contains</span> <span class="n">object</span> <span class="k">and</span> <span class="k">package</span> <span class="k">with</span> <span class="n">same</span> <span class="n">name</span><span class="p">:</span> <span class="n">implicits</span></code>
     <ul>
       <li>not this again :( — we thought we solved this one</li>
     </ul>

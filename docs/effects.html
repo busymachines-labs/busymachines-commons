@@ -4,26 +4,23 @@
 
 <ul>
   <li>stable: <code class="highlighter-rouge">N/A</code></li>
-  <li>latest: <code class="highlighter-rouge">0.3.0-RC8</code></li>
+  <li>latest: <code class="highlighter-rouge">0.3.0-RC9</code></li>
 </ul>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects"</span>            <span class="o">%</span> <span class="s">"0.3.0-RC8"</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects"</span>            <span class="o">%</span> <span class="s">"0.3.0-RC9"</span>
 <span class="c1">//the above module is actually a composite of the following three modules
-</span><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects-sync"</span>       <span class="o">%</span> <span class="s">"0.3.0-RC8"</span>
-<span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects-sync-cats"</span>  <span class="o">%</span> <span class="s">"0.3.0-RC8"</span>
-<span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects-async"</span>      <span class="o">%</span> <span class="s">"0.3.0-RC8"</span>
-</code></pre>
-</div>
+</span><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects-sync"</span>       <span class="o">%</span> <span class="s">"0.3.0-RC9"</span>
+<span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects-sync-cats"</span>  <span class="o">%</span> <span class="s">"0.3.0-RC9"</span>
+<span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-effects-async"</span>      <span class="o">%</span> <span class="s">"0.3.0-RC9"</span>
+</code></pre></div></div>
 
 <h2 id="recommended-usage">Recommended usage</h2>
-<div class="highlighter-rouge"><pre class="highlight"><code>libraryDependencies += "com.busymachines" %% "busymachines-commons-effects" % "0.3.0-RC8"
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>libraryDependencies += "com.busymachines" %% "busymachines-commons-effects" % "0.3.0-RC9"
+</code></pre></div></div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects._</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects._</span>
 <span class="k">import</span> <span class="nn">busymachines.effects.validated._</span> <span class="c1">//only if you need Validated (see below)
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>If you need fine grained control then you can still pick and choose the modules you depend on and the imports you make.</p>
 
@@ -40,17 +37,15 @@
 
 <h3 id="gotchas">Gotchas</h3>
 <p>You have to use either:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects.sync._</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects.sync._</span>
 <span class="k">import</span> <span class="nn">busymachines.effects.async._</span>
 <span class="c1">//or other even more modular imports like:
 //import busymachines.effects.sync.result._
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>Or:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects._</span>
-</code></pre>
-</div>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects._</span>
+</code></pre></div></div>
 
 <p>But never combine the latter with any of the former imports. The latter is intended to bring in everything from the former two, and you would be importing certain <code class="highlighter-rouge">val</code>s twice.</p>
 
@@ -99,15 +94,13 @@ You can also import only what you need. See <a href="effects.html#modular-import
 <h5 id="3-iron-out-inconsistencies">3. iron out inconsistencies</h5>
 
 <p>Attempts to iron out inconsistencies of the Scala standard library effect type companion objects. E.g. all Effects can be now constructed with a <code class="highlighter-rouge">pure</code> method on the companion object, and so on. This way, it is a complement to <code class="highlighter-rouge">cats.implicits._</code>, which provides syntax for:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
 <span class="k">val</span> <span class="n">option</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="s">"string"</span><span class="o">.</span><span class="n">pure</span><span class="o">[</span><span class="kt">Option</span><span class="o">]</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects._</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects._</span>
 <span class="k">val</span> <span class="n">option</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Option</span><span class="o">.</span><span class="n">pure</span><span class="o">(</span><span class="s">"string"</span><span class="o">)</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>And some other, more useful, operations, detailed in the sections bellow.</p>
 
@@ -127,16 +120,15 @@ You can also import only what you need. See <a href="effects.html#modular-import
 
 <p>The single “novel” contribution of the entire <code class="highlighter-rouge">effects</code> module is the datatype <code class="highlighter-rouge">Result</code>, which is defined as:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Result</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>    <span class="k">=</span> <span class="nc">Either</span><span class="o">[</span><span class="kt">Anomaly</span>, <span class="kt">T</span><span class="o">]</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="kt">Result</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>    <span class="k">=</span> <span class="nc">Either</span><span class="o">[</span><span class="kt">Anomaly</span>, <span class="kt">T</span><span class="o">]</span>
 <span class="k">type</span> <span class="kt">Correct</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>   <span class="k">=</span> <span class="nc">Right</span><span class="o">[</span><span class="kt">Anomaly</span>, <span class="kt">T</span><span class="o">]</span>
 <span class="k">type</span> <span class="kt">Incorrect</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Left</span><span class="o">[</span><span class="kt">Anomaly</span>, <span class="kt">T</span><span class="o">]</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Used to model “failure”. Long story short, it’s a specialized <code class="highlighter-rouge">Either</code>, all semantics are the same. And is a pure, referentially transparent substitute for <code class="highlighter-rouge">Try</code>, but it also integrates with <a href="core.html">core</a>. There’s nothing more to it, you should just use it anytime you have pure computation that can sometimes “fail”.</p>
 
 <p>quick-example:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects.sync._</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.effects.sync._</span>
 <span class="c1">//or:
 //import busymachines.effects._
 </span>
@@ -156,8 +148,7 @@ You can also import only what you need. See <a href="effects.html#modular-import
   <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">yay</span>
   <span class="n">y</span> <span class="k">&lt;-</span> <span class="n">nay</span>
 <span class="o">}</span> <span class="k">yield</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Standard monadic behavior, leveraging <code class="highlighter-rouge">Either</code>’s <a href="https://typelevel.org/cats/datatypes/either.html">right bias</a>, but with a fixed type for the left-hand side to considerably reduce the boilerplate for 99% percent of the cases.</p>
 
@@ -174,7 +165,7 @@ You can also import only what you need. See <a href="effects.html#modular-import
 <p>The types and syntax are not immediately available with the usual <code class="highlighter-rouge">import busymachines.effects.sync_</code>, but rather have to be brought in via the <code class="highlighter-rouge">import busymachines.effects.sync.validated._</code>. This decision was made through empirical observation, the vast majority of time the semantics of <code class="highlighter-rouge">Result</code> are better suited than <code class="highlighter-rouge">Validated</code>, and the use of the latter is a special case.</p>
 
 <p>The best examples are in the aforementioned cats docs, and in our tests:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">package</span> <span class="nn">busymachines.effects.sync.validation_test</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="nn">busymachines.effects.sync.validation_test</span>
 
 <span class="k">import</span> <span class="nn">org.scalatest._</span>
 
@@ -254,15 +245,14 @@ You can also import only what you need. See <a href="effects.html#modular-import
 <span class="o">}</span>
 
 
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h4 id="conversion-to-other-effects">Conversion to other effects</h4>
 
 <p>Conversion to other effects forces all <code class="highlighter-rouge">n</code> <code class="highlighter-rouge">busymachines.core.Anomaly</code>s accumulated by this <code class="highlighter-rouge">Validated</code> to be transformed into one single <code class="highlighter-rouge">busymachines.core.Anomalies</code> type.</p>
 
 <p>Take for instance the previous example from the tests:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>    test("reject both") {
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    test("reject both") {
       val v = PWDValidator(invBoth)
       assert(v == Validated.fail(PWDValidator.InvSpaces, PWDValidator.InvSize), "failed")
 
@@ -276,11 +266,10 @@ You can also import only what you need. See <a href="effects.html#modular-import
         "as result — ctor"
       )
     }
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Where <code class="highlighter-rouge">TestValidationFailures</code> is defined as:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">package</span> <span class="nn">busymachines.effects.sync.validation_test</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="nn">busymachines.effects.sync.validation_test</span>
 
 <span class="k">import</span> <span class="nn">busymachines.core._</span>
 
@@ -298,8 +287,7 @@ You can also import only what you need. See <a href="effects.html#modular-import
   <span class="k">override</span> <span class="k">def</span> <span class="n">name</span> <span class="k">=</span> <span class="s">"test_validation_001"</span>
 <span class="o">}</span>
 
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>There are always two methods available when converting to other effects:</p>
 <ol>
@@ -396,23 +384,21 @@ You can also import only what you need. See <a href="effects.html#modular-import
   <li><code class="highlighter-rouge">expr.suspendIn{IO/Future/Task}</code> — the expression <code class="highlighter-rouge">effectValue</code> is passed by name, to ensure that whatever side-effect it has is “suspended” in the specified Effect. This is almost useless when done for <code class="highlighter-rouge">Future</code> since the side-effect is done on a separate thread, but for <code class="highlighter-rouge">IO</code> and <code class="highlighter-rouge">Task</code> it is absolutely invaluable, as it delays side-effects until you explicitely “run” the <code class="highlighter-rouge">IO</code> or <code class="highlighter-rouge">Task</code></li>
 </ul>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">writeToDB</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">???</span> <span class="c1">// extremely poor imperative code
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">writeToDB</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">???</span> <span class="c1">// extremely poor imperative code
 </span>  <span class="k">val</span> <span class="n">io</span><span class="k">:</span> <span class="kt">IO</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="n">writeToDB</span><span class="o">(</span><span class="mi">42</span><span class="o">).</span><span class="n">suspendInIO</span>
   <span class="c1">//at this point no side-effect has happened!!!
 </span>
   <span class="n">io</span><span class="o">.</span><span class="n">unsafeSyncGet</span><span class="o">()</span> <span class="c1">//applying side-effect, the world is a horrible place
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="c1">// slightly, but only slightly, less poor imperative code,
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">// slightly, but only slightly, less poor imperative code,
 </span>  <span class="c1">//see section on referential transparency in "learning materials"
 </span>  <span class="k">def</span> <span class="n">writeToDB</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
   <span class="k">val</span> <span class="n">io</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="n">writeToDB</span><span class="o">(</span><span class="mi">42</span><span class="o">).</span><span class="n">suspendInTask</span>
   <span class="c1">//at this point no side-effect has happened!!!
 </span>
   <span class="n">io</span><span class="o">.</span><span class="n">unsafeSyncGet</span><span class="o">()</span> <span class="c1">//applying side-effect, the world is a horrible place
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>Apply side-effects in special cases:</p>
 <ul>
@@ -428,7 +414,7 @@ You can also import only what you need. See <a href="effects.html#modular-import
   <li><code class="highlighter-rouge">$F.pure(Option.pure(...)).effectOnPure</code></li>
 </ul>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">diagnose</span><span class="o">(</span><span class="n">int</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Defect</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">diagnose</span><span class="o">(</span><span class="n">int</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Defect</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
   <span class="k">def</span> <span class="n">complexDiagnose</span><span class="o">(</span><span class="n">int</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">Defect</span><span class="o">]]</span> <span class="k">=</span> <span class="o">???</span>
 
   <span class="k">def</span> <span class="n">repair</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Defect</span><span class="o">)</span><span class="k">:</span> <span class="kt">Task</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
@@ -442,8 +428,7 @@ You can also import only what you need. See <a href="effects.html#modular-import
 
   <span class="c1">//...
 </span>  <span class="n">repairTask</span><span class="o">.</span><span class="n">unsafeSyncGet</span><span class="o">()</span> <span class="c1">// apply repair job
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <h2 id="conversion-between-effects">conversion between effects</h2>
 

@@ -6,16 +6,15 @@
 
 <h2 id="artifacts">artifacts</h2>
 
-<p>This module is vanilla scala <em>*only*</em>, compiled with scala version : <code class="highlighter-rouge">2.12.5</code>.</p>
+<p>This module is vanilla scala <em>*only*</em>, compiled with scala version : <code class="highlighter-rouge">2.12.8</code>.</p>
 
 <ul>
   <li>stable: <code class="highlighter-rouge">0.2.0</code></li>
-  <li>latest: <code class="highlighter-rouge">0.3.0-RC8</code></li>
+  <li>latest: <code class="highlighter-rouge">0.3.0-RC9</code></li>
 </ul>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-core"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
-</code></pre>
-</div>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-core"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
+</code></pre></div></div>
 
 <h2 id="description">Description</h2>
 
@@ -29,7 +28,7 @@
 Because they can provide decent failure management out of the box. Use in combination with the <code class="highlighter-rouge">rest</code> modules, you can move with almost zero effort to meaningful error messages.</p>
 
 <p>The Anomaly trait, the base class for everything in <code class="highlighter-rouge">core</code>:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">trait</span> <span class="nc">Anomaly</span> <span class="k">extends</span> <span class="nc">Product</span> <span class="k">with</span> <span class="nc">Serializable</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">trait</span> <span class="nc">Anomaly</span> <span class="k">extends</span> <span class="nc">Product</span> <span class="k">with</span> <span class="nc">Serializable</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">id</span><span class="k">:</span> <span class="kt">AnomalyID</span>
 
   <span class="k">def</span> <span class="n">message</span><span class="k">:</span> <span class="kt">String</span>
@@ -39,8 +38,7 @@ Because they can provide decent failure management out of the box. Use in combin
   <span class="c1">//important scaladoc elided
 </span>  <span class="k">def</span> <span class="n">asThrowable</span><span class="k">:</span> <span class="kt">Throwable</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>A simple way of uniquely identifying any failure, together with some useful values to give more context.</p>
 
@@ -61,15 +59,14 @@ Essentially we have 6 types of failures (with a plural counterpart to each):</p>
 
 <h4 id="quick-failure-style">Quick failure style</h4>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">option</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span> <span class="c1">//...
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">option</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span> <span class="c1">//...
 </span><span class="n">option</span><span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="k">throw</span> <span class="nc">NotFoundFailure</span><span class="o">)</span>
 <span class="n">option</span><span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="k">throw</span> <span class="nc">NotFoundFailure</span><span class="o">(</span><span class="s">"this specific message, instead of generic"</span><span class="o">))</span>
 
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h4 id="long-term-failure-style">Long term failure style</h4>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">RevolutionaryDomainFailures</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">RevolutionaryDomainFailures</span> <span class="o">{</span>
   <span class="c1">//create a stable, and unique ID
 </span>  <span class="k">case</span> <span class="k">object</span> <span class="nc">CannotBeDone</span> <span class="k">extends</span> <span class="nc">AnomalyID</span> <span class="o">{</span> <span class="k">val</span> <span class="n">name</span> <span class="k">=</span> <span class="s">"rd_001"</span> <span class="o">}</span>
 <span class="o">}</span>
@@ -96,8 +93,7 @@ Essentially we have 6 types of failures (with a plural counterpart to each):</p>
   <span class="k">val</span> <span class="n">solutionToHaltingProblem</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="nc">None</span>
   <span class="n">solutionToHaltingProblem</span><span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="k">throw</span> <span class="nc">SolutionNotFoundFailure</span><span class="o">(</span><span class="s">"Halting Problem"</span><span class="o">,</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">"stop"</span><span class="o">,</span> <span class="s">"12"</span><span class="o">)))</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Similarly, we have predefined errors, but they are not as semantically rich.</p>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/busymachines-commons/highlight/highlight.pack.js"></script><script>hljs.configure({

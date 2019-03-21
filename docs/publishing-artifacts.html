@@ -7,49 +7,51 @@
 <p>The contents of this folder ought to be copied to your <code class="highlighter-rouge">~/.sbt/1.0</code> folder. And the appropriate values assigned to each sbt key, as described below.</p>
 
 <p>Each of the following sections describes the purpose of the files in the <code class="highlighter-rouge">z-publishing-artifacts</code> folder <em>once copied to <code class="highlighter-rouge">~/.sbt/1.0</code></em>.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>$ tree
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ tree
 .
 ├── README.md
 ├── pgp.sbt
 ├── plugins
 │   └── plugins.sbt
 └── sonatype.sbt
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="pluginspluginssbt"><a href="https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/plugins/plugins.sbt">plugins/plugins.sbt</a></h2>
 
-<p>If copied in your global <code class="highlighter-rouge">sbt</code> config this will load the <a href="https://github.com/sbt/sbt-pgp">sbt-pgp</a> as a global plugin for you machine.</p>
+<p>If copied in your global <code class="highlighter-rouge">sbt</code> config this will load the <a href="https://github.com/sbt/sbt-pgp">sbt-pgp</a> as a global plugin for your machine.</p>
 
-<p>Note that for this to work you need to have <a href="https://gpgtools.org/">PGP tools</a> installed on your machine! By defauly this build will look that it has a <code class="highlighter-rouge">pgp</code> command available in your <code class="highlighter-rouge">$PATH</code>.</p>
+<p>Note that for this to work you need to have <a href="https://gpgtools.org/">PGP tools</a> installed on your machine! By default this build will look that it has a <code class="highlighter-rouge">pgp</code> command available in your <code class="highlighter-rouge">$PATH</code>.</p>
 
 <p>Content:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">"com.jsuereth"</span> <span class="o">%</span> <span class="s">"sbt-pgp"</span> <span class="o">%</span> <span class="s">"1.1.0"</span><span class="o">)</span>
-</code></pre>
-</div>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">"com.jsuereth"</span> <span class="o">%</span> <span class="s">"sbt-pgp"</span> <span class="o">%</span> <span class="s">"2.0.0-M2"</span><span class="o">)</span>
+</code></pre></div></div>
 
 <h2 id="pgpsbt"><a href="https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/pgp.sbt">pgp.sbt</a></h2>
-<p>As required by the <code class="highlighter-rouge">sbt-pgp</code> pluging required above, this file contains the paths to your PGP keys, and—optionally—the path to the <code class="highlighter-rouge">gpg</code> command on your system if it’s not available in your global <code class="highlighter-rouge">$PATH</code> variable`:</p>
+<p>As required by the <code class="highlighter-rouge">sbt-pgp</code> plugin required above, this file contains the paths to your PGP keys, and — optionally — the path to the <code class="highlighter-rouge">gpg</code> command on your system if it’s not available in your global <code class="highlighter-rouge">$PATH</code> variable`:</p>
 
 <p>Content:</p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">com</span><span class="o">.</span><span class="n">typesafe</span><span class="o">.</span><span class="n">sbt</span><span class="o">.</span><span class="n">pgp</span><span class="o">.</span><span class="nc">PgpKeys</span><span class="o">.</span><span class="n">pgpSecretRing</span> <span class="o">:=</span> <span class="n">file</span><span class="o">(</span><span class="s">"~/.gnupg/secring.gpg"</span><span class="o">)</span>
-<span class="n">com</span><span class="o">.</span><span class="n">typesafe</span><span class="o">.</span><span class="n">sbt</span><span class="o">.</span><span class="n">pgp</span><span class="o">.</span><span class="nc">PgpKeys</span><span class="o">.</span><span class="n">pgpPublicRing</span> <span class="o">:=</span> <span class="n">file</span><span class="o">(</span><span class="s">"~/.gnupg/pubring.gpg"</span><span class="o">)</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">com</span><span class="o">.</span><span class="n">typesafe</span><span class="o">.</span><span class="n">sbt</span><span class="o">.</span><span class="n">pgp</span><span class="o">.</span><span class="nc">PgpKeys</span><span class="o">.</span><span class="n">pgpPublicRing</span> <span class="o">:=</span> <span class="n">file</span><span class="o">(</span><span class="s">"~/.gnupg/pubring.kbx"</span><span class="o">)</span>
 <span class="c1">// com.typesafe.sbt.pgp.PgpKeys.gpgCommand := "/path/to/gpg"
-</span></code></pre>
-</div>
+</span>
+<span class="c1">//run to ensure you have the full key id, as required by SBT: gpg --keyid-format LONG -k
+// usePgpKeyHex("FULL_HEX_KEY_ID_HERE")
+</span>
+<span class="c1">//for easy copy pasting just run this in your sbt scala REPL (invoked by &gt; console):
+// """thepasswordofthekey""".map(c =&gt; s""" '$c' """).mkString(",")
+</span><span class="n">com</span><span class="o">.</span><span class="n">typesafe</span><span class="o">.</span><span class="n">sbt</span><span class="o">.</span><span class="n">pgp</span><span class="o">.</span><span class="nc">PgpKeys</span><span class="o">.</span><span class="n">pgpPassphrase</span> <span class="o">:=</span> <span class="nc">Some</span><span class="o">(</span><span class="nc">Array</span><span class="o">(</span><span class="sc">'t'</span><span class="o">,</span> <span class="sc">'h'</span><span class="o">,</span> <span class="sc">'e'</span><span class="o">,</span> <span class="sc">'p'</span><span class="o">,</span> <span class="sc">'a'</span><span class="o">,</span> <span class="sc">'s'</span><span class="o">,</span> <span class="sc">'w'</span><span class="o">,</span> <span class="sc">'o'</span><span class="o">,</span> <span class="sc">'r'</span><span class="o">,</span> <span class="sc">'d'</span><span class="o">,</span> <span class="sc">'o'</span><span class="o">,</span> <span class="sc">'f'</span><span class="o">,</span> <span class="sc">'t'</span><span class="o">,</span> <span class="sc">'h'</span><span class="o">,</span> <span class="sc">'e'</span><span class="o">,</span> <span class="sc">'k'</span><span class="o">,</span> <span class="sc">'e'</span><span class="o">,</span> <span class="sc">'y'</span><span class="o">))</span>
+</code></pre></div></div>
 
 <h2 id="sonatypesbt"><a href="https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/sonatype.sbt">sonatype.sbt</a></h2>
 
 <p>This file contains the username and passwords for the Sonatype repository:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">credentials</span> <span class="o">+=</span> <span class="nc">Credentials</span><span class="o">(</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">credentials</span> <span class="o">+=</span> <span class="nc">Credentials</span><span class="o">(</span>
   <span class="s">"Sonatype Nexus Repository Manager"</span><span class="o">,</span>
   <span class="s">"oss.sonatype.org"</span><span class="o">,</span>
   <span class="s">"$USERNAME_ON_SONATYPE_JIRA"</span><span class="o">,</span>
   <span class="s">"$PASSWORD_ON_SONATYPE_JIRA"</span>
 <span class="o">)</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Currently we have only one sonatype user who uses this account, as can be seen in this issue on their JIRA:
 <a href="https://issues.sonatype.org/browse/OSSRH-33718">https://issues.sonatype.org/browse/OSSRH-33718</a>.</p>
@@ -65,7 +67,7 @@
 
 <p>simply run the sbt command:</p>
 <ol>
-  <li><code class="highlighter-rouge">doRelase</code></li>
+  <li><code class="highlighter-rouge">doRelease</code></li>
 </ol>
 
 <p>It’s an alias for the hard way described bellow if you wish to learn the details.</p>
@@ -109,15 +111,17 @@ If this doesn’t work for some reason, then read further to understand the enti
 <h4 id="command-line-usage">Command Line Usage</h4>
 
 <p>Publish a GPG-signed artifact to Sonatype:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>$ sbt publishSigned
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sbt publishSigned
+</code></pre></div></div>
 
 <p>Do close and promote at once:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>$ sbt sonatypeRelease
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sbt sonatypeRelease
+</code></pre></div></div>
 <p>This command accesses <a href="https://oss.sonatype.org/nexus-staging-plugin/default/docs/index.html">Sonatype Nexus REST API</a>, then sends close and promote commands.</p>
+
+<h4 id="publish-docs">Publish docs</h4>
+
+<p>Don’t forget to run the <code class="highlighter-rouge">doSitePublish</code> task to publish your newly updated docs.</p>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/busymachines-commons/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });

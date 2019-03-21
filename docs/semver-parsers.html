@@ -6,12 +6,11 @@
 
 <ul>
   <li>stable: <code class="highlighter-rouge">0.2.0</code></li>
-  <li>latest: <code class="highlighter-rouge">0.3.0-RC8</code></li>
+  <li>latest: <code class="highlighter-rouge">0.3.0-RC9</code></li>
 </ul>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-semver-parsers"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
-</code></pre>
-</div>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="s">"busymachines-commons-semver-parsers"</span> <span class="o">%</span> <span class="s">"0.2.0"</span>
+</code></pre></div></div>
 
 <h3 id="transitive-dependencies">Transitive dependencies</h3>
 
@@ -41,15 +40,14 @@
 </ul>
 
 <p>And their counterpart syntactic sugars enabled by importing the <code class="highlighter-rouge">import busymachines.semver.syntax._</code></p>
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.semver._</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">busymachines.semver._</span>
 <span class="k">import</span> <span class="nn">busymachines.semver.syntax._</span>
 
 <span class="k">val</span> <span class="n">version</span>        <span class="k">=</span> <span class="nc">SemanticVersion</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">0</span><span class="o">,</span><span class="mi">0</span><span class="o">,</span> <span class="nc">Labels</span><span class="o">.</span><span class="n">rc</span><span class="o">(</span><span class="mi">4</span><span class="o">))</span>
 <span class="k">val</span> <span class="n">stringRepr</span>     <span class="k">=</span> <span class="n">version</span><span class="o">.</span><span class="n">lowercase</span> <span class="c1">// "1.0.0-rc4"
 </span><span class="k">val</span> <span class="n">parsedVersion</span>  <span class="k">=</span> <span class="nc">SemanticVersion</span><span class="o">.</span><span class="n">unsafeFromString</span><span class="o">(</span><span class="n">stringRepr</span><span class="o">)</span>
 <span class="c1">// version == parsedVersion
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/busymachines-commons/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });

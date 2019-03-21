@@ -4,7 +4,7 @@
 
 <h2 id="sbt-module-ids">sbt module IDs</h2>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">bmCommonsVersion</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"0.3.0-RC8"</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">bmCommonsVersion</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"0.3.0-RC9"</span>
 
 <span class="k">def</span> <span class="n">bmCommons</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">ModuleID</span> <span class="o">=</span> <span class="s">"com.busymachines"</span> <span class="o">%%</span> <span class="n">s</span><span class="s">"busymachines-commons-$m"</span> <span class="o">%</span> <span class="n">bmCommonsVersion</span>
 
@@ -23,8 +23,7 @@
 
 <span class="k">val</span> <span class="n">bmcRestJsonTK</span><span class="k">:</span> <span class="kt">ModuleID</span> <span class="o">=</span> <span class="n">bmCommons</span><span class="o">(</span><span class="s">"rest-json-testkit"</span><span class="o">)</span> <span class="o">%</span> <span class="nc">Test</span> <span class="n">withSources</span> <span class="o">()</span>
 <span class="k">val</span> <span class="n">bmcRestCoreTK</span><span class="k">:</span> <span class="kt">ModuleID</span> <span class="o">=</span> <span class="n">bmCommons</span><span class="o">(</span><span class="s">"rest-core-testkit"</span><span class="o">)</span> <span class="o">%</span> <span class="nc">Test</span> <span class="n">withSources</span> <span class="o">()</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h2 id="modules">modules</h2>
 
@@ -109,7 +108,7 @@
 
 <p>This is a parallel module hierarchy whose json serialization is handled by <code class="highlighter-rouge">spray-json</code>. DO NOT use together with their non-deprecated counterpart. These will not live very long, use at your own risk. The same design rules were followed, and the <code class="highlighter-rouge">rest</code> packages are syntactically, and semantically almost identical to the non-deprecated counterparts. Using the <code class="highlighter-rouge">json</code> package differs the most.</p>
 
-<p>These modules have been removed starting with version <code class="highlighter-rouge">0.3.0-RC8</code>. In case any bugs are found, they will be fixed and released as version <code class="highlighter-rouge">0.2.x</code>. Think parallel scala <code class="highlighter-rouge">2.11</code>, and <code class="highlighter-rouge">2.12</code> series.</p>
+<p>These modules have been removed starting with version <code class="highlighter-rouge">0.3.0-RC9</code>. In case any bugs are found, they will be fixed and released as version <code class="highlighter-rouge">0.2.x</code>. Think parallel scala <code class="highlighter-rouge">2.11</code>, and <code class="highlighter-rouge">2.12</code> series.</p>
 
 <table>
   <thead>
