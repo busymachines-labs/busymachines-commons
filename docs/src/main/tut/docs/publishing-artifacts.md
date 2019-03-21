@@ -37,9 +37,15 @@ As required by the `sbt-pgp` plugin required above, this file contains the paths
 
 Content:
 ```scala
-com.typesafe.sbt.pgp.PgpKeys.pgpSecretRing := file("~/.gnupg/secring.gpg")
-com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupg/pubring.gpg")
+com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupg/pubring.kbx")
 // com.typesafe.sbt.pgp.PgpKeys.gpgCommand := "/path/to/gpg"
+
+//run to ensure you have the full key id, as required by SBT: gpg --keyid-format LONG -k
+usePgpKeyHex("FULL_HEX_KEY_ID_HERE")
+
+//for easy copy pasting just run this in your sbt scala REPL (invoked by > console):
+// """thepasswordofthekey""".map(c => s""" '$c' """).mkString(",")
+com.typesafe.sbt.pgp.PgpKeys.pgpPassphrase := Some(Array('t', 'h', 'e', 'p', 'a', 's', 'w', 'o', 'r', 'd', 'o', 'f', 't', 'h', 'e', 'k', 'e', 'y'))
 ```
 
 ## [sonatype.sbt](https://github.com/busymachines/busymachines-commons/blob/master/z-publishing-artifacts/sonatype.sbt)
