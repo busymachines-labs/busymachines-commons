@@ -41,7 +41,7 @@ com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupg/pubring.kbx")
 // com.typesafe.sbt.pgp.PgpKeys.gpgCommand := "/path/to/gpg"
 
 //run to ensure you have the full key id, as required by SBT: gpg --keyid-format LONG -k
-usePgpKeyHex("FULL_HEX_KEY_ID_HERE")
+// usePgpKeyHex("FULL_HEX_KEY_ID_HERE")
 
 //for easy copy pasting just run this in your sbt scala REPL (invoked by > console):
 // """thepasswordofthekey""".map(c => s""" '$c' """).mkString(",")
