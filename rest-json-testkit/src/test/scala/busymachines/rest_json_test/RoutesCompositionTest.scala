@@ -72,14 +72,14 @@ class RoutesCompositionTest extends FlatSpec with JsonRestAPITest {
           SomeTestDTOGet(
             int    = 1,
             string = "one",
-            option = None
+            option = None,
           ),
           SomeTestDTOGet(
             int    = 2,
             string = "two",
-            option = None
-          )
-        )
+            option = None,
+          ),
+        ),
       )
     }
   }

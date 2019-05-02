@@ -37,7 +37,7 @@ final case class SemanticVersion(
   minor: Int,
   patch: Int,
   label: Option[Label] = Option.empty[Label],
-  meta:  Option[String] = Option.empty[String]
+  meta:  Option[String] = Option.empty[String],
 ) extends SemanticVersionOrdering with Ordered[SemanticVersion] {
 
   /**

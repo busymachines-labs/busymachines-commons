@@ -25,7 +25,7 @@ package busymachines.json
   */
 trait DefaultTypeDiscriminatorConfig {
 
-  private[this] final val JsonTypeString: String = "_type"
+  final private[this] val JsonTypeString: String = "_type"
 
   /**
     * This exists to give us the default behavior of deserializing sealed trait

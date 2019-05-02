@@ -346,7 +346,7 @@ object ValidatedSyntax {
       */
     @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]]
+      cbf: CanBuildFrom[C[A], B, C[B]],
     ): Validated[C[B]] = ValidatedOps.traverse(col)(fn)
 
     /**
@@ -370,7 +370,7 @@ object ValidatedSyntax {
       */
     @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
       implicit
-      cbf: CanBuildFrom[M[Validated[A]], A, M[A]]
+      cbf: CanBuildFrom[M[Validated[A]], A, M[A]],
     ): Validated[M[A]] = ValidatedOps.sequence(in)
 
     /**
@@ -623,7 +623,7 @@ object ValidatedOps {
     */
   @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
+    cbf: CanBuildFrom[C[A], B, C[B]],
   ): Validated[C[B]] = {
     import cats.instances.list._
     import cats.syntax.traverse._
@@ -634,7 +634,7 @@ object ValidatedOps {
     }
     else {
       //OK, super inneficient, need a better implementation
-      val result:  Validated[List[B]] = col.toList.traverse(fn)
+      val result:  Validated[List[B]]       = col.toList.traverse(fn)
       val builder: mutable.Builder[B, C[B]] = cbf.apply()
       result.map(_.foreach(e => builder.+=(e))).map(_ => builder.result())
     }
@@ -669,7 +669,7 @@ object ValidatedOps {
     */
   @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
     implicit
-    cbf: CanBuildFrom[M[Validated[A]], A, M[A]]
+    cbf: CanBuildFrom[M[Validated[A]], A, M[A]],
   ): Validated[M[A]] = ValidatedOps.traverse(in)(identity)
 
   /**

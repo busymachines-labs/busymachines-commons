@@ -171,7 +171,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.cond(
             false,
             42,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -180,7 +180,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.cond(
             true,
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -191,7 +191,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condThr(
             false,
             42,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -200,7 +200,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condThr(
             true,
             42,
-            thr
+            thr,
           )
           assert(value.r == 42)
         }
@@ -211,7 +211,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condWith(
             false,
             pureV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -220,7 +220,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condWith(
             true,
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -229,7 +229,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condWith(
             false,
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -238,7 +238,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condWith(
             true,
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -249,7 +249,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condWithThr(
             false,
             pureV,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -258,7 +258,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condWithThr(
             true,
             pureV,
-            thr
+            thr,
           )
           assert(value.r == 42)
         }
@@ -267,7 +267,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condWithThr(
             false,
             failV,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -276,7 +276,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.condWithThr(
             true,
             failV,
-            thr
+            thr,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -287,7 +287,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCond(
             bfalse,
             42,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -296,7 +296,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCond(
             btrue,
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -305,7 +305,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCond(
             bfail,
             42,
-            ano
+            ano,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -316,7 +316,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondThr(
             bfalse,
             42,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -325,7 +325,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondThr(
             btrue,
             42,
-            thr
+            thr,
           )
           assert(value.r == 42)
         }
@@ -334,7 +334,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondThr(
             bfail,
             42,
-            thr
+            thr,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -345,7 +345,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWith(
             bfalse,
             pureV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -354,7 +354,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWith(
             bfalse,
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -363,7 +363,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWith(
             btrue,
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -372,7 +372,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWith(
             btrue,
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -381,7 +381,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWith(
             bfail,
             pureV,
-            ano
+            ano,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -390,7 +390,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWith(
             bfail,
             failV,
-            ano
+            ano,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -401,7 +401,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWithThr(
             bfalse,
             pureV,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -410,7 +410,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWithThr(
             bfalse,
             failV,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -419,7 +419,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWithThr(
             btrue,
             pureV,
-            thr
+            thr,
           )
           assert(value.r == 42)
         }
@@ -428,7 +428,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWithThr(
             btrue,
             failV,
-            thr
+            thr,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -437,7 +437,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWithThr(
             bfail,
             pureV,
-            thr
+            thr,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -446,7 +446,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.flatCondWithThr(
             bfail,
             failV,
-            thr
+            thr,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -456,7 +456,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = Try.failOnTrue(
             false,
-            ano
+            ano,
           )
           value.r
         }
@@ -464,7 +464,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = Try.failOnTrue(
             true,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -474,7 +474,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = Try.failOnTrueThr(
             false,
-            thr
+            thr,
           )
           value.r
         }
@@ -482,7 +482,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = Try.failOnTrueThr(
             true,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -492,7 +492,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = Try.failOnFalse(
             false,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -500,7 +500,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = Try.failOnFalse(
             true,
-            ano
+            ano,
           )
           value.r
         }
@@ -510,7 +510,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = Try.failOnFalseThr(
             false,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -518,7 +518,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = Try.failOnFalseThr(
             true,
-            thr
+            thr,
           )
           value.r
         }
@@ -528,7 +528,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = Try.flatFailOnTrue(
             bfalse,
-            ano
+            ano,
           )
           value.r
         }
@@ -536,7 +536,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = Try.flatFailOnTrue(
             btrue,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -544,7 +544,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail") {
           val value = Try.flatFailOnTrue(
             bfail,
-            ano
+            ano,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -555,7 +555,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = Try.flatFailOnTrueThr(
             bfalse,
-            thr
+            thr,
           )
           value.r
         }
@@ -563,7 +563,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = Try.flatFailOnTrueThr(
             btrue,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -571,7 +571,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail") {
           val value = Try.flatFailOnTrueThr(
             bfail,
-            thr
+            thr,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -582,7 +582,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = Try.flatFailOnFalse(
             bfalse,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -590,7 +590,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = Try.flatFailOnFalse(
             btrue,
-            ano
+            ano,
           )
           value.r
         }
@@ -598,7 +598,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail") {
           val value = Try.flatFailOnFalse(
             bfail,
-            ano
+            ano,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -609,7 +609,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = Try.flatFailOnFalseThr(
             bfalse,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -617,7 +617,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = Try.flatFailOnFalseThr(
             btrue,
-            thr
+            thr,
           )
           value.r
         }
@@ -625,7 +625,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail") {
           val value = Try.flatFailOnFalseThr(
             bfail,
-            thr
+            thr,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -676,7 +676,7 @@ final class TryEffectsTest extends FunSpec {
       describe("unpack") {
         test("incorrect") {
           assertThrows[InvalidInputFailure](
-            Try.unpackResult(Try.pure(incorrect)).r
+            Try.unpackResult(Try.pure(incorrect)).r,
           )
         }
 
@@ -693,7 +693,7 @@ final class TryEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            Try.asOptionUnsafe(failV)
+            Try.asOptionUnsafe(failV),
           )
         }
 
@@ -707,7 +707,7 @@ final class TryEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            Try.asListUnsafe(failV)
+            Try.asListUnsafe(failV),
           )
         }
 
@@ -763,7 +763,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.bimap(
             failV,
             int2str,
-            thr2ano
+            thr2ano,
           )
 
           assertThrows[ForbiddenFailure](value.r)
@@ -773,7 +773,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.bimap(
             pureV,
             int2str,
-            thr2ano
+            thr2ano,
           )
 
           assert(value.r == "42")
@@ -787,7 +787,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.bimapThr(
             failV,
             int2str,
-            thr2thr
+            thr2thr,
           )
 
           assertThrows[IllegalArgumentException](value.r)
@@ -797,7 +797,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.bimapThr(
             pureV,
             int2str,
-            thr2thr
+            thr2thr,
           )
 
           assert(value.r == "42")
@@ -811,7 +811,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.morph(
             failV,
             int2str,
-            thr2str
+            thr2str,
           )
           assert(value.r == ano.message)
         }
@@ -820,7 +820,7 @@ final class TryEffectsTest extends FunSpec {
           val value = Try.morph(
             pureV,
             int2str,
-            thr2str
+            thr2str,
           )
           assert(value.r == "42")
         }
@@ -962,7 +962,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = false.condTry(
             42,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -970,7 +970,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = true.condTry(
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -981,7 +981,7 @@ final class TryEffectsTest extends FunSpec {
           val value =
             false.condTryThr(
               42,
-              thr
+              thr,
             )
           assertThrows[RuntimeException](value.r)
         }
@@ -989,7 +989,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = true.condTryThr(
             42,
-            thr
+            thr,
           )
           assert(value.r == 42)
         }
@@ -999,7 +999,7 @@ final class TryEffectsTest extends FunSpec {
         test("false — pure") {
           val value = false.condWithTry(
             pureV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -1007,7 +1007,7 @@ final class TryEffectsTest extends FunSpec {
         test("true — pure") {
           val value = true.condWithTry(
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -1015,7 +1015,7 @@ final class TryEffectsTest extends FunSpec {
         test("false — fail") {
           val value = false.condWithTry(
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -1023,7 +1023,7 @@ final class TryEffectsTest extends FunSpec {
         test("true — fail") {
           val value = true.condWithTry(
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -1033,7 +1033,7 @@ final class TryEffectsTest extends FunSpec {
         test("false — pure") {
           val value = false.condWithTryThr(
             pureV,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -1041,7 +1041,7 @@ final class TryEffectsTest extends FunSpec {
         test("true — pure") {
           val value = true.condWithTryThr(
             pureV,
-            thr
+            thr,
           )
           assert(value.r == 42)
         }
@@ -1050,7 +1050,7 @@ final class TryEffectsTest extends FunSpec {
           val value =
             false.condWithTryThr(
               failV,
-              thr
+              thr,
             )
           assertThrows[RuntimeException](value.r)
         }
@@ -1058,7 +1058,7 @@ final class TryEffectsTest extends FunSpec {
         test("true — fail") {
           val value = true.condWithTryThr(
             failV,
-            thr
+            thr,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -1068,7 +1068,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = bfalse.cond(
             42,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -1076,7 +1076,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = btrue.cond(
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -1084,7 +1084,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail") {
           val value = bfail.cond(
             42,
-            ano
+            ano,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -1094,7 +1094,7 @@ final class TryEffectsTest extends FunSpec {
         test("false") {
           val value = bfalse.condThr(
             42,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -1102,7 +1102,7 @@ final class TryEffectsTest extends FunSpec {
         test("true") {
           val value = btrue.condThr(
             42,
-            thr
+            thr,
           )
           assert(value.r == 42)
         }
@@ -1110,7 +1110,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail") {
           val value = bfail.condThr(
             42,
-            thr
+            thr,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -1120,7 +1120,7 @@ final class TryEffectsTest extends FunSpec {
         test("false — pure") {
           val value = bfalse.condWith(
             pureV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -1128,7 +1128,7 @@ final class TryEffectsTest extends FunSpec {
         test("false — fail") {
           val value = bfalse.condWith(
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -1136,7 +1136,7 @@ final class TryEffectsTest extends FunSpec {
         test("true — pure") {
           val value = btrue.condWith(
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -1144,7 +1144,7 @@ final class TryEffectsTest extends FunSpec {
         test("true — fail") {
           val value = btrue.condWith(
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -1152,7 +1152,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail — pure") {
           val value = bfail.condWith(
             pureV,
-            ano
+            ano,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -1160,7 +1160,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail — fail") {
           val value = bfail.condWith(
             failV,
-            ano
+            ano,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -1170,7 +1170,7 @@ final class TryEffectsTest extends FunSpec {
         test("false — pure") {
           val value = bfalse.condWithThr(
             pureV,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -1178,7 +1178,7 @@ final class TryEffectsTest extends FunSpec {
         test("false — fail") {
           val value = bfalse.condWithThr(
             failV,
-            thr
+            thr,
           )
           assertThrows[RuntimeException](value.r)
         }
@@ -1186,7 +1186,7 @@ final class TryEffectsTest extends FunSpec {
         test("true — pure") {
           val value = btrue.condWithThr(
             pureV,
-            thr
+            thr,
           )
           assert(value.r == 42)
         }
@@ -1194,7 +1194,7 @@ final class TryEffectsTest extends FunSpec {
         test("true — fail") {
           val value = btrue.condWithThr(
             failV,
-            thr
+            thr,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -1202,7 +1202,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail — pure") {
           val value = bfail.condWithThr(
             pureV,
-            thr
+            thr,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -1210,7 +1210,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail — fail") {
           val value = bfail.condWithThr(
             failV,
-            thr
+            thr,
           )
           assertThrows[IllegalArgumentException](value.r)
         }
@@ -1380,7 +1380,7 @@ final class TryEffectsTest extends FunSpec {
       describe("unpack") {
         test("incorrect") {
           assertThrows[InvalidInputFailure](
-            Try.pure(incorrect).unpack.r
+            Try.pure(incorrect).unpack.r,
           )
         }
 
@@ -1397,7 +1397,7 @@ final class TryEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            failV.asOptionUnsafe()
+            failV.asOptionUnsafe(),
           )
         }
 
@@ -1411,7 +1411,7 @@ final class TryEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            failV.asListUnsafe()
+            failV.asListUnsafe(),
           )
         }
 
@@ -1466,7 +1466,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail") {
           val value = failV.bimap(
             int2str,
-            thr2ano
+            thr2ano,
           )
 
           assertThrows[ForbiddenFailure](value.r)
@@ -1475,7 +1475,7 @@ final class TryEffectsTest extends FunSpec {
         test("pure") {
           val value = pureV.bimap(
             int2str,
-            thr2ano
+            thr2ano,
           )
 
           assert(value.r == "42")
@@ -1488,7 +1488,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail") {
           val value = failV.bimapThr(
             int2str,
-            thr2thr
+            thr2thr,
           )
 
           assertThrows[IllegalArgumentException](value.r)
@@ -1497,7 +1497,7 @@ final class TryEffectsTest extends FunSpec {
         test("pure") {
           val value = pureV.bimapThr(
             int2str,
-            thr2thr
+            thr2thr,
           )
 
           assert(value.r == "42")
@@ -1510,7 +1510,7 @@ final class TryEffectsTest extends FunSpec {
         test("fail") {
           val value = failV.morph(
             int2str,
-            thr2str
+            thr2str,
           )
           assert(value.r == ano.message)
         }
@@ -1518,7 +1518,7 @@ final class TryEffectsTest extends FunSpec {
         test("pure") {
           val value = pureV.morph(
             int2str,
-            thr2str
+            thr2str,
           )
           assert(value.r == "42")
         }

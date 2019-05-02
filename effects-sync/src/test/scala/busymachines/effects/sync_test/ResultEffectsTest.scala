@@ -156,7 +156,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.cond(
             false,
             42,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -165,7 +165,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.cond(
             true,
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -176,7 +176,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.condWith(
             false,
             pureV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -185,7 +185,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.condWith(
             true,
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -194,7 +194,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.condWith(
             false,
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -203,7 +203,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.condWith(
             true,
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -214,7 +214,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.flatCond(
             bfalse,
             42,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -223,7 +223,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.flatCond(
             btrue,
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -232,7 +232,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.flatCond(
             bfail,
             42,
-            ano
+            ano,
           )
           assertThrows[DeniedFailure](value.r)
         }
@@ -243,7 +243,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.flatCondWith(
             bfalse,
             pureV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -252,7 +252,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.flatCondWith(
             bfalse,
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -261,7 +261,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.flatCondWith(
             btrue,
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -270,7 +270,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.flatCondWith(
             btrue,
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -279,7 +279,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.flatCondWith(
             bfail,
             pureV,
-            ano
+            ano,
           )
           assertThrows[DeniedFailure](value.r)
         }
@@ -288,7 +288,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.flatCondWith(
             bfail,
             failV,
-            ano
+            ano,
           )
           assertThrows[DeniedFailure](value.r)
         }
@@ -298,7 +298,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false") {
           val value = Result.failOnTrue(
             false,
-            ano
+            ano,
           )
           value.r
         }
@@ -306,7 +306,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true") {
           val value = Result.failOnTrue(
             true,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -316,7 +316,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false") {
           val value = Result.failOnFalse(
             false,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -324,7 +324,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true") {
           val value = Result.failOnFalse(
             true,
-            ano
+            ano,
           )
           value.r
         }
@@ -334,7 +334,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false") {
           val value = Result.flatFailOnTrue(
             bfalse,
-            ano
+            ano,
           )
           value.r
         }
@@ -342,7 +342,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true") {
           val value = Result.flatFailOnTrue(
             btrue,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -350,7 +350,7 @@ final class ResultEffectsTest extends FunSpec {
         test("fail") {
           val value = Result.flatFailOnTrue(
             bfail,
-            ano
+            ano,
           )
           assertThrows[DeniedFailure](value.r)
         }
@@ -361,7 +361,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false") {
           val value = Result.flatFailOnFalse(
             bfalse,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -369,7 +369,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true") {
           val value = Result.flatFailOnFalse(
             btrue,
-            ano
+            ano,
           )
           value.r
         }
@@ -377,7 +377,7 @@ final class ResultEffectsTest extends FunSpec {
         test("fail") {
           val value = Result.flatFailOnFalse(
             bfail,
-            ano
+            ano,
           )
           assertThrows[DeniedFailure](value.r)
         }
@@ -414,7 +414,7 @@ final class ResultEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            Result.asOptionUnsafe(failV)
+            Result.asOptionUnsafe(failV),
           )
         }
 
@@ -428,7 +428,7 @@ final class ResultEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            Result.asListUnsafe(failV)
+            Result.asListUnsafe(failV),
           )
         }
 
@@ -472,7 +472,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.bimap(
             failV,
             int2str,
-            ano2ano
+            ano2ano,
           )
 
           assertThrows[ForbiddenFailure](value.r)
@@ -482,7 +482,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.bimap(
             pureV,
             int2str,
-            ano2ano
+            ano2ano,
           )
 
           assert(value.r == "42")
@@ -496,7 +496,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.morph(
             failV,
             int2str,
-            ano2str
+            ano2str,
           )
           assert(value.r == ano.message)
         }
@@ -505,7 +505,7 @@ final class ResultEffectsTest extends FunSpec {
           val value = Result.morph(
             pureV,
             int2str,
-            ano2str
+            ano2str,
           )
           assert(value.r == "42")
         }
@@ -708,7 +708,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false") {
           val value = false.condResult(
             42,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -716,7 +716,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true") {
           val value = true.condResult(
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -726,7 +726,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false — pure") {
           val value = false.condWithResult(
             pureV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -734,7 +734,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true — pure") {
           val value = true.condWithResult(
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -742,7 +742,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false — fail") {
           val value = false.condWithResult(
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -750,7 +750,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true — fail") {
           val value = true.condWithResult(
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -760,7 +760,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false") {
           val value = bfalse.cond(
             42,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -768,7 +768,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true") {
           val value = btrue.cond(
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -776,7 +776,7 @@ final class ResultEffectsTest extends FunSpec {
         test("fail") {
           val value = bfail.cond(
             42,
-            ano
+            ano,
           )
           assertThrows[DeniedFailure](value.r)
         }
@@ -786,7 +786,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false — pure") {
           val value = bfalse.condWith(
             pureV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -794,7 +794,7 @@ final class ResultEffectsTest extends FunSpec {
         test("false — fail") {
           val value = bfalse.condWith(
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -802,7 +802,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true — pure") {
           val value = btrue.condWith(
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -810,7 +810,7 @@ final class ResultEffectsTest extends FunSpec {
         test("true — fail") {
           val value = btrue.condWith(
             failV,
-            ano
+            ano,
           )
           assertThrows[InvalidInputFailure](value.r)
         }
@@ -818,7 +818,7 @@ final class ResultEffectsTest extends FunSpec {
         test("fail — pure") {
           val value = bfail.condWith(
             pureV,
-            ano
+            ano,
           )
           assertThrows[DeniedFailure](value.r)
         }
@@ -826,7 +826,7 @@ final class ResultEffectsTest extends FunSpec {
         test("fail — fail") {
           val value = bfail.condWith(
             failV,
-            ano
+            ano,
           )
           assertThrows[DeniedFailure](value.r)
         }
@@ -922,7 +922,7 @@ final class ResultEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            failV.asOptionUnsafe()
+            failV.asOptionUnsafe(),
           )
         }
 
@@ -936,7 +936,7 @@ final class ResultEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            failV.asListUnsafe()
+            failV.asListUnsafe(),
           )
         }
 
@@ -979,7 +979,7 @@ final class ResultEffectsTest extends FunSpec {
         test("fail") {
           val value = failV.bimap(
             int2str,
-            ano2ano
+            ano2ano,
           )
 
           assertThrows[ForbiddenFailure](value.r)
@@ -988,7 +988,7 @@ final class ResultEffectsTest extends FunSpec {
         test("pure") {
           val value = pureV.bimap(
             int2str,
-            ano2ano
+            ano2ano,
           )
 
           assert(value.r == "42")
@@ -1001,7 +1001,7 @@ final class ResultEffectsTest extends FunSpec {
         test("fail") {
           val value = failV.morph(
             int2str,
-            ano2str
+            ano2str,
           )
           assert(value.r == ano.message)
         }
@@ -1009,7 +1009,7 @@ final class ResultEffectsTest extends FunSpec {
         test("pure") {
           val value = pureV.morph(
             int2str,
-            ano2str
+            ano2str,
           )
           assert(value.r == "42")
         }

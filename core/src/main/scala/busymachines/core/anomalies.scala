@@ -41,7 +41,7 @@ object Anomalies {
   }
 }
 
-private[core] final case class AnomaliesImpl(
+final private[core] case class AnomaliesImpl(
   override val id:              AnomalyID,
   override val message:         String,
   override val firstAnomaly:    Anomaly,
@@ -52,7 +52,7 @@ private[core] final case class AnomaliesImpl(
     id,
     message,
     firstAnomaly,
-    restOfAnomalies
+    restOfAnomalies,
   )
 }
 
@@ -70,7 +70,7 @@ object AnomalousFailures {
   }
 }
 
-private[core] final case class AnomalousFailuresImpl(
+final private[core] case class AnomalousFailuresImpl(
   override val id:              AnomalyID,
   override val message:         String,
   override val firstAnomaly:    Anomaly,

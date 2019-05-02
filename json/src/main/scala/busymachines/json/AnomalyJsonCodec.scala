@@ -31,7 +31,7 @@ object AnomalyJsonCodec extends AnomalyJsonCodec
 
 trait AnomalyJsonCodec {
 
-  implicit private final val AnomalyIDCodec: Codec[AnomalyID] = new Codec[AnomalyID] {
+  implicit final private val AnomalyIDCodec: Codec[AnomalyID] = new Codec[AnomalyID] {
     override def apply(c: HCursor): DecoderResult[AnomalyID] = {
       c.as[String].right.map(AnomalyID.apply)
     }
@@ -39,7 +39,7 @@ trait AnomalyJsonCodec {
     override def apply(a: AnomalyID): Json = Json.fromString(a.name)
   }
 
-  implicit private final val StringOrSeqCodec: Codec[Anomaly.Parameter] = new Codec[Anomaly.Parameter] {
+  implicit final private val StringOrSeqCodec: Codec[Anomaly.Parameter] = new Codec[Anomaly.Parameter] {
     override def apply(a: Anomaly.Parameter): Json = {
       a match {
         case StringWrapper(s)      => Json.fromString(s)
@@ -58,7 +58,7 @@ trait AnomalyJsonCodec {
     }
   }
 
-  implicit private final val AnomalyParamsCodec: Codec[Anomaly.Parameters] =
+  implicit final private val AnomalyParamsCodec: Codec[Anomaly.Parameters] =
     new Codec[Anomaly.Parameters] {
       override def apply(c: HCursor): DecoderResult[Anomaly.Parameters] = {
         val jsonObj = c.as[JsonObject]
@@ -116,7 +116,7 @@ trait AnomalyJsonCodec {
       if (a.parameters.isEmpty) {
         Json.obj(
           CoreJsonConstants.id      -> id,
-          CoreJsonConstants.message -> message
+          CoreJsonConstants.message -> message,
         )
       }
       else {
@@ -124,7 +124,7 @@ trait AnomalyJsonCodec {
         Json.obj(
           CoreJsonConstants.id         -> id,
           CoreJsonConstants.message    -> message,
-          CoreJsonConstants.parameters -> params
+          CoreJsonConstants.parameters -> params,
         )
       }
     }

@@ -26,39 +26,39 @@ package busymachines.json_test
 private[json_test] case class AnarchistMelon(
   noGods:       Boolean,
   noMasters:    Boolean,
-  noSuperTypes: Boolean
+  noSuperTypes: Boolean,
 )
 
-private[json_test] sealed trait Melon {
+sealed private[json_test] trait Melon {
   def weight: Int
 }
 
 private[json_test] case class WinterMelon(
   fuzzy:  Boolean,
-  weight: Int
+  weight: Int,
 ) extends Melon
 
 private[json_test] case class WaterMelon(
   seeds:  Boolean,
-  weight: Int
+  weight: Int,
 ) extends Melon
 
 private[json_test] case object SmallMelon extends Melon {
   override val weight: Int = 0
 }
 
-private[json_test] sealed trait Taste
+sealed private[json_test] trait Taste
 
 private[json_test] case object SweetTaste extends Taste
 
 //I ran out of ideas, ok? I'll think of better test data.
 private[json_test] case object SourTaste extends Taste
 
-private[json_test] sealed trait TastyMelon extends Melon {
+sealed private[json_test] trait TastyMelon extends Melon {
   def tastes: Seq[Taste]
 }
 
 private[json_test] case class SquareMelon(
   weight: Int,
-  tastes: Seq[Taste]
+  tastes: Seq[Taste],
 ) extends TastyMelon

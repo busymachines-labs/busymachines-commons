@@ -43,7 +43,7 @@ trait RestAPI {
       RestAPI.defaultExceptionHandler(
         anomalyMarshaller,
         anomaliesMarshaller,
-      )
+      ),
     )
 }
 
@@ -66,7 +66,7 @@ object RestAPI {
     }
 
     def apply(statusCode: StatusCode, f: Anomaly)(
-      implicit am:        ToEntityMarshaller[Anomaly]
+      implicit am:        ToEntityMarshaller[Anomaly],
     ): Route = {
       complete((statusCode, f))
     }
@@ -75,7 +75,7 @@ object RestAPI {
   object anomalies {
 
     def apply(statusCode: StatusCode, fs: Anomalies)(
-      implicit asm:       ToEntityMarshaller[Anomalies]
+      implicit asm:       ToEntityMarshaller[Anomalies],
     ): Route =
       complete((statusCode, fs))
   }
@@ -127,13 +127,13 @@ object RestAPI {
     */
   def seal(
     api:  RestAPI,
-    apis: RestAPI*
+    apis: RestAPI*,
   )(
     implicit
     routingSettings:  RoutingSettings,
     parserSettings:   ParserSettings = null,
     rejectionHandler: RejectionHandler = RejectionHandler.default,
-    exceptionHandler: ExceptionHandler = null
+    exceptionHandler: ExceptionHandler = null,
   ): RestAPI = {
     val r           = combine(api, apis: _*)
     val sealedRoute = Route.seal(r.route)
@@ -256,7 +256,7 @@ object RestAPI {
    * which is really annoying :/
    */
   private def boxedErrorHandler(
-    implicit am: ToEntityMarshaller[Anomaly]
+    implicit am: ToEntityMarshaller[Anomaly],
   ): ExceptionHandler = ExceptionHandler {
     case e: NotImplementedError =>
       anomaly(StatusCodes.NotImplemented, CatastrophicError(e))

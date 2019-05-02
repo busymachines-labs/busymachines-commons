@@ -10,12 +10,12 @@ import busymachines.core._
   */
 private[async_test] case class TVFs(
   bad:  Anomaly,
-  bads: List[Anomaly] = Nil
+  bads: List[Anomaly] = Nil,
 ) extends AnomalousFailures(
       TVFsID,
       s"Test validation failed with ${bads.length + 1} anomalies",
       bad,
-      bads
+      bads,
     )
 
 private[async_test] case object TVFsID extends AnomalyID {

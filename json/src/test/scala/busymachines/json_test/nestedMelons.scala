@@ -23,7 +23,7 @@ package busymachines.json_test
   * @since 26 Oct 2017
   *
   */
-private[json_test] sealed trait OutdoorMelon
+sealed private[json_test] trait OutdoorMelon
 
 private[json_test] object OutdoorMelons {
 
@@ -37,7 +37,7 @@ private[json_test] object OutdoorMelons {
 
   case class WildMelon(
     weight: Int,
-    color:  Color
+    color:  Color,
   ) extends OutdoorMelon
 
 }

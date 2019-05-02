@@ -81,7 +81,7 @@ final class JsonAutoDerivationWithSpecialConfigurationTest1 extends FlatSpec {
         |    "_melonMania" : "SquareMelon"
         |  }
         |]
-      """.stripMargin.trim
+      """.stripMargin.trim,
     )(rawJson)
 
     val read: List[Melon] = rawJson.unsafeDecodeAs[List[Melon]]
@@ -147,7 +147,7 @@ final class JsonAutoDerivationWithSpecialConfigurationTest2 extends FlatSpec {
         |    "_melonMania" : "SquareMelon"
         |  }
         |]
-      """.stripMargin.trim
+      """.stripMargin.trim,
     )(rawJson)
 
     val read: List[Melon] = rawJson.unsafeDecodeAs[List[Melon]]

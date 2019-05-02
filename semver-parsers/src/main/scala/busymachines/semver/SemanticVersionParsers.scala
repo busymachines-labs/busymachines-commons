@@ -173,14 +173,13 @@ object SemanticVersionParsers {
       patch    <- int
       optLabel <- opt(dashWithLabel)
       optMeta  <- opt(plusWithMeta)
-    } yield
-      SemanticVersion(
-        major = major,
-        minor = minor,
-        patch = patch,
-        label = optLabel,
-        meta  = optMeta
-      )
+    } yield SemanticVersion(
+      major = major,
+      minor = minor,
+      patch = patch,
+      label = optLabel,
+      meta  = optMeta,
+    )
   }
 
   private val semanticVersionEOI: Parser[SemanticVersion] =

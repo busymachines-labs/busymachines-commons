@@ -33,7 +33,7 @@ final class JsonDerivationNestedTypesTest1 extends FlatSpec {
 
   val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
     weight = 42,
-    color  = OutdoorMelons.Colors.Green
+    color  = OutdoorMelons.Colors.Green,
   )
 
   //-----------------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ final class JsonDerivationNestedTypesTest1 extends FlatSpec {
 
     val json = outdoorMelon.asJson
 
-    assert(stringyJson == json.spaces2NoNulls,                       "encoder")
+    assert(stringyJson == json.spaces2NoNulls, "encoder")
     assert(outdoorMelon == stringyJson.unsafeDecodeAs[OutdoorMelon], "decoder")
   }
 
@@ -71,7 +71,7 @@ final class JsonDerivationNestedTypesTest2 extends FlatSpec {
 
   val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
     weight = 42,
-    color  = OutdoorMelons.Colors.Green
+    color  = OutdoorMelons.Colors.Green,
   )
 
   //-----------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ final class JsonDerivationNestedTypesTest2 extends FlatSpec {
 
     val json = outdoorMelon.asJson
 
-    assert(stringyJson == json.spaces2NoNulls,                       "encoder")
+    assert(stringyJson == json.spaces2NoNulls, "encoder")
     assert(outdoorMelon == stringyJson.unsafeDecodeAs[OutdoorMelon], "decoder")
   }
 

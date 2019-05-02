@@ -68,7 +68,7 @@ object HttpServer {
       route       = route,
       config      = config,
       logNormalIO = reportWithPrependedServerName(name, logNormalIO),
-      logErrorIO  = reportWithPrependedServerName(name, logErrorIO)
+      logErrorIO  = reportWithPrependedServerName(name, logErrorIO),
     )
   }
 
@@ -126,7 +126,7 @@ final class HttpServer private (
   def startThenCleanUpActorSystem: IO[Unit] = {
     startThenWaitUntilShutdownDoCustomCleanup(
       waitForShutdownIO = _.waitForServerShutdownIO,
-      cleanupIO         = _.terminateActorSystemIO
+      cleanupIO         = _.terminateActorSystemIO,
     )
   }
 
@@ -153,7 +153,7 @@ final class HttpServer private (
     */
   def startThenWaitUntilShutdownDoCustomCleanup(
     waitForShutdownIO: HttpServer.Context => IO[Unit],
-    cleanupIO:         HttpServer.Context => IO[Unit]
+    cleanupIO:         HttpServer.Context => IO[Unit],
   ): IO[Unit] = {
     val ctx = HttpServer.Context(
       logNormalIO             = logNormalIO,
@@ -164,20 +164,20 @@ final class HttpServer private (
     for {
       bindAttempt <- step1_bindPortAndHandle.attempt
       result <- bindAttempt match {
-                 case Right(binding) =>
-                   for {
-                     _ <- waitForShutdownIO(ctx)
-                     _ <- step3_unbind(binding: ServerBinding)
-                     _ <- cleanupIO(ctx)
-                   } yield ()
+        case Right(binding) =>
+          for {
+            _ <- waitForShutdownIO(ctx)
+            _ <- step3_unbind(binding: ServerBinding)
+            _ <- cleanupIO(ctx)
+          } yield ()
 
-                 case Left(t) =>
-                   for {
-                     _ <- step1_1_bindErrorRecovery(t)
-                     _ <- waitForShutdownIO(ctx)
-                     _ <- cleanupIO(ctx)
-                   } yield ()
-               }
+        case Left(t) =>
+          for {
+            _ <- step1_1_bindErrorRecovery(t)
+            _ <- waitForShutdownIO(ctx)
+            _ <- cleanupIO(ctx)
+          } yield ()
+      }
     } yield result
   }
 
@@ -185,17 +185,18 @@ final class HttpServer private (
     for {
       serverBinding <- {
         IO.fromFuture {
-          IO(
-            Http().bindAndHandle(
-              handler   = route,
-              interface = config.host,
-              port      = config.port
+            IO(
+              Http().bindAndHandle(
+                handler   = route,
+                interface = config.host,
+                port      = config.port,
+              ),
             )
-          )
-        }.adaptError {
-          //the reason we do this is because akka wraps any exception that might occur, and it obscured the type
-          case NonFatal(e) => if (e != null) e.getCause else e
-        }
+          }
+          .adaptError {
+            //the reason we do this is because akka wraps any exception that might occur, and it obscured the type
+            case NonFatal(e) => if (e != null) e.getCause else e
+          }
       }
       _ <- logNormalIO(show"port bound @ $config")
     } yield serverBinding
@@ -223,13 +224,13 @@ final class HttpServer private (
       val shutdownThread = new Thread(
         () => {
           val io = logNormalIO(
-            s"shutdown hook started — waiting at most '${config.waitAtMostForCleanup}' for main thread to finish its work"
+            s"shutdown hook started — waiting at most '${config.waitAtMostForCleanup}' for main thread to finish its work",
           ) >>
             IO(mainThread.join(config.waitAtMostForCleanup.toMillis)) >>
             logNormalIO("main thread finished — shutdown hook ended — shutting down JVM")
 
           io.unsafeRunSync()
-        }
+        },
       )
 
       Runtime.getRuntime.addShutdownHook(shutdownThread)

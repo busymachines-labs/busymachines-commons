@@ -74,8 +74,8 @@ private[rest_json_test] class BasicAuthenticatedRoutesRestAPIForTesting
             complete(
               (
                 StatusCodes.OK,
-                Future.successful(SomeTestDTOGet(int = 42, string = basicAuth.getOrElse("it's optional!"), None))
-              )
+                Future.successful(SomeTestDTOGet(int = 42, string = basicAuth.getOrElse("it's optional!"), None)),
+              ),
             )
           }
         }

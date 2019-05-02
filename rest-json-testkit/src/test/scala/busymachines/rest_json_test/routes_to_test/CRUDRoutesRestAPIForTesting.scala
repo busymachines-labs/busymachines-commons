@@ -65,7 +65,7 @@ private[rest_json_test] class CRUDRoutesRestAPIForTesting
             val response = SomeTestDTOGet(
               int    = 42,
               string = p.string,
-              option = p.option
+              option = p.option,
             )
             complete((StatusCodes.Created, Future.successful(response)))
           }
@@ -74,13 +74,13 @@ private[rest_json_test] class CRUDRoutesRestAPIForTesting
             SomeTestDTOGet(
               int    = 1,
               string = "one",
-              option = None
+              option = None,
             ),
             SomeTestDTOGet(
               int    = 2,
               string = "two",
-              option = None
-            )
+              option = None,
+            ),
           )
 
           complete(Future.successful(response))
@@ -90,7 +90,7 @@ private[rest_json_test] class CRUDRoutesRestAPIForTesting
           val response = SomeTestDTOGet(
             int    = id,
             string = "wabbalubbadubdub",
-            option = Option(42)
+            option = Option(42),
           )
           complete(Future.successful(response))
         } ~ put {
@@ -98,7 +98,7 @@ private[rest_json_test] class CRUDRoutesRestAPIForTesting
             val response = SomeTestDTOGet(
               int    = id,
               string = p.string,
-              option = p.option
+              option = p.option,
             )
             complete(Future.successful(response))
           }
@@ -107,7 +107,7 @@ private[rest_json_test] class CRUDRoutesRestAPIForTesting
             val response = SomeTestDTOGet(
               int    = id,
               string = p.string,
-              option = None
+              option = None,
             )
             complete(Future.successful(response))
           }

@@ -210,7 +210,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.cond(
               false,
               42,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -219,7 +219,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.cond(
               true,
               42,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -230,7 +230,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condThr(
               false,
               42,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -239,7 +239,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condThr(
               true,
               42,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -250,7 +250,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condWith(
               false,
               pureV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -259,7 +259,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condWith(
               true,
               pureV,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -268,7 +268,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condWith(
               false,
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -277,7 +277,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condWith(
               true,
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -288,7 +288,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condWithThr(
               false,
               pureV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -297,7 +297,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condWithThr(
               true,
               pureV,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -306,7 +306,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condWithThr(
               false,
               failV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -315,7 +315,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.condWithThr(
               true,
               failV,
-              thr
+              thr,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -326,7 +326,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCond(
               bfalse,
               42,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -335,7 +335,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCond(
               btrue,
               42,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -344,7 +344,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCond(
               bfail,
               42,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -355,7 +355,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondThr(
               bfalse,
               42,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -364,7 +364,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondThr(
               btrue,
               42,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -373,7 +373,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondThr(
               bfail,
               42,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -384,7 +384,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWith(
               bfalse,
               pureV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -393,7 +393,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWith(
               bfalse,
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -402,7 +402,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWith(
               btrue,
               pureV,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -411,7 +411,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWith(
               btrue,
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -420,7 +420,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWith(
               bfail,
               pureV,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -429,7 +429,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWith(
               bfail,
               failV,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -440,7 +440,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWithThr(
               bfalse,
               pureV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -449,7 +449,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWithThr(
               bfalse,
               failV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -458,7 +458,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWithThr(
               btrue,
               pureV,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -467,7 +467,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWithThr(
               btrue,
               failV,
-              thr
+              thr,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -476,7 +476,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWithThr(
               bfail,
               pureV,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -485,7 +485,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.flatCondWithThr(
               bfail,
               failV,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -495,7 +495,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Task.failOnTrue(
               false,
-              ano
+              ano,
             )
             value.r
           }
@@ -503,7 +503,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Task.failOnTrue(
               true,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -513,7 +513,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Task.failOnTrueThr(
               false,
-              thr
+              thr,
             )
             value.r
           }
@@ -521,7 +521,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Task.failOnTrueThr(
               true,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -531,7 +531,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Task.failOnFalse(
               false,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -539,7 +539,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Task.failOnFalse(
               true,
-              ano
+              ano,
             )
             value.r
           }
@@ -549,7 +549,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Task.failOnFalseThr(
               false,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -557,7 +557,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Task.failOnFalseThr(
               true,
-              thr
+              thr,
             )
             value.r
           }
@@ -567,7 +567,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Task.flatFailOnTrue(
               bfalse,
-              ano
+              ano,
             )
             value.r
           }
@@ -575,7 +575,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Task.flatFailOnTrue(
               btrue,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -583,7 +583,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Task.flatFailOnTrue(
               bfail,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -594,7 +594,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Task.flatFailOnTrueThr(
               bfalse,
-              thr
+              thr,
             )
             value.r
           }
@@ -602,7 +602,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Task.flatFailOnTrueThr(
               btrue,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -610,7 +610,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Task.flatFailOnTrueThr(
               bfail,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -621,7 +621,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Task.flatFailOnFalse(
               bfalse,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -629,7 +629,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Task.flatFailOnFalse(
               btrue,
-              ano
+              ano,
             )
             value.r
           }
@@ -637,7 +637,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Task.flatFailOnFalse(
               bfail,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -648,7 +648,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Task.flatFailOnFalseThr(
               bfalse,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -656,7 +656,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Task.flatFailOnFalseThr(
               btrue,
-              thr
+              thr,
             )
             value.r
           }
@@ -664,7 +664,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Task.flatFailOnFalseThr(
               bfail,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -715,7 +715,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
         describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              Task.unpackResult(Task.pure(incorrect)).r
+              Task.unpackResult(Task.pure(incorrect)).r,
             )
           }
 
@@ -874,7 +874,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.bimap(
               failV,
               int2str,
-              thr2ano
+              thr2ano,
             )
 
             assertThrows[ForbiddenFailure](value.r)
@@ -884,7 +884,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.bimap(
               pureV,
               int2str,
-              thr2ano
+              thr2ano,
             )
 
             assert(value.r == "42")
@@ -897,7 +897,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Task.bimap(
               failV,
-              res2res
+              res2res,
             )
 
             assertThrows[ForbiddenFailure](value.r)
@@ -906,7 +906,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = Task.bimap(
               pureV,
-              res2res
+              res2res,
             )
 
             assert(value.r == "42")
@@ -920,7 +920,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.bimapThr(
               failV,
               int2str,
-              thr2thr
+              thr2thr,
             )
 
             assertThrows[IllegalArgumentException](value.r)
@@ -930,7 +930,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.bimapThr(
               pureV,
               int2str,
-              thr2thr
+              thr2thr,
             )
 
             assert(value.r == "42")
@@ -944,7 +944,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.morph(
               failV,
               int2str,
-              thr2str
+              thr2str,
             )
             assert(value.r == ano.message)
           }
@@ -953,7 +953,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value = Task.morph(
               pureV,
               int2str,
-              thr2str
+              thr2str,
             )
             assert(value.r == "42")
           }
@@ -964,7 +964,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Task.morph(
               failV,
-              res2str
+              res2str,
             )
             assert(value.r == ano.message)
           }
@@ -972,7 +972,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = Task.morph(
               pureV,
-              res2str
+              res2str,
             )
             assert(value.r == "42")
           }
@@ -1005,7 +1005,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = false.condTask(
               42,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1013,7 +1013,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = true.condTask(
               42,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -1024,7 +1024,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value =
               false.condTaskThr(
                 42,
-                thr
+                thr,
               )
             assertThrows[RuntimeException](value.r)
           }
@@ -1032,7 +1032,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = true.condTaskThr(
               42,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -1042,7 +1042,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false — pure") {
             val value = false.condWithTask(
               pureV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1050,7 +1050,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true — pure") {
             val value = true.condWithTask(
               pureV,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -1058,7 +1058,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false — fail") {
             val value = false.condWithTask(
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1066,7 +1066,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true — fail") {
             val value = true.condWithTask(
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1076,7 +1076,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false — pure") {
             val value = false.condWithTaskThr(
               pureV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -1084,7 +1084,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true — pure") {
             val value = true.condWithTaskThr(
               pureV,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -1093,7 +1093,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             val value =
               false.condWithTaskThr(
                 failV,
-                thr
+                thr,
               )
             assertThrows[RuntimeException](value.r)
           }
@@ -1101,7 +1101,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true — fail") {
             val value = true.condWithTaskThr(
               failV,
-              thr
+              thr,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1111,7 +1111,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = bfalse.cond(
               42,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1119,7 +1119,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = btrue.cond(
               42,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -1127,7 +1127,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = bfail.cond(
               42,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1137,7 +1137,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = bfalse.condThr(
               42,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -1145,7 +1145,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = btrue.condThr(
               42,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -1153,7 +1153,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = bfail.condThr(
               42,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1163,7 +1163,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false — pure") {
             val value = bfalse.condWith(
               pureV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1171,7 +1171,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false — fail") {
             val value = bfalse.condWith(
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1179,7 +1179,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true — pure") {
             val value = btrue.condWith(
               pureV,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -1187,7 +1187,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true — fail") {
             val value = btrue.condWith(
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1195,7 +1195,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail — pure") {
             val value = bfail.condWith(
               pureV,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1203,7 +1203,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail — fail") {
             val value = bfail.condWith(
               failV,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1213,7 +1213,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false — pure") {
             val value = bfalse.condWithThr(
               pureV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -1221,7 +1221,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("false — fail") {
             val value = bfalse.condWithThr(
               failV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -1229,7 +1229,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true — pure") {
             val value = btrue.condWithThr(
               pureV,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -1237,7 +1237,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("true — fail") {
             val value = btrue.condWithThr(
               failV,
-              thr
+              thr,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1245,7 +1245,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail — pure") {
             val value = bfail.condWithThr(
               pureV,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1253,7 +1253,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail — fail") {
             val value = bfail.condWithThr(
               failV,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1423,7 +1423,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
         describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              Task.pure(incorrect).unpack.r
+              Task.pure(incorrect).unpack.r,
             )
           }
 
@@ -1582,7 +1582,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = failV.bimap(
               int2str,
-              thr2ano
+              thr2ano,
             )
 
             assertThrows[ForbiddenFailure](value.r)
@@ -1591,7 +1591,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = pureV.bimap(
               int2str,
-              thr2ano
+              thr2ano,
             )
 
             assert(value.r == "42")
@@ -1603,7 +1603,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             val value = failV.bimap(
-              res2res
+              res2res,
             )
 
             assertThrows[ForbiddenFailure](value.r)
@@ -1611,7 +1611,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("pure") {
             val value = pureV.bimap(
-              res2res
+              res2res,
             )
 
             assert(value.r == "42")
@@ -1624,7 +1624,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = failV.bimapThr(
               int2str,
-              thr2thr
+              thr2thr,
             )
 
             assertThrows[IllegalArgumentException](value.r)
@@ -1633,7 +1633,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = pureV.bimapThr(
               int2str,
-              thr2thr
+              thr2thr,
             )
 
             assert(value.r == "42")
@@ -1646,7 +1646,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = failV.morph(
               int2str,
-              thr2str
+              thr2str,
             )
             assert(value.r == ano.message)
           }
@@ -1654,7 +1654,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = pureV.morph(
               int2str,
-              thr2str
+              thr2str,
             )
             assert(value.r == "42")
           }
@@ -1664,14 +1664,14 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             val value = failV.morph(
-              res2str
+              res2str,
             )
             assert(value.r == ano.message)
           }
 
           test("pure") {
             val value = pureV.morph(
-              res2str
+              res2str,
             )
             assert(value.r == "42")
           }
@@ -1706,7 +1706,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
         test("suspendOption") {
           val f = Task.suspendOption(
             Option(throw thr),
-            ano
+            ano,
           )
           assertThrows[RuntimeException](f.r)
 
@@ -1715,7 +1715,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
         test("suspendOptionThr") {
           val f = Task.suspendOptionThr(
             Option(throw thr),
-            iae
+            iae,
           )
           assertThrows[RuntimeException](f.r)
 
@@ -1723,7 +1723,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
 
         test("suspendTry") {
           val f = Task.suspendTry(
-            Try.pure(throw thr)
+            Try.pure(throw thr),
           )
           assertThrows[RuntimeException](f.r)
         }
@@ -1731,14 +1731,14 @@ final class TaskEffectsAsyncTest extends FunSpec {
         test("suspendEither") {
           val f = Task.suspendEither(
             Right[Throwable, String](throw thr),
-            thr2ano
+            thr2ano,
           )
           assertThrows[RuntimeException](f.r)
         }
 
         test("suspendEitherThr") {
           val f = Task.suspendEitherThr(
-            Right[Throwable, String](throw thr)
+            Right[Throwable, String](throw thr),
           )
           assertThrows[RuntimeException](f.r)
         }
@@ -1746,14 +1746,14 @@ final class TaskEffectsAsyncTest extends FunSpec {
         test("suspendEitherThr — transform") {
           val f = Task.suspendEitherThr(
             Right[Throwable, String](throw thr),
-            thr2thr
+            thr2thr,
           )
           assertThrows[RuntimeException](f.r)
         }
 
         test("suspendResult") {
           val f = Task.suspendResult(
-            Result.pure(throw thr)
+            Result.pure(throw thr),
           )
           assertThrows[RuntimeException](f.r)
         }
@@ -1761,7 +1761,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
         describe("suspendValidated") {
           test("normal") {
             val f = Task.suspendValidated(
-              Validated.pure(throw thr)
+              Validated.pure(throw thr),
             )
             assertThrows[RuntimeException](f.r)
           }
@@ -1769,7 +1769,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
           test("ano") {
             val f = Task.suspendValidated(
               Validated.pure(throw thr),
-              TVFs
+              TVFs,
             )
             assertThrows[RuntimeException](f.r)
           }
@@ -1781,7 +1781,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
             Future {
               sideEffect = 42
               sideEffect
-            }
+            },
           )
           if (sideEffect == 42) fail("side effect should not have been applied yet")
           f.r
@@ -1801,7 +1801,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -1816,7 +1816,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -1834,7 +1834,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -1849,7 +1849,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -1867,7 +1867,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -1882,7 +1882,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -1897,7 +1897,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[IllegalArgumentException](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -1915,7 +1915,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -1929,7 +1929,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -1944,7 +1944,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[IllegalArgumentException](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -1965,7 +1965,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -1980,7 +1980,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -1998,7 +1998,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2013,7 +2013,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2030,7 +2030,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2044,7 +2044,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2058,7 +2058,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2077,7 +2077,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2091,7 +2091,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2107,7 +2107,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2130,7 +2130,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2146,7 +2146,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2164,7 +2164,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2179,7 +2179,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2198,7 +2198,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2213,7 +2213,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2228,7 +2228,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2247,7 +2247,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2261,7 +2261,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2277,7 +2277,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2432,7 +2432,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2446,7 +2446,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2463,7 +2463,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2476,7 +2476,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2493,7 +2493,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2507,7 +2507,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2520,7 +2520,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[IllegalArgumentException](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2537,7 +2537,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2550,7 +2550,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2564,7 +2564,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[IllegalArgumentException](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2584,7 +2584,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2598,7 +2598,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
               Task {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2615,7 +2615,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2629,7 +2629,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2648,7 +2648,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = 42
                   sideEffect
-                }
+                },
               )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2664,7 +2664,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                   Task {
                     sideEffect = 42
                     sideEffect
-                  }
+                  },
                 )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2679,7 +2679,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = 42
                   sideEffect
-                }
+                },
               )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2699,7 +2699,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                   Task {
                     sideEffect = x
                     sideEffect
-                }
+                  },
               )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2714,7 +2714,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                   Task {
                     sideEffect = x
                     sideEffect
-                }
+                  },
               )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2731,7 +2731,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                   Task {
                     sideEffect = x
                     sideEffect
-                }
+                  },
               )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2753,7 +2753,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2768,7 +2768,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2785,7 +2785,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2799,7 +2799,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                 Task {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2819,7 +2819,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                   Task {
                     sideEffect = 42
                     sideEffect
-                }
+                  },
               )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2835,7 +2835,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                   Task {
                     sideEffect = 42
                     sideEffect
-                }
+                  },
               )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2851,7 +2851,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                   Task {
                     sideEffect = 42
                     sideEffect
-                }
+                  },
               )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2872,7 +2872,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                     Task {
                       sideEffect = x
                       sideEffect
-                  }
+                    },
                 )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2887,7 +2887,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                   Task {
                     sideEffect = x
                     sideEffect
-                }
+                  },
               )
             if (sideEffect == 42) fail("side effect should not have been applied yet")
             f.r
@@ -2905,7 +2905,7 @@ final class TaskEffectsAsyncTest extends FunSpec {
                     Task {
                       sideEffect = x
                       sideEffect
-                  }
+                    },
                 )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2987,11 +2987,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
             Task {
               assert(
                 startedFlag.isEmpty,
-                s"started flag should have been empty at the start of each task but was: $startedFlag"
+                s"started flag should have been empty at the start of each task but was: $startedFlag",
               )
               previouslyProcessed foreach { previous =>
                 assertResult(expected = i - 1, "... the tasks were not executed in the correct order.")(
-                  actual = previous
+                  actual = previous,
                 )
               }
               startedFlag         = Some(i)
@@ -3033,11 +3033,11 @@ final class TaskEffectsAsyncTest extends FunSpec {
             Task {
               assert(
                 startedFlag.isEmpty,
-                s"started flag should have been empty at the start of each task but was: $startedFlag"
+                s"started flag should have been empty at the start of each task but was: $startedFlag",
               )
               previouslyProcessed foreach { previous =>
                 assertResult(expected = i - 1, "... the tasks were not executed in the correct order.")(
-                  actual = previous
+                  actual = previous,
                 )
               }
               startedFlag         = Some(i)

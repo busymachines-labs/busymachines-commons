@@ -504,10 +504,10 @@ object TaskSyntax {
       */
     @inline def unsafeSyncGet[T](
       value:  Task[T],
-      atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration
+      atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration,
     )(
       implicit
-      sc: Scheduler
+      sc: Scheduler,
     ): T =
       TaskOps.unsafeSyncGet(value, atMost)
 
@@ -759,7 +759,7 @@ object TaskSyntax {
       */
     def traverse_[A, B, M[X] <: TraversableOnce[X]](col: M[A])(fn: A => Task[B])(
       implicit
-      cbf: CanBuildFrom[M[A], B, M[B]]
+      cbf: CanBuildFrom[M[A], B, M[B]],
     ): Task[Unit] = TaskOps.traverse_(col)(fn)
 
     /**
@@ -771,7 +771,7 @@ object TaskSyntax {
       */
     @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Task[A]])(
       implicit
-      cbf: CanBuildFrom[M[Task[A]], A, M[A]]
+      cbf: CanBuildFrom[M[Task[A]], A, M[A]],
     ): Task[Unit] = TaskOps.sequence_(in)
 
     /**
@@ -798,7 +798,7 @@ object TaskSyntax {
       */
     @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]]
+      cbf: CanBuildFrom[C[A], B, C[B]],
     ): Task[C[B]] = TaskOps.serialize(col)(fn)
 
     /**
@@ -810,7 +810,7 @@ object TaskSyntax {
       */
     @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]]
+      cbf: CanBuildFrom[C[A], B, C[B]],
     ): Task[Unit] = TaskOps.serialize_(col)(fn)
   }
 
@@ -851,7 +851,7 @@ object TaskSyntax {
       */
     @inline def unsafeSyncGet(atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration)(
       implicit
-      sc: Scheduler
+      sc: Scheduler,
     ): T =
       TaskOps.unsafeSyncGet(value, atMost)
 
@@ -1692,9 +1692,9 @@ object TaskOps {
     */
   @inline def unsafeSyncGet[T](
     value:  Task[T],
-    atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration
+    atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration,
   )(
-    implicit sc: Scheduler
+    implicit sc: Scheduler,
   ): T = value.runToFuture.unsafeSyncGet(atMost)
 
   //=========================================================================
@@ -1963,7 +1963,7 @@ object TaskOps {
     */
   def traverse_[A, B, M[X] <: TraversableOnce[X]](col: M[A])(fn: A => Task[B])(
     implicit
-    cbf: CanBuildFrom[M[A], B, M[B]]
+    cbf: CanBuildFrom[M[A], B, M[B]],
   ): Task[Unit] = TaskOps.discardContent(Task.traverse(col)(fn))
 
   /**
@@ -1975,7 +1975,7 @@ object TaskOps {
     */
   @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Task[A]])(
     implicit
-    cbf: CanBuildFrom[M[Task[A]], A, M[A]]
+    cbf: CanBuildFrom[M[Task[A]], A, M[A]],
   ): Task[Unit] = TaskOps.discardContent(Task.sequence(in))
 
   /**
@@ -2002,7 +2002,7 @@ object TaskOps {
     */
   @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
+    cbf: CanBuildFrom[C[A], B, C[B]],
   ): Task[C[B]] = Task.traverse(col)(fn)(cbf)
 
   /**
@@ -2014,7 +2014,7 @@ object TaskOps {
     */
   @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
+    cbf: CanBuildFrom[C[A], B, C[B]],
   ): Task[Unit] = TaskOps.discardContent(TaskOps.serialize(col)(fn))
 
 }

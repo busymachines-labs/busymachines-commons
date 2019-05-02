@@ -50,10 +50,10 @@ object UnauthorizedAnomaly extends AnomalyConstructors[UnauthorizedAnomaly] {
     UnauthorizedAnomalyImpl(id = a.id, message = a.message, parameters = a.parameters)
 }
 
-private[core] final case class UnauthorizedAnomalyImpl(
+final private[core] case class UnauthorizedAnomalyImpl(
   override val id:         AnomalyID  = UnauthorizedAnomalyID,
   override val message:    String     = MeaningfulAnomalies.UnauthorizedMsg,
-  override val parameters: Parameters = Parameters.empty
+  override val parameters: Parameters = Parameters.empty,
 ) extends UnauthorizedAnomaly with Product with Serializable {
 
   override def asThrowable: Throwable = UnauthorizedFailureImpl(id, message, parameters)
@@ -119,7 +119,7 @@ object UnauthorizedFailure
     UnauthorizedFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
-private[core] final case class UnauthorizedFailureImpl(
+final private[core] case class UnauthorizedFailureImpl(
   override val id:         AnomalyID         = UnauthorizedAnomalyID,
   override val message:    String            = MeaningfulAnomalies.UnauthorizedMsg,
   override val parameters: Parameters        = Parameters.empty,

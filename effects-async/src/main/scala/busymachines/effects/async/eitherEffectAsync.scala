@@ -119,7 +119,7 @@ object EitherSyntaxAsync {
       * You might as well use [[FutureOps.fromEither]]
       */
     @inline def suspendInFuture[L, R](value: => Either[L, R], bad: L => Anomaly)(
-      implicit ec: ExecutionContext
+      implicit ec:                           ExecutionContext,
     ): Future[R] =
       FutureOps.suspendEither(value, bad)
 
@@ -137,7 +137,7 @@ object EitherSyntaxAsync {
       * You might as well use [[FutureOps.fromEither]]
       */
     @inline def suspendInFutureThr[L, R](value: => Either[L, R], bad: L => Throwable)(
-      implicit ec: ExecutionContext
+      implicit ec:                              ExecutionContext,
     ): Future[R] =
       FutureOps.suspendEitherThr(value, bad)
 
@@ -156,7 +156,7 @@ object EitherSyntaxAsync {
     @inline def suspendInFutureThr[L, R](value: => Either[L, R])(
       implicit
       ev: L <:< Throwable,
-      ec: ExecutionContext
+      ec: ExecutionContext,
     ): Future[R] = FutureOps.suspendEitherThr(value)(ev, ec)
 
     /**

@@ -74,7 +74,7 @@ final class JsonDefaultAutoSemiAutoInteractionTest extends FlatSpec {
         |]
         |
       """.stripMargin.trim,
-      "... raw json should have been obtained using the explicitImplicitTasteCodec"
+      "... raw json should have been obtained using the explicitImplicitTasteCodec",
     )(rawJson)
 
     val read: List[Melon] = rawJson.unsafeDecodeAs[List[Melon]]

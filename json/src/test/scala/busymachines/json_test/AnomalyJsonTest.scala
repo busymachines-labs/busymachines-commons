@@ -39,8 +39,8 @@ class AnomalyJsonTest extends FlatSpec {
       "test message",
       Anomaly.Parameters(
         "one" -> "one",
-        "two" -> List("one", "two")
-      )
+        "two" -> List("one", "two"),
+      ),
     )
 
     val rawJson = failure.asJson.spaces2
@@ -57,12 +57,12 @@ class AnomalyJsonTest extends FlatSpec {
           |    ]
           |  }
           |}
-          |""".stripMargin.trim
+          |""".stripMargin.trim,
     )
 
     val read = rawJson.unsafeDecodeAs[Anomaly]
-    assert(read.id.name == failure.id.name,       "id")
-    assert(read.message == failure.message,       "message")
+    assert(read.id.name == failure.id.name, "id")
+    assert(read.message == failure.message, "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -71,8 +71,8 @@ class AnomalyJsonTest extends FlatSpec {
       "test message",
       Anomaly.Parameters(
         "one" -> "one",
-        "two" -> List("one", "two")
-      )
+        "two" -> List("one", "two"),
+      ),
     )
 
     val rawJson = failure.asJson.spaces2
@@ -89,12 +89,12 @@ class AnomalyJsonTest extends FlatSpec {
           |    ]
           |  }
           |}
-          |""".stripMargin.trim
+          |""".stripMargin.trim,
     )
 
     val read = rawJson.unsafeDecodeAs[Anomaly]
-    assert(read.id.name == failure.id.name,       "id")
-    assert(read.message == failure.message,       "message")
+    assert(read.id.name == failure.id.name, "id")
+    assert(read.message == failure.message, "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -103,8 +103,8 @@ class AnomalyJsonTest extends FlatSpec {
       "test message",
       Anomaly.Parameters(
         "one" -> "one",
-        "two" -> List("one", "two")
-      )
+        "two" -> List("one", "two"),
+      ),
     )
 
     val rawJson = failure.asJson.spaces2
@@ -121,12 +121,12 @@ class AnomalyJsonTest extends FlatSpec {
           |    ]
           |  }
           |}
-          |""".stripMargin.trim
+          |""".stripMargin.trim,
     )
 
     val read = rawJson.unsafeDecodeAs[Anomaly]
-    assert(read.id.name == failure.id.name,       "id")
-    assert(read.message == failure.message,       "message")
+    assert(read.id.name == failure.id.name, "id")
+    assert(read.message == failure.message, "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -135,8 +135,8 @@ class AnomalyJsonTest extends FlatSpec {
       "test message",
       Anomaly.Parameters(
         "one" -> "one",
-        "two" -> List("one", "two")
-      )
+        "two" -> List("one", "two"),
+      ),
     )
 
     val rawJson = failure.asJson.spaces2
@@ -153,12 +153,12 @@ class AnomalyJsonTest extends FlatSpec {
           |    ]
           |  }
           |}
-          |""".stripMargin.trim
+          |""".stripMargin.trim,
     )
 
     val read = rawJson.unsafeDecodeAs[Anomaly]
-    assert(read.id.name == failure.id.name,       "id")
-    assert(read.message == failure.message,       "message")
+    assert(read.id.name == failure.id.name, "id")
+    assert(read.message == failure.message, "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -167,8 +167,8 @@ class AnomalyJsonTest extends FlatSpec {
       "test message",
       Anomaly.Parameters(
         "one" -> "one",
-        "two" -> List("one", "two")
-      )
+        "two" -> List("one", "two"),
+      ),
     )
 
     val rawJson = failure.asJson.spaces2
@@ -185,12 +185,12 @@ class AnomalyJsonTest extends FlatSpec {
           |    ]
           |  }
           |}
-          |""".stripMargin.trim
+          |""".stripMargin.trim,
     )
 
     val read = rawJson.unsafeDecodeAs[Anomaly]
-    assert(read.id.name == failure.id.name,       "id")
-    assert(read.message == failure.message,       "message")
+    assert(read.id.name == failure.id.name, "id")
+    assert(read.message == failure.message, "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -199,8 +199,8 @@ class AnomalyJsonTest extends FlatSpec {
       "test message",
       Anomaly.Parameters(
         "one" -> "one",
-        "two" -> List("one", "two")
-      )
+        "two" -> List("one", "two"),
+      ),
     )
 
     val rawJson = failure.asJson.spaces2
@@ -217,12 +217,12 @@ class AnomalyJsonTest extends FlatSpec {
           |    ]
           |  }
           |}
-          |""".stripMargin.trim
+          |""".stripMargin.trim,
     )
 
     val read = rawJson.unsafeDecodeAs[Anomaly]
-    assert(read.id.name == failure.id.name,       "id")
-    assert(read.message == failure.message,       "message")
+    assert(read.id.name == failure.id.name, "id")
+    assert(read.message == failure.message, "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 
@@ -236,16 +236,16 @@ class AnomalyJsonTest extends FlatSpec {
         "one",
         Anomaly.Parameters(
           "3" -> "1",
-          "4" -> List("1", "2")
-        )
+          "4" -> List("1", "2"),
+        ),
       ),
       NotFoundFailure(
         "two",
         Anomaly.Parameters(
           "5" -> "6",
-          "6" -> List("6", "7")
-        )
-      )
+          "6" -> List("6", "7"),
+        ),
+      ),
     )
     val rawJson = failure.asJson.spaces2
     assert(
@@ -279,12 +279,12 @@ class AnomalyJsonTest extends FlatSpec {
           |    }
           |  ]
           |}
-          |""".stripMargin.trim
+          |""".stripMargin.trim,
     )
 
     val read = rawJson.unsafeDecodeAs[Anomaly]
-    assert(read.id.name == failure.id.name,       "id")
-    assert(read.message == failure.message,       "message")
+    assert(read.id.name == failure.id.name, "id")
+    assert(read.message == failure.message, "message")
     assert(read.parameters == failure.parameters, "parameters")
   }
 

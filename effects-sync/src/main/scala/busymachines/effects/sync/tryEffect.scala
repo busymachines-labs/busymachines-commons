@@ -416,7 +416,7 @@ object TrySyntax {
       */
     @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]]
+      cbf: CanBuildFrom[C[A], B, C[B]],
     ): Try[C[B]] = TryOps.traverse(col)(fn)
 
     /**
@@ -439,7 +439,7 @@ object TrySyntax {
       */
     @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]]
+      cbf: CanBuildFrom[C[A], B, C[B]],
     ): Try[Unit] = TryOps.traverse_(col)(fn)
 
     /**
@@ -457,7 +457,7 @@ object TrySyntax {
       */
     @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
       implicit
-      cbf: CanBuildFrom[M[Try[A]], A, M[A]]
+      cbf: CanBuildFrom[M[Try[A]], A, M[A]],
     ): Try[M[A]] = TryOps.sequence(in)
 
     /**
@@ -479,7 +479,7 @@ object TrySyntax {
       */
     @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
       implicit
-      cbf: CanBuildFrom[M[Try[A]], A, M[A]]
+      cbf: CanBuildFrom[M[Try[A]], A, M[A]],
     ): Try[Unit] = TryOps.sequence_(in)
 
   }
@@ -1155,7 +1155,7 @@ object TryOps {
     */
   @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
+    cbf: CanBuildFrom[C[A], B, C[B]],
   ): Try[C[B]] = {
     import scala.collection.mutable
     if (col.isEmpty) {
@@ -1204,7 +1204,7 @@ object TryOps {
     */
   @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
+    cbf: CanBuildFrom[C[A], B, C[B]],
   ): Try[Unit] = TryOps.discardContent(TryOps.traverse(col)(fn))
 
   /**
@@ -1222,7 +1222,7 @@ object TryOps {
     */
   @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
     implicit
-    cbf: CanBuildFrom[M[Try[A]], A, M[A]]
+    cbf: CanBuildFrom[M[Try[A]], A, M[A]],
   ): Try[M[A]] = TryOps.traverse(in)(identity)
 
   /**
@@ -1244,6 +1244,6 @@ object TryOps {
     */
   @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
     implicit
-    cbf: CanBuildFrom[M[Try[A]], A, M[A]]
+    cbf: CanBuildFrom[M[Try[A]], A, M[A]],
   ): Try[Unit] = TryOps.discardContent(TryOps.sequence(in))
 }

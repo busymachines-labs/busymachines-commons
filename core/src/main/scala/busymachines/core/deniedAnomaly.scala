@@ -50,10 +50,10 @@ object DeniedAnomaly extends AnomalyConstructors[DeniedAnomaly] {
     DeniedAnomalyImpl(id = a.id, message = a.message, parameters = a.parameters)
 }
 
-private[core] final case class DeniedAnomalyImpl(
+final private[core] case class DeniedAnomalyImpl(
   override val id:         AnomalyID  = DeniedAnomalyID,
   override val message:    String     = MeaningfulAnomalies.DeniedMsg,
-  override val parameters: Parameters = Parameters.empty
+  override val parameters: Parameters = Parameters.empty,
 ) extends DeniedAnomaly with Product with Serializable {
 
   override def asThrowable: Throwable = DeniedFailureImpl(id, message, parameters)
@@ -119,7 +119,7 @@ object DeniedFailure
     DeniedFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
-private[core] final case class DeniedFailureImpl(
+final private[core] case class DeniedFailureImpl(
   override val id:         AnomalyID         = DeniedAnomalyID,
   override val message:    String            = MeaningfulAnomalies.DeniedMsg,
   override val parameters: Parameters        = Parameters.empty,

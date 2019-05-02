@@ -41,7 +41,7 @@ object MinimalWebServerConfig {
 
   private case class MinimalWebServerConfigImpl(
     override val host: String,
-    override val port: Int
+    override val port: Int,
   ) extends MinimalWebServerConfig
 
   implicit val MinimalWebServerConfigShow: Show[MinimalWebServerConfig] =

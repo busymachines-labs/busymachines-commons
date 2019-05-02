@@ -137,9 +137,9 @@ private[rest_json_test] class DefaultExceptionHandlerRestAPIForTesting
               SomeTestDTOGet(
                 42,
                 "fortyTwo",
-                None
+                None,
               )
-            })
+            }),
           )
         }
       }
@@ -175,12 +175,12 @@ private[rest_json_test] class DefaultExceptionHandlerRestAPIForTesting
       AnomalousFailures(
         AnomalyID("1234"),
         "a lot of failures",
-        NotFoundFailure("notFound",    Anomaly.Parameters("one"   -> "1")),
-        UnauthorizedFailure("unauth",  Anomaly.Parameters("two"   -> "2")),
-        ForbiddenFailure("no_access",  Anomaly.Parameters("three" -> "3")),
-        DeniedFailure("denied",        Anomaly.Parameters("four"  -> "4")),
-        InvalidInputFailure("invalid", Anomaly.Parameters("five"  -> "5")),
-        ConflictFailure("conflict",    Anomaly.Parameters("six"   -> "6")),
+        NotFoundFailure("notFound", Anomaly.Parameters("one"     -> "1")),
+        UnauthorizedFailure("unauth", Anomaly.Parameters("two"   -> "2")),
+        ForbiddenFailure("no_access", Anomaly.Parameters("three" -> "3")),
+        DeniedFailure("denied", Anomaly.Parameters("four"        -> "4")),
+        InvalidInputFailure("invalid", Anomaly.Parameters("five" -> "5")),
+        ConflictFailure("conflict", Anomaly.Parameters("six"     -> "6")),
       )
     }
   }

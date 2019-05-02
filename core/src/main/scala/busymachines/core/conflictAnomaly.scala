@@ -50,10 +50,10 @@ object ConflictAnomaly extends AnomalyConstructors[ConflictAnomaly] {
     ConflictAnomalyImpl(id = a.id, message = a.message, parameters = a.parameters)
 }
 
-private[core] final case class ConflictAnomalyImpl(
+final private[core] case class ConflictAnomalyImpl(
   override val id:         AnomalyID  = ConflictAnomalyID,
   override val message:    String     = MeaningfulAnomalies.ConflictMsg,
-  override val parameters: Parameters = Parameters.empty
+  override val parameters: Parameters = Parameters.empty,
 ) extends ConflictAnomaly with Product with Serializable {
 
   override def asThrowable: Throwable = ConflictFailureImpl(id, message, parameters)
@@ -119,7 +119,7 @@ object ConflictFailure
     ConflictFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
-private[core] final case class ConflictFailureImpl(
+final private[core] case class ConflictFailureImpl(
   override val id:         AnomalyID         = ConflictAnomalyID,
   override val message:    String            = MeaningfulAnomalies.ConflictMsg,
   override val parameters: Parameters        = Parameters.empty,

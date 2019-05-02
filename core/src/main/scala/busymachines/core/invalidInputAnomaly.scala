@@ -50,10 +50,10 @@ object InvalidInputAnomaly extends AnomalyConstructors[InvalidInputAnomaly] {
     InvalidInputAnomalyImpl(id = a.id, message = a.message, parameters = a.parameters)
 }
 
-private[core] final case class InvalidInputAnomalyImpl(
+final private[core] case class InvalidInputAnomalyImpl(
   override val id:         AnomalyID  = InvalidInputAnomalyID,
   override val message:    String     = MeaningfulAnomalies.InvalidInputMsg,
-  override val parameters: Parameters = Parameters.empty
+  override val parameters: Parameters = Parameters.empty,
 ) extends InvalidInputAnomaly with Product with Serializable {
 
   override def asThrowable: Throwable = InvalidInputFailureImpl(id, message, parameters)
@@ -119,7 +119,7 @@ object InvalidInputFailure
     InvalidInputFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
-private[core] final case class InvalidInputFailureImpl(
+final private[core] case class InvalidInputFailureImpl(
   override val id:         AnomalyID         = InvalidInputAnomalyID,
   override val message:    String            = MeaningfulAnomalies.InvalidInputMsg,
   override val parameters: Parameters        = Parameters.empty,

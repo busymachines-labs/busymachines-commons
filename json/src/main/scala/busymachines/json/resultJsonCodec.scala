@@ -45,28 +45,28 @@ trait ResultJsonCodec {
     new ResultJsonEncoderImpl[T](
       encode,
       AnomalyJsonCodec.AnomalyCodec,
-      AnomalyJsonCodec.AnomaliesCodec
+      AnomalyJsonCodec.AnomaliesCodec,
     )
 
   implicit final def bmCommonsResultDecoder[T](implicit decode: Decoder[T]): Decoder[Result[T]] =
     new ResultJsonDecoderImpl[T](
       decode,
       AnomalyJsonCodec.AnomalyCodec,
-      AnomalyJsonCodec.AnomaliesCodec
+      AnomalyJsonCodec.AnomaliesCodec,
     )
 
   implicit final def bmCommonsResultCodec[T](implicit codec: Codec[T]): Codec[Result[T]] =
     new ResultJsonCodecImpl[T](
       codec,
       AnomalyJsonCodec.AnomalyCodec,
-      AnomalyJsonCodec.AnomaliesCodec
+      AnomalyJsonCodec.AnomaliesCodec,
     )
 }
 
-private[json] final class ResultJsonEncoderImpl[T](
+final private[json] class ResultJsonEncoderImpl[T](
   private val encode:         Encoder[T],
   private val anomalyCodec:   Codec[Anomaly],
-  private val anomaliesCodec: Codec[Anomalies]
+  private val anomaliesCodec: Codec[Anomalies],
 ) extends Encoder[Result[T]] {
 
   override def apply(a: Result[T]): Json = a match {
@@ -79,10 +79,10 @@ private[json] final class ResultJsonEncoderImpl[T](
   }
 }
 
-private[json] final class ResultJsonDecoderImpl[T](
+final private[json] class ResultJsonDecoderImpl[T](
   private val decode:         Decoder[T],
   private val anomalyCodec:   Codec[Anomaly],
-  private val anomaliesCodec: Codec[Anomalies]
+  private val anomaliesCodec: Codec[Anomalies],
 ) extends Decoder[Result[T]] {
   override def apply(c: HCursor): DecoderResult[Result[T]] = {
     val potentialAnomaly: Either[DecodingFailure, Anomaly] =
@@ -98,10 +98,10 @@ private[json] final class ResultJsonDecoderImpl[T](
   }
 }
 
-private[json] final class ResultJsonCodecImpl[T](
+final private[json] class ResultJsonCodecImpl[T](
   private val codec:          Codec[T],
   private val anomalyCodec:   Codec[Anomaly],
-  private val anomaliesCodec: Codec[Anomalies]
+  private val anomaliesCodec: Codec[Anomalies],
 ) extends Codec[Result[T]] {
   override def apply(a: Result[T]): Json = a match {
     case Correct(t) => codec(t)

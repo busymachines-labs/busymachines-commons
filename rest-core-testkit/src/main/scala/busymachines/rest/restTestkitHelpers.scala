@@ -62,7 +62,7 @@ private[rest] trait RestAPIRequestBuildingSugar {
   protected def post[BodyType, R](uri: String, body: BodyType)(thunk: => R)(
     implicit
     cc:      CallerContext,
-    encoder: ToEntityMarshaller[BodyType]
+    encoder: ToEntityMarshaller[BodyType],
   ): R = {
     val g = Post(uri, body)
     requestRunner.runRequest(g)(thunk)
@@ -70,7 +70,7 @@ private[rest] trait RestAPIRequestBuildingSugar {
 
   protected def postRaw[R](
     uri:         String,
-    contentType: ContentType.NonBinary = ContentTypes.`application/json`
+    contentType: ContentType.NonBinary = ContentTypes.`application/json`,
   )(raw:         String)(thunk: => R)(implicit cc: CallerContext): R = {
     val g = Post(uri).withEntity(contentType, raw)
     requestRunner.runRequest(g)(thunk)
@@ -79,7 +79,7 @@ private[rest] trait RestAPIRequestBuildingSugar {
   protected def patch[BodyType, R](uri: String, body: BodyType)(thunk: => R)(
     implicit
     cc:      CallerContext,
-    encoder: ToEntityMarshaller[BodyType]
+    encoder: ToEntityMarshaller[BodyType],
   ): R = {
     val g = Patch(uri, body)
     requestRunner.runRequest(g)(thunk)
@@ -87,15 +87,15 @@ private[rest] trait RestAPIRequestBuildingSugar {
 
   protected def patchRaw[R](
     uri:         String,
-    contentType: ContentType.NonBinary = ContentTypes.`application/json`
+    contentType: ContentType.NonBinary = ContentTypes.`application/json`,
   )(raw:         String)(thunk: => R)(implicit cc: CallerContext): R = {
     val g = Patch(uri).withEntity(contentType, raw)
     requestRunner.runRequest(g)(thunk)
   }
 
   protected def put[BodyType, R](uri: String, body: BodyType)(thunk: => R)(
-    implicit cc: CallerContext,
-    encoder:     ToEntityMarshaller[BodyType]
+    implicit cc:                      CallerContext,
+    encoder:                          ToEntityMarshaller[BodyType],
   ): R = {
     val g = Put(uri, body)
     requestRunner.runRequest(g)(thunk)
@@ -103,7 +103,7 @@ private[rest] trait RestAPIRequestBuildingSugar {
 
   protected def putRaw[R](
     uri:         String,
-    contentType: ContentType.NonBinary = ContentTypes.`application/json`
+    contentType: ContentType.NonBinary = ContentTypes.`application/json`,
   )(raw:         String)(thunk: => R)(implicit cc: CallerContext): R = {
     val g = Put(uri).withEntity(contentType, raw)
     requestRunner.runRequest(g)(thunk)
@@ -127,45 +127,45 @@ private[rest] object RequestDebugging {
   private val delimiter: String = "==================================================="
 
   private[rest] def requestLogFun(
-    printingTimeoutDuration: FiniteDuration
+    printingTimeoutDuration: FiniteDuration,
   )(transformEntity:         String => String)(
     implicit
     materializer: Materializer,
-    ec:           ExecutionContext
+    ec:           ExecutionContext,
   ): HttpRequest => Unit = { req =>
     printRequest(req, printingTimeoutDuration)(transformEntity)
   }
 
   private[rest] def resultLogFun(
-    printingTimeoutDuration: FiniteDuration
+    printingTimeoutDuration: FiniteDuration,
   )(
-    transformEntity:       String => String
+    transformEntity:       String => String,
   )(implicit materializer: Materializer, ec: ExecutionContext): RouteResult => Unit = { rez =>
     printResult(rez, printingTimeoutDuration)(transformEntity)
   }
 
   private[rest] def logResultPrintln(
-    printingTimeoutDuration: FiniteDuration
+    printingTimeoutDuration: FiniteDuration,
   )(transformEntity:         String => String)(implicit materializer: Materializer, ec: ExecutionContext) = {
     Directives.logResult(LoggingMagnet(_ => resultLogFun(printingTimeoutDuration)(transformEntity)))
   }
 
   private def printResult(
     rr:                      RouteResult,
-    printingTimeoutDuration: FiniteDuration
+    printingTimeoutDuration: FiniteDuration,
   )(transformEntity:         String => String)(implicit mat: Materializer, ec: ExecutionContext): Unit = {
     print(s"\n${responseToString(rr, printingTimeoutDuration)(transformEntity)}")
   }
 
   private[rest] def responseToString(
     rr:                      RouteResult,
-    printingTimeoutDuration: FiniteDuration
+    printingTimeoutDuration: FiniteDuration,
   )(
-    transformEntity: String => String
+    transformEntity: String => String,
   )(
     implicit
     mat: Materializer,
-    ec:  ExecutionContext
+    ec:  ExecutionContext,
   ): String = {
     rr match {
       case Complete(response) =>
@@ -196,14 +196,14 @@ private[rest] object RequestDebugging {
 
   private def printRequest(
     request:                 HttpRequest,
-    printingTimeoutDuration: FiniteDuration
+    printingTimeoutDuration: FiniteDuration,
   )(transformEntity:         String => String)(implicit mat: Materializer, ec: ExecutionContext): Unit = {
     print(s"\n${requestToString(request, printingTimeoutDuration)(transformEntity)}")
   }
 
   private[rest] def requestToString(
     request:                 HttpRequest,
-    printingTimeoutDuration: FiniteDuration
+    printingTimeoutDuration: FiniteDuration,
   )(transformEntity:         String => String)(implicit mat: Materializer, ec: ExecutionContext): String = {
     val methodUri = s"${request.method.value} ${request.uri}"
     val headers   = request.headers.map(h => s"${h.name()}: ${h.value()}").mkString("\n").trim
@@ -221,9 +221,9 @@ private[rest] object RequestDebugging {
 
   private def entityToString(
     entity:                  HttpEntity,
-    printingTimeoutDuration: FiniteDuration
+    printingTimeoutDuration: FiniteDuration,
   )(
-    transformEntity: String => String
+    transformEntity: String => String,
   )(implicit mat:    Materializer, ec: ExecutionContext): String = {
     if (entity.isKnownEmpty()) {
       ""
@@ -262,7 +262,7 @@ private[rest] trait DefaultRequestRunners {
 
     object normal extends RequestRunner {
       override def runRequest[T](
-        request: HttpRequest
+        request: HttpRequest,
       )(thunk:   => T)(implicit route: Route, mat: Materializer, cc: CallerContext): T = {
         cc(request) ~> route ~> check {
           thunk
@@ -272,7 +272,7 @@ private[rest] trait DefaultRequestRunners {
 
     object printing extends RequestRunner {
       override def runRequest[T](
-        request: HttpRequest
+        request: HttpRequest,
       )(thunk:   => T)(implicit route: Route, mat: Materializer, cc: CallerContext): T = {
         val loggedRoute =
           RequestDebugging.logResultPrintln(printingTimeoutDuration)(transformEntityString)(mat, executor)(route)
@@ -320,16 +320,16 @@ trait CallerContexts {
   def basic(username: String, password: String): CallerContext = CallerContext { httpRequest =>
     httpRequest.addHeader(
       Authorization(
-        BasicHttpCredentials(username, password)
-      )
+        BasicHttpCredentials(username, password),
+      ),
     )
   }
 
   def bearer(token: String): CallerContext = CallerContext { httpRequest =>
     httpRequest.addHeader(
       Authorization(
-        OAuth2BearerToken(token)
-      )
+        OAuth2BearerToken(token),
+      ),
     )
   }
 }

@@ -49,11 +49,11 @@ object JsonRestAPI extends jsonrest.JsonSupport {
 
   def defaultExceptionHandler: ExceptionHandler = RestAPI.defaultExceptionHandler(
     anomalyMarshaller,
-    anomaliesMarshaller
+    anomaliesMarshaller,
   )
 
   def defaultExceptionHandlerNoTerminalCase: ExceptionHandler = RestAPI.defaultExceptionHandlerNoTerminalCase(
     anomalyMarshaller,
-    anomaliesMarshaller
+    anomaliesMarshaller,
   )
 }

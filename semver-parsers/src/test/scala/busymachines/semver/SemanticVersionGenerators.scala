@@ -43,7 +43,7 @@ trait SemanticVersionGenerators {
       betaSingletonGen,
       betaGen,
       rcGen,
-      mGen
+      mGen,
     )
   }
 
@@ -54,14 +54,13 @@ trait SemanticVersionGenerators {
       patch    <- Gen.posNum[Int]
       optLabel <- Gen.option(labelGenerator)
       optMeta  <- Gen.option(Gen.alphaStr)
-    } yield
-      SemanticVersion(
-        major = major,
-        minor = minor,
-        patch = patch,
-        label = optLabel,
-        meta  = optMeta
-      )
+    } yield SemanticVersion(
+      major = major,
+      minor = minor,
+      patch = patch,
+      label = optLabel,
+      meta  = optMeta,
+    )
 
   }
 

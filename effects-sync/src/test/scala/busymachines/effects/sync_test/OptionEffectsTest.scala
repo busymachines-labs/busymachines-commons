@@ -116,7 +116,7 @@ final class OptionEffectsTest extends FunSpec {
         test("false") {
           val value = Option.cond(
             false,
-            42
+            42,
           )
           assert(value == None)
         }
@@ -124,7 +124,7 @@ final class OptionEffectsTest extends FunSpec {
         test("true") {
           val value = Option.cond(
             true,
-            42
+            42,
           )
           assert(value.r == 42)
         }
@@ -134,7 +134,7 @@ final class OptionEffectsTest extends FunSpec {
         test("false — pure") {
           val value = Option.condWith(
             false,
-            pureV
+            pureV,
           )
           assert(value == None)
         }
@@ -142,7 +142,7 @@ final class OptionEffectsTest extends FunSpec {
         test("true — pure") {
           val value = Option.condWith(
             true,
-            pureV
+            pureV,
           )
           assert(value.r == 42)
         }
@@ -150,7 +150,7 @@ final class OptionEffectsTest extends FunSpec {
         test("false — fail") {
           val value = Option.condWith(
             false,
-            failV
+            failV,
           )
           assert(value == None)
         }
@@ -158,7 +158,7 @@ final class OptionEffectsTest extends FunSpec {
         test("true — fail") {
           val value = Option.condWith(
             true,
-            failV
+            failV,
           )
           assert(value == None)
         }
@@ -168,7 +168,7 @@ final class OptionEffectsTest extends FunSpec {
         test("false") {
           val value = Option.flatCond(
             bfalse,
-            42
+            42,
           )
           assert(value == None)
         }
@@ -176,7 +176,7 @@ final class OptionEffectsTest extends FunSpec {
         test("true") {
           val value = Option.flatCond(
             btrue,
-            42
+            42,
           )
           assert(value.r == 42)
         }
@@ -184,7 +184,7 @@ final class OptionEffectsTest extends FunSpec {
         test("fail") {
           val value = Option.flatCond(
             bfail,
-            42
+            42,
           )
           assert(value == None)
         }
@@ -194,7 +194,7 @@ final class OptionEffectsTest extends FunSpec {
         test("false — pure") {
           val value = Option.flatCondWith(
             bfalse,
-            pureV
+            pureV,
           )
           assert(value == None)
         }
@@ -202,7 +202,7 @@ final class OptionEffectsTest extends FunSpec {
         test("false — fail") {
           val value = Option.flatCondWith(
             bfalse,
-            failV
+            failV,
           )
           assert(value == None)
         }
@@ -210,7 +210,7 @@ final class OptionEffectsTest extends FunSpec {
         test("true — pure") {
           val value = Option.flatCondWith(
             btrue,
-            pureV
+            pureV,
           )
           assert(value.r == 42)
         }
@@ -218,7 +218,7 @@ final class OptionEffectsTest extends FunSpec {
         test("true — fail") {
           val value = Option.flatCondWith(
             btrue,
-            failV
+            failV,
           )
           assert(value == None)
         }
@@ -226,7 +226,7 @@ final class OptionEffectsTest extends FunSpec {
         test("fail — pure") {
           val value = Option.flatCondWith(
             bfail,
-            pureV
+            pureV,
           )
           assert(value == None)
         }
@@ -234,7 +234,7 @@ final class OptionEffectsTest extends FunSpec {
         test("fail — fail") {
           val value = Option.flatCondWith(
             bfail,
-            failV
+            failV,
           )
           assert(value == None)
         }
@@ -248,7 +248,7 @@ final class OptionEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            Option.asTry(failV, ano).get
+            Option.asTry(failV, ano).get,
           )
         }
 
@@ -262,7 +262,7 @@ final class OptionEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[RuntimeException](
-            Option.asTryThr(failV, thr).get
+            Option.asTryThr(failV, thr).get,
           )
         }
 
@@ -330,7 +330,7 @@ final class OptionEffectsTest extends FunSpec {
           val value = Option.morph(
             failV,
             int2str,
-            ano.message
+            ano.message,
           )
           assert(value.r == ano.message)
         }
@@ -339,7 +339,7 @@ final class OptionEffectsTest extends FunSpec {
           val value = Option.morph(
             pureV,
             int2str,
-            ano.message
+            ano.message,
           )
           assert(value.r == "42")
         }
@@ -348,7 +348,7 @@ final class OptionEffectsTest extends FunSpec {
       describe("recover") {
         test("fail") {
           assert(
-            Option.recover(failV, 11) == Option.pure(11)
+            Option.recover(failV, 11) == Option.pure(11),
           )
         }
 
@@ -599,7 +599,7 @@ final class OptionEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[InvalidInputFailure](
-            failV.asTry(ano).get
+            failV.asTry(ano).get,
           )
         }
 
@@ -613,7 +613,7 @@ final class OptionEffectsTest extends FunSpec {
 
         test("fail") {
           assertThrows[RuntimeException](
-            failV.asTryThr(thr).get
+            failV.asTryThr(thr).get,
           )
         }
 
@@ -680,7 +680,7 @@ final class OptionEffectsTest extends FunSpec {
         test("fail") {
           val value = failV.morph(
             int2str,
-            ano.message
+            ano.message,
           )
           assert(value.r == ano.message)
         }
@@ -688,7 +688,7 @@ final class OptionEffectsTest extends FunSpec {
         test("pure") {
           val value = pureV.morph(
             int2str,
-            ano.message
+            ano.message,
           )
           assert(value.r == "42")
         }

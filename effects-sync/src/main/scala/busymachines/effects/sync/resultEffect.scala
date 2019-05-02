@@ -31,8 +31,8 @@ import scala.util.control.NonFatal
   */
 trait ResultTypeDefinitions {
   final type Result[T]    = Either[Anomaly, T]
-  final type Correct[T]   = Right[Anomaly,  T]
-  final type Incorrect[T] = Left[Anomaly,   T]
+  final type Correct[T]   = Right[Anomaly, T]
+  final type Incorrect[T] = Left[Anomaly, T]
 }
 
 trait ResultCompanionAliases {
@@ -593,7 +593,7 @@ object Result {
     */
   @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
+    cbf: CanBuildFrom[C[A], B, C[B]],
   ): Result[C[B]] = {
     import scala.collection.mutable
     if (col.isEmpty) {
@@ -638,7 +638,7 @@ object Result {
     */
   @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
+    cbf: CanBuildFrom[C[A], B, C[B]],
   ): Result[Unit] = Result.discardContent(Result.traverse(col)(fn))
 
   //=========================================================================
@@ -660,7 +660,7 @@ object Result {
     */
   @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
     implicit
-    cbf: CanBuildFrom[M[Result[A]], A, M[A]]
+    cbf: CanBuildFrom[M[Result[A]], A, M[A]],
   ): Result[M[A]] = Result.traverse(in)(identity)
 
   /**
@@ -681,7 +681,7 @@ object Result {
     */
   @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
     implicit
-    cbf: CanBuildFrom[M[Result[A]], A, M[A]]
+    cbf: CanBuildFrom[M[Result[A]], A, M[A]],
   ): Result[Unit] = Result.discardContent(Result.sequence(in))
 }
 

@@ -29,25 +29,25 @@ sealed abstract class InvalidSemanticVersionParsingFailure(m: String) extends In
 
 final case class InvalidSemanticVersionFailure(input: String, parseError: String)
     extends InvalidSemanticVersionParsingFailure(
-      s"Failed to parse semantic version '$input' because: $parseError"
+      s"Failed to parse semantic version '$input' because: $parseError",
     ) {
   override def id: AnomalyID = ParsingAnomalyIDs.InvalidSemanticVersion
 
   override val parameters: Anomaly.Parameters = Anomaly.Parameters(
     "input"      -> input,
-    "parseError" -> parseError
+    "parseError" -> parseError,
   )
 }
 
 final case class InvalidSemanticVersionLabelFailure(input: String, parseError: String)
     extends InvalidSemanticVersionParsingFailure(
-      s"Failed to parse label of semantic version '$input' because: $parseError"
+      s"Failed to parse label of semantic version '$input' because: $parseError",
     ) {
   override def id: AnomalyID = ParsingAnomalyIDs.InvalidSemanticVersionLabel
 
   override val parameters: Anomaly.Parameters = Anomaly.Parameters(
     "input"      -> input,
-    "parseError" -> parseError
+    "parseError" -> parseError,
   )
 }
 

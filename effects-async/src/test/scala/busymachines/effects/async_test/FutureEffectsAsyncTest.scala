@@ -184,7 +184,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.cond(
               false,
               42,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -193,7 +193,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.cond(
               true,
               42,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -204,7 +204,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condThr(
               false,
               42,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -213,7 +213,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condThr(
               true,
               42,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -224,7 +224,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condWith(
               false,
               pureV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -233,7 +233,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condWith(
               true,
               pureV,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -242,7 +242,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condWith(
               false,
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -251,7 +251,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condWith(
               true,
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -262,7 +262,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condWithThr(
               false,
               pureV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -271,7 +271,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condWithThr(
               true,
               pureV,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -280,7 +280,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condWithThr(
               false,
               failV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -289,7 +289,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.condWithThr(
               true,
               failV,
-              thr
+              thr,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -300,7 +300,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCond(
               bfalse,
               42,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -309,7 +309,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCond(
               btrue,
               42,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -318,7 +318,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCond(
               bfail,
               42,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -329,7 +329,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondThr(
               bfalse,
               42,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -338,7 +338,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondThr(
               btrue,
               42,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -347,7 +347,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondThr(
               bfail,
               42,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -358,7 +358,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWith(
               bfalse,
               pureV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -367,7 +367,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWith(
               bfalse,
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -376,7 +376,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWith(
               btrue,
               pureV,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -385,7 +385,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWith(
               btrue,
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -394,7 +394,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWith(
               bfail,
               pureV,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -403,7 +403,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWith(
               bfail,
               failV,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -414,7 +414,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWithThr(
               bfalse,
               pureV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -423,7 +423,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWithThr(
               bfalse,
               failV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -432,7 +432,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWithThr(
               btrue,
               pureV,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -441,7 +441,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWithThr(
               btrue,
               failV,
-              thr
+              thr,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -450,7 +450,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWithThr(
               bfail,
               pureV,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -459,7 +459,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.flatCondWithThr(
               bfail,
               failV,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -469,7 +469,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Future.failOnTrue(
               false,
-              ano
+              ano,
             )
             value.r
           }
@@ -477,7 +477,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Future.failOnTrue(
               true,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -487,7 +487,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Future.failOnTrueThr(
               false,
-              thr
+              thr,
             )
             value.r
           }
@@ -495,7 +495,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Future.failOnTrueThr(
               true,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -505,7 +505,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Future.failOnFalse(
               false,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -513,7 +513,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Future.failOnFalse(
               true,
-              ano
+              ano,
             )
             value.r
           }
@@ -523,7 +523,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Future.failOnFalseThr(
               false,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -531,7 +531,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Future.failOnFalseThr(
               true,
-              thr
+              thr,
             )
             value.r
           }
@@ -541,7 +541,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Future.flatFailOnTrue(
               bfalse,
-              ano
+              ano,
             )
             value.r
           }
@@ -549,7 +549,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Future.flatFailOnTrue(
               btrue,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -557,7 +557,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Future.flatFailOnTrue(
               bfail,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -568,7 +568,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Future.flatFailOnTrueThr(
               bfalse,
-              thr
+              thr,
             )
             value.r
           }
@@ -576,7 +576,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Future.flatFailOnTrueThr(
               btrue,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -584,7 +584,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Future.flatFailOnTrueThr(
               bfail,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -595,7 +595,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Future.flatFailOnFalse(
               bfalse,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -603,7 +603,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Future.flatFailOnFalse(
               btrue,
-              ano
+              ano,
             )
             value.r
           }
@@ -611,7 +611,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Future.flatFailOnFalse(
               bfail,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -622,7 +622,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = Future.flatFailOnFalseThr(
               bfalse,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -630,7 +630,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = Future.flatFailOnFalseThr(
               btrue,
-              thr
+              thr,
             )
             value.r
           }
@@ -638,7 +638,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Future.flatFailOnFalseThr(
               bfail,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -689,7 +689,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
         describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              Future.unpackResult(Future.pure(incorrect)).r
+              Future.unpackResult(Future.pure(incorrect)).r,
             )
           }
 
@@ -848,7 +848,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.bimap(
               failV,
               int2str,
-              thr2ano
+              thr2ano,
             )
 
             assertThrows[ForbiddenFailure](value.r)
@@ -858,7 +858,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.bimap(
               pureV,
               int2str,
-              thr2ano
+              thr2ano,
             )
 
             assert(value.r == "42")
@@ -871,7 +871,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Future.bimap(
               failV,
-              res2res
+              res2res,
             )
 
             assertThrows[ForbiddenFailure](value.r)
@@ -880,7 +880,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = Future.bimap(
               pureV,
-              res2res
+              res2res,
             )
 
             assert(value.r == "42")
@@ -894,7 +894,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.bimapThr(
               failV,
               int2str,
-              thr2thr
+              thr2thr,
             )
 
             assertThrows[IllegalArgumentException](value.r)
@@ -904,7 +904,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.bimapThr(
               pureV,
               int2str,
-              thr2thr
+              thr2thr,
             )
 
             assert(value.r == "42")
@@ -918,7 +918,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.morph(
               failV,
               int2str,
-              thr2str
+              thr2str,
             )
             assert(value.r == ano.message)
           }
@@ -927,7 +927,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value = Future.morph(
               pureV,
               int2str,
-              thr2str
+              thr2str,
             )
             assert(value.r == "42")
           }
@@ -938,7 +938,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = Future.morph(
               failV,
-              res2str
+              res2str,
             )
             assert(value.r == ano.message)
           }
@@ -946,7 +946,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = Future.morph(
               pureV,
-              res2str
+              res2str,
             )
             assert(value.r == "42")
           }
@@ -979,7 +979,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = false.condFuture(
               42,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -987,7 +987,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = true.condFuture(
               42,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -998,7 +998,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value =
               false.condFutureThr(
                 42,
-                thr
+                thr,
               )
             assertThrows[RuntimeException](value.r)
           }
@@ -1006,7 +1006,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = true.condFutureThr(
               42,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -1016,7 +1016,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false — pure") {
             val value = false.condWithFuture(
               pureV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1024,7 +1024,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true — pure") {
             val value = true.condWithFuture(
               pureV,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -1032,7 +1032,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false — fail") {
             val value = false.condWithFuture(
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1040,7 +1040,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true — fail") {
             val value = true.condWithFuture(
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1050,7 +1050,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false — pure") {
             val value = false.condWithFutureThr(
               pureV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -1058,7 +1058,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true — pure") {
             val value = true.condWithFutureThr(
               pureV,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -1067,7 +1067,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
             val value =
               false.condWithFutureThr(
                 failV,
-                thr
+                thr,
               )
             assertThrows[RuntimeException](value.r)
           }
@@ -1075,7 +1075,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true — fail") {
             val value = true.condWithFutureThr(
               failV,
-              thr
+              thr,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1085,7 +1085,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = bfalse.cond(
               42,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1093,7 +1093,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = btrue.cond(
               42,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -1101,7 +1101,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = bfail.cond(
               42,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1111,7 +1111,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false") {
             val value = bfalse.condThr(
               42,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -1119,7 +1119,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true") {
             val value = btrue.condThr(
               42,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -1127,7 +1127,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = bfail.condThr(
               42,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1137,7 +1137,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false — pure") {
             val value = bfalse.condWith(
               pureV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1145,7 +1145,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false — fail") {
             val value = bfalse.condWith(
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1153,7 +1153,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true — pure") {
             val value = btrue.condWith(
               pureV,
-              ano
+              ano,
             )
             assert(value.r == 42)
           }
@@ -1161,7 +1161,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true — fail") {
             val value = btrue.condWith(
               failV,
-              ano
+              ano,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1169,7 +1169,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail — pure") {
             val value = bfail.condWith(
               pureV,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1177,7 +1177,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail — fail") {
             val value = bfail.condWith(
               failV,
-              ano
+              ano,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1187,7 +1187,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false — pure") {
             val value = bfalse.condWithThr(
               pureV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -1195,7 +1195,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("false — fail") {
             val value = bfalse.condWithThr(
               failV,
-              thr
+              thr,
             )
             assertThrows[RuntimeException](value.r)
           }
@@ -1203,7 +1203,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true — pure") {
             val value = btrue.condWithThr(
               pureV,
-              thr
+              thr,
             )
             assert(value.r == 42)
           }
@@ -1211,7 +1211,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("true — fail") {
             val value = btrue.condWithThr(
               failV,
-              thr
+              thr,
             )
             assertThrows[InvalidInputFailure](value.r)
           }
@@ -1219,7 +1219,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail — pure") {
             val value = bfail.condWithThr(
               pureV,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1227,7 +1227,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail — fail") {
             val value = bfail.condWithThr(
               failV,
-              thr
+              thr,
             )
             assertThrows[IllegalArgumentException](value.r)
           }
@@ -1397,7 +1397,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
         describe("unpack") {
           test("incorrect") {
             assertThrows[InvalidInputFailure](
-              Future.pure(incorrect).unpack.r
+              Future.pure(incorrect).unpack.r,
             )
           }
 
@@ -1556,7 +1556,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = failV.bimap(
               int2str,
-              thr2ano
+              thr2ano,
             )
 
             assertThrows[ForbiddenFailure](value.r)
@@ -1565,7 +1565,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = pureV.bimap(
               int2str,
-              thr2ano
+              thr2ano,
             )
 
             assert(value.r == "42")
@@ -1577,7 +1577,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             val value = failV.bimap(
-              res2res
+              res2res,
             )
 
             assertThrows[ForbiddenFailure](value.r)
@@ -1585,7 +1585,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("pure") {
             val value = pureV.bimap(
-              res2res
+              res2res,
             )
 
             assert(value.r == "42")
@@ -1598,7 +1598,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = failV.bimapThr(
               int2str,
-              thr2thr
+              thr2thr,
             )
 
             assertThrows[IllegalArgumentException](value.r)
@@ -1607,7 +1607,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = pureV.bimapThr(
               int2str,
-              thr2thr
+              thr2thr,
             )
 
             assert(value.r == "42")
@@ -1620,7 +1620,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("fail") {
             val value = failV.morph(
               int2str,
-              thr2str
+              thr2str,
             )
             assert(value.r == ano.message)
           }
@@ -1628,7 +1628,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("pure") {
             val value = pureV.morph(
               int2str,
-              thr2str
+              thr2str,
             )
             assert(value.r == "42")
           }
@@ -1638,14 +1638,14 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
           test("fail") {
             val value = failV.morph(
-              res2str
+              res2str,
             )
             assert(value.r == ano.message)
           }
 
           test("pure") {
             val value = pureV.morph(
-              res2str
+              res2str,
             )
             assert(value.r == "42")
           }
@@ -1699,7 +1699,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
         test("suspendOption") {
           val f = Future.suspendOption(
             Option(throw thr),
-            ano
+            ano,
           )
           assertThrows[RuntimeException](f.r)
 
@@ -1708,7 +1708,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
         test("suspendOptionThr") {
           val f = Future.suspendOptionThr(
             Option(throw thr),
-            iae
+            iae,
           )
           assertThrows[RuntimeException](f.r)
 
@@ -1716,7 +1716,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
 
         test("suspendTry") {
           val f = Future.suspendTry(
-            Try.pure(throw thr)
+            Try.pure(throw thr),
           )
           assertThrows[RuntimeException](f.r)
         }
@@ -1724,14 +1724,14 @@ final class FutureEffectsAsyncTest extends FunSpec {
         test("suspendEither") {
           val f = Future.suspendEither(
             Right[Throwable, String](throw thr),
-            thr2ano
+            thr2ano,
           )
           assertThrows[RuntimeException](f.r)
         }
 
         test("suspendEitherThr") {
           val f = Future.suspendEitherThr(
-            Right[Throwable, String](throw thr)
+            Right[Throwable, String](throw thr),
           )
           assertThrows[RuntimeException](f.r)
         }
@@ -1739,14 +1739,14 @@ final class FutureEffectsAsyncTest extends FunSpec {
         test("suspendEitherThr — transform") {
           val f = Future.suspendEitherThr(
             Right[Throwable, String](throw thr),
-            thr2thr
+            thr2thr,
           )
           assertThrows[RuntimeException](f.r)
         }
 
         test("suspendResult") {
           val f = Future.suspendResult(
-            Result.pure(throw thr)
+            Result.pure(throw thr),
           )
           assertThrows[RuntimeException](f.r)
         }
@@ -1754,7 +1754,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
         describe("suspendValidated") {
           test("normal") {
             val f = Future.suspendValidated(
-              Validated.pure(throw thr)
+              Validated.pure(throw thr),
             )
             assertThrows[RuntimeException](f.r)
           }
@@ -1762,7 +1762,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("ano") {
             val f = Future.suspendValidated(
               Validated.pure(throw thr),
-              TVFs
+              TVFs,
             )
             assertThrows[RuntimeException](f.r)
           }
@@ -1781,7 +1781,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -1795,7 +1795,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -1813,7 +1813,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -1827,7 +1827,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -1844,7 +1844,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -1858,7 +1858,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -1872,7 +1872,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[IllegalArgumentException](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -1890,7 +1890,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -1904,7 +1904,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -1918,7 +1918,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[IllegalArgumentException](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -1939,7 +1939,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -1953,7 +1953,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -1971,7 +1971,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -1986,7 +1986,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2003,7 +2003,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -2016,7 +2016,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2030,7 +2030,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2049,7 +2049,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2063,7 +2063,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2078,7 +2078,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2101,7 +2101,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2116,7 +2116,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2134,7 +2134,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2149,7 +2149,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2167,7 +2167,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2181,7 +2181,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2196,7 +2196,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2215,7 +2215,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2229,7 +2229,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2244,7 +2244,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2387,7 +2387,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -2400,7 +2400,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2417,7 +2417,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2430,7 +2430,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -2446,7 +2446,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -2459,7 +2459,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2472,7 +2472,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[IllegalArgumentException](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2489,7 +2489,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2502,7 +2502,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -2515,7 +2515,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             assertThrows[IllegalArgumentException](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2535,7 +2535,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             assert(sideEffect == 42)
@@ -2548,7 +2548,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
               Future {
                 sideEffect = 42
                 sideEffect
-              }
+              },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2565,7 +2565,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2579,7 +2579,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2598,7 +2598,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                   Future {
                     sideEffect = 42
                     sideEffect
-                  }
+                  },
                 )
             f.r
             assert(sideEffect == 42)
@@ -2613,7 +2613,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                   Future {
                     sideEffect = 42
                     sideEffect
-                  }
+                  },
                 )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2629,7 +2629,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                   Future {
                     sideEffect = 42
                     sideEffect
-                  }
+                  },
                 )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2650,7 +2650,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                     Future {
                       sideEffect = x
                       sideEffect
-                  }
+                    },
                 )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2666,7 +2666,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                     Future {
                       sideEffect = x
                       sideEffect
-                  }
+                    },
                 )
             f.r
             assert(sideEffect == 42)
@@ -2682,7 +2682,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                   Future {
                     sideEffect = x
                     sideEffect
-                }
+                  },
               )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2704,7 +2704,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2718,7 +2718,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = 42
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2735,7 +2735,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2749,7 +2749,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                 Future {
                   sideEffect = x
                   sideEffect
-              }
+                },
             )
             f.r
             assert(sideEffect == 42)
@@ -2769,7 +2769,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                     Future {
                       sideEffect = 42
                       sideEffect
-                  }
+                    },
                 )
             f.r
             assert(sideEffect == 42)
@@ -2784,7 +2784,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                   Future {
                     sideEffect = 42
                     sideEffect
-                }
+                  },
               )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2800,7 +2800,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                   Future {
                     sideEffect = 42
                     sideEffect
-                }
+                  },
               )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2821,7 +2821,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                     Future {
                       sideEffect = x
                       sideEffect
-                  }
+                    },
                 )
             f.r
             if (sideEffect == 42) fail("side effect should not have executed on other branch")
@@ -2837,7 +2837,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                     Future {
                       sideEffect = x
                       sideEffect
-                  }
+                    },
                 )
             f.r
             assert(sideEffect == 42)
@@ -2854,7 +2854,7 @@ final class FutureEffectsAsyncTest extends FunSpec {
                     Future {
                       sideEffect = x
                       sideEffect
-                  }
+                    },
                 )
             assertThrows[InvalidInputFailure](f.r)
             assert(sideEffect == 0, "side effect should not have applied on fail")
@@ -2897,11 +2897,11 @@ final class FutureEffectsAsyncTest extends FunSpec {
             Future {
               assert(
                 startedFlag.isEmpty,
-                s"started flag should have been empty at the start of each future but was: $startedFlag"
+                s"started flag should have been empty at the start of each future but was: $startedFlag",
               )
               previouslyProcessed foreach { previous =>
                 assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
-                  actual = previous
+                  actual = previous,
                 )
               }
               startedFlag         = Some(i)
@@ -2942,11 +2942,11 @@ final class FutureEffectsAsyncTest extends FunSpec {
             Future {
               assert(
                 startedFlag.isEmpty,
-                s"started flag should have been empty at the start of each future but was: $startedFlag"
+                s"started flag should have been empty at the start of each future but was: $startedFlag",
               )
               previouslyProcessed foreach { previous =>
                 assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
-                  actual = previous
+                  actual = previous,
                 )
               }
               startedFlag         = Some(i)

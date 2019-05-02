@@ -53,8 +53,8 @@ final class EffectsPackageTest extends FunSpec {
     test("either") {
       import effects.either._
       assert(
-        Either.asIO(Right[Int,   Int](1), (_: Int) => InvalidInputFailure).unsafeRunSync() ==
-          Either.asIO(Right[Int, Int](1), (_: Int) => InvalidInputFailure).unsafeRunSync()
+        Either.asIO(Right[Int, Int](1), (_:   Int) => InvalidInputFailure).unsafeRunSync() ==
+          Either.asIO(Right[Int, Int](1), (_: Int) => InvalidInputFailure).unsafeRunSync(),
       )
     }
 

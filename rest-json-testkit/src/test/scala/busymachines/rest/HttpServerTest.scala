@@ -54,11 +54,11 @@ class HttpServerTest extends FlatSpec {
       route = restAPI.route,
       config = MinimalWebServerConfig(
         host = "0.0.0.0",
-        port = 15898
-      )
+        port = 15898,
+      ),
     ).startThenWaitUntilShutdownDoCustomCleanup(
       waitForShutdownIO = ctx => ctx.logNormalIO("shutting down immediately as part of test"),
-      cleanupIO         = ctx => ctx.terminateActorSystemIO
+      cleanupIO         = ctx => ctx.terminateActorSystemIO,
     )
 
     val terminationFuture = IO.fromFuture(IO(as.whenTerminated))
@@ -80,8 +80,8 @@ class HttpServerTest extends FlatSpec {
       route = restAPI.route,
       config = MinimalWebServerConfig(
         host = "0.0.0.0",
-        port = 15898
-      )
+        port = 15898,
+      ),
     ).startThenCleanUpActorSystem
 
     val terminationFuture = IO.fromFuture(IO(as.whenTerminated))

@@ -56,7 +56,7 @@ object ValidatedSyntaxAsync {
 
     @inline def suspendInFuture[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies)(
       implicit
-      ec: ExecutionContext
+      ec: ExecutionContext,
     ): Future[T] =
       FutureOps.suspendValidated(value, ctor)
 

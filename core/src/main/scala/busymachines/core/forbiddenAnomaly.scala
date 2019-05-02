@@ -50,10 +50,10 @@ object ForbiddenAnomaly extends AnomalyConstructors[ForbiddenAnomaly] {
     ForbiddenAnomalyImpl(id = a.id, message = a.message, parameters = a.parameters)
 }
 
-private[core] final case class ForbiddenAnomalyImpl(
+final private[core] case class ForbiddenAnomalyImpl(
   override val id:         AnomalyID  = ForbiddenAnomalyID,
   override val message:    String     = MeaningfulAnomalies.ForbiddenMsg,
-  override val parameters: Parameters = Parameters.empty
+  override val parameters: Parameters = Parameters.empty,
 ) extends ForbiddenAnomaly with Product with Serializable {
 
   override def asThrowable: Throwable = ForbiddenFailureImpl(id, message, parameters)
@@ -119,7 +119,7 @@ object ForbiddenFailure
     ForbiddenFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
-private[core] final case class ForbiddenFailureImpl(
+final private[core] case class ForbiddenFailureImpl(
   override val id:         AnomalyID         = ForbiddenAnomalyID,
   override val message:    String            = MeaningfulAnomalies.ForbiddenMsg,
   override val parameters: Parameters        = Parameters.empty,

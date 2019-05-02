@@ -56,7 +56,7 @@ class DefaultExceptionHandlerTest extends FlatSpec with JsonRestAPITest {
           SomeTestDTOGet(
             42,
             "fortyTwo",
-            None
+            None,
           )
       }
     }

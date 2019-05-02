@@ -17,7 +17,7 @@ private[validation_test] object PWDValidator {
 
   def apply(s: Password): Validated[Unit] = Validated.sequence_(
     validateSpaces(s),
-    validateSize(s)
+    validateSize(s),
   )
 
   private def validateSpaces(s: Password): Validated[Unit] = {
@@ -64,14 +64,14 @@ class ValidatedEffectsTest extends FunSpec {
 
       assert(
         v.asResult == Result.fail(GenericValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))),
-        "as result — normal"
+        "as result — normal",
       )
 
       assert(
         v.asResult(TestValidationFailures) == Result.fail(
-          TestValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize))
+          TestValidationFailures(PWDValidator.InvSpaces, List(PWDValidator.InvSize)),
         ),
-        "as result — ctor"
+        "as result — ctor",
       )
     }
 

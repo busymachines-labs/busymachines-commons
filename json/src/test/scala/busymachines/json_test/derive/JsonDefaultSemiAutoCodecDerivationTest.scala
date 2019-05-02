@@ -52,7 +52,7 @@ class JsonDefaultSemiAutoCodecDerivationTest extends FlatSpec {
         """
           |val rawJson = "{}"
           |rawJson.unsafeDecodeAs[WinterMelon]
-        """.stripMargin
+        """.stripMargin,
       )
     }
 
@@ -61,7 +61,7 @@ class JsonDefaultSemiAutoCodecDerivationTest extends FlatSpec {
         """
           |val winterMelon: WinterMelon = WinterMelon(fuzzy = true, weight = 45)
           |winterMelon.asJson
-        """.stripMargin
+        """.stripMargin,
       )
     }
 

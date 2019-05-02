@@ -73,11 +73,11 @@ trait Anomaly extends Product with Serializable {
 trait AnomalyID extends Product with Serializable with Equals {
   def name: String
 
-  override final def canEqual(that: Any): Boolean = that.isInstanceOf[AnomalyID]
+  final override def canEqual(that: Any): Boolean = that.isInstanceOf[AnomalyID]
 
-  override final def equals(obj: Any): Boolean = canEqual(obj) && this.hashCode() == obj.hashCode()
+  final override def equals(obj: Any): Boolean = canEqual(obj) && this.hashCode() == obj.hashCode()
 
-  override final def hashCode(): Int = name.hashCode * 13
+  final override def hashCode(): Int = name.hashCode * 13
 
   override def toString: String = name
 }
@@ -89,7 +89,7 @@ object AnomalyID {
 private[core] case object DefaultAnomalyID extends AnomalyID {
   override val name: String = "DA_0"
 }
-private[core] final case class AnomalyIDUnderlying(override val name: String) extends AnomalyID
+final private[core] case class AnomalyIDUnderlying(override val name: String) extends AnomalyID
 
 object Anomaly extends AnomalyConstructors[Anomaly] {
   private[core] val Anomaly: String = "Anomaly"
@@ -138,10 +138,10 @@ object Anomaly extends AnomalyConstructors[Anomaly] {
 
 }
 
-private[core] final case class AnomalyImpl(
+final private[core] case class AnomalyImpl(
   override val id:         AnomalyID          = DefaultAnomalyID,
   override val message:    String             = Anomaly.Anomaly,
-  override val parameters: Anomaly.Parameters = Anomaly.Parameters.empty
+  override val parameters: Anomaly.Parameters = Anomaly.Parameters.empty,
 ) extends Anomaly {
 
   override def asThrowable: Throwable =
@@ -166,9 +166,9 @@ final case class SeqStringWrapper private (ses: immutable.Seq[String]) extends S
   */
 abstract class AnomalousFailure(
   override val message: String,
-  causedBy:             Option[Throwable] = None
+  causedBy:             Option[Throwable] = None,
 ) extends Exception(message, causedBy.orNull) with Anomaly {
-  override final def asThrowable: Throwable = this
+  final override def asThrowable: Throwable = this
 }
 
 private[core] case object AnomalousFailureID extends AnomalyID {
@@ -225,9 +225,9 @@ object AnomalousFailure extends FailureConstructors[AnomalousFailure] {
     AnomalousFailureImpl(message = message, causedBy = Option(causedBy))
 }
 
-private[core] final case class AnomalousFailureImpl(
+final private[core] case class AnomalousFailureImpl(
   override val id:         AnomalyID          = AnomalousFailureID,
   override val message:    String             = AnomalousFailure.AnomalousFailure,
   override val parameters: Anomaly.Parameters = Anomaly.Parameters.empty,
-  causedBy:                Option[Throwable]  = None
+  causedBy:                Option[Throwable]  = None,
 ) extends AnomalousFailure(message, causedBy)

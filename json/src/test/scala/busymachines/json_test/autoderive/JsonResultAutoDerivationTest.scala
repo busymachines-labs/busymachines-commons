@@ -53,19 +53,19 @@ class JsonResultAutoDerivationTest extends FlatSpec {
       original <- anarchistMelon.left
       decoded  <- read.left
     } yield {
-      assert(original.id === decoded.id,                 "... id")
-      assert(original.message === decoded.message,       "... message")
+      assert(original.id === decoded.id, "... id")
+      assert(original.message === decoded.message, "... message")
       assert(original.parameters === decoded.parameters, "... parameters")
     }
   }
 
   it should "... be able to serialize/deserialize Incorrect(AnarchistMelon) — Anomalies" in {
-    val anomaly1 = NotFoundFailure("notFound",    Anomaly.Parameters("one"   -> "1"))
-    val anomaly2 = UnauthorizedFailure("unauth",  Anomaly.Parameters("two"   -> "2"))
-    val anomaly3 = ForbiddenFailure("no_access",  Anomaly.Parameters("three" -> "3"))
-    val anomaly4 = DeniedFailure("denied",        Anomaly.Parameters("four"  -> "4"))
-    val anomaly5 = InvalidInputFailure("invalid", Anomaly.Parameters("five"  -> "5"))
-    val anomaly6 = ConflictFailure("conflict",    Anomaly.Parameters("six"   -> "6"))
+    val anomaly1 = NotFoundFailure("notFound", Anomaly.Parameters("one"     -> "1"))
+    val anomaly2 = UnauthorizedFailure("unauth", Anomaly.Parameters("two"   -> "2"))
+    val anomaly3 = ForbiddenFailure("no_access", Anomaly.Parameters("three" -> "3"))
+    val anomaly4 = DeniedFailure("denied", Anomaly.Parameters("four"        -> "4"))
+    val anomaly5 = InvalidInputFailure("invalid", Anomaly.Parameters("five" -> "5"))
+    val anomaly6 = ConflictFailure("conflict", Anomaly.Parameters("six"     -> "6"))
     val anomalies = Anomalies(
       AnomalyID("1234"),
       "a lot of failures",
@@ -74,7 +74,7 @@ class JsonResultAutoDerivationTest extends FlatSpec {
       anomaly3,
       anomaly4,
       anomaly5,
-      anomaly6
+      anomaly6,
     )
 
     val anarchistMelon = Result.fail[AnarchistMelon](anomalies)
@@ -91,8 +91,8 @@ class JsonResultAutoDerivationTest extends FlatSpec {
       assert(decoded.isInstanceOf[Anomalies], "... decoded expected multiple anomalies")
       val decodedAnomalies = original.asInstanceOf[Anomalies]
 
-      assert(originalAnomalies.id === decodedAnomalies.id,                 "... id")
-      assert(originalAnomalies.message === decodedAnomalies.message,       "... message")
+      assert(originalAnomalies.id === decodedAnomalies.id, "... id")
+      assert(originalAnomalies.message === decodedAnomalies.message, "... message")
       assert(originalAnomalies.parameters === decodedAnomalies.parameters, "... parameters")
 
       assert(originalAnomalies.messages.length === decodedAnomalies.messages.length, "... same amount of anomalies")

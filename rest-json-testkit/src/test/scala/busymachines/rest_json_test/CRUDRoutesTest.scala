@@ -49,13 +49,13 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
           SomeTestDTOGet(
             int    = 1,
             string = "one",
-            option = None
+            option = None,
           ),
           SomeTestDTOGet(
             int    = 2,
             string = "two",
-            option = None
-          )
+            option = None,
+          ),
         )
       }
     }
@@ -79,7 +79,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
   it should "return 201 Created on POST" in {
     val p = SomeTestDTOPost(
       "lalala",
-      None
+      None,
     )
 
     withClue("... typed post") {
@@ -89,7 +89,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
             SomeTestDTOGet(
               42,
               "lalala",
-              None
+              None,
             )
         }
       }
@@ -101,14 +101,14 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
           |{
           |  "string" : "lalala"
           |}
-        """.stripMargin
+        """.stripMargin,
       ) {
         assert {
           responseAs[SomeTestDTOGet] ==
             SomeTestDTOGet(
               42,
               "lalala",
-              None
+              None,
             )
         }
       }
@@ -121,7 +121,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
   it should "return 200 OK on PUT" in {
     val p = SomeTestDTOPut(
       string = "lalala",
-      option = Option(42)
+      option = Option(42),
     )
 
     withClue("... typed PUT") {
@@ -133,7 +133,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
             SomeTestDTOGet(
               77,
               "lalala",
-              Option(42)
+              Option(42),
             )
         }
       }
@@ -146,7 +146,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
           |  "string" : "lalala",
           |  "option" : "42"
           |}
-        """.stripMargin
+        """.stripMargin,
       ) {
         expectStatus(StatusCodes.OK)
 
@@ -155,7 +155,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
             SomeTestDTOGet(
               77,
               "lalala",
-              Option(42)
+              Option(42),
             )
         }
       }
@@ -166,7 +166,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
 
   it should "return 200 OK on PATCH" in {
     val p = SomeTestDTOPatch(
-      "lalala"
+      "lalala",
     )
 
     withClue("... typed PATCH") {
@@ -178,7 +178,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
             SomeTestDTOGet(
               77,
               "lalala",
-              None
+              None,
             )
         }
       }
@@ -190,7 +190,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
           |{
           |  "string" : "lalala"
           |}
-        """.stripMargin
+        """.stripMargin,
       ) {
         expectStatus(StatusCodes.OK)
 
@@ -199,7 +199,7 @@ class CRUDRoutesTest extends FlatSpec with JsonRestAPITest {
             SomeTestDTOGet(
               77,
               "lalala",
-              None
+              None,
             )
         }
       }

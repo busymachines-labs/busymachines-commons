@@ -258,7 +258,7 @@ object OptionSyntax {
       */
     @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]]
+      cbf: CanBuildFrom[C[A], B, C[B]],
     ): Option[C[B]] = OptionOps.traverse(col)(fn)
 
     /**
@@ -279,7 +279,7 @@ object OptionSyntax {
       */
     @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]]
+      cbf: CanBuildFrom[C[A], B, C[B]],
     ): Option[Unit] = OptionOps.traverse_(col)(fn)
 
     /**
@@ -297,7 +297,7 @@ object OptionSyntax {
       */
     @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
       implicit
-      cbf: CanBuildFrom[M[Option[A]], A, M[A]]
+      cbf: CanBuildFrom[M[Option[A]], A, M[A]],
     ): Option[M[A]] = OptionOps.sequence(in)
 
     /**
@@ -317,7 +317,7 @@ object OptionSyntax {
       */
     @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
       implicit
-      cbf: CanBuildFrom[M[Option[A]], A, M[A]]
+      cbf: CanBuildFrom[M[Option[A]], A, M[A]],
     ): Option[Unit] = OptionOps.sequence_(in)
 
   }
@@ -644,7 +644,7 @@ object OptionOps {
     */
   @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
+    cbf: CanBuildFrom[C[A], B, C[B]],
   ): Option[C[B]] = {
     import scala.collection.mutable
     if (col.isEmpty) {
@@ -691,7 +691,7 @@ object OptionOps {
     */
   @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]]
+    cbf: CanBuildFrom[C[A], B, C[B]],
   ): Option[Unit] = OptionOps.discardContent(OptionOps.traverse(col)(fn))
 
   /**
@@ -709,7 +709,7 @@ object OptionOps {
     */
   @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
     implicit
-    cbf: CanBuildFrom[M[Option[A]], A, M[A]]
+    cbf: CanBuildFrom[M[Option[A]], A, M[A]],
   ): Option[M[A]] = OptionOps.traverse(in)(identity)
 
   /**
@@ -730,7 +730,7 @@ object OptionOps {
     */
   @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
     implicit
-    cbf: CanBuildFrom[M[Option[A]], A, M[A]]
+    cbf: CanBuildFrom[M[Option[A]], A, M[A]],
   ): Option[Unit] = OptionOps.discardContent(OptionOps.sequence(in))
 
 }

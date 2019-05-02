@@ -50,17 +50,17 @@ object RestAPIAuthentications {
 
   private val MissingBasicCredentials = AuthenticationFailedRejection(
     cause     = AuthenticationFailedRejection.CredentialsMissing,
-    challenge = HttpChallenges.basic(BasicS)
+    challenge = HttpChallenges.basic(BasicS),
   )
 
   private val InvalidBasicCredentials = AuthenticationFailedRejection(
     cause     = AuthenticationFailedRejection.CredentialsRejected,
-    challenge = HttpChallenges.basic(BasicS)
+    challenge = HttpChallenges.basic(BasicS),
   )
 
   private val InvalidBearerCredentials = AuthenticationFailedRejection(
     cause     = AuthenticationFailedRejection.CredentialsRejected,
-    challenge = HttpChallenges.oAuth2(BasicS)
+    challenge = HttpChallenges.oAuth2(BasicS),
   )
 
   /**

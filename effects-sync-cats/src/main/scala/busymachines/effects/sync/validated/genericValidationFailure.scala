@@ -10,12 +10,12 @@ import busymachines.core._
   */
 final case class GenericValidationFailures(
   bad:  Anomaly,
-  bads: List[Anomaly] = Nil
+  bads: List[Anomaly] = Nil,
 ) extends AnomalousFailures(
       GenericValidationFailuresID,
       s"Validation failed with ${bads.length + 1} anomalies",
       bad,
-      bads
+      bads,
     )
 
 case object GenericValidationFailuresID extends AnomalyID {

@@ -155,7 +155,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
           val value: Validated[Int] = Validated.condAno(
             false,
             42,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
@@ -164,7 +164,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
           val value: Validated[Int] = Validated.condAno(
             true,
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -175,7 +175,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
           val value = Validated.condWith(
             false,
             pureV,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
@@ -184,7 +184,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
           val value = Validated.condWith(
             true,
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -193,7 +193,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
           val value = Validated.condWith(
             false,
             failV,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
@@ -202,7 +202,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
           val value = Validated.condWith(
             true,
             failV,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
@@ -212,7 +212,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("false") {
           val value = Validated.invalidOnTrue(
             false,
-            ano
+            ano,
           )
           value.r
         }
@@ -220,7 +220,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("true") {
           val value = Validated.invalidOnTrue(
             true,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
@@ -230,7 +230,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("false") {
           val value = Validated.invalidOnFalse(
             false,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
@@ -238,7 +238,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("true") {
           val value = Validated.invalidOnFalse(
             true,
-            ano
+            ano,
           )
           value.r
         }
@@ -252,13 +252,13 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
 
         test("fail") {
           assertThrows[GenericValidationFailures](
-            Validated.asOptionUnsafe(failV)
+            Validated.asOptionUnsafe(failV),
           )
         }
 
         test("fail — ano") {
           assertThrows[TestValidationFailures](
-            Validated.asOptionUnsafe(failV, TestValidationFailures)
+            Validated.asOptionUnsafe(failV, TestValidationFailures),
           )
         }
 
@@ -276,13 +276,13 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
 
         test("fail") {
           assertThrows[GenericValidationFailures](
-            Validated.asListUnsafe(failV)
+            Validated.asListUnsafe(failV),
           )
         }
 
         test("fail — ano") {
           assertThrows[TestValidationFailures](
-            Validated.asListUnsafe(failV, TestValidationFailures)
+            Validated.asListUnsafe(failV, TestValidationFailures),
           )
         }
 
@@ -541,13 +541,13 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
 
         test("fail") {
           assertThrows[GenericValidationFailures](
-            failV.asOptionUnsafe()
+            failV.asOptionUnsafe(),
           )
         }
 
         test("fail — ano") {
           assertThrows[TestValidationFailures](
-            failV.asOptionUnsafe(TestValidationFailures)
+            failV.asOptionUnsafe(TestValidationFailures),
           )
         }
 
@@ -565,13 +565,13 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
 
         test("fail") {
           assertThrows[GenericValidationFailures](
-            failV.asListUnsafe()
+            failV.asListUnsafe(),
           )
         }
 
         test("fail — ano") {
           assertThrows[TestValidationFailures](
-            failV.asListUnsafe(TestValidationFailures)
+            failV.asListUnsafe(TestValidationFailures),
           )
         }
 
@@ -652,7 +652,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("false") {
           val value: Validated[Int] = false.cond(
             42,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
@@ -660,7 +660,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("true") {
           val value = true.cond(
             42,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -670,7 +670,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("false — pure") {
           val value = false.condWith(
             pureV,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
@@ -678,7 +678,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("true — pure") {
           val value = true.condWith(
             pureV,
-            ano
+            ano,
           )
           assert(value.r == 42)
         }
@@ -686,7 +686,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("false — fail") {
           val value = false.condWith(
             failV,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
@@ -694,7 +694,7 @@ final class ValidatedEffectsSyntaxTest extends FunSpec {
         test("true — fail") {
           val value = true.condWith(
             failV,
-            ano
+            ano,
           )
           assertThrows[GenericValidationFailures](value.r)
         }
