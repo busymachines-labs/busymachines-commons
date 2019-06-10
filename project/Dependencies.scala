@@ -20,9 +20,9 @@ import sbt._
 object Dependencies {
 
   lazy val `scala_2.12`:            String      = "2.12.8"
-  lazy val `scala_2.13`:            String      = "2.13.0-M3"
+  lazy val `scala_2.13`:            String      = "2.13.0-RC2"
   lazy val mainScalaVersion:        String      = `scala_2.12`
-  lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`)
+  lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`, `scala_2.13`)
 
   //============================================================================================
   //====================================== Scala things ========================================
