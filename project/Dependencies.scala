@@ -58,7 +58,7 @@ object Dependencies {
     circeCore,
     circeGeneric,
     circeGenericExtras,
-    circeParser
+    circeParser,
   )
 
   lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.5"
@@ -81,7 +81,7 @@ object Dependencies {
   /**
     * https://github.com/hseeberger/akka-http-json
     */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.23.0"
+  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.26.0"
 
   //============================================================================================
   //=========================================  testing =========================================
