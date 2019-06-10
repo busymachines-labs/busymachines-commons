@@ -47,6 +47,10 @@ object TrySyntaxAsync {
       * [[scala.util.Failure]] is sequenced into this effect
       * [[scala.util.Success]] is the pure value of this effect
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask[T](value: Try[T]): Task[T] =
       Task.fromTry(value)
 
@@ -87,6 +91,10 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask[T](value: => Try[T]): Task[T] =
       TaskOps.suspendTry(value)
   }
@@ -114,6 +122,10 @@ object TrySyntaxAsync {
       * [[scala.util.Failure]] is sequenced into this effect
       * [[scala.util.Success]] is the pure value of this effect
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask: Task[T] =
       Task.fromTry(value)
   }
@@ -160,6 +172,10 @@ object TrySyntaxAsync {
       * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
       * You might as well use [[Task.fromTry]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask: Task[T] =
       TaskOps.suspendTry(value)
   }

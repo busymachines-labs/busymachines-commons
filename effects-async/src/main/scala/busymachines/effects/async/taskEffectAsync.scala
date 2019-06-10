@@ -22,6 +22,10 @@ import scala.util.control.NonFatal
   */
 trait TaskTypeDefinitions {
 
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   final type CancellableFuture[T] = mex.CancelableFuture[T]
 
   /**
@@ -30,11 +34,29 @@ trait TaskTypeDefinitions {
     * which makes this type the only implicit in context necessary to do
     * interop between [[Task]] and [[scala.concurrent.Future]]
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   final type Scheduler = mex.Scheduler
-  final type Task[T]   = mev.Task[T]
 
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
+  final type Task[T] = mev.Task[T]
+
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline final def Scheduler: mex.Scheduler.type = mex.Scheduler
-  @inline final def Task:      mev.Task.type      = mev.Task
+
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
+  @inline final def Task: mev.Task.type = mev.Task
 
 }
 
@@ -44,21 +66,46 @@ object TaskSyntax {
     *
     */
   trait Implicits {
+
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     implicit final def bmcTaskCompanionObjectOps(obj: mev.Task.type): CompanionObjectOps =
       new CompanionObjectOps(obj)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     implicit final def bmcTaskReferenceOps[T](value: Task[T]): ReferenceOps[T] =
       new ReferenceOps(value)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     implicit final def bmcTaskNestedOptionOps[T](nopt: Task[Option[T]]): NestedOptionOps[T] =
       new NestedOptionOps(nopt)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     implicit final def bmcTaskNestedResultOps[T](result: Task[Result[T]]): NestedResultOps[T] =
       new NestedResultOps(result)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     implicit final def bmcTaskBooleanOps(test: Boolean): BooleanOps =
       new BooleanOps(test)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     implicit final def bmcTaskNestedBooleanOps(test: Task[Boolean]): NestedBooleanOps =
       new NestedBooleanOps(test)
   }
@@ -1311,6 +1358,10 @@ object TaskOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromEither]]
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def suspendEither[L, R](either: => Either[L, R], transformLeft: L => Anomaly): Task[R] =
     Task.suspend(TaskOps.fromEither(either, transformLeft))
 
@@ -1318,6 +1369,10 @@ object TaskOps {
     * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
     * if it is a [[java.lang.Throwable]].
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): Task[R] = either match {
     case Left(value)  => TaskOps.failThr(ev(value))
     case Right(value) => TaskOps.pure(value)
@@ -1331,6 +1386,10 @@ object TaskOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromEither]]
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def suspendEitherThr[L, R](either: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
     Task.suspend(TaskOps.fromEitherThr(either)(ev))
 
@@ -1338,6 +1397,10 @@ object TaskOps {
     * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
     * this effect, yielding a failed effect.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): Task[R] = either match {
     case Left(value)  => TaskOps.failThr(transformLeft(value))
     case Right(value) => TaskOps.pure(value)
@@ -1351,6 +1414,10 @@ object TaskOps {
     * N.B. this is useless if the [[Either]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromEither]]
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def suspendEitherThr[L, R](either: => Either[L, R], transformLeft: L => Throwable): Task[R] =
     Task.suspend(TaskOps.fromEitherThr(either, transformLeft))
 
@@ -1361,6 +1428,10 @@ object TaskOps {
     * [[busymachines.effects.sync.Correct]] becomes a pure effect
     *
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def fromResult[T](result: Result[T]): Task[T] = result match {
     case Left(value)  => TaskOps.fail(value)
     case Right(value) => TaskOps.pure(value)
@@ -1373,6 +1444,10 @@ object TaskOps {
     * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromResult]]
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def suspendResult[T](result: => Result[T]): Task[T] =
     Task.suspend(TaskOps.fromResult(result))
 
@@ -1387,7 +1462,10 @@ object TaskOps {
     * all failed cases will be wrapped in a:
     * [[busymachines.effects.sync.validated.GenericValidationFailures]]
     */
-
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def fromValidated[T](value: Validated[T]): Task[T] = value match {
     case cd.Validated.Valid(e)   => TaskOps.pure(e)
     case cd.Validated.Invalid(e) => TaskOps.fail(GenericValidationFailures(e.head, e.tail))
@@ -1430,7 +1508,10 @@ object TaskOps {
     * }}}
     *
     */
-
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
     value match {
       case cd.Validated.Valid(e)   => TaskOps.pure(e)
@@ -1444,6 +1525,10 @@ object TaskOps {
     * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
     * You might as well use [[TaskOps.fromValidated]]
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def suspendValidated[T](value: => Validated[T]): Task[T] =
     Task.suspend(TaskOps.fromValidated(value))
 
@@ -1453,6 +1538,10 @@ object TaskOps {
     * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
     * You might as well use [[FutureOps.fromValidated]]
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def suspendValidated[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
     Task.suspend(TaskOps.fromValidated(value, ctor))
 
@@ -1464,6 +1553,10 @@ object TaskOps {
     * If you are certain that this [[Future]] is pure, then you can use
     * this method to lift it into [[Task]].
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def fromFuturePure[T](value: Future[T]): Task[T] =
     Task.fromFuture(value)
 
@@ -1493,6 +1586,10 @@ object TaskOps {
     * }}}
     *
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def suspendFuture[T](value: => Future[T]): Task[T] =
     Task.deferFuture(value)
 
@@ -1501,6 +1598,10 @@ object TaskOps {
     * Transform an [[IO]] into a [[Task]]. No gotchas because pure
     * functional programming is awesome.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def fromIO[T](value: IO[T]): Task[T] =
     Task.fromIO(value)
 
@@ -1509,6 +1610,10 @@ object TaskOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): Task[T] =
     if (test) TaskOps.pure(good) else TaskOps.fail(bad)
 
@@ -1517,6 +1622,10 @@ object TaskOps {
     *   pure effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): Task[T] =
     if (test) TaskOps.pure(good) else TaskOps.failThr(bad)
 
@@ -1525,6 +1634,10 @@ object TaskOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def condWith[T](test: Boolean, good: => Task[T], bad: => Anomaly): Task[T] =
     if (test) good else TaskOps.fail(bad)
 
@@ -1533,6 +1646,10 @@ object TaskOps {
     *   effect from ``good`` if the boolean is true
     *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def condWithThr[T](test: Boolean, good: => Task[T], bad: => Throwable): Task[T] =
     if (test) good else TaskOps.failThr(bad)
 
@@ -1542,6 +1659,10 @@ object TaskOps {
     *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatCond[T](test: Task[Boolean], good: => T, bad: => Anomaly): Task[T] =
     test.flatMap(t => TaskOps.cond(t, good, bad))
 
@@ -1551,6 +1672,10 @@ object TaskOps {
     *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatCondThr[T](test: Task[Boolean], good: => T, bad: => Throwable): Task[T] =
     test.flatMap(t => TaskOps.condThr(t, good, bad))
 
@@ -1560,6 +1685,10 @@ object TaskOps {
     *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatCondWith[T](test: Task[Boolean], good: => Task[T], bad: => Anomaly): Task[T] =
     test.flatMap(t => TaskOps.condWith(t, good, bad))
 
@@ -1569,6 +1698,10 @@ object TaskOps {
     *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     *   failed effect if the effect wrapping the boolean is already failed
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatCondWithThr[T](test: Task[Boolean], good: => Task[T], bad: => Throwable): Task[T] =
     test.flatMap(t => TaskOps.condWithThr(t, good, bad))
 
@@ -1576,6 +1709,10 @@ object TaskOps {
     * @return
     *   Failed effect, if the boolean is true
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def failOnTrue(test: Boolean, bad: => Anomaly): Task[Unit] =
     if (test) TaskOps.fail(bad) else Task.unit
 
@@ -1583,6 +1720,10 @@ object TaskOps {
     * @return
     *   Failed effect, if the boolean is true
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def failOnTrueThr(test: Boolean, bad: => Throwable): Task[Unit] =
     if (test) TaskOps.failThr(bad) else Task.unit
 
@@ -1590,6 +1731,10 @@ object TaskOps {
     * @return
     *   Failed effect, if the boolean is false
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def failOnFalse(test: Boolean, bad: => Anomaly): Task[Unit] =
     if (!test) TaskOps.fail(bad) else Task.unit
 
@@ -1597,6 +1742,10 @@ object TaskOps {
     * @return
     *   Failed effect, if the boolean is false
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def failOnFalseThr(test: Boolean, bad: => Throwable): Task[Unit] =
     if (!test) TaskOps.failThr(bad) else Task.unit
 
@@ -1604,6 +1753,10 @@ object TaskOps {
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatFailOnTrue(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
     test.flatMap(t => TaskOps.failOnTrue(t, bad))
 
@@ -1611,6 +1764,10 @@ object TaskOps {
     * @return
     *   Failed effect, if the boxed boolean is true, or if the original effect is failed
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatFailOnTrueThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
     test.flatMap(t => TaskOps.failOnTrueThr(t, bad))
 
@@ -1618,6 +1775,10 @@ object TaskOps {
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatFailOnFalse(test: Task[Boolean], bad: => Anomaly): Task[Unit] =
     test.flatMap(t => TaskOps.failOnFalse(t, bad))
 
@@ -1625,6 +1786,10 @@ object TaskOps {
     * @return
     *   Failed effect, if the boxed boolean is false, or if the original effect is failed
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatFailOnFalseThr(test: Task[Boolean], bad: => Throwable): Task[Unit] =
     test.flatMap(t => TaskOps.failOnFalseThr(t, bad))
 
@@ -1633,6 +1798,10 @@ object TaskOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def unpackOption[T](nopt: Task[Option[T]], ifNone: => Anomaly): Task[T] =
     nopt.flatMap {
       case None    => TaskOps.fail(ifNone)
@@ -1644,6 +1813,10 @@ object TaskOps {
     *
     * The failure of this effect takes precedence over the given failure
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def unpackOptionThr[T](nopt: Task[Option[T]], ifNone: => Throwable): Task[T] =
     nopt.flatMap {
       case None    => TaskOps.failThr(ifNone)
@@ -1655,6 +1828,10 @@ object TaskOps {
     *
     * The failure of this effect takes precedence over the failure of the [[busymachines.effects.sync.Incorrect]] value.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def unpackResult[T](value: Task[Result[T]]): Task[T] = value.flatMap {
     case Left(a)  => TaskOps.fail(a)
     case Right(a) => TaskOps.pure(a)
@@ -1665,6 +1842,10 @@ object TaskOps {
     *
     * This transforms any failed effect, into a pure one with and [[busymachines.effects.sync.Incorrect]] value.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def attemptResult[T](value: Task[T]): Task[Result[T]] =
     value.attempt.map((e: Either[Throwable, T]) => Result.fromEitherThr(e))
 
@@ -1674,12 +1855,20 @@ object TaskOps {
     * The moment you call this, the side-effects suspended in this [[IO]] start being
     * executed.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def asFutureUnsafe[T](value: Task[T])(implicit sc: Scheduler): CancellableFuture[T] =
     value.runToFuture
 
   /**
     * No gotchas. Pure functional programming = <3
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def asIO[T](value: Task[T])(implicit sc: Scheduler): IO[T] =
     value.toIO
 
@@ -1690,6 +1879,10 @@ object TaskOps {
     * call this in your code. You have libraries that do this for you "at the end of the world"
     * parts of your program: e.g. akka-http when waiting for the response value to a request.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def unsafeSyncGet[T](
     value:  Task[T],
     atMost: FiniteDuration = ConstantsAsyncEffects.defaultDuration,
@@ -1712,6 +1905,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def effectOnTrue(test: Boolean, effect: => Task[_]): Task[Unit] =
     if (test) TaskOps.discardContent(effect) else Task.unit
 
@@ -1726,6 +1923,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatEffectOnTrue(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
     test.flatMap(t => TaskOps.effectOnTrue(t, effect))
 
@@ -1739,6 +1940,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def effectOnFalse(test: Boolean, effect: => Task[_]): Task[Unit] =
     if (!test) TaskOps.discardContent(effect) else Task.unit
 
@@ -1753,6 +1958,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatEffectOnFalse(test: Task[Boolean], effect: => Task[_]): Task[Unit] =
     test.flatMap(t => TaskOps.effectOnFalse(t, effect))
 
@@ -1766,6 +1975,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def effectOnFail[T](value: Option[T], effect: => Task[_]): Task[Unit] =
     if (value.isEmpty) TaskOps.discardContent(effect) else Task.unit
 
@@ -1780,6 +1993,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatEffectOnNone[T](value: Task[Option[T]], effect: => Task[_]): Task[Unit] =
     value.flatMap(opt => TaskOps.effectOnFail(opt, effect))
 
@@ -1793,6 +2010,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def effectOnPure[T](value: Option[T], effect: T => Task[_]): Task[Unit] =
     value match {
       case None    => Task.unit
@@ -1811,6 +2032,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatEffectOnSome[T](value: Task[Option[T]], effect: T => Task[_]): Task[Unit] =
     value.flatMap(opt => TaskOps.effectOnPure(opt, effect))
 
@@ -1824,6 +2049,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def effectOnFail[T](value: Result[T], effect: Anomaly => Task[_]): Task[Unit] = value match {
     case Correct(_)         => Task.unit
     case Incorrect(anomaly) => TaskOps.discardContent(effect(anomaly))
@@ -1840,6 +2069,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatEffectOnIncorrect[T](value: Task[Result[T]], effect: Anomaly => Task[_]): Task[Unit] =
     value.flatMap(result => TaskOps.effectOnFail(result, effect))
 
@@ -1853,6 +2086,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def effectOnPure[T](value: Result[T], effect: T => Task[_]): Task[Unit] =
     value match {
       case Incorrect(_) => Task.unit
@@ -1870,6 +2107,10 @@ object TaskOps {
     *   Does not return anything, this method is inherently imperative, and relies on
     *   side-effects to achieve something.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def flatEffectOnCorrect[T](value: Task[Result[T]], effect: T => Task[_]): Task[Unit] =
     value.flatMap(result => TaskOps.effectOnPure(result, effect))
 
@@ -1882,6 +2123,10 @@ object TaskOps {
     * "bi" map, because it also allows you to change both branches of the effect, not just the
     * happy path.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def bimap[T, R](value: Task[T], good: T => R, bad: Throwable => Anomaly): Task[R] =
     value.map(good).adaptError {
       case NonFatal(t) => bad(t).asThrowable
@@ -1891,6 +2136,10 @@ object TaskOps {
     * Similar to the overload, but the [[busymachines.effects.sync.Correct]] branch of the result is used to change the "pure" branch of this
     * effect, and [[busymachines.effects.sync.Incorrect]] branch is used to change the "fail" branch of the effect.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def bimap[T, R](value: Task[T], result: Result[T] => Result[R]): Task[R] =
     TaskOps.attemptResult(value).map(result).flatMap {
       case Correct(v)   => TaskOps.pure(v)
@@ -1903,6 +2152,10 @@ object TaskOps {
     *
     * The overload that uses [[java.lang.Throwable]] instead of [[busymachines.core.Anomaly]]
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def bimapThr[T, R](value: Task[T], good: T => R, bad: Throwable => Throwable): Task[R] =
     value.map(good).adaptError {
       case NonFatal(t) => bad(t)
@@ -1925,6 +2178,10 @@ object TaskOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def morph[T, R](value: Task[T], good: T => R, bad: Throwable => R): Task[R] =
     value.map(good).recover {
       case NonFatal(t) => bad(t)
@@ -1936,6 +2193,10 @@ object TaskOps {
     *
     * Undefined behavior if you throw exceptions in the method. DO NOT do that!
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def morph[T, R](value: Task[T], result: Result[T] => R): Task[R] =
     TaskOps.attemptResult(value).map(result)
 
@@ -1947,6 +2208,10 @@ object TaskOps {
     * it's just the final value that is discarded
     *
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def discardContent(value: Task[_]): Task[Unit] =
     value.map(ConstantsAsyncEffects.UnitFunction1)
 
@@ -1961,6 +2226,10 @@ object TaskOps {
     * @see [[monix.eval.Task.traverse]]
     *
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   def traverse_[A, B, M[X] <: TraversableOnce[X]](col: M[A])(fn: A => Task[B])(
     implicit
     cbf: CanBuildFrom[M[A], B, M[B]],
@@ -1973,6 +2242,10 @@ object TaskOps {
     * @see [[monix.eval.Task.sequence]]
     *
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Task[A]])(
     implicit
     cbf: CanBuildFrom[M[Task[A]], A, M[A]],
@@ -2000,6 +2273,10 @@ object TaskOps {
     *
     *
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]],
@@ -2012,6 +2289,10 @@ object TaskOps {
     * @see [[serialize]]
     *
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Task[B])(
     implicit
     cbf: CanBuildFrom[C[A], B, C[B]],

@@ -25,6 +25,10 @@ package object async
 
   object future extends FutureTypeDefinitions with FutureSyntax.Implicits
 
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   object task extends TaskTypeDefinitions with TaskSyntax.Implicits
 
 }

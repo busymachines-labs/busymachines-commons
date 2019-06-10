@@ -16,7 +16,7 @@ import org.scalatest._
   *
   */
 final class IOEffectsAsyncTest extends FunSpec {
-  implicit val ec: Scheduler = Scheduler.global
+  implicit val ec: ExecutionContext = ExecutionContext.global
   //prevents atrocious English
   private def test: ItWord = it
 
@@ -190,16 +190,6 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("fromTask") {
-          test("fail") {
-            assertThrows[InvalidInputFailure](IO.fromTask(Task.fail(ano)).r)
-          }
-
-          test("pure") {
-            assert(IO.fromTask(Task.pure(42)).r == 42)
-          }
-        }
-
       } //end constructors
 
       describe("boolean") {
@@ -207,7 +197,7 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("cond") {
           test("false") {
             val value = IO.cond(
-              false,
+              test = false,
               42,
               ano,
             )
@@ -216,7 +206,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true") {
             val value = IO.cond(
-              true,
+              test = true,
               42,
               ano,
             )
@@ -227,7 +217,7 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("condThr") {
           test("false") {
             val value = IO.condThr(
-              false,
+              test = false,
               42,
               thr,
             )
@@ -236,7 +226,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true") {
             val value = IO.condThr(
-              true,
+              test = true,
               42,
               thr,
             )
@@ -247,7 +237,7 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("condWith") {
           test("false — pure") {
             val value = IO.condWith(
-              false,
+              test = false,
               pureV,
               ano,
             )
@@ -256,7 +246,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true — pure") {
             val value = IO.condWith(
-              true,
+              test = true,
               pureV,
               ano,
             )
@@ -265,7 +255,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("false — fail") {
             val value = IO.condWith(
-              false,
+              test = false,
               failV,
               ano,
             )
@@ -274,7 +264,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true — fail") {
             val value = IO.condWith(
-              true,
+              test = true,
               failV,
               ano,
             )
@@ -285,7 +275,7 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("condWithThr") {
           test("false — pure") {
             val value = IO.condWithThr(
-              false,
+              test = false,
               pureV,
               thr,
             )
@@ -294,7 +284,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true — pure") {
             val value = IO.condWithThr(
-              true,
+              test = true,
               pureV,
               thr,
             )
@@ -303,7 +293,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("false — fail") {
             val value = IO.condWithThr(
-              false,
+              test = false,
               failV,
               thr,
             )
@@ -312,7 +302,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true — fail") {
             val value = IO.condWithThr(
-              true,
+              test = true,
               failV,
               thr,
             )
@@ -493,7 +483,7 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("failOnTrue") {
           test("false") {
             val value = IO.failOnTrue(
-              false,
+              test = false,
               ano,
             )
             value.r
@@ -501,7 +491,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true") {
             val value = IO.failOnTrue(
-              true,
+              test = true,
               ano,
             )
             assertThrows[InvalidInputFailure](value.r)
@@ -511,7 +501,7 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("failOnTrueThr") {
           test("false") {
             val value = IO.failOnTrueThr(
-              false,
+              test = false,
               thr,
             )
             value.r
@@ -519,7 +509,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true") {
             val value = IO.failOnTrueThr(
-              true,
+              test = true,
               thr,
             )
             assertThrows[RuntimeException](value.r)
@@ -529,7 +519,7 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("failOnFalse") {
           test("false") {
             val value = IO.failOnFalse(
-              false,
+              test = false,
               ano,
             )
             assertThrows[InvalidInputFailure](value.r)
@@ -537,7 +527,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true") {
             val value = IO.failOnFalse(
-              true,
+              test = true,
               ano,
             )
             value.r
@@ -547,7 +537,7 @@ final class IOEffectsAsyncTest extends FunSpec {
         describe("failOnFalseThr") {
           test("false") {
             val value = IO.failOnFalseThr(
-              false,
+              test = false,
               thr,
             )
             assertThrows[RuntimeException](value.r)
@@ -555,7 +545,7 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("true") {
             val value = IO.failOnFalseThr(
-              true,
+              test = true,
               thr,
             )
             value.r
@@ -850,17 +840,6 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("pure") {
             assert(Future.asIO(successF).r == 42)
           }
-        }
-
-        describe("task asIO") {
-          test("fail") {
-            assertThrows[InvalidInputFailure](Task.asIO(Task.fail(ano)).r)
-          }
-
-          test("pure") {
-            assert(Task.asIO(Task.pure(42)).r == 42)
-          }
-
         }
 
       } //end as{Effect} — reverse
@@ -1561,17 +1540,6 @@ final class IOEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("task asIO") {
-          test("fail") {
-            assertThrows[InvalidInputFailure](Task.fail(ano).asIO.r)
-          }
-
-          test("pure") {
-            assert(Task.pure(42).asIO.r == 42)
-          }
-
-        }
-
       } //end as{Effect} — reverse
 
       describe("transformers") {
@@ -1796,7 +1764,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("false") {
             var sideEffect: Int = 0
             val f = IO.effectOnFalse(
-              false,
+              test = false,
               IO {
                 sideEffect = 42
                 sideEffect
@@ -1811,7 +1779,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("true") {
             var sideEffect: Int = 0
             val f = IO.effectOnFalse(
-              true,
+              test = true,
               IO {
                 sideEffect = 42
                 sideEffect
@@ -1829,7 +1797,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("false") {
             var sideEffect: Int = 0
             val f = IO.effectOnTrue(
-              false,
+              test = false,
               IO {
                 sideEffect = 42
                 sideEffect
@@ -1844,7 +1812,7 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("true") {
             var sideEffect: Int = 0
             val f = IO.effectOnTrue(
-              true,
+              test = true,
               IO {
                 sideEffect = 42
                 sideEffect
@@ -2916,18 +2884,17 @@ final class IOEffectsAsyncTest extends FunSpec {
       describe("IO.traverse") {
 
         test("empty list") {
-          val input:    Seq[Int] = List()
-          val expected: Seq[Int] = List()
+          val input: Seq[Int] = List()
 
           var sideEffect: Int = 0
 
-          val eventualResult = IO.traverse(input) { _ =>
+          val eventualResult: IO[Seq[Unit]] = IO.traverse(input) { _ =>
             IO {
               sideEffect = 42
             }
           }
 
-          assert(eventualResult.r == expected)
+          assert(eventualResult.r.isEmpty)
           assert(sideEffect == 0, "nothing should have happened")
         }
 
@@ -3032,8 +2999,7 @@ final class IOEffectsAsyncTest extends FunSpec {
       describe("IO.serialize") {
 
         test("empty list") {
-          val input:    Seq[Int] = List()
-          val expected: Seq[Int] = List()
+          val input: Seq[Int] = List()
 
           var sideEffect: Int = 0
 
@@ -3043,7 +3009,7 @@ final class IOEffectsAsyncTest extends FunSpec {
             }
           }
 
-          assert(eventualResult.r == expected)
+          assert(eventualResult.r.isEmpty)
           assert(sideEffect == 0, "nothing should have happened")
         }
 

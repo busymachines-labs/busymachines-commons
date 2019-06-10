@@ -36,6 +36,10 @@ object ResultSyntaxAsync {
     @inline def asIO[T](value: Result[T]): IO[T] =
       IOOps.fromResult(value)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask[T](value: Result[T]): Task[T] =
       TaskOps.fromResult(value)
 
@@ -45,6 +49,10 @@ object ResultSyntaxAsync {
     @inline def suspendInIO[T](value: => Result[T]): IO[T] =
       IOOps.suspendResult(value)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask[T](value: => Result[T]): Task[T] =
       TaskOps.suspendResult(value)
   }
@@ -81,6 +89,10 @@ object ResultSyntaxAsync {
       * [[busymachines.effects.sync.Correct]] becomes a pure effect
       *
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask: Task[T] =
       TaskOps.fromResult(value)
 
@@ -150,6 +162,10 @@ object ResultSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def effectOnFailTask(effect: Anomaly => Task[_]): Task[Unit] =
       TaskOps.effectOnFail(value, effect)
 
@@ -163,6 +179,10 @@ object ResultSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def effectOnPureTask(effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnPure(value, effect)
 
@@ -204,6 +224,10 @@ object ResultSyntaxAsync {
       * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromResult]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask: Task[T] =
       TaskOps.suspendResult(value)
   }

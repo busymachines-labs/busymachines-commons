@@ -30,8 +30,6 @@ import org.scalatest.FunSpec
 final class EffectsPackageTest extends FunSpec {
   private def test: ItWord = it
 
-  implicit private val sch: effects.Scheduler = effects.Scheduler.global
-
   describe("effects") {
 
     test("package") {
@@ -74,11 +72,6 @@ final class EffectsPackageTest extends FunSpec {
     test("io") {
       import effects.io._
       assert(IO.pure(1).unsafeSyncGet() == IO.pure(1).unsafeSyncGet())
-    }
-
-    test("task") {
-      import effects.task._
-      assert(Task.pure(1).unsafeSyncGet() == Task.pure(1).unsafeSyncGet())
     }
 
     test("future") {

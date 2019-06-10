@@ -56,12 +56,20 @@ object OptionSyntaxAsync {
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask[T](value: Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.fromOption(value, ifNone)
 
     /**
       * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTaskThr[T](value: Option[T], ifNone: => Throwable): Task[T] =
       TaskOps.fromOptionThr(value, ifNone)
 
@@ -128,6 +136,10 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask[T](value: => Option[T], ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(value, ifNone)
 
@@ -139,6 +151,10 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTaskThr[T](value: => Option[T], ifNone: => Throwable): Task[T] =
       TaskOps.suspendOptionThr(value, ifNone)
   }
@@ -180,6 +196,10 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask(ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(value, ifNone)
 
@@ -191,6 +211,10 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTaskThr(ifNone: => Throwable): Task[T] =
       TaskOps.suspendOptionThr(value, ifNone)
 
@@ -259,6 +283,10 @@ object OptionSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def effectOnFailTask(effect: => Task[_]): Task[Unit] =
       TaskOps.effectOnFail(value, effect)
 
@@ -272,6 +300,10 @@ object OptionSyntaxAsync {
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def effectOnPureTask(effect: T => Task[_]): Task[Unit] =
       TaskOps.effectOnPure(value, effect)
 
@@ -342,6 +374,10 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask(ifNone: => Anomaly): Task[T] =
       TaskOps.suspendOption(value, ifNone)
 
@@ -353,6 +389,10 @@ object OptionSyntaxAsync {
       * N.B. this is useless if the [[Option]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromOption]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTaskThr(ifNone: => Throwable): Task[T] =
       TaskOps.suspendOptionThr(value, ifNone)
   }

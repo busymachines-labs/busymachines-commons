@@ -827,17 +827,6 @@ final class FutureEffectsAsyncTest extends FunSpec {
           }
         }
 
-        describe("task asFutureUnsafe()") {
-          test("fail") {
-            assertThrows[InvalidInputFailure](Task.asFutureUnsafe(Task.fail(ano))(Scheduler.global).r)
-          }
-
-          test("pure") {
-            assert(Task.asFutureUnsafe(Task.pure(42))(Scheduler.global).r == 42)
-          }
-
-        }
-
       } //end as{Effect} — reverse
 
       describe("transformers") {
@@ -1534,17 +1523,6 @@ final class FutureEffectsAsyncTest extends FunSpec {
           test("pure") {
             assert(IO.pure(42).asFutureUnsafe().r == 42)
           }
-        }
-
-        describe("task asFutureUnsafe()") {
-          test("fail") {
-            assertThrows[InvalidInputFailure](Task.fail(ano).asFutureUnsafe()(Scheduler.global).r)
-          }
-
-          test("pure") {
-            assert(Task.pure(42).asFutureUnsafe()(Scheduler.global).r == 42)
-          }
-
         }
 
       } //end as{Effect} — reverse

@@ -45,9 +45,17 @@ object ValidatedSyntaxAsync {
     @inline def asIO[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.fromValidated(value, ctor)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask[T](value: Validated[T]): Task[T] =
       TaskOps.fromValidated(value)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.fromValidated(value, ctor)
 
@@ -66,9 +74,17 @@ object ValidatedSyntaxAsync {
     @inline def suspendInIO[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.suspendValidated(value, ctor)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask[T](value: => Validated[T]): Task[T] =
       TaskOps.suspendValidated(value)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.suspendValidated(value, ctor)
   }
@@ -125,6 +141,10 @@ object ValidatedSyntaxAsync {
       * [[Validated.Valid]] becomes a pure effect
       *
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask: Task[T] =
       TaskOps.fromValidated(value)
 
@@ -135,6 +155,10 @@ object ValidatedSyntaxAsync {
       * [[Validated.Valid]] becomes a pure effect
       *
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask(ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.fromValidated(value, ctor)
   }
@@ -199,6 +223,10 @@ object ValidatedSyntaxAsync {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromValidated]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask: Task[T] =
       TaskOps.suspendValidated(value)
 
@@ -209,6 +237,10 @@ object ValidatedSyntaxAsync {
       * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromValidated]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask(ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
       TaskOps.suspendValidated(value, ctor)
   }

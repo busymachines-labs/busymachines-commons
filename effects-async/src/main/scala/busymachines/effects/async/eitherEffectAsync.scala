@@ -80,6 +80,10 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask[L, R](value: Either[L, R], bad: L => Anomaly): Task[R] =
       TaskOps.suspendEither(value, bad)
 
@@ -91,6 +95,10 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTaskThr[L, R](value: Either[L, R], bad: L => Throwable): Task[R] =
       TaskOps.suspendEitherThr(value, bad)
 
@@ -102,6 +110,10 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTaskThr[L, R](value: Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.suspendEitherThr(value)(ev)
 
@@ -201,6 +213,10 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask[L, R](value: => Either[L, R], bad: L => Anomaly): Task[R] =
       TaskOps.suspendEither(value, bad)
 
@@ -212,6 +228,10 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTaskThr[L, R](value: => Either[L, R], bad: L => Throwable): Task[R] =
       TaskOps.suspendEitherThr(value, bad)
 
@@ -223,6 +243,10 @@ object EitherSyntaxAsync {
       * N.B. this is useless if the [[Either]] was previously assigned to a "val".
       * You might as well use [[TaskOps.fromEither]]
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTaskThr[L, R](value: => Either[L, R])(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.suspendEitherThr(value)(ev)
   }
@@ -270,6 +294,10 @@ object EitherSyntaxAsync {
       * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
       * if it is a [[java.lang.Throwable]].
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask(bad: L => Anomaly): Task[R] =
       TaskOps.fromEither(value, bad)
 
@@ -277,6 +305,10 @@ object EitherSyntaxAsync {
       * Lift this [[Either]] and transform its left-hand side into a [[java.lang.Throwable]] and sequence it within
       * this effect, yielding a failed effect.
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTaskThr(bad: L => Throwable): Task[R] =
       TaskOps.fromEitherThr(value, bad)
 
@@ -284,6 +316,10 @@ object EitherSyntaxAsync {
       * Lift this [[Either]] and  sequence its left-hand-side [[java.lang.Throwable]] within this effect
       * if it is a [[java.lang.Throwable]].
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTaskThr(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.fromEitherThr(value)(ev)
 
@@ -312,12 +348,24 @@ object EitherSyntaxAsync {
     @inline def suspendInIOThr(implicit ev: L <:< Throwable): IO[R] =
       IOOps.suspendEitherThr(value)(ev)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask(bad: L => Anomaly): Task[R] =
       TaskOps.suspendEither(value, bad)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTaskThr(bad: L => Throwable): Task[R] =
       TaskOps.suspendEitherThr(value, bad)
 
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTaskThr(implicit ev: L <:< Throwable): Task[R] =
       TaskOps.suspendEitherThr(value)(ev)
 

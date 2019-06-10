@@ -525,6 +525,10 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask[T](value: Future[T]): Task[T] =
       FutureOps.asTask(value)
 
@@ -583,6 +587,10 @@ object FutureSyntax {
       * }}}
       *
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask[T](value: => Future[T]): Task[T] =
       FutureOps.suspendInTask(value)
 
@@ -971,6 +979,10 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask: Task[T] =
       FutureOps.asTask(value)
 
@@ -1109,6 +1121,10 @@ object FutureSyntax {
       * }}}
       *
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def suspendInTask: Task[T] =
       FutureOps.suspendInTask(value)
 
@@ -1896,6 +1912,10 @@ object FutureOps {
     * Having to care about such val/def distinctions shows why Future is an
     * imperative programming mess.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def asTask[T](value: Future[T]): Task[T] =
     TaskOps.fromFuturePure(value)
 
@@ -1954,6 +1974,10 @@ object FutureOps {
     * }}}
     *
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def suspendInTask[T](value: => Future[T]): Task[T] =
     TaskOps.suspendFuture(value)
 

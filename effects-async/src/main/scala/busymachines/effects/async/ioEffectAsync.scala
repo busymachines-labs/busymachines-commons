@@ -19,6 +19,9 @@ trait IOTypeDefinitions {
 
   final type IO[T] = ce.IO[T]
   @inline final def IO: ce.IO.type = ce.IO
+
+  final type ContextShift[F[_]] = ce.ContextShift[F]
+  final val ContextShift: ce.ContextShift.type = ce.ContextShift
 }
 
 object IOSyntax {
@@ -313,6 +316,10 @@ object IOSyntax {
       * Transform a monix [[Task]] into an [[IO]]. No gotchas because pure
       * functional programming is awesome.
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
       IOOps.fromTask(task)
 
@@ -484,6 +491,10 @@ object IOSyntax {
     /**
       * No gotchas. Pure functional programming = <3
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask[T](value: IO[T]): Task[T] =
       IOOps.asTask(value)
 
@@ -533,7 +544,6 @@ object IOSyntax {
       *
       * @param value
       *   Runs the given effect when the value of this [[Boolean]] is ``false``
-      *
       * @param effect
       *   The effect to run
       * @return
@@ -863,6 +873,10 @@ object IOSyntax {
     /**
       * No gotchas. Pure functional programming = <3
       */
+    @scala.deprecated(
+      "0.3.0-RC11",
+      "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+    )
     @inline def asTask: Task[T] =
       IOOps.asTask(value)
 
@@ -1523,6 +1537,10 @@ object IOOps {
     * Transform a monix [[Task]] into an [[IO]]. No gotchas because pure
     * functional programming is awesome.
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
     TaskOps.asIO(task)
 
@@ -1702,6 +1720,10 @@ object IOOps {
   /**
     * No gotchas. Pure functional programming = <3
     */
+  @scala.deprecated(
+    "0.3.0-RC11",
+    "Monix support will be dropped in 0.4.x — replace w/ cats-effect, or roll your own monix syntax",
+  )
   @inline def asTask[T](value: IO[T]): Task[T] =
     TaskOps.fromIO(value)
 
@@ -1751,7 +1773,6 @@ object IOOps {
     *
     * @param value
     *   Runs the given effect when the value of this [[Boolean]] is ``false``
-    *
     * @param effect
     *   The effect to run
     * @return
