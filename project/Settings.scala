@@ -47,14 +47,12 @@ object Settings {
        * https://github.com/oleg-py/better-monadic-for
        */
       addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0"),
-      scalacOptions ++= customScalaCompileFlagList ++ betterForPluginCompilerFlags,
+      scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, 12)) => scala2_12Flags
+        case Some((2, 13)) => scala2_13Flags
+        case _             => Seq.empty
+      }) ++ betterForPluginCompilerFlags,
     )
-
-  def customScalaCompileFlagList: Seq[String] = CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, 12)) => scala2_12Flags
-    case Some((2, 13)) => scala2_13Flags
-    case _             => Seq.empty
-  }
 
   /**
     * tpolecat's glorious compile flag list:
