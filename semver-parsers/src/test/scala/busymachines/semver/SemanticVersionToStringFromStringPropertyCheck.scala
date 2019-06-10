@@ -18,7 +18,7 @@
 package busymachines.semver
 
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 /**
   *
@@ -27,7 +27,7 @@ import org.scalatest.prop.PropertyChecks
   *
   */
 class SemanticVersionToStringFromStringPropertyCheck
-    extends FunSpec with PropertyChecks with SemanticVersionGenerators {
+    extends FunSpec with ScalaCheckPropertyChecks with SemanticVersionGenerators {
 
   describe("Label parser") {
     it("should be able to parse all lowercase representations of Label") {

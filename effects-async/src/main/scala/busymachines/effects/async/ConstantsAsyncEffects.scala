@@ -10,7 +10,7 @@ import busymachines.effects.sync.ConstantsSyncEffects
   *
   */
 object ConstantsAsyncEffects {
-  val UnitFunction1 = ConstantsSyncEffects.UnitFunction1
+  val UnitFunction1: Any => Unit = ConstantsSyncEffects.UnitFunction1
 
   val defaultDuration: FiniteDuration = minutes(1)
 }

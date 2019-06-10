@@ -45,12 +45,6 @@ object ValidatedSyntaxAsync {
     @inline def asIO[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.fromValidated(value, ctor)
 
-    @inline def asTask[T](value: Validated[T]): Task[T] =
-      TaskOps.fromValidated(value)
-
-    @inline def asTask[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
-      TaskOps.fromValidated(value, ctor)
-
     @inline def suspendInFuture[T](value: => Validated[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendValidated(value)
 
@@ -65,12 +59,6 @@ object ValidatedSyntaxAsync {
 
     @inline def suspendInIO[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.suspendValidated(value, ctor)
-
-    @inline def suspendInTask[T](value: => Validated[T]): Task[T] =
-      TaskOps.suspendValidated(value)
-
-    @inline def suspendInTask[T](value: => Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
-      TaskOps.suspendValidated(value, ctor)
   }
 
   /**
@@ -81,8 +69,8 @@ object ValidatedSyntaxAsync {
     /**
       *
       * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
+      * [[Validated#Invalid]] becomes a failed effect
+      * [[Validated#Valid]] becomes a pure effect
       *
       */
     @inline def asFuture: Future[T] =
@@ -91,8 +79,8 @@ object ValidatedSyntaxAsync {
     /**
       *
       * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
+      * [[Validated#Invalid]] becomes a failed effect
+      * [[Validated#Valid]] becomes a pure effect
       *
       */
     @inline def asFuture(ctor: (Anomaly, List[Anomaly]) => Anomalies): Future[T] =
@@ -101,8 +89,8 @@ object ValidatedSyntaxAsync {
     /**
       *
       * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
+      * [[Validated#Invalid]] becomes a failed effect
+      * [[Validated#Valid]] becomes a pure effect
       *
       */
     @inline def asIO: IO[T] =
@@ -111,32 +99,12 @@ object ValidatedSyntaxAsync {
     /**
       *
       * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
+      * [[Validated#Invalid]] becomes a failed effect
+      * [[Validated#Valid]] becomes a pure effect
       *
       */
     @inline def asIO(ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.fromValidated(value, ctor)
-
-    /**
-      *
-      * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
-      *
-      */
-    @inline def asTask: Task[T] =
-      TaskOps.fromValidated(value)
-
-    /**
-      *
-      * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
-      *
-      */
-    @inline def asTask(ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
-      TaskOps.fromValidated(value, ctor)
   }
 
   /**
@@ -192,24 +160,5 @@ object ValidatedSyntaxAsync {
     @inline def suspendInIO(ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] =
       IOOps.suspendValidated(value, ctor)
 
-    /**
-      * Suspend any side-effects that might happen during the creation of this [[Validated]].
-      * Other than that it has the semantics of [[TaskOps.fromValidated]]
-      *
-      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
-      * You might as well use [[TaskOps.fromValidated]]
-      */
-    @inline def suspendInTask: Task[T] =
-      TaskOps.suspendValidated(value)
-
-    /**
-      * Suspend any side-effects that might happen during the creation of this [[Validated]].
-      * Other than that it has the semantics of [[TaskOps.fromValidated]]
-      *
-      * N.B. this is useless if the [[Validated]] was previously assigned to a "val".
-      * You might as well use [[TaskOps.fromValidated]]
-      */
-    @inline def suspendInTask(ctor: (Anomaly, List[Anomaly]) => Anomalies): Task[T] =
-      TaskOps.suspendValidated(value, ctor)
   }
 }

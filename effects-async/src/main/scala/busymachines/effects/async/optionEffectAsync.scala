@@ -54,18 +54,6 @@ object OptionSyntaxAsync {
       IOOps.fromOptionThr(value, ifNone)
 
     /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
-      */
-    @inline def asTask[T](value: Option[T], ifNone: => Anomaly): Task[T] =
-      TaskOps.fromOption(value, ifNone)
-
-    /**
-      * Lift this [[Option]] and transform it into a failed effect if it is [[scala.None]]
-      */
-    @inline def asTaskThr[T](value: Option[T], ifNone: => Throwable): Task[T] =
-      TaskOps.fromOptionThr(value, ifNone)
-
-    /**
       * N.B.
       * For Future in particular, this is useless, since you suspend a side-effect which
       * gets immediately applied due to the nature of the Future. This is useful only that
@@ -120,27 +108,6 @@ object OptionSyntaxAsync {
     @inline def suspendInIOThr[T](value: => Option[T], ifNone: => Throwable): IO[T] =
       IOOps.suspendOptionThr(value, ifNone)
 
-    /**
-      *
-      * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
-      *
-      * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-      * You might as well use [[TaskOps.fromOption]]
-      */
-    @inline def suspendInTask[T](value: => Option[T], ifNone: => Anomaly): Task[T] =
-      TaskOps.suspendOption(value, ifNone)
-
-    /**
-      *
-      * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
-      *
-      * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-      * You might as well use [[TaskOps.fromOption]]
-      */
-    @inline def suspendInTaskThr[T](value: => Option[T], ifNone: => Throwable): Task[T] =
-      TaskOps.suspendOptionThr(value, ifNone)
   }
 
   /**
@@ -171,28 +138,6 @@ object OptionSyntaxAsync {
       */
     @inline def asIOThr(ifNone: => Throwable): IO[T] =
       IOOps.fromOptionThr(value, ifNone)
-
-    /**
-      *
-      * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
-      *
-      * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-      * You might as well use [[TaskOps.fromOption]]
-      */
-    @inline def asTask(ifNone: => Anomaly): Task[T] =
-      TaskOps.suspendOption(value, ifNone)
-
-    /**
-      *
-      * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
-      *
-      * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-      * You might as well use [[TaskOps.fromOption]]
-      */
-    @inline def asTaskThr(ifNone: => Throwable): Task[T] =
-      TaskOps.suspendOptionThr(value, ifNone)
 
     //=========================================================================
     //==================== Run side-effects on Option state ===================
@@ -248,33 +193,6 @@ object OptionSyntaxAsync {
       */
     @inline def effectOnPureIO(effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnPure(value, effect)
-
-    /**
-      *
-      * Runs the given effect when the value of this [[Option]] is [[scala.None]]
-      *
-      * @param effect
-      *   The effect to run
-      * @return
-      *   Does not return anything, this method is inherently imperative, and relies on
-      *   side-effects to achieve something.
-      */
-    @inline def effectOnFailTask(effect: => Task[_]): Task[Unit] =
-      TaskOps.effectOnFail(value, effect)
-
-    /**
-      *
-      * Runs the given effect when the value of this [[Option]] is [[Some]]
-      *
-      * @param effect
-      *   The effect to run
-      * @return
-      *   Does not return anything, this method is inherently imperative, and relies on
-      *   side-effects to achieve something.
-      */
-    @inline def effectOnPureTask(effect: T => Task[_]): Task[Unit] =
-      TaskOps.effectOnPure(value, effect)
-
   }
 
   /**
@@ -334,26 +252,5 @@ object OptionSyntaxAsync {
     @inline def suspendInIOThr(ifNone: => Throwable): IO[T] =
       IOOps.suspendOptionThr(value, ifNone)
 
-    /**
-      *
-      * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[scala.None]] then we get back a failed effect with the given [[busymachines.core.Anomaly]]
-      *
-      * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-      * You might as well use [[TaskOps.fromOption]]
-      */
-    @inline def suspendInTask(ifNone: => Anomaly): Task[T] =
-      TaskOps.suspendOption(value, ifNone)
-
-    /**
-      *
-      * Suspend any side-effects that might happen during the creation of this [[Option]].
-      * If the option is [[scala.None]] then we get back a failed effect with the given [[java.lang.Throwable]]
-      *
-      * N.B. this is useless if the [[Option]] was previously assigned to a "val".
-      * You might as well use [[TaskOps.fromOption]]
-      */
-    @inline def suspendInTaskThr(ifNone: => Throwable): Task[T] =
-      TaskOps.suspendOptionThr(value, ifNone)
   }
 }

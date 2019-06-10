@@ -36,17 +36,12 @@ object ResultSyntaxAsync {
     @inline def asIO[T](value: Result[T]): IO[T] =
       IOOps.fromResult(value)
 
-    @inline def asTask[T](value: Result[T]): Task[T] =
-      TaskOps.fromResult(value)
-
     @inline def suspendInFuture[T](value: => Result[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendResult(value)
 
     @inline def suspendInIO[T](value: => Result[T]): IO[T] =
       IOOps.suspendResult(value)
 
-    @inline def suspendInTask[T](value: => Result[T]): Task[T] =
-      TaskOps.suspendResult(value)
   }
 
   /**
@@ -73,16 +68,6 @@ object ResultSyntaxAsync {
       */
     @inline def asIO: IO[T] =
       IOOps.fromResult(value)
-
-    /**
-      *
-      * Lift the [[busymachines.effects.sync.Result]] in this effect
-      * [[busymachines.effects.sync.Incorrect]] becomes a failed effect
-      * [[busymachines.effects.sync.Correct]] becomes a pure effect
-      *
-      */
-    @inline def asTask: Task[T] =
-      TaskOps.fromResult(value)
 
     //=========================================================================
     //==================== Run side-effects on Option state ===================
@@ -140,32 +125,6 @@ object ResultSyntaxAsync {
     @inline def effectOnPureIO(effect: T => IO[_]): IO[Unit] =
       IOOps.effectOnPure(value, effect)
 
-    /**
-      *
-      * Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Incorrect]]
-      *
-      * @param effect
-      *   The effect to run
-      * @return
-      *   Does not return anything, this method is inherently imperative, and relies on
-      *   side-effects to achieve something.
-      */
-    @inline def effectOnFailTask(effect: Anomaly => Task[_]): Task[Unit] =
-      TaskOps.effectOnFail(value, effect)
-
-    /**
-      *
-      * Runs the given effect when the value of this [[busymachines.effects.sync.Result]] is [[busymachines.effects.sync.Correct]]
-      *
-      * @param effect
-      *   The effect to run
-      * @return
-      *   Does not return anything, this method is inherently imperative, and relies on
-      *   side-effects to achieve something.
-      */
-    @inline def effectOnPureTask(effect: T => Task[_]): Task[Unit] =
-      TaskOps.effectOnPure(value, effect)
-
   }
 
   /**
@@ -197,14 +156,5 @@ object ResultSyntaxAsync {
     @inline def suspendInIO: IO[T] =
       IOOps.suspendResult(value)
 
-    /**
-      * Suspend any side-effects that might happen during the creation of this [[busymachines.effects.sync.Result]].
-      * Other than that it has the semantics of [[TaskOps.fromResult]]
-      *
-      * N.B. this is useless if the [[busymachines.effects.sync.Result]] was previously assigned to a "val".
-      * You might as well use [[TaskOps.fromResult]]
-      */
-    @inline def suspendInTask: Task[T] =
-      TaskOps.suspendResult(value)
   }
 }

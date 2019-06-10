@@ -4,6 +4,7 @@ import busymachines.core._
 import busymachines.effects.sync._
 import busymachines.effects.sync.validated._
 import busymachines.duration.FiniteDuration
+import cats.effect.ContextShift
 
 import scala.collection.generic.CanBuildFrom
 import scala.util.control.NonFatal
@@ -64,7 +65,7 @@ object FutureSyntax {
 
     /**
       * N.B. pass only pure values. If you have side effects, then
-      * use [[Future.apply]] to suspend them inside this future.
+      * use [[Future#apply]] to suspend them inside this future.
       */
     @inline def pure[T](value: T): Future[T] =
       FutureOps.pure(value)
@@ -138,7 +139,7 @@ object FutureSyntax {
       * Successful Try yields a pure effect
       *
       * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
-      * You might as well use [[Future.fromTry]]
+      * You might as well use [[Future#fromTry]]
       */
     @inline def suspendTry[T](tr: => Try[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendTry(tr)
@@ -243,8 +244,8 @@ object FutureSyntax {
     /**
       *
       * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
+      * [[Validated#Invalid]] becomes a failed effect
+      * [[Validated#Valid]] becomes a pure effect
       *
       * Consider using the overload with an extra constructor parameter
       * for a custom [[busymachines.core.Anomalies]], otherwise your
@@ -257,8 +258,8 @@ object FutureSyntax {
     /**
       *
       * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
+      * [[Validated#Invalid]] becomes a failed effect
+      * [[Validated#Valid]] becomes a pure effect
       *
       * Provide the constructor for the specific [[busymachines.core.Anomalies]]
       * into which the anomalies shall be stored.
@@ -517,18 +518,6 @@ object FutureSyntax {
       FutureOps.asIO(value)
 
     /**
-      * !!! USE WITH CARE !!!
-      * Most likely you want to use [[FutureOps.suspendInTask]] which ensures that it suspends
-      * the side effects of the given future (if it created by the given expression,
-      * if it's a val, then good luck).
-      *
-      * Having to care about such val/def distinctions shows why Future is an
-      * imperative programming mess.
-      */
-    @inline def asTask[T](value: Future[T]): Task[T] =
-      FutureOps.asTask(value)
-
-    /**
       *
       * Suspend the side-effects of this [[Future]] into an [[IO]]. This is the
       * most important operation when it comes to inter-op between the two effects.
@@ -554,37 +543,8 @@ object FutureSyntax {
       * }}}
       *
       */
-    @inline def suspendInIO[T](value: => Future[T]): IO[T] =
+    @inline def suspendInIO[T](value: => Future[T])(implicit cs: ContextShift[IO]): IO[T] =
       FutureOps.suspendInIO(value)
-
-    /**
-      *
-      * Suspend the side-effects of this [[Future]] into a [[Task]]. This is the
-      * most important operation when it comes to inter-op between the two effects.
-      *
-      * Usage. N.B. that this only makes sense if the creation of the Future itself
-      * is also suspended in the [[Task]].
-      * {{{
-      * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
-      *   //...
-      *   val task = Task.suspendFuture(writeToDB(42, "string"))
-      *   //no database writes happened yet, since the future did
-      *   //not do its annoying running of side-effects immediately!
-      *
-      *   //when we want side-effects:
-      *   task.unsafeGetSync()
-      * }}}
-      *
-      * This is almost useless unless you are certain that ??? is a pure computation
-      * might as well use Task.fromFuturePure(???)
-      * {{{
-      *   val f: Future[Int] = Future.apply(???)
-      *   Task.suspendFuture(f)
-      * }}}
-      *
-      */
-    @inline def suspendInTask[T](value: => Future[T]): Task[T] =
-      FutureOps.suspendInTask(value)
 
     /**
       * !!! USE WITH CARE !!!
@@ -602,9 +562,9 @@ object FutureSyntax {
 
     /**
       *
-      * @param value
       *   Runs the given effect when the value of this [[Boolean]] is ``true``
       *   Does not run the side-effect if the value is also a failed effect.
+      *
       * @param effect
       *   The effect to run
       * @return
@@ -616,9 +576,9 @@ object FutureSyntax {
 
     /**
       *
-      * @param value
       *   Runs the given effect when the value of this [[Boolean]] is ``true``
       *   Does not run the side-effect if the value is also a failed effect.
+      *
       * @param effect
       *   The effect to run
       * @return
@@ -633,8 +593,8 @@ object FutureSyntax {
 
     /**
       *
-      * @param value
       *   Runs the given effect when the value of this [[Boolean]] is ``false``
+      *
       * @param effect
       *   The effect to run
       * @return
@@ -646,9 +606,9 @@ object FutureSyntax {
 
     /**
       *
-      * @param value
       *   Runs the given effect when the value of this [[Boolean]] is ``false``
       *   Does not run the side-effect if the value is also a failed effect.
+      *
       * @param effect
       *   The effect to run
       * @return
@@ -893,13 +853,13 @@ object FutureSyntax {
 
     /**
       *
-      * Syntactically inspired from [[Future.traverse]], but it differs semantically
+      * Syntactically inspired from [[Future#traverse]], but it differs semantically
       * insofar as this method does not attempt to run any futures in parallel. "M" stands
       * for "monadic", as opposed to "applicative" which is the foundation for the formal definition
       * of "traverse" (even though in Scala it is by accident-ish)
       *
-      * For the vast majority of cases you should prefer this method over [[Future.sequence]]
-      * and [[Future.traverse]], since even small collections can easily wind up queuing so many
+      * For the vast majority of cases you should prefer this method over [[Future#sequence]]
+      * and [[Future#traverse]], since even small collections can easily wind up queuing so many
       * [[Future]]s that you blow your execution context.
       *
       * Usage:
@@ -961,18 +921,6 @@ object FutureSyntax {
       */
     @inline def asIO: IO[T] =
       FutureOps.asIO(value)
-
-    /**
-      * !!! USE WITH CARE !!!
-      * Most likely you want to use [[FutureOps.suspendInTask]] which ensures that it suspends
-      * the side effects of the given future (if it created by the given expression,
-      * if it's a val, then good luck).
-      *
-      * Having to care about such val/def distinctions shows why Future is an
-      * imperative programming mess.
-      */
-    @inline def asTask: Task[T] =
-      FutureOps.asTask(value)
 
     /**
       * !!! USE WITH CARE !!!
@@ -1080,37 +1028,8 @@ object FutureSyntax {
       * }}}
       *
       */
-    @inline def suspendInIO: IO[T] =
+    @inline def suspendInIO(implicit cs: ContextShift[IO]): IO[T] =
       FutureOps.suspendInIO(value)
-
-    /**
-      *
-      * Suspend the side-effects of this [[Future]] into a [[Task]]. This is the
-      * most important operation when it comes to inter-op between the two effects.
-      *
-      * Usage. N.B. that this only makes sense if the creation of the Future itself
-      * is also suspended in the [[Task]].
-      * {{{
-      * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
-      *   //...
-      *   val task = Task.suspendFuture(writeToDB(42, "string"))
-      *   //no database writes happened yet, since the future did
-      *   //not do its annoying running of side-effects immediately!
-      *
-      *   //when we want side-effects:
-      *   task.unsafeGetSync()
-      * }}}
-      *
-      * This is almost useless unless you are certain that ??? is a pure computation
-      * might as well use Task.fromFuturePure(???)
-      * {{{
-      *   val f: Future[Int] = Future.apply(???)
-      *   Task.suspendFuture(f)
-      * }}}
-      *
-      */
-    @inline def suspendInTask: Task[T] =
-      FutureOps.suspendInTask(value)
 
   }
 
@@ -1276,8 +1195,8 @@ object FutureSyntax {
 
     /**
       *
-      * @param value
       *   Runs the given effect when the value of this [[Boolean]] is ``false``
+      *
       * @param effect
       *   The effect to run
       * @return
@@ -1289,9 +1208,9 @@ object FutureSyntax {
 
     /**
       *
-      * @param value
       *   Runs the given effect when the value of this [[Boolean]] is ``true``
       *   Does not run the side-effect if the value is also a failed effect.
+      *
       * @param effect
       *   The effect to run
       * @return
@@ -1371,8 +1290,6 @@ object FutureSyntax {
       * Runs the given effect when the value of this [[Boolean]] is ``false``
       * Does not run the side-effect if the value is also a failed effect.
       *
-      * @param effect
-      *   The effect to run
       * @return
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
@@ -1388,8 +1305,6 @@ object FutureSyntax {
       * Runs the given effect when the value of this [[Boolean]] is ``true``
       * Does not run the side-effect if the value is also a failed effect.
       *
-      * @param effect
-      *   The effect to run
       * @return
       *   Does not return anything, this method is inherently imperative, and relies on
       *   side-effects to achieve something.
@@ -1407,7 +1322,7 @@ object FutureOps {
 
   /**
     * N.B. pass only pure values. If you have side effects, then
-    * use [[Future.apply]] to suspend them inside this future.
+    * use [[Future#apply]] to suspend them inside this future.
     */
 
   @inline def pure[T](value: T): Future[T] =
@@ -1489,7 +1404,7 @@ object FutureOps {
     * Successful Try yields a pure effect
     *
     * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
-    * You might as well use [[Future.fromTry]]
+    * You might as well use [[Future#fromTry]]
     */
   @inline def suspendTry[T](tr: => Try[T])(implicit ec: ExecutionContext): Future[T] =
     Future(tr).flatMap(Future.fromTry)
@@ -1602,8 +1517,8 @@ object FutureOps {
   /**
     *
     * Lift the [[Validated]] in this effect
-    * [[Validated.Invalid]] becomes a failed effect
-    * [[Validated.Valid]] becomes a pure effect
+    * [[Validated#Invalid]] becomes a failed effect
+    * [[Validated#Valid]] becomes a pure effect
     *
     * Consider using the overload with an extra constructor parameter
     * for a custom [[busymachines.core.Anomalies]], otherwise your
@@ -1619,8 +1534,8 @@ object FutureOps {
   /**
     *
     * Lift the [[Validated]] in this effect
-    * [[Validated.Invalid]] becomes a failed effect
-    * [[Validated.Valid]] becomes a pure effect
+    * [[Validated#Invalid]] becomes a failed effect
+    * [[Validated#Valid]] becomes a pure effect
     *
     * Provide the constructor for the specific [[busymachines.core.Anomalies]]
     * into which the anomalies shall be stored.
@@ -1888,18 +1803,6 @@ object FutureOps {
     IOOps.fromFuturePure(value)
 
   /**
-    * !!! USE WITH CARE !!!
-    * Most likely you want to use [[FutureOps.suspendInTask]] which ensures that it suspends
-    * the side effects of the given future (if it created by the given expression,
-    * if it's a val, then good luck).
-    *
-    * Having to care about such val/def distinctions shows why Future is an
-    * imperative programming mess.
-    */
-  @inline def asTask[T](value: Future[T]): Task[T] =
-    TaskOps.fromFuturePure(value)
-
-  /**
     *
     * Suspend the side-effects of this [[Future]] into an [[IO]]. This is the
     * most important operation when it comes to inter-op between the two effects.
@@ -1925,37 +1828,8 @@ object FutureOps {
     * }}}
     *
     */
-  @inline def suspendInIO[T](value: => Future[T]): IO[T] =
+  @inline def suspendInIO[T](value: => Future[T])(implicit cs: ContextShift[IO]): IO[T] =
     IOOps.suspendFuture(value)
-
-  /**
-    *
-    * Suspend the side-effects of this [[Future]] into a [[Task]]. This is the
-    * most important operation when it comes to inter-op between the two effects.
-    *
-    * Usage. N.B. that this only makes sense if the creation of the Future itself
-    * is also suspended in the [[Task]].
-    * {{{
-    * @inline def  writeToDB(v: Int, s: String): Future[Long] = ???
-    *   //...
-    *   val task = Task.suspendFuture(writeToDB(42, "string"))
-    *   //no database writes happened yet, since the future did
-    *   //not do its annoying running of side-effects immediately!
-    *
-    *   //when we want side-effects:
-    *   task.unsafeGetSync()
-    * }}}
-    *
-    * This is almost useless unless you are certain that ??? is a pure computation
-    * might as well use Task.fromFuturePure(???)
-    * {{{
-    *   val f: Future[Int] = Future.apply(???)
-    *   Task.suspendFuture(f)
-    * }}}
-    *
-    */
-  @inline def suspendInTask[T](value: => Future[T]): Task[T] =
-    TaskOps.suspendFuture(value)
 
   /**
     * !!! USE WITH CARE !!!
@@ -1973,9 +1847,9 @@ object FutureOps {
 
   /**
     *
-    * @param value
     *   Runs the given effect when the value of this [[Boolean]] is ``true``
     *   Does not run the side-effect if the value is also a failed effect.
+    *
     * @param effect
     *   The effect to run
     * @return
@@ -1987,9 +1861,9 @@ object FutureOps {
 
   /**
     *
-    * @param value
     *   Runs the given effect when the value of this [[Boolean]] is ``true``
     *   Does not run the side-effect if the value is also a failed effect.
+    *
     * @param effect
     *   The effect to run
     * @return
@@ -2004,8 +1878,8 @@ object FutureOps {
 
   /**
     *
-    * @param value
     *   Runs the given effect when the value of this [[Boolean]] is ``false``
+    *
     * @param effect
     *   The effect to run
     * @return
@@ -2017,9 +1891,9 @@ object FutureOps {
 
   /**
     *
-    * @param value
     *   Runs the given effect when the value of this [[Boolean]] is ``false``
     *   Does not run the side-effect if the value is also a failed effect.
+    *
     * @param effect
     *   The effect to run
     * @return
@@ -2282,13 +2156,13 @@ object FutureOps {
 
   /**
     *
-    * Syntactically inspired from [[Future.traverse]], but it differs semantically
+    * Syntactically inspired from [[Future#traverse]], but it differs semantically
     * insofar as this method does not attempt to run any futures in parallel. "M" stands
     * for "monadic", as opposed to "applicative" which is the foundation for the formal definition
     * of "traverse" (even though in Scala it is by accident-ish)
     *
-    * For the vast majority of cases you should prefer this method over [[Future.sequence]]
-    * and [[Future.traverse]], since even small collections can easily wind up queuing so many
+    * For the vast majority of cases you should prefer this method over [[Future#sequence]]
+    * and [[Future#traverse]], since even small collections can easily wind up queuing so many
     * [[Future]]s that you blow your execution context.
     *
     * Usage:
@@ -2326,7 +2200,7 @@ object FutureOps {
       }
       val eventualBuilder: Future[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
         (serializedBuilder: Future[mutable.Builder[B, C[B]]], element: A) =>
-          serializedBuilder flatMap [mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
+          serializedBuilder flatMap [mutable.Builder[B, C[B]]] { result: mutable.Builder[B, C[B]] =>
             val f: Future[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
               result.+=(newElement)
             }

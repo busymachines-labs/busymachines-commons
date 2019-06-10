@@ -3,7 +3,7 @@ package busymachines.effects.async
 import busymachines.core._
 import busymachines.effects.sync._
 import busymachines.effects.sync.validated._
-
+import cats.effect.ContextShift
 import cats.{effect => ce}
 
 import scala.collection.generic.CanBuildFrom
@@ -198,8 +198,8 @@ object IOSyntax {
     /**
       *
       * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
+      * [[Validated#Invalid]] becomes a failed effect
+      * [[Validated#Valid]] becomes a pure effect
       *
       * Consider using the overload with an extra constructor parameter
       * for a custom [[busymachines.core.Anomalies]], otherwise your
@@ -212,8 +212,8 @@ object IOSyntax {
     /**
       *
       * Lift the [[Validated]] in this effect
-      * [[Validated.Invalid]] becomes a failed effect
-      * [[Validated.Valid]] becomes a pure effect
+      * [[Validated#Invalid]] becomes a failed effect
+      * [[Validated#Valid]] becomes a pure effect
       *
       * Provide the constructor for the specific [[busymachines.core.Anomalies]]
       * into which the anomalies shall be stored.
@@ -305,16 +305,8 @@ object IOSyntax {
       * }}}
       *
       */
-    @inline def suspendFuture[T](result: => Future[T]): IO[T] =
+    @inline def suspendFuture[T](result: => Future[T])(implicit cs: ContextShift[IO]): IO[T] =
       IOOps.suspendFuture(result)
-
-    /**
-      *
-      * Transform a monix [[Task]] into an [[IO]]. No gotchas because pure
-      * functional programming is awesome.
-      */
-    @inline def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
-      IOOps.fromTask(task)
 
     /**
       * @return
@@ -482,12 +474,6 @@ object IOSyntax {
       IOOps.asFutureUnsafe(value)
 
     /**
-      * No gotchas. Pure functional programming = <3
-      */
-    @inline def asTask[T](value: IO[T]): Task[T] =
-      IOOps.asTask(value)
-
-    /**
       * !!! USE WITH CARE !!!
       *
       * Mostly here for testing. There is almost no reason whatsover for you to explicitely
@@ -503,9 +489,10 @@ object IOSyntax {
 
     /**
       *
-      * @param value
+      *
       *   Runs the given effect when the value of this [[Boolean]] is ``true``
       *   Does not run the side-effect if the value is also a failed effect.
+      *
       * @param effect
       *   The effect to run
       * @return
@@ -517,9 +504,10 @@ object IOSyntax {
 
     /**
       *
-      * @param value
+      *
       *   Runs the given effect when the value of this [[Boolean]] is ``true``
       *   Does not run the side-effect if the value is also a failed effect.
+      *
       * @param effect
       *   The effect to run
       * @return
@@ -531,7 +519,7 @@ object IOSyntax {
 
     /**
       *
-      * @param value
+      *
       *   Runs the given effect when the value of this [[Boolean]] is ``false``
       *
       * @param effect
@@ -545,9 +533,9 @@ object IOSyntax {
 
     /**
       *
-      * @param value
       *   Runs the given effect when the value of this [[Boolean]] is ``false``
       *   Does not run the side-effect if the value is also a failed effect.
+      *
       * @param effect
       *   The effect to run
       * @return
@@ -799,7 +787,7 @@ object IOSyntax {
 
     /**
       *
-      * Syntactically inspired from [[Future.traverse]].
+      * Syntactically inspired from [[Future#traverse]].
       *
       * See [[FutureOps.serialize]] for semantics.
       *
@@ -859,12 +847,6 @@ object IOSyntax {
       */
     @inline def asFutureUnsafe(): Future[T] =
       IOOps.asFutureUnsafe(value)
-
-    /**
-      * No gotchas. Pure functional programming = <3
-      */
-    @inline def asTask: Task[T] =
-      IOOps.asTask(value)
 
     /**
       * !!! USE WITH CARE !!!
@@ -1239,13 +1221,6 @@ object IOOps {
   import cats.syntax.monadError._
 
   /**
-    * N.B. pass only pure values. If you have side effects, then
-    * use [[IO.apply]] to suspend them inside this future.
-    */
-  @inline def pure[T](value: T): IO[T] =
-    IO.pure(value)
-
-  /**
     * Failed effect but with an [[busymachines.core.Anomaly]]
     */
   @inline def fail[T](bad: Anomaly): IO[T] =
@@ -1264,7 +1239,7 @@ object IOOps {
     */
   @inline def fromOption[T](opt: Option[T], ifNone: => Anomaly): IO[T] = opt match {
     case None        => IOOps.fail(ifNone)
-    case Some(value) => IOOps.pure(value)
+    case Some(value) => IO.pure(value)
   }
 
   /**
@@ -1283,7 +1258,7 @@ object IOOps {
     */
   @inline def fromOptionThr[T](opt: Option[T], ifNone: => Throwable): IO[T] = opt match {
     case None        => IOOps.failThr(ifNone)
-    case Some(value) => IOOps.pure(value)
+    case Some(value) => IO.pure(value)
   }
 
   /**
@@ -1324,7 +1299,7 @@ object IOOps {
     */
   @inline def fromEither[L, R](either: Either[L, R], transformLeft: L => Anomaly): IO[R] = either match {
     case Left(value)  => IOOps.fail(transformLeft(value))
-    case Right(value) => IOOps.pure(value)
+    case Right(value) => IO.pure(value)
   }
 
   /**
@@ -1345,7 +1320,7 @@ object IOOps {
     */
   @inline def fromEitherThr[L, R](either: Either[L, R])(implicit ev: L <:< Throwable): IO[R] = either match {
     case Left(value)  => IOOps.failThr(ev(value))
-    case Right(value) => IOOps.pure(value)
+    case Right(value) => IO.pure(value)
   }
 
   /**
@@ -1365,7 +1340,7 @@ object IOOps {
     */
   @inline def fromEitherThr[L, R](either: Either[L, R], transformLeft: L => Throwable): IO[R] = either match {
     case Left(value)  => IOOps.failThr(transformLeft(value))
-    case Right(value) => IOOps.pure(value)
+    case Right(value) => IO.pure(value)
   }
 
   /**
@@ -1388,14 +1363,14 @@ object IOOps {
     */
   @inline def fromResult[T](result: Result[T]): IO[T] = result match {
     case Left(value)  => IOOps.fail(value)
-    case Right(value) => IOOps.pure(value)
+    case Right(value) => IO.pure(value)
   }
 
   /**
     *
     * Lift the [[Validated]] in this effect
-    * [[Validated.Invalid]] becomes a failed effect
-    * [[Validated.Valid]] becomes a pure effect
+    * [[Validated#Invalid]] becomes a failed effect
+    * [[Validated#Valid]] becomes a pure effect
     *
     * Consider using the overload with an extra constructor parameter
     * for a custom [[busymachines.core.Anomalies]], otherwise your
@@ -1403,15 +1378,15 @@ object IOOps {
     * [[busymachines.effects.sync.validated.GenericValidationFailures]]
     */
   @inline def fromValidated[T](value: Validated[T]): IO[T] = value match {
-    case cats.data.Validated.Valid(e)   => IOOps.pure(e)
+    case cats.data.Validated.Valid(e)   => IO.pure(e)
     case cats.data.Validated.Invalid(e) => IOOps.fail(GenericValidationFailures(e.head, e.tail))
   }
 
   /**
     *
     * Lift the [[Validated]] in this effect
-    * [[Validated.Invalid]] becomes a failed effect
-    * [[Validated.Valid]] becomes a pure effect
+    * [[Validated#Invalid]] becomes a failed effect
+    * [[Validated#Valid]] becomes a pure effect
     *
     * Provide the constructor for the specific [[busymachines.core.Anomalies]]
     * into which the anomalies shall be stored.
@@ -1445,7 +1420,7 @@ object IOOps {
     *
     */
   @inline def fromValidated[T](value: Validated[T], ctor: (Anomaly, List[Anomaly]) => Anomalies): IO[T] = value match {
-    case cats.data.Validated.Valid(e)   => IOOps.pure(e)
+    case cats.data.Validated.Valid(e)   => IO.pure(e)
     case cats.data.Validated.Invalid(e) => IOOps.fail(ctor(e.head, e.tail))
   }
 
@@ -1515,16 +1490,8 @@ object IOOps {
     * }}}
     *
     */
-  @inline def suspendFuture[T](value: => Future[T]): IO[T] =
-    IO.fromFuture(IO(value))
-
-  /**
-    *
-    * Transform a monix [[Task]] into an [[IO]]. No gotchas because pure
-    * functional programming is awesome.
-    */
-  @inline def fromTask[T](task: Task[T])(implicit sc: Scheduler): IO[T] =
-    TaskOps.asIO(task)
+  @inline def suspendFuture[T](value: => Future[T])(implicit cs: ContextShift[IO]): IO[T] =
+    IO.fromFuture(IO(value)).guarantee(cs.shift)
 
   /**
     * @return
@@ -1532,7 +1499,7 @@ object IOOps {
     *   failed effect with ``bad`` [[busymachines.core.Anomaly]] if boolean is false
     */
   @inline def cond[T](test: Boolean, good: => T, bad: => Anomaly): IO[T] =
-    if (test) IOOps.pure(good) else IOOps.fail(bad)
+    if (test) IO.pure(good) else IOOps.fail(bad)
 
   /**
     * @return
@@ -1540,7 +1507,7 @@ object IOOps {
     *   failed effect with ``bad`` [[java.lang.Throwable]] if boolean is false
     */
   @inline def condThr[T](test: Boolean, good: => T, bad: => Throwable): IO[T] =
-    if (test) IOOps.pure(good) else IOOps.failThr(bad)
+    if (test) IO.pure(good) else IOOps.failThr(bad)
 
   /**
     * @return
@@ -1658,7 +1625,7 @@ object IOOps {
   @inline def unpackOption[T](nopt: IO[Option[T]], ifNone: => Anomaly): IO[T] =
     nopt.flatMap {
       case None    => IOOps.fail(ifNone)
-      case Some(v) => IOOps.pure(v)
+      case Some(v) => IO.pure(v)
     }
 
   /**
@@ -1669,7 +1636,7 @@ object IOOps {
   @inline def unpackOptionThr[T](nopt: IO[Option[T]], ifNone: => Throwable): IO[T] =
     nopt.flatMap {
       case None    => IOOps.failThr(ifNone)
-      case Some(v) => IOOps.pure(v)
+      case Some(v) => IO.pure(v)
     }
 
   /**
@@ -1679,7 +1646,7 @@ object IOOps {
     */
   @inline def unpackResult[T](value: IO[Result[T]]): IO[T] = value.flatMap {
     case Left(a)  => IOOps.fail(a)
-    case Right(a) => IOOps.pure(a)
+    case Right(a) => IO.pure(a)
   }
 
   /**
@@ -1700,12 +1667,6 @@ object IOOps {
     value.unsafeToFuture()
 
   /**
-    * No gotchas. Pure functional programming = <3
-    */
-  @inline def asTask[T](value: IO[T]): Task[T] =
-    TaskOps.fromIO(value)
-
-  /**
     * !!! USE WITH CARE !!!
     *
     * Mostly here for testing. There is almost no reason whatsover for you to explicitely
@@ -1721,9 +1682,9 @@ object IOOps {
 
   /**
     *
-    * @param value
     *   Runs the given effect when the value of this [[Boolean]] is ``true``
     *   Does not run the side-effect if the value is also a failed effect.
+    *
     * @param effect
     *   The effect to run
     * @return
@@ -1735,9 +1696,9 @@ object IOOps {
 
   /**
     *
-    * @param value
     *   Runs the given effect when the value of this [[Boolean]] is ``true``
     *   Does not run the side-effect if the value is also a failed effect.
+    *
     * @param effect
     *   The effect to run
     * @return
@@ -1749,7 +1710,6 @@ object IOOps {
 
   /**
     *
-    * @param value
     *   Runs the given effect when the value of this [[Boolean]] is ``false``
     *
     * @param effect
@@ -1763,9 +1723,9 @@ object IOOps {
 
   /**
     *
-    * @param value
     *   Runs the given effect when the value of this [[Boolean]] is ``false``
     *   Does not run the side-effect if the value is also a failed effect.
+    *
     * @param effect
     *   The effect to run
     * @return
@@ -1912,7 +1872,7 @@ object IOOps {
     */
   @inline def bimap[T, R](value: IO[T], result: Result[T] => Result[R]): IO[R] =
     IOOps.attemptResult(value).map(result).flatMap {
-      case Correct(v)   => IOOps.pure(v)
+      case Correct(v)   => IO.pure(v)
       case Incorrect(v) => IOOps.fail(v)
     }
 
@@ -2049,7 +2009,7 @@ object IOOps {
 
   /**
     *
-    * Syntactically inspired from [[Future.traverse]].
+    * Syntactically inspired from [[Future#traverse]].
     *
     * See [[FutureOps.serialize]] for semantics.
     *

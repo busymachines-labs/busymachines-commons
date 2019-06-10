@@ -32,8 +32,7 @@ package object effects
     extends AnyRef with OptionSyntax.Implicits with OptionSyntaxAsync.Implcits with TryTypeDefinitons
     with TrySyntax.Implicits with TrySyntaxAsync.Implcits with EitherSyntax.Implicits with EitherSyntaxAsync.Implcits
     with ResultTypeDefinitions with ResultCompanionAliases with ResultSyntax.Implicits with ResultSyntaxAsync.Implcits
-    with FutureTypeDefinitions with FutureSyntax.Implicits with IOTypeDefinitions with IOSyntax.Implicits
-    with TaskTypeDefinitions with TaskSyntax.Implicits {
+    with FutureTypeDefinitions with FutureSyntax.Implicits with IOTypeDefinitions with IOSyntax.Implicits {
 
   object option extends OptionSyntax.Implicits with OptionSyntaxAsync.Implcits
 
@@ -50,7 +49,5 @@ package object effects
   object io extends IOTypeDefinitions with IOSyntax.Implicits
 
   object future extends FutureTypeDefinitions with FutureSyntax.Implicits
-
-  object task extends TaskTypeDefinitions with TaskSyntax.Implicits
 
 }

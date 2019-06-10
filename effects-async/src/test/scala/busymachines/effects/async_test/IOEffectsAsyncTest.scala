@@ -3,10 +3,9 @@ package busymachines.effects.async_test
 import busymachines.core._
 import busymachines.effects.async._
 import busymachines.effects.sync._
-
 import busymachines.effects.async.validated._
 import busymachines.effects.sync.validated._
-
+import cats.effect.ContextShift
 import org.scalatest._
 
 /**
@@ -16,7 +15,8 @@ import org.scalatest._
   *
   */
 final class IOEffectsAsyncTest extends FunSpec {
-  implicit val ec: Scheduler = Scheduler.global
+  implicit val ec: ExecutionContext = ExecutionContext.global
+  implicit val cs: ContextShift[IO] = IO.contextShift(ec)
   //prevents atrocious English
   private def test: ItWord = it
 
@@ -187,16 +187,6 @@ final class IOEffectsAsyncTest extends FunSpec {
 
           test("success") {
             assert(IO.fromFuturePure(successF).r == 42)
-          }
-        }
-
-        describe("fromTask") {
-          test("fail") {
-            assertThrows[InvalidInputFailure](IO.fromTask(Task.fail(ano)).r)
-          }
-
-          test("pure") {
-            assert(IO.fromTask(Task.pure(42)).r == 42)
           }
         }
 
@@ -850,17 +840,6 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("pure") {
             assert(Future.asIO(successF).r == 42)
           }
-        }
-
-        describe("task asIO") {
-          test("fail") {
-            assertThrows[InvalidInputFailure](Task.asIO(Task.fail(ano)).r)
-          }
-
-          test("pure") {
-            assert(Task.asIO(Task.pure(42)).r == 42)
-          }
-
         }
 
       } //end as{Effect} — reverse
@@ -1559,17 +1538,6 @@ final class IOEffectsAsyncTest extends FunSpec {
           test("pure") {
             assert(successF.asIO.r == 42)
           }
-        }
-
-        describe("task asIO") {
-          test("fail") {
-            assertThrows[InvalidInputFailure](Task.fail(ano).asIO.r)
-          }
-
-          test("pure") {
-            assert(Task.pure(42).asIO.r == 42)
-          }
-
         }
 
       } //end as{Effect} — reverse

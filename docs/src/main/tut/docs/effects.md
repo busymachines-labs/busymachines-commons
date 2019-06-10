@@ -36,7 +36,7 @@ The purpose of this module is to give you all the effects (see section in [learn
 
 The effects are loosely separated into two modules:
 * pure, synchronous effects (`sync` module): `Option`, `List`, `Try`, `Either`, `Result`
-* impure, asynchronous effects (`async` module): `IO`, `Task`, `Future`
+* impure, asynchronous effects (`async` module): `IO`, `Future`
 
 ### Gotchas
 You have to use either:
@@ -311,7 +311,6 @@ There are always two methods available when converting to other effects:
 
 External dependencies:
 * [cats-effect](https://github.com/typelevel/cats-effect) — defines `IO`
-* [monix](https://github.com/monix/monix) — defines `Task`
 
 The `IO`, `Task` and `Future` types are only aliased here. With syntax extensions as detailed in the next section. Therefore you can easily substitute the original types, and only having to account for the rather thing syntax extensions.
 
@@ -440,27 +439,25 @@ Legend:
 
 Notice how conversions cluster in a diagonal if we enumerate the effects from the ones that capture "fewer" semantics to the ones that capture "more". This is rather intuitive because each of these effects can handle the same basic things (They're all `Applicative` and `Monad`), but then each adds new things to the table. So it's trivial to go from the "weakest" effect (`Id`) to the "strongest" effect (`Task`), but not the other way around. This involves actually handling all concurrency related machinery and applying all side-effects captured in the `Task`; extremely non-trivial things.
 
-Effects |   Id   | Option | Result |   IO   |  Task  |
---------|--------|--------|--------|--------|--------|
-   Id   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |
- Option |    x   |    ✓   |    ✓   |    ✓   |    ✓   |
- Result |    x   |    -   |    ✓   |    ✓   |    ✓   |
-   IO   |    x   |    x   |    x   |    ✓   |    ✓   |
-  Task  |    x   |    x   |    x   |    ✓   |    ✓   |
+Effects |   Id   | Option | Result |   IO   |
+--------|--------|--------|--------|--------|
+   Id   |    ✓   |    ✓   |    ✓   |    ✓   |
+ Option |    x   |    ✓   |    ✓   |    ✓   |
+ Result |    x   |    -   |    ✓   |    ✓   |
+   IO   |    x   |    x   |    x   |    ✓   |
 
 #### complete table
 
 `Try` and `Future` are added in order to interact with legacy code. Writing new modules using them is highly discouraged though.
 
-Effects |   Id   | Option |  Try   | Result |   IO   |  Task  | Future |
---------|--------|--------|--------|--------|--------|--------|--------|
-   Id   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |
- Option |    x   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |
-  Try   |    x   |    -   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |
- Result |    x   |    -   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |
-   IO   |    x   |    x   |    x   |    x   |    ✓   |    ✓   |    -   |
-  Task  |    x   |    x   |    x   |    x   |    ✓   |    ✓   |    -   |
- Future |    x   |    x   |    x   |    x   |    ✓   |    ✓   |    ✓   |
+Effects |   Id   | Option |  Try   | Result |   IO   | Future |
+--------|--------|--------|--------|--------|--------|--------|
+   Id   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |
+ Option |    x   |    ✓   |    ✓   |    ✓   |    ✓   |    ✓   |
+  Try   |    x   |    -   |    ✓   |    ✓   |    ✓   |    ✓   |
+ Result |    x   |    -   |    ✓   |    ✓   |    ✓   |    ✓   |
+   IO   |    x   |    x   |    x   |    x   |    ✓   |    -   |
+ Future |    x   |    x   |    x   |    x   |    ✓   |    ✓   |
 
 
 ## modular imports
@@ -476,7 +473,6 @@ Each module exposes effect specific imports:
 #### effects-async:
 * `import busymachines.effects.async.future._`
 * `import busymachines.effects.async.io._`
-* `import busymachines.effects.async.task._`
 
 #### effects
 * `import busymachines.effects.option._`
@@ -485,4 +481,3 @@ Each module exposes effect specific imports:
 * `import busymachines.effects.result._`
 * `import busymachines.effects.future._`
 * `import busymachines.effects.io._`
-* `import busymachines.effects.task._`

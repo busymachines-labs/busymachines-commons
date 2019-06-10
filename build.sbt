@@ -21,18 +21,18 @@ import Keys._
 lazy val currentSnapshotVersion = "0.3.0-SNAPSHOT"
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
-addCommandAlias("build",           ";compile;Test/compile")
-addCommandAlias("rebuild",         ";clean;compile;Test/compile")
-addCommandAlias("rebuild-update",  ";clean;update;compile;Test/compile")
-addCommandAlias("ci",              ";scalafmtCheck;coverageOff;rebuild-update;test")
-addCommandAlias("ci-quick",        ";scalafmtCheck;build;test")
-addCommandAlias("doLocal",         ";rebuild-update;publishLocal")
+addCommandAlias("build", ";compile;Test/compile")
+addCommandAlias("rebuild", ";clean;compile;Test/compile")
+addCommandAlias("rebuild-update", ";clean;update;compile;Test/compile")
+addCommandAlias("ci", ";scalafmtCheck;coverageOff;rebuild-update;test")
+addCommandAlias("ci-quick", ";scalafmtCheck;build;test")
+addCommandAlias("doLocal", ";rebuild-update;publishLocal")
 addCommandAlias("doSnapshotLocal", ";rebuild-update;setSnapshotVersion;publishLocal")
 
-addCommandAlias("mkSite",        ";docs/makeMicrosite")
+addCommandAlias("mkSite", ";docs/makeMicrosite")
 addCommandAlias("doSitePublish", ";docs/publishMicrosite")
 
-addCommandAlias("doCoverage",    ";rebuild;coverage;test;coverageReport;coverageOff")
+addCommandAlias("doCoverage", ";rebuild;coverage;test;coverageReport;coverageOff")
 addCommandAlias("doCoverage-ci", ";rebuild-update;coverage;test;coverageReport;coverageOff")
 
 /**
@@ -76,7 +76,7 @@ lazy val root = Project(id = "busymachines-commons", base = file("."))
     `rest-json`,
     `rest-json-testkit`,
     `semver`,
-    `semver-parsers`
+    `semver-parsers`,
   )
 
 lazy val core = project
@@ -85,7 +85,7 @@ lazy val core = project
   .settings(
     name in ThisProject := "busymachines-commons-core",
     libraryDependencies +=
-      Dependencies.scalaTest % Test withSources ()
+      Dependencies.scalaTest % Test withSources (),
   )
 
 lazy val duration = project
@@ -94,7 +94,7 @@ lazy val duration = project
   .settings(
     name in ThisProject := "busymachines-commons-duration",
     libraryDependencies +=
-      Dependencies.scalaTest % Test withSources ()
+      Dependencies.scalaTest % Test withSources (),
   )
 
 lazy val `effects-sync` = project
@@ -108,11 +108,11 @@ lazy val `effects-sync` = project
         * only in tests because we want to test if syntax
         * plays well with import cats._, cats.implicits._
         */
-      Dependencies.catsCore % Test withSources ()
-    )
+      Dependencies.catsCore % Test withSources (),
+    ),
   )
   .dependsOn(
-    core
+    core,
   )
 
 lazy val `effects-sync-cats` = project
@@ -122,12 +122,12 @@ lazy val `effects-sync-cats` = project
     name in ThisProject := "busymachines-commons-effects-sync-cats",
     libraryDependencies ++= Seq(
       Dependencies.catsCore  withSources (),
-      Dependencies.scalaTest % Test withSources ()
-    )
+      Dependencies.scalaTest % Test withSources (),
+    ),
   )
   .dependsOn(
     core,
-    `effects-sync`
+    `effects-sync`,
   )
 
 lazy val `effects-async` = project
@@ -138,15 +138,14 @@ lazy val `effects-async` = project
     libraryDependencies ++= Seq(
       Dependencies.catsCore   withSources (),
       Dependencies.catsEffect withSources (),
-      Dependencies.monix      withSources (),
-      Dependencies.scalaTest  % Test withSources ()
-    )
+      Dependencies.scalaTest  % Test withSources (),
+    ),
   )
   .dependsOn(
     core,
     duration,
     `effects-sync`,
-    `effects-sync-cats`
+    `effects-sync-cats`,
   )
 
 lazy val effects = project
@@ -155,13 +154,13 @@ lazy val effects = project
   .settings(
     name in ThisProject := "busymachines-commons-effects",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources ()
-    )
+      Dependencies.scalaTest % Test withSources (),
+    ),
   )
   .dependsOn(
     core,
     `effects-sync`,
-    `effects-async`
+    `effects-async`,
   )
 
 lazy val json = project
@@ -173,12 +172,12 @@ lazy val json = project
       Dependencies.circe.map(c => c withSources ()) ++ Seq(
         Dependencies.shapeless withSources (),
         Dependencies.catsCore  withSources (),
-        Dependencies.scalaTest % Test withSources ()
-      )
+        Dependencies.scalaTest % Test withSources (),
+      ),
   )
   .dependsOn(
     core,
-    `effects-sync`
+    `effects-sync`,
   )
 
 lazy val `rest-core` = project
@@ -187,17 +186,17 @@ lazy val `rest-core` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-core",
     libraryDependencies ++= Seq(
-      Dependencies.akkaHttp  withSources (),
+      Dependencies.akkaHttp withSources (),
       /**
         * http://doc.akka.io/docs/akka-http/current/scala/http/introduction.html#using-akka-http
         */
       Dependencies.akkaStream withSources (),
       //used for building the WebServerIO helpers
-      Dependencies.catsEffect withSources ()
-    )
+      Dependencies.catsEffect withSources (),
+    ),
   )
   .dependsOn(
-    core
+    core,
   )
 
 lazy val `rest-core-testkit` = project
@@ -209,12 +208,12 @@ lazy val `rest-core-testkit` = project
       Dependencies.akkaTestKit     withSources (),
       Dependencies.akkaHttpTestKit withSources (),
       Dependencies.scalaTest       withSources (),
-      Dependencies.scalaTest       % Test withSources ()
-    )
+      Dependencies.scalaTest       % Test withSources (),
+    ),
   )
   .dependsOn(
     core,
-    `rest-core`
+    `rest-core`,
   )
 
 lazy val `rest-json` = project
@@ -223,13 +222,13 @@ lazy val `rest-json` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-json",
     libraryDependencies ++= Seq(
-      Dependencies.akkaHttpCirceIntegration withSources ()
-    )
+      Dependencies.akkaHttpCirceIntegration withSources (),
+    ),
   )
   .dependsOn(
     core,
     json,
-    `rest-core`
+    `rest-core`,
   )
 
 lazy val `rest-json-testkit` = project
@@ -238,15 +237,15 @@ lazy val `rest-json-testkit` = project
   .settings(
     name in ThisProject := "busymachines-commons-rest-json-testkit",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources ()
-    )
+      Dependencies.scalaTest % Test withSources (),
+    ),
   )
   .dependsOn(
     core,
     json,
     `rest-core`,
     `rest-json`,
-    `rest-core-testkit`
+    `rest-core-testkit`,
   )
 
 lazy val `semver` = project
@@ -255,8 +254,8 @@ lazy val `semver` = project
   .settings(
     name in ThisProject := "busymachines-commons-semver",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources ()
-    )
+      Dependencies.scalaTest % Test withSources (),
+    ),
   )
   .dependsOn()
 
@@ -268,13 +267,13 @@ lazy val `semver-parsers` = project
     libraryDependencies ++= Seq(
       Dependencies.attoParser withSources (),
       Dependencies.scalaTest  % Test withSources (),
-      Dependencies.scalaCheck % Test withSources ()
-    )
+      Dependencies.scalaCheck % Test withSources (),
+    ),
   )
   .dependsOn(
     core,
     `effects-sync`,
-    `semver`
+    `semver`,
   )
 
 lazy val docs = project
@@ -306,7 +305,7 @@ lazy val docs = project
       "gray"            -> "#837F84",
       "gray-light"      -> "#E3E2E3",
       "gray-lighter"    -> "#F4F3F4",
-      "white-color"     -> "#FFFFFF"
+      "white-color"     -> "#FFFFFF",
     ),
     //micrositeFavicons := Seq(
     //  MicrositeFavicon("favicon16x16.png", "16x16"),
@@ -315,6 +314,6 @@ lazy val docs = project
     micrositeFooterText := Some("""Ⓒ 2018 <a href="https://www.busymachines.com/">BusyMachines</a>"""),
     //------ same as default settings --------
     micrositePushSiteWith      := GHPagesPlugin,
-    micrositeGitHostingService := GitHub
+    micrositeGitHostingService := GitHub,
   )
   .dependsOn()

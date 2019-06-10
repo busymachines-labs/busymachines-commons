@@ -58,36 +58,34 @@ object Dependencies {
     circeCore,
     circeGeneric,
     circeGenericExtras,
-    circeParser
+    circeParser,
   )
 
   lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.5"
-
-  lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC2"
 
   //============================================================================================
   //================================= http://akka.io/docs/ =====================================
   //======================================== akka ==============================================
   //============================================================================================
 
-  lazy val akkaVersion: String = "2.5.19"
+  lazy val akkaVersion: String = "2.5.23"
 
   lazy val akkaActor:  ModuleID = "com.typesafe.akka" %% "akka-actor"  % akkaVersion
   lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
 
-  lazy val akkaHttpVersion: String   = "10.1.7"
+  lazy val akkaHttpVersion: String   = "10.1.8"
   lazy val akkaHttp:        ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 
   /**
     * https://github.com/hseeberger/akka-http-json
     */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.23.0"
+  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.26.0"
 
   //============================================================================================
   //=========================================  testing =========================================
   //============================================================================================
 
-  lazy val scalaTest:  ModuleID = "org.scalatest"  %% "scalatest"  % "3.0.5"
+  lazy val scalaTest:  ModuleID = "org.scalatest"  %% "scalatest"  % "3.0.7"
   lazy val scalaCheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.14.0"
 
   lazy val akkaTestKit:       ModuleID = "com.typesafe.akka" %% "akka-testkit"        % akkaVersion

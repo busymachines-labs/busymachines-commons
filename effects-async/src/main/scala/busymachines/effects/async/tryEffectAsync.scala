@@ -44,13 +44,6 @@ object TrySyntaxAsync {
       IOOps.fromTry(value)
 
     /**
-      * [[scala.util.Failure]] is sequenced into this effect
-      * [[scala.util.Success]] is the pure value of this effect
-      */
-    @inline def asTask[T](value: Try[T]): Task[T] =
-      Task.fromTry(value)
-
-    /**
       * N.B.
       * For Future in particular, this is useless, since you suspend a side-effect which
       * gets immediately applied due to the nature of the Future. This is useful only that
@@ -61,7 +54,7 @@ object TrySyntaxAsync {
       * Successful Try yields a pure effect
       *
       * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
-      * You might as well use [[Future.fromTry]]
+      * You might as well use [[Future#fromTry]]
       */
     @inline def suspendInFuture[T](value: => Try[T])(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendTry(value)
@@ -77,18 +70,6 @@ object TrySyntaxAsync {
       */
     @inline def suspendInIO[T](value: => Try[T]): IO[T] =
       IOOps.suspendTry(value)
-
-    /**
-      *
-      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
-      * Failed Try yields a failed effect
-      * Successful Try yields a pure effect
-      *
-      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
-      * You might as well use [[Task.fromTry]]
-      */
-    @inline def suspendInTask[T](value: => Try[T]): Task[T] =
-      TaskOps.suspendTry(value)
   }
 
   /**
@@ -109,13 +90,6 @@ object TrySyntaxAsync {
       */
     @inline def asIO: IO[T] =
       IOOps.fromTry(value)
-
-    /**
-      * [[scala.util.Failure]] is sequenced into this effect
-      * [[scala.util.Success]] is the pure value of this effect
-      */
-    @inline def asTask: Task[T] =
-      Task.fromTry(value)
   }
 
   /**
@@ -134,7 +108,7 @@ object TrySyntaxAsync {
       * Successful Try yields a pure effect
       *
       * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
-      * You might as well use [[Future.fromTry]]
+      * You might as well use [[Future#fromTry]]
       */
     @inline def suspendInFuture(implicit ec: ExecutionContext): Future[T] =
       FutureOps.suspendTry(value)
@@ -150,17 +124,5 @@ object TrySyntaxAsync {
       */
     @inline def suspendInIO: IO[T] =
       IOOps.suspendTry(value)
-
-    /**
-      *
-      * Suspend any side-effects that might happen during the creation of this [[scala.util.Try]].
-      * Failed Try yields a failed effect
-      * Successful Try yields a pure effect
-      *
-      * N.B. this is useless if the [[scala.util.Try]] was previously assigned to a "val".
-      * You might as well use [[Task.fromTry]]
-      */
-    @inline def suspendInTask: Task[T] =
-      TaskOps.suspendTry(value)
   }
 }
