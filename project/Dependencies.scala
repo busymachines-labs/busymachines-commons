@@ -29,6 +29,7 @@ object Dependencies {
   //============================================================================================
 
   //lazy val scalaReflect: ModuleID = "org.scala-lang" % "scala-reflect" % mainScalaVersion
+  lazy val scalaCompat: ModuleID = "org.scala-lang.modules" %% "scala-collection-compat" % "2.0.0"
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================
