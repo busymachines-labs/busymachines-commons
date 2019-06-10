@@ -29,6 +29,7 @@ object Dependencies {
   //============================================================================================
 
   //lazy val scalaReflect: ModuleID = "org.scala-lang" % "scala-reflect" % mainScalaVersion
+  lazy val scalaCompat: ModuleID = "org.scala-lang.modules" %% "scala-collection-compat" % "2.0.0"
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================
@@ -85,7 +86,7 @@ object Dependencies {
   //=========================================  testing =========================================
   //============================================================================================
 
-  lazy val scalaTest:  ModuleID = "org.scalatest"  %% "scalatest"  % "3.1.0-SNAP13"
+  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.1.0-SNAP13"
 
   lazy val akkaTestKit:       ModuleID = "com.typesafe.akka" %% "akka-testkit"        % akkaVersion
   lazy val akkaStreamTestKit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion

@@ -103,7 +103,8 @@ lazy val `effects-sync` = project
   .settings(
     name in ThisProject := "busymachines-commons-effects-sync",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources (),
+      Dependencies.scalaCompat withSources (),
+      Dependencies.scalaTest   % Test withSources (),
       /**
         * only in tests because we want to test if syntax
         * plays well with import cats._, cats.implicits._
@@ -121,8 +122,9 @@ lazy val `effects-sync-cats` = project
   .settings(
     name in ThisProject := "busymachines-commons-effects-sync-cats",
     libraryDependencies ++= Seq(
-      Dependencies.catsCore  withSources (),
-      Dependencies.scalaTest % Test withSources (),
+      Dependencies.catsCore    withSources (),
+      Dependencies.scalaCompat withSources (),
+      Dependencies.scalaTest   % Test withSources (),
     ),
   )
   .dependsOn(
@@ -136,9 +138,10 @@ lazy val `effects-async` = project
   .settings(
     name in ThisProject := "busymachines-commons-effects-async",
     libraryDependencies ++= Seq(
-      Dependencies.catsCore   withSources (),
-      Dependencies.catsEffect withSources (),
-      Dependencies.scalaTest  % Test withSources (),
+      Dependencies.catsCore    withSources (),
+      Dependencies.catsEffect  withSources (),
+      Dependencies.scalaCompat withSources (),
+      Dependencies.scalaTest   % Test withSources (),
     ),
   )
   .dependsOn(
@@ -154,7 +157,8 @@ lazy val effects = project
   .settings(
     name in ThisProject := "busymachines-commons-effects",
     libraryDependencies ++= Seq(
-      Dependencies.scalaTest % Test withSources (),
+      Dependencies.scalaCompat withSources (),
+      Dependencies.scalaTest   % Test withSources (),
     ),
   )
   .dependsOn(
