@@ -2,7 +2,7 @@ package busymachines.effects.async_test
 
 import busymachines.effects.async._
 
-import org.scalatest.FunSpec
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -19,7 +19,7 @@ import org.scalatest.FunSpec
   * @since 18 Apr 2018
   *
   */
-class BetterMonadicForTest extends FunSpec {
+class BetterMonadicForTest extends AnyFunSpec {
   private def test: ItWord = it
 
   describe("no withFilter for ought to work w/ IO which has no .withFilter method") {

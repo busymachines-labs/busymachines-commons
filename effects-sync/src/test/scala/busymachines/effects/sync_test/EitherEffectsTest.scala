@@ -19,7 +19,7 @@ package busymachines.effects.sync_test
 
 import busymachines.core._
 import busymachines.effects.sync._
-import org.scalatest.FunSpec
+import org.scalatest.funspec.AnyFunSpec
 
 import cats.syntax.either._
 
@@ -29,7 +29,7 @@ import cats.syntax.either._
   * @since 29 Jan 2018
   *
   */
-class EitherEffectsTest extends FunSpec {
+class EitherEffectsTest extends AnyFunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 

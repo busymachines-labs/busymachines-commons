@@ -18,7 +18,7 @@
 package busymachines.json_test.derive
 
 import busymachines.json_test._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -26,7 +26,7 @@ import org.scalatest.FlatSpec
   * @since 26 Jan 2018
   *
   */
-class JsonResultCodecDerivationTest extends FlatSpec {
+class JsonResultCodecDerivationTest extends AnyFlatSpec {
 
   import busymachines.core._
   import busymachines.effects.sync._

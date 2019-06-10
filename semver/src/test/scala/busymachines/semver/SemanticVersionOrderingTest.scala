@@ -17,7 +17,8 @@
   */
 package busymachines.semver
 
-import org.scalatest.{Assertion, FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.{Assertion, Matchers}
 
 /**
   *
@@ -25,7 +26,7 @@ import org.scalatest.{Assertion, FlatSpec, Matchers}
   * @since 10 Nov 2017
   *
   */
-class SemanticVersionOrderingTest extends FlatSpec with Matchers {
+class SemanticVersionOrderingTest extends AnyFlatSpec with Matchers {
 
   //technically I could have used >, ==, < operators as well
   implicit private class SemVerTestOps(sv: SemanticVersion) {

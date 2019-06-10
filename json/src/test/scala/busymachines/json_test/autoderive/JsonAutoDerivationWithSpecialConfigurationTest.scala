@@ -18,7 +18,7 @@
 package busymachines.json_test.autoderive
 
 import busymachines.json_test._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -26,7 +26,7 @@ import org.scalatest.FlatSpec
   * @since 10 Aug 2017
   *
   */
-final class JsonAutoDerivationWithSpecialConfigurationTest1 extends FlatSpec {
+final class JsonAutoDerivationWithSpecialConfigurationTest1 extends AnyFlatSpec {
 
   import busymachines.json.syntax._
 
@@ -95,7 +95,7 @@ final class JsonAutoDerivationWithSpecialConfigurationTest1 extends FlatSpec {
   * from above to the scope of the class to remove false positive "implicit not used",
   * and it interferes with this test.
   */
-final class JsonAutoDerivationWithSpecialConfigurationTest2 extends FlatSpec {
+final class JsonAutoDerivationWithSpecialConfigurationTest2 extends AnyFlatSpec {
 
   import busymachines.json.syntax._
 

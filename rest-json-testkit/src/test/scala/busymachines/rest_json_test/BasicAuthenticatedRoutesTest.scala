@@ -19,7 +19,7 @@ package busymachines.rest_json_test
 
 import busymachines.rest._
 import busymachines.rest_json_test.routes_to_test._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -27,7 +27,7 @@ import org.scalatest.FlatSpec
   * @since 07 Sep 2017
   *
   */
-class BasicAuthenticatedRoutesTest extends FlatSpec with JsonRestAPITest {
+class BasicAuthenticatedRoutesTest extends AnyFlatSpec with JsonRestAPITest {
   implicit override protected lazy val testedRoute: Route = {
     val authAPI = new BasicAuthenticatedRoutesRestAPIForTesting()
     RestAPI.seal(authAPI).route

@@ -18,7 +18,7 @@
 package busymachines.json_test
 
 import busymachines.core._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -26,7 +26,7 @@ import org.scalatest.FlatSpec
   * @since 10 Aug 2017
   *
   */
-class AnomalyJsonTest extends FlatSpec {
+class AnomalyJsonTest extends AnyFlatSpec {
 
   import busymachines.json._
   import AnomalyJsonCodec._

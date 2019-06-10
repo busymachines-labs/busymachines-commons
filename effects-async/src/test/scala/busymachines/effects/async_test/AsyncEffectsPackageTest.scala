@@ -2,7 +2,7 @@ package busymachines.effects.async_test
 
 import busymachines.effects.sync._
 import busymachines.effects.async
-import org.scalatest.FunSpec
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -10,7 +10,7 @@ import org.scalatest.FunSpec
   * @since 02 Feb 2018
   *
   */
-final class AsyncEffectsPackageTest extends FunSpec {
+final class AsyncEffectsPackageTest extends AnyFunSpec {
   private def test: ItWord = it
 
   describe("effects") {

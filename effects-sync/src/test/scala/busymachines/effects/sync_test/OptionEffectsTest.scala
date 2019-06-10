@@ -19,7 +19,7 @@ package busymachines.effects.sync_test
 
 import busymachines.core._
 import busymachines.effects.sync._
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -27,7 +27,7 @@ import org.scalatest._
   * @since 28 Jan 2018
   *
   */
-final class OptionEffectsTest extends FunSpec {
+final class OptionEffectsTest extends AnyFunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 

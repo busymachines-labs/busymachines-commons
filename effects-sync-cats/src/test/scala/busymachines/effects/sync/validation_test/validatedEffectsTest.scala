@@ -1,10 +1,9 @@
 package busymachines.effects.sync.validation_test
 
-import org.scalatest._
-
 import busymachines.core._
 import busymachines.effects.sync._
 import busymachines.effects.sync.validated._
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -32,7 +31,7 @@ private[validation_test] object PWDValidator {
   case object InvSize   extends InvalidInputFailure("must have size of at least 4")
 }
 
-class ValidatedEffectsTest extends FunSpec {
+class ValidatedEffectsTest extends AnyFunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 
