@@ -20,9 +20,9 @@ import sbt._
 object Dependencies {
 
   lazy val `scala_2.12`:            String      = "2.12.8"
-  lazy val `scala_2.13`:            String      = "2.13.0-M3"
+  lazy val `scala_2.13`:            String      = "2.13.0"
   lazy val mainScalaVersion:        String      = `scala_2.12`
-  lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`)
+  lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`, `scala_2.13`)
 
   //============================================================================================
   //====================================== Scala things ========================================
@@ -85,7 +85,7 @@ object Dependencies {
   //=========================================  testing =========================================
   //============================================================================================
 
-  lazy val scalaTest:  ModuleID = "org.scalatest"  %% "scalatest"  % "3.0.7"
+  lazy val scalaTest:  ModuleID = "org.scalatest"  %% "scalatest"  % "3.1.0-SNAP13"
   lazy val scalaCheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.14.0"
 
   lazy val akkaTestKit:       ModuleID = "com.typesafe.akka" %% "akka-testkit"        % akkaVersion
