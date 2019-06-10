@@ -2,7 +2,7 @@ package busymachines.duration_test
 
 import busymachines.duration.FiniteDuration
 import busymachines.{duration => d}
-import org.scalatest.FunSpec
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -10,7 +10,7 @@ import org.scalatest.FunSpec
   * @since 01 Feb 2018
   *
   */
-class DurationTest extends FunSpec {
+class DurationTest extends AnyFunSpec {
   private def test: ItWord = it
 
   describe("duration") {

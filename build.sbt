@@ -272,7 +272,6 @@ lazy val `semver-parsers` = project
     libraryDependencies ++= Seq(
       Dependencies.attoParser withSources (),
       Dependencies.scalaTest  % Test withSources (),
-      Dependencies.scalaCheck % Test withSources (),
     ),
   )
   .dependsOn(

@@ -6,8 +6,7 @@ import busymachines.effects.sync._
 
 import busymachines.effects.async.validated._
 import busymachines.effects.sync.validated._
-
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -15,7 +14,7 @@ import org.scalatest._
   * @since 28 Jan 2018
   *
   */
-final class IOEffectsAsyncTest extends FunSpec {
+final class IOEffectsAsyncTest extends AnyFunSpec {
   implicit val ec: ExecutionContext = ExecutionContext.global
   //prevents atrocious English
   private def test: ItWord = it

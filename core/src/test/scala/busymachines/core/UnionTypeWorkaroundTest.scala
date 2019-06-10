@@ -17,7 +17,7 @@
   */
 package busymachines.core
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -25,7 +25,7 @@ import org.scalatest.FlatSpec
   * @since 31 Jul 2017
   *
   */
-class UnionTypeWorkaroundTest extends FlatSpec {
+class UnionTypeWorkaroundTest extends AnyFlatSpec {
 
   behavior of "Anomalies"
 

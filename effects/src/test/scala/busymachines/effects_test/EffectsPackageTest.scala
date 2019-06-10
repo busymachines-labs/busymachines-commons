@@ -19,7 +19,7 @@ package busymachines.effects_test
 
 import busymachines.core.InvalidInputFailure
 import busymachines.effects
-import org.scalatest.FunSpec
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -27,7 +27,7 @@ import org.scalatest.FunSpec
   * @since 02 Feb 2018
   *
   */
-final class EffectsPackageTest extends FunSpec {
+final class EffectsPackageTest extends AnyFunSpec {
   private def test: ItWord = it
 
   describe("effects") {

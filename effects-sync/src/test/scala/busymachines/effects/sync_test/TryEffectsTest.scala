@@ -15,11 +15,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package busymachines.effects_test
+package busymachines.effects.sync_test
 
 import busymachines.core._
 import busymachines.effects.sync._
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -27,7 +27,7 @@ import org.scalatest._
   * @since 28 Jan 2018
   *
   */
-final class TryEffectsTest extends FunSpec {
+final class TryEffectsTest extends AnyFunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 

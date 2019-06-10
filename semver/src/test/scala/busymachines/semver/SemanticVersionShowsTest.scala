@@ -17,7 +17,8 @@
   */
 package busymachines.semver
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.Matchers
 
 /**
   *
@@ -25,7 +26,7 @@ import org.scalatest.{FlatSpec, Matchers}
   * @since 13 Nov 2017
   *
   */
-class SemanticVersionShowsTest extends FlatSpec with Matchers {
+class SemanticVersionShowsTest extends AnyFlatSpec with Matchers {
 
   val snapshot    = SemanticVersion(1, 0, 0, Labels.snapshot)
   val alphaSingle = SemanticVersion(1, 0, 0, Labels.alpha)

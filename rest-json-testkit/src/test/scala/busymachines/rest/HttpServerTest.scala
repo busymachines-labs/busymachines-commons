@@ -20,7 +20,7 @@ package busymachines.rest
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import cats.effect.IO
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 import scala.concurrent.ExecutionContext
 
@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext
   * @since 22 Dec 2017
   *
   */
-class HttpServerTest extends FlatSpec {
+class HttpServerTest extends AnyFlatSpec {
 
   private lazy val restAPI: RestAPI = new JsonRestAPI with Directives {
     override protected def routeDefinition: Route = {

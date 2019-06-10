@@ -18,7 +18,7 @@
 package busymachines.json_test.derive
 
 import busymachines.json_test._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -26,7 +26,7 @@ import org.scalatest.FlatSpec
   * @since 26 Oct 2017
   *
   */
-final class JsonDerivationNestedTypesTest1 extends FlatSpec {
+final class JsonDerivationNestedTypesTest1 extends AnyFlatSpec {
 
   import busymachines.json._
   import busymachines.json.syntax._
@@ -64,7 +64,7 @@ final class JsonDerivationNestedTypesTest1 extends FlatSpec {
 
 }
 
-final class JsonDerivationNestedTypesTest2 extends FlatSpec {
+final class JsonDerivationNestedTypesTest2 extends AnyFlatSpec {
 
   import busymachines.json._
   import busymachines.json.syntax._

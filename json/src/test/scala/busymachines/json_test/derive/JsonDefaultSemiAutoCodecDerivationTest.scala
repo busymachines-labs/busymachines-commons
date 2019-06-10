@@ -18,7 +18,7 @@
 package busymachines.json_test.derive
 
 import busymachines.json_test._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -30,7 +30,7 @@ import org.scalatest.FlatSpec
   * @since 10 Aug 2017
   *
   */
-class JsonDefaultSemiAutoCodecDerivationTest extends FlatSpec {
+class JsonDefaultSemiAutoCodecDerivationTest extends AnyFlatSpec {
 
   import busymachines.json.syntax._
   import melonsDefaultSemiAutoCodecs._

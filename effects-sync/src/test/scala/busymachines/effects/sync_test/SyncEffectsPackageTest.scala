@@ -19,7 +19,7 @@ package busymachines.effects.sync_test
 
 import busymachines.effects.sync
 import busymachines.core.InvalidInputFailure
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -27,7 +27,7 @@ import org.scalatest._
   * @since 02 Feb 2018
   *
   */
-class SyncEffectsPackageTest extends FunSpec {
+class SyncEffectsPackageTest extends AnyFunSpec {
   private def test: ItWord = it
 
   test("option") {

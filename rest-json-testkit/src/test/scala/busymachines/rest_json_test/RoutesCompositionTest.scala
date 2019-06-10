@@ -20,7 +20,7 @@ package busymachines.rest_json_test
 import busymachines.core._
 import busymachines.rest._
 import busymachines.rest_json_test.routes_to_test._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -28,7 +28,7 @@ import org.scalatest.FlatSpec
   * @since 07 Sep 2017
   *
   */
-class RoutesCompositionTest extends FlatSpec with JsonRestAPITest {
+class RoutesCompositionTest extends AnyFlatSpec with JsonRestAPITest {
   private lazy val combinedAPI: RestAPI = {
     val eh   = new DefaultExceptionHandlerRestAPIForTesting()
     val crud = new CRUDRoutesRestAPIForTesting()

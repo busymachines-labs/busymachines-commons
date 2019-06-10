@@ -17,7 +17,7 @@
   */
 package busymachines.json_test.autoderive
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -25,7 +25,7 @@ import org.scalatest.FlatSpec
   * @since 26 Jan 2018
   *
   */
-class JsonResultAutoDerivationTest extends FlatSpec {
+class JsonResultAutoDerivationTest extends AnyFlatSpec {
 
   import busymachines.json_test._
   import busymachines.core._

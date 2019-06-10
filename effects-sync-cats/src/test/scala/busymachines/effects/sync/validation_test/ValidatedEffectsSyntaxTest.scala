@@ -20,7 +20,7 @@ package busymachines.effects.sync.validation_test
 import busymachines.core._
 import busymachines.effects.sync.validated._
 import busymachines.effects.sync._
-import org.scalatest._
+import org.scalatest.funspec.AnyFunSpec
 
 /**
   *
@@ -28,7 +28,7 @@ import org.scalatest._
   * @since 28 Jan 2018
   *
   */
-final class ValidatedEffectsSyntaxTest extends FunSpec {
+final class ValidatedEffectsSyntaxTest extends AnyFunSpec {
   //prevents atrocious English
   private def test: ItWord = it
 

@@ -20,7 +20,7 @@ package busymachines.rest_json_test
 import busymachines.core._
 import busymachines.rest._
 import busymachines.rest_json_test.routes_to_test._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
 /**
   *
@@ -28,7 +28,7 @@ import org.scalatest.FlatSpec
   * @since 06 Sep 2017
   *
   */
-class DefaultExceptionHandlerTest extends FlatSpec with JsonRestAPITest {
+class DefaultExceptionHandlerTest extends AnyFlatSpec with JsonRestAPITest {
   implicit override val testedRoute: Route                                    = RestAPI.seal(defApi).route
   implicit lazy val context:         CallerContext                            = Contexts.none
   private lazy val defApi:           DefaultExceptionHandlerRestAPIForTesting = new DefaultExceptionHandlerRestAPIForTesting()
