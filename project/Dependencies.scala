@@ -24,21 +24,29 @@ object Dependencies {
   lazy val mainScalaVersion:        String      = `scala_2.12`
   lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`, `scala_2.13`)
 
+  lazy val scalaCompatVersion:   String = "2.0.0"        //https://github.com/scala/scala-collection-compat/releases
+  lazy val shapelessVersion:     String = "2.3.3"        //https://github.com/milessabin/shapeless/releases
+  lazy val catsVersion:          String = "2.0.0-M4"     //https://github.com/typelevel/cats/releases
+  lazy val catsEffectVersion:    String = "2.0.0-M4"     //https://github.com/typelevel/cats-effect/releases
+  lazy val circeVersion:         String = "0.12.0-M3"    //https://github.com/circe/circe/releases
+  lazy val attoCoreVersion:      String = "0.6.5"        //https://github.com/tpolecat/atto/releases
+  lazy val akkaVersion:          String = "2.5.23"       //https://github.com/akka/akka/releases
+  lazy val akkaHttpVersion:      String = "10.1.8"       //https://github.com/akka/akka-http/releases
+  lazy val akkaHttpCirceVersion: String = "1.26.0"       //https://github.com/hseeberger/akka-http-json/releases
+  lazy val scalaTestVersion:     String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
   //============================================================================================
   //====================================== Scala things ========================================
   //============================================================================================
 
   //lazy val scalaReflect: ModuleID = "org.scala-lang" % "scala-reflect" % mainScalaVersion
-  lazy val scalaCompat: ModuleID = "org.scala-lang.modules" %% "scala-collection-compat" % "2.0.0"
+  lazy val scalaCompat: ModuleID = "org.scala-lang.modules" %% "scala-collection-compat" % scalaCompatVersion
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================
   //========================================  typelevel ========================================
   //============================================================================================
 
-  lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3"
-
-  lazy val catsVersion: String = "2.0.0-M3"
+  lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % shapelessVersion
 
   lazy val catsCore:    ModuleID = "org.typelevel" %% "cats-core"    % catsVersion
   lazy val catsMacros:  ModuleID = "org.typelevel" %% "cats-macros"  % catsVersion
@@ -46,9 +54,7 @@ object Dependencies {
   lazy val catsLaws:    ModuleID = "org.typelevel" %% "cats-laws"    % catsVersion
   lazy val catsTestkit: ModuleID = "org.typelevel" %% "cats-testkit" % catsVersion
 
-  lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0-M3"
-
-  lazy val circeVersion: String = "0.11.1"
+  lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion
 
   lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % circeVersion
   lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeVersion
@@ -62,31 +68,28 @@ object Dependencies {
     circeParser,
   )
 
-  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.5"
+  lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % attoCoreVersion
 
   //============================================================================================
   //================================= http://akka.io/docs/ =====================================
   //======================================== akka ==============================================
   //============================================================================================
 
-  lazy val akkaVersion: String = "2.5.23"
-
   lazy val akkaActor:  ModuleID = "com.typesafe.akka" %% "akka-actor"  % akkaVersion
   lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
 
-  lazy val akkaHttpVersion: String   = "10.1.8"
-  lazy val akkaHttp:        ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+  lazy val akkaHttp: ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 
   /**
     * https://github.com/hseeberger/akka-http-json
     */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % "1.26.0"
+  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCirceVersion
 
   //============================================================================================
   //=========================================  testing =========================================
   //============================================================================================
 
-  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "3.1.0-SNAP13"
+  lazy val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % scalaTestVersion
 
   lazy val akkaTestKit:       ModuleID = "com.typesafe.akka" %% "akka-testkit"        % akkaVersion
   lazy val akkaStreamTestKit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
