@@ -604,19 +604,19 @@ object Result {
       val head = seq.head
       val tail = seq.tail
       val builder: mutable.Builder[B, C[B]] = cbf.apply()
-      val firstBuilder = fn(head) map { z =>
+      val firstBuilder = fn(head).map { z =>
         builder.+=(z)
       }
       val eventualBuilder: Result[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
         (serializedBuilder: Result[mutable.Builder[B, C[B]]], element: A) =>
-          serializedBuilder flatMap [Anomaly, mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
-            val f: Result[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
+          serializedBuilder.flatMap[Anomaly, mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
+            val f: Result[mutable.Builder[B, C[B]]] = fn(element).map { newElement =>
               result.+=(newElement)
             }
             f
           }
       }
-      eventualBuilder map { b =>
+      eventualBuilder.map { b =>
         b.result()
       }
     }

@@ -214,8 +214,8 @@ final class HttpServer private (
   }
 
   private def step3_unbind(binding: ServerBinding): IO[Unit] = {
-    logNormalIO(show"unbinding @ $config") >>
-      IO.fromFuture(IO(binding.unbind())) map (_ => ())
+    (logNormalIO(show"unbinding @ $config") >>
+      IO.fromFuture(IO(binding.unbind()))).map(_ => ())
   }
 
   private def waitForExternalSIGKILLSignal: IO[Unit] = {
@@ -245,5 +245,5 @@ final class HttpServer private (
   private def terminateActorSystemIO: IO[Unit] = {
     logNormalIO(s"closing actor system: ${actorSystem.name}") >>
       IO.fromFuture(IO(actorSystem.terminate()))
-  } map (_ => ())
+  }.map(_ => ())
 }

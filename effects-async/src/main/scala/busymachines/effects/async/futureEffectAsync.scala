@@ -2195,19 +2195,19 @@ object FutureOps {
       val head = seq.head
       val tail = seq.tail
       val builder: mutable.Builder[B, C[B]] = cbf.apply()
-      val firstBuilder = fn(head) map { z =>
+      val firstBuilder = fn(head).map { z =>
         builder.+=(z)
       }
       val eventualBuilder: Future[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
         (serializedBuilder: Future[mutable.Builder[B, C[B]]], element: A) =>
-          serializedBuilder flatMap [mutable.Builder[B, C[B]]] { result: mutable.Builder[B, C[B]] =>
-            val f: Future[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
+          serializedBuilder.flatMap[mutable.Builder[B, C[B]]] { result: mutable.Builder[B, C[B]] =>
+            val f: Future[mutable.Builder[B, C[B]]] = fn(element).map { newElement =>
               result.+=(newElement)
             }
             f
           }
       }
-      eventualBuilder map { b =>
+      eventualBuilder.map { b =>
         b.result()
       }
     }

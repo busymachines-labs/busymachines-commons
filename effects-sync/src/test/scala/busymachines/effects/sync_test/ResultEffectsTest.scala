@@ -663,7 +663,7 @@ final class ResultEffectsTest extends AnyFunSpec {
           val expected = nrs.map(_.toString)
 
           val result: Result[Seq[String]] = Result.sequence {
-            input map { tr =>
+            input.map { tr =>
               tr.map(i => i.toString)
             }
           }
@@ -684,7 +684,7 @@ final class ResultEffectsTest extends AnyFunSpec {
           val input: Seq[Result[Int]] = (1 to 100).toList.map(Result.pure)
 
           val result: Result[Unit] = Result.sequence_ {
-            input map { tr =>
+            input.map { tr =>
               tr.map(i => i.toString)
             }
           }
