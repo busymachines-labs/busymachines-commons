@@ -99,7 +99,9 @@ object EitherSyntax {
       * Throws exception if there isn't one
       */
     @inline def unsafeGetLeft(): L =
-      value.swap.getOrElse(throw new java.util.NoSuchElementException(s"Either did not have a left hand side: was: $value"))
+      value.swap.getOrElse(
+        throw new java.util.NoSuchElementException(s"Either did not have a left hand side: was: $value"),
+      )
 
     /**
       * Returns the value on the right.

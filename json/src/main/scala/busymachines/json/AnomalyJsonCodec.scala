@@ -63,27 +63,26 @@ trait AnomalyJsonCodec {
       override def apply(c: HCursor): DecoderResult[Anomaly.Parameters] = {
         val jsonObj = c.as[JsonObject]
         val m       = jsonObj.map(_.toMap)
-        val m2: Either[DecodingFailure, Either[DecodingFailure, Anomaly.Parameters]] = m.map {
-          (e: Map[String, Json]) =>
-            val potentialFailures = e.map { p =>
-              p._2.as[Anomaly.Parameter].map(s => (p._1, s))
-            }.toList
+        val m2: Either[DecodingFailure, Either[DecodingFailure, Anomaly.Parameters]] = m.map { (e: Map[String, Json]) =>
+          val potentialFailures = e.map { p =>
+            p._2.as[Anomaly.Parameter].map(s => (p._1, s))
+          }.toList
 
-            if (potentialFailures.nonEmpty) {
-              val first: Either[DecodingFailure, List[(String, Anomaly.Parameter)]] =
-                potentialFailures.head.map(e => List(e))
-              val rest = potentialFailures.tail
-              val r: Either[DecodingFailure, List[(String, Anomaly.Parameter)]] = rest.foldRight(first) { (v, acc) =>
-                for {
-                  prevAcc <- acc
-                  newVal  <- v
-                } yield prevAcc :+ newVal
-              }
-              r.map(l => Anomaly.Parameters(l: _*))
+          if (potentialFailures.nonEmpty) {
+            val first: Either[DecodingFailure, List[(String, Anomaly.Parameter)]] =
+              potentialFailures.head.map(e => List(e))
+            val rest = potentialFailures.tail
+            val r: Either[DecodingFailure, List[(String, Anomaly.Parameter)]] = rest.foldRight(first) { (v, acc) =>
+              for {
+                prevAcc <- acc
+                newVal  <- v
+              } yield prevAcc :+ newVal
             }
-            else {
-              Right[DecodingFailure, Anomaly.Parameters](Anomaly.Parameters.empty)
-            }
+            r.map(l => Anomaly.Parameters(l: _*))
+          }
+          else {
+            Right[DecodingFailure, Anomaly.Parameters](Anomaly.Parameters.empty)
+          }
         }
         m2.flatMap(x => identity(x))
       }

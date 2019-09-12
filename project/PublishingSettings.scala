@@ -54,22 +54,22 @@ object PublishingSettings {
     publishMavenStyle          := true,
     pomIncludeRepository       := (_ => false),
     //new since sbt-pgp 3.4, see: https://github.com/xerial/sbt-sonatype/#uploading-artifacts-in-parallel
-    publishTo                  := sonatypePublishToBundle.value,
-    licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+    publishTo := sonatypePublishToBundle.value,
+    licenses  := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     scmInfo := Option(
       ScmInfo(
         url("https://github.com/busymachines/busymachines-commons"),
-        "scm:git@github.com:busymachines/busymachines-commons.git"
-      )
+        "scm:git@github.com:busymachines/busymachines-commons.git",
+      ),
     ),
     developers := List(
       Developer(
         id    = "lorandszakacs",
         name  = "Lorand Szakacs",
         email = "lorand.szakacs@busymachines.com",
-        url   = url("https://github.com/lorandszakacs")
-      )
-    )
+        url   = url("https://github.com/lorandszakacs"),
+      ),
+    ),
   )
 
   def noPublishSettings = Seq(
@@ -77,7 +77,7 @@ object PublishingSettings {
     publishLocal         := {},
     skip in publishLocal := true,
     skip in publish      := true,
-    publishArtifact      := false
+    publishArtifact      := false,
   )
 
 }

@@ -23,5 +23,5 @@ credentials += Credentials(
   "Sonatype Nexus Repository Manager",
   "oss.sonatype.org",
   "$USERNAME_ON_SONATYPE_JIRA",
-  "$PASSWORD_ON_SONATYPE_JIRA"
+  "$PASSWORD_ON_SONATYPE_JIRA",
 )

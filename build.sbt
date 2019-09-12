@@ -54,11 +54,11 @@ addCommandAlias("doSnapshotRelease", ";ci;setSnapshotVersion;publishSigned")
   * All instructions for publishing to sonatype can be found in
   * ``z-publishing-artifcats/README.md``.
   */
-  addCommandAlias("cleanPublishSigned", ";recompile;publishSigned")
-  addCommandAlias("do212Release", ";++2.12.10;sonatypeBundleRelease")
-  addCommandAlias("do213Release", ";++2.13.0;sonatypeBundleRelease")
-  //we do this like this, because sonatypeBundleRelease cannot parallelize 2.12, and 2.13 releases
-  addCommandAlias("doRelease", ";+cleanPublishSigned;do212Release;do213Release")
+addCommandAlias("cleanPublishSigned", ";recompile;publishSigned")
+addCommandAlias("do212Release", ";++2.12.10;sonatypeBundleRelease")
+addCommandAlias("do213Release", ";++2.13.0;sonatypeBundleRelease")
+//we do this like this, because sonatypeBundleRelease cannot parallelize 2.12, and 2.13 releases
+addCommandAlias("doRelease", ";+cleanPublishSigned;do212Release;do213Release")
 
 /**
   * this is a phantom project that is simply supposed to aggregate all modules for convenience,
