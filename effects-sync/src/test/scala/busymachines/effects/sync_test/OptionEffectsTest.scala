@@ -465,7 +465,7 @@ final class OptionEffectsTest extends AnyFunSpec {
           val expected = nrs.map(_.toString)
 
           val result: Option[Seq[String]] = Option.sequence {
-            input map { tr =>
+            input.map { tr =>
               tr.map(i => i.toString)
             }
           }
@@ -487,7 +487,7 @@ final class OptionEffectsTest extends AnyFunSpec {
           val input: Seq[Option[Int]] = (1 to 100).toList.map(Option.pure)
 
           val result: Option[Unit] = Option.sequence_ {
-            input map { tr =>
+            input.map { tr =>
               tr.map(i => i.toString)
             }
           }

@@ -273,22 +273,22 @@ object RestAPI {
     am:  ToEntityMarshaller[Anomaly],
     asm: ToEntityMarshaller[Anomalies],
   ): ExceptionHandler =
-    semanticallyMeaningfulHandler(am, asm) orElse ExceptionHandler {
+    semanticallyMeaningfulHandler(am, asm).orElse(ExceptionHandler {
       case e: java.util.concurrent.ExecutionException =>
         boxedErrorHandler.apply(e.getCause)
 
       case e: Throwable =>
         anomaly(StatusCodes.InternalServerError, CatastrophicError(e))
-    }
+    })
 
   def defaultExceptionHandlerNoTerminalCase(
     implicit
     am:  ToEntityMarshaller[Anomaly],
     asm: ToEntityMarshaller[Anomalies],
   ): ExceptionHandler =
-    semanticallyMeaningfulHandler(am, asm) orElse ExceptionHandler {
+    semanticallyMeaningfulHandler(am, asm).orElse(ExceptionHandler {
       case e: java.util.concurrent.ExecutionException =>
         boxedErrorHandler.apply(e.getCause)
-    }
+    })
 
 }

@@ -2910,7 +2910,7 @@ final class IOEffectsAsyncTest extends AnyFunSpec {
                 startedFlag.isEmpty,
                 s"started flag should have been empty at the start of each IO but was: $startedFlag",
               )
-              previouslyProcessed foreach { previous =>
+              previouslyProcessed.foreach { previous =>
                 assertResult(expected = i - 1, "... the IOs were not executed in the correct order.")(
                   actual = previous,
                 )
@@ -2963,13 +2963,13 @@ final class IOEffectsAsyncTest extends AnyFunSpec {
           var previouslyProcessed: Option[Int] = None
           var startedFlag:         Option[Int] = None
 
-          val eventualResult: IO[Seq[String]] = IO.sequence(input map { io =>
+          val eventualResult: IO[Seq[String]] = IO.sequence(input.map { io =>
             io.map { i =>
               assert(
                 startedFlag.isEmpty,
                 s"started flag should have been empty at the start of each IO but was: $startedFlag",
               )
-              previouslyProcessed foreach { previous =>
+              previouslyProcessed.foreach { previous =>
                 assertResult(expected = i - 1, "... the IOs were not executed in the correct order.")(
                   actual = previous,
                 )
@@ -3025,7 +3025,7 @@ final class IOEffectsAsyncTest extends AnyFunSpec {
                 startedFlag.isEmpty,
                 s"started flag should have been empty at the start of each IO but was: $startedFlag",
               )
-              previouslyProcessed foreach { previous =>
+              previouslyProcessed.foreach { previous =>
                 assertResult(expected = i - 1, "... the IOs were not executed in the correct order.")(
                   actual = previous,
                 )
