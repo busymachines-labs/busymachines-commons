@@ -833,9 +833,7 @@ object FutureSyntax {
       * @see [[scala.concurrent.Future.traverse]]
       */
     @inline def traverse_[A, B, M[X] <: IterableOnce[X]](in: M[A])(fn: A => Future[B])(
-      implicit
-      cbf: BuildFrom[M[A], B, M[B]],
-      ec:  ExecutionContext,
+      implicit ec:  ExecutionContext,
     ): Future[Unit] = FutureOps.traverse_(in)(fn)
 
     /**
@@ -846,9 +844,7 @@ object FutureSyntax {
       * @see [[scala.concurrent.Future.sequence]]
       */
     @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Future[A]])(
-      implicit
-      cbf: BuildFrom[M[Future[A]], A, M[A]],
-      ec:  ExecutionContext,
+      implicit ec:  ExecutionContext,
     ): Future[Unit] = FutureOps.sequence_(in)
 
     /**
@@ -2135,11 +2131,9 @@ object FutureOps {
     * @see [[scala.concurrent.Future.traverse]]
     */
   @inline def traverse_[A, B, M[X] <: IterableOnce[X]](in: M[A])(fn: A => Future[B])(
-    implicit
-    cbf: BuildFrom[M[A], B, M[B]],
-    ec:  ExecutionContext,
+    implicit ec:  ExecutionContext,
   ): Future[Unit] =
-    FutureOps.discardContent(Future.traverse(in)(fn))
+    FutureOps.discardContent(Future.traverse(in.iterator)(fn))
 
   /**
     *
@@ -2149,10 +2143,8 @@ object FutureOps {
     * @see [[scala.concurrent.Future.sequence]]
     */
   @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Future[A]])(
-    implicit
-    cbf: BuildFrom[M[Future[A]], A, M[A]],
-    ec:  ExecutionContext,
-  ): Future[Unit] = FutureOps.discardContent(Future.sequence(in))
+    implicit ec:  ExecutionContext,
+  ): Future[Unit] = FutureOps.discardContent(Future.sequence(in.iterator))
 
   /**
     *
