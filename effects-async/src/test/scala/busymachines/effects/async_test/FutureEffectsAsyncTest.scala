@@ -2935,44 +2935,6 @@ final class FutureEffectsAsyncTest extends AnyFunSpec {
           assert(previouslyProcessed == Option(100))
         }
       }
-
-      describe("Future.traverse_") {
-
-        test("empty list") {
-          val input: Seq[Int] = List()
-
-          var sideEffect: Int = 0
-
-          val eventualResult: Future[Unit] = Future.traverse_(input) { _ =>
-            Future {
-              sideEffect = 42
-            }
-          }
-
-          eventualResult.r
-          assert(sideEffect == 0, "nothing should have happened")
-        }
-      }
-
-      describe("Future.sequence_") {
-
-        test("empty list") {
-          val input: Seq[Int] = List()
-
-          var sideEffect: Int = 0
-
-          val eventualResult: Future[Unit] = Future.sequence_ {
-            input.map { _ =>
-              Future {
-                sideEffect = 42
-              }
-            }
-          }
-
-          eventualResult.r
-          assert(sideEffect == 0, "nothing should have happened")
-        }
-      }
     }
 
   }

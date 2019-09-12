@@ -45,7 +45,7 @@ class JsonUtilsTest extends AnyFlatSpec with EitherValues with Matchers {
         |}
       """.stripMargin
 
-    JsonParsing.parseString(rawJson).right.value
+    JsonParsing.parseString(rawJson).value
   }
 
   //-----------------------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ class JsonUtilsTest extends AnyFlatSpec with EitherValues with Matchers {
         |}
       """.stripMargin
 
-    val am = JsonDecoding.decodeAs[AnarchistMelon](rawJson).right.value
+    val am = JsonDecoding.decodeAs[AnarchistMelon](rawJson).value.unsafeGet()
     assertResult(AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true))(am)
   }
 

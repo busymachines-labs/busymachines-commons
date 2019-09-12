@@ -46,7 +46,7 @@ object Settings {
        *
        * https://github.com/oleg-py/better-monadic-for
        */
-      addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0"),
+      addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 12)) => scala2_12Flags
         case Some((2, 13)) => scala2_13Flags
@@ -143,7 +143,6 @@ object Settings {
     "-Xlint:private-shadow", // A private field (or class parameter) shadows a superclass field.
     "-Xlint:stars-align", // Pattern sequence wildcard must align with sequence component.
     "-Xlint:type-parameter-shadow", // A local type parameter shadows a type already in scope.
-    "-Ywarn-extra-implicit", // Warn when more than one implicit parameter section is defined.
     "-Ywarn-numeric-widen", // Warn when numerics are widened.
     "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
     "-Ywarn-unused:imports", // Warn if an import selector is not referenced.

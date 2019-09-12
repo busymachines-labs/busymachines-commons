@@ -99,7 +99,9 @@ object EitherSyntax {
       * Throws exception if there isn't one
       */
     @inline def unsafeGetLeft(): L =
-      value.left.get
+      value.swap.getOrElse(
+        throw new java.util.NoSuchElementException(s"No left-hand-side for either. Current value ${this.toString}"),
+      )
 
     /**
       * Returns the value on the right.
@@ -107,6 +109,8 @@ object EitherSyntax {
       * Throws exception if there isn't one
       */
     @inline def unsafeGetRight(): R =
-      value.right.get
+      value.getOrElse(
+        throw new java.util.NoSuchElementException(s"No right-hand-side for either. Current value ${this.toString}"),
+      )
   }
 }

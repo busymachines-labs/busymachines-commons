@@ -21,7 +21,7 @@ import busymachines.core._
 import busymachines.effects.sync._
 import cats.{data => cd}
 
-import scala.collection.generic.CanBuildFrom
+import scala.collection.compat._
 import scala.util.control.NonFatal
 
 /**
@@ -344,15 +344,15 @@ object ValidatedSyntax {
       *   }
       * }}}
       */
-    @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
+    @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Validated[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
     ): Validated[C[B]] = ValidatedOps.traverse(col)(fn)
 
     /**
       * Basically like ``traverse`` but discards the value
       */
-    @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] =
+    @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] =
       ValidatedOps.traverse_(col)(fn)
 
     /**
@@ -368,15 +368,15 @@ object ValidatedSyntax {
       *   val fileNames:    Validated[List[String]] = Validated.sequence(fileNamesTry)
       * }}}
       */
-    @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
+    @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[Validated[A]])(
       implicit
-      cbf: CanBuildFrom[M[Validated[A]], A, M[A]],
+      cbf: BuildFrom[M[Validated[A]], A, M[A]],
     ): Validated[M[A]] = ValidatedOps.sequence(in)
 
     /**
       * Like ``sequence`` but discards the value
       */
-    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
+    @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
       ValidatedOps.sequence_(in)
 
     @inline def sequence[A](head: Validated[A], tail: Validated[A]*): Validated[List[A]] =
@@ -621,21 +621,21 @@ object ValidatedOps {
     *   }
     * }}}
     */
-  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B])(
+  @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Validated[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): Validated[C[B]] = {
     import cats.instances.list._
     import cats.syntax.traverse._
     import scala.collection.mutable
 
-    if (col.isEmpty) {
-      Validated.pure(cbf.apply().result())
+    if (col.iterator.isEmpty) {
+      Validated.pure(cbf.newBuilder(col).result())
     }
     else {
       //OK, super inneficient, need a better implementation
-      val result:  Validated[List[B]]       = col.toList.traverse(fn)
-      val builder: mutable.Builder[B, C[B]] = cbf.apply()
+      val result:  Validated[List[B]]       = col.iterator.toList.traverse(fn)
+      val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)
       result.map(_.foreach(e => builder.+=(e))).map(_ => builder.result())
     }
   }
@@ -643,14 +643,14 @@ object ValidatedOps {
   /**
     * Like ``traverse`` but discards the value
     */
-  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] = {
+  @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Validated[B]): Validated[Unit] = {
     import cats.instances.list._
     import cats.syntax.foldable._
-    if (col.isEmpty) {
+    if (col.iterator.isEmpty) {
       Validated.unit
     }
     else {
-      col.toList.traverse_(fn)
+      col.iterator.toList.traverse_(fn)
     }
   }
 
@@ -667,9 +667,9 @@ object ValidatedOps {
     *   val fileNames:    Validated[List[String]] = Validated.sequence(fileNamesTry)
     * }}}
     */
-  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]])(
+  @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[Validated[A]])(
     implicit
-    cbf: CanBuildFrom[M[Validated[A]], A, M[A]],
+    cbf: BuildFrom[M[Validated[A]], A, M[A]],
   ): Validated[M[A]] = ValidatedOps.traverse(in)(identity)
 
   /**
@@ -694,7 +694,7 @@ object ValidatedOps {
   /**
     * Like ``sequence`` but discards the value
     */
-  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
+  @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Validated[A]]): Validated[Unit] =
     ValidatedOps.traverse_(in)(identity)
 
   /**
