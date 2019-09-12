@@ -29,7 +29,7 @@ object Dependencies {
   lazy val catsVersion:          String = "2.0.0"        //https://github.com/typelevel/cats/releases
   lazy val catsEffectVersion:    String = "2.0.0"        //https://github.com/typelevel/cats-effect/releases
   lazy val circeVersion:         String = "0.12.0-M3"    //https://github.com/circe/circe/releases
-  lazy val attoCoreVersion:      String = "0.6.5"        //https://github.com/tpolecat/atto/releases
+  lazy val attoCoreVersion:      String = "0.7.0"        //https://github.com/tpolecat/atto/releases
   lazy val akkaVersion:          String = "2.5.23"       //https://github.com/akka/akka/releases
   lazy val akkaHttpVersion:      String = "10.1.8"       //https://github.com/akka/akka-http/releases
   lazy val akkaHttpCirceVersion: String = "1.26.0"       //https://github.com/hseeberger/akka-http-json/releases
