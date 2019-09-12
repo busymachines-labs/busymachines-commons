@@ -33,7 +33,6 @@ object Dependencies {
   lazy val attoCoreVersion:      String = "0.7.0"        //https://github.com/tpolecat/atto/releases
   lazy val akkaVersion:          String = "2.5.23"       //https://github.com/akka/akka/releases
   lazy val akkaHttpVersion:      String = "10.1.8"       //https://github.com/akka/akka-http/releases
-  lazy val akkaHttpCirceVersion: String = "1.26.0"       //https://github.com/hseeberger/akka-http-json/releases
   lazy val scalaTestVersion:     String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
   //============================================================================================
   //====================================== Scala things ========================================
@@ -81,11 +80,6 @@ object Dependencies {
   lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
 
   lazy val akkaHttp: ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
-
-  /**
-    * https://github.com/hseeberger/akka-http-json
-    */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCirceVersion
 
   //============================================================================================
   //=========================================  testing =========================================
