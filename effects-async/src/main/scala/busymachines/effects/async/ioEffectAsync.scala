@@ -276,7 +276,7 @@ object IOSyntax {
       * If you are certain that this [[Future]] is pure, then you can use
       * this method to lift it into [[IO]].
       */
-    @inline def fromFuturePure[T](future: Future[T]): IO[T] =
+    @inline def fromFuturePure[T](future: Future[T])(implicit cs: ContextShift[IO]): IO[T] =
       IOOps.fromFuturePure(future)
 
     /**
@@ -1461,7 +1461,7 @@ object IOOps {
     * If you are certain that this [[Future]] is pure, then you can use
     * this method to lift it into [[IO]].
     */
-  @inline def fromFuturePure[T](value: Future[T]): IO[T] =
+  @inline def fromFuturePure[T](value: Future[T])(implicit cs: ContextShift[IO]): IO[T] =
     IO.fromFuture(IO(value))
 
   /**

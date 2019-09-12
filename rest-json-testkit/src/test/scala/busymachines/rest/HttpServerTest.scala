@@ -19,7 +19,7 @@ package busymachines.rest
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import cats.effect.IO
+import cats.effect.{ContextShift, IO}
 import org.scalatest.flatspec.AnyFlatSpec
 
 import scala.concurrent.ExecutionContext
@@ -48,6 +48,7 @@ class HttpServerTest extends AnyFlatSpec {
     implicit val as: ActorSystem       = ActorSystem("http-server-test")
     implicit val am: ActorMaterializer = ActorMaterializer()
     implicit val ec: ExecutionContext  = as.dispatcher
+    implicit val cs: ContextShift[IO]  = IO.contextShift(ec)
 
     val httpServer = HttpServer(
       name  = "HttpServerTest",
@@ -74,6 +75,7 @@ class HttpServerTest extends AnyFlatSpec {
     implicit val as: ActorSystem       = ActorSystem("http-server-test")
     implicit val am: ActorMaterializer = ActorMaterializer()
     implicit val ec: ExecutionContext  = as.dispatcher
+    implicit val cs: ContextShift[IO]  = IO.contextShift(ec)
 
     val httpServer = HttpServer(
       name  = "HttpServerTest",

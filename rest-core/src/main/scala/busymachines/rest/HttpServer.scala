@@ -60,6 +60,7 @@ object HttpServer {
   )(
     implicit
     as: ActorSystem,
+    cs: ContextShift[IO],
     ec: ExecutionContext,
     am: ActorMaterializer,
   ): HttpServer = {
@@ -109,6 +110,7 @@ final class HttpServer private (
 )(
   implicit
   private val actorSystem:       ActorSystem,
+  private val contextShift:      ContextShift[IO],
   private val execContext:       ExecutionContext,
   private val actorMaterializer: ActorMaterializer,
 ) {
