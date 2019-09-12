@@ -85,11 +85,11 @@ trait BaseCirceSupport {
     * @return marshaller for JSON value
     */
   implicit final def jsonMarshaller(
-                                     implicit printer: Printer = Printer.noSpaces,
-                                   ): ToEntityMarshaller[Json] =
+    implicit printer: Printer = Printer.noSpaces,
+  ): ToEntityMarshaller[Json] =
     Marshaller.oneOf(mediaTypes: _*) { mediaType =>
       Marshaller.withFixedContentType(ContentType(mediaType)) { json =>
-        HttpEntity(mediaType, ByteString(printer.prettyByteBuffer(json, mediaType.charset.nioCharset())))
+        HttpEntity(mediaType, ByteString(printer.printToByteBuffer(json, mediaType.charset.nioCharset())))
       }
     }
 
@@ -100,8 +100,8 @@ trait BaseCirceSupport {
     * @return marshaller for any `A` value
     */
   implicit final def marshaller[A: Encoder](
-                                             implicit printer: Printer = Printer.noSpaces,
-                                           ): ToEntityMarshaller[A] =
+    implicit printer: Printer = Printer.noSpaces,
+  ): ToEntityMarshaller[A] =
     jsonMarshaller(printer).compose(Encoder[A].apply)
 
   /**

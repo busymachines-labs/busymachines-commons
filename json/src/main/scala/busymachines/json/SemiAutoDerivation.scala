@@ -33,10 +33,10 @@ trait SemiAutoDerivation {
   type DerivationHelper[A] = io.circe.generic.extras.semiauto.DerivationHelper[A]
 
   final def decoder[A](implicit decode: Lazy[decoding.ConfiguredDecoder[A]]): Decoder[A] =
-    circeSemiAuto.deriveDecoder[A](decode)
+    circeSemiAuto.deriveConfiguredDecoder[A](decode)
 
   final def encoder[A](implicit encode: Lazy[encoding.ConfiguredAsObjectEncoder[A]]): ObjectEncoder[A] =
-    circeSemiAuto.deriveEncoder[A](encode)
+    circeSemiAuto.deriveConfiguredEncoder[A](encode)
 
   final def codec[A](
     implicit
@@ -45,7 +45,7 @@ trait SemiAutoDerivation {
   ): Codec[A] = Codec.instance[A](encode.value, decode.value)
 
   final def deriveFor[A]: DerivationHelper[A] =
-    circeSemiAuto.deriveFor[A]
+    circeSemiAuto.deriveConfiguredFor[A]
 
   final def enumerationDecoder[A](implicit decode: Lazy[decoding.EnumerationDecoder[A]]): Decoder[A] =
     circeSemiAuto.deriveEnumerationDecoder[A]
