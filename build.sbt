@@ -230,9 +230,7 @@ lazy val `rest-json` = project
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
     name in ThisProject := "busymachines-commons-rest-json",
-    libraryDependencies ++= Seq(
-      Dependencies.akkaHttpCirceIntegration withSources (),
-    ),
+    libraryDependencies ++= Seq(),
   )
   .dependsOn(
     core,

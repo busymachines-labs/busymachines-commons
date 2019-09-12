@@ -25,13 +25,11 @@ package busymachines.rest
   */
 object jsonrest {
 
-  import de.heikoseeberger.akkahttpcirce
+  type JsonSupport = FailFastCirceSupport
+  val JsonSupport: FailFastCirceSupport.type = FailFastCirceSupport
 
-  type JsonSupport = akkahttpcirce.FailFastCirceSupport
-  val JsonSupport: akkahttpcirce.FailFastCirceSupport.type = akkahttpcirce.FailFastCirceSupport
+  type ErrorAccumulatingJsonSupport = ErrorAccumulatingCirceSupport
 
-  type ErrorAccumulatingJsonSupport = akkahttpcirce.ErrorAccumulatingCirceSupport
-
-  val ErrorAccumulatingJsonSupport: akkahttpcirce.ErrorAccumulatingCirceSupport.type =
-    akkahttpcirce.ErrorAccumulatingCirceSupport
+  val ErrorAccumulatingJsonSupport: ErrorAccumulatingCirceSupport.type =
+    ErrorAccumulatingCirceSupport
 }
