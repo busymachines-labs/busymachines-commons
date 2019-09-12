@@ -26,7 +26,7 @@ package busymachines.json
   * {{{
   *   Error:(20, 11) package cats contains object and package with same name: implicits
   *    one of them needs to be removed from classpath
-  *    c.as[String].right.map(FailureID.apply)
+  *    c.as[String].map(FailureID.apply)
   * }}}
   *
   * Therefore "package-like" imports are modeled as much as possible as static imports of

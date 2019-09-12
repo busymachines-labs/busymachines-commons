@@ -522,7 +522,7 @@ object Result {
     * happy path.
     */
   @inline def bimap[T, R](value: Result[T], good: T => R, bad: Anomaly => Anomaly): Result[R] =
-    value.right.map(good).left.map(bad)
+    value.map(good).left.map(bad)
 
   /**
     *
