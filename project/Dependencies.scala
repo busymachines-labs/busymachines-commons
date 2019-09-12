@@ -31,7 +31,7 @@ object Dependencies {
   lazy val circeVersion:       String = "0.12.1"       //https://github.com/circe/circe/releases
   lazy val attoCoreVersion:    String = "0.7.0"        //https://github.com/tpolecat/atto/releases
   lazy val akkaVersion:        String = "2.5.23"       //https://github.com/akka/akka/releases
-  lazy val akkaHttpVersion:    String = "10.1.8"       //https://github.com/akka/akka-http/releases
+  lazy val akkaHttpVersion:    String = "10.1.9"       //https://github.com/akka/akka-http/releases
   lazy val scalaTestVersion:   String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
   //============================================================================================
   //====================================== Scala things ========================================
