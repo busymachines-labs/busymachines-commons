@@ -21,6 +21,7 @@ import Keys._
 lazy val currentSnapshotVersion = "0.3.0-SNAPSHOT"
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
+addCommandAlias("recompile", ";clean;update;compile")
 addCommandAlias("build", ";compile;Test/compile")
 addCommandAlias("rebuild", ";clean;compile;Test/compile")
 addCommandAlias("rebuild-update", ";clean;update;compile;Test/compile")
@@ -53,7 +54,11 @@ addCommandAlias("doSnapshotRelease", ";ci;setSnapshotVersion;publishSigned")
   * All instructions for publishing to sonatype can be found in
   * ``z-publishing-artifcats/README.md``.
   */
-addCommandAlias("doRelease", ";ci;publishSigned;sonatypeRelease")
+addCommandAlias("cleanPublishSigned", ";recompile;publishSigned")
+addCommandAlias("do212Release", ";++2.12.10;sonatypeBundleRelease")
+addCommandAlias("do213Release", ";++2.13.0;sonatypeBundleRelease")
+//we do this like this, because sonatypeBundleRelease cannot parallelize 2.12, and 2.13 releases
+addCommandAlias("doRelease", ";+cleanPublishSigned;do212Release;do213Release")
 
 /**
   * this is a phantom project that is simply supposed to aggregate all modules for convenience,
@@ -225,9 +230,7 @@ lazy val `rest-json` = project
   .settings(PublishingSettings.sonatypeSettings)
   .settings(
     name in ThisProject := "busymachines-commons-rest-json",
-    libraryDependencies ++= Seq(
-      Dependencies.akkaHttpCirceIntegration withSources (),
-    ),
+    libraryDependencies ++= Seq(),
   )
   .dependsOn(
     core,

@@ -33,7 +33,7 @@ trait AnomalyJsonCodec {
 
   implicit final private val AnomalyIDCodec: Codec[AnomalyID] = new Codec[AnomalyID] {
     override def apply(c: HCursor): DecoderResult[AnomalyID] = {
-      c.as[String].right.map(AnomalyID.apply)
+      c.as[String].map(AnomalyID.apply)
     }
 
     override def apply(a: AnomalyID): Json = Json.fromString(a.name)
@@ -50,10 +50,10 @@ trait AnomalyJsonCodec {
     override def apply(c: HCursor): DecoderResult[Anomaly.Parameter] = {
       val sa: DecoderResult[String] = c.as[String]
       if (sa.isRight) {
-        sa.right.map(Anomaly.Parameter)
+        sa.map(Anomaly.Parameter)
       }
       else {
-        c.as[List[String]].right.map(Anomaly.Parameter)
+        c.as[List[String]].map(Anomaly.Parameter)
       }
     }
   }
@@ -62,30 +62,29 @@ trait AnomalyJsonCodec {
     new Codec[Anomaly.Parameters] {
       override def apply(c: HCursor): DecoderResult[Anomaly.Parameters] = {
         val jsonObj = c.as[JsonObject]
-        val m       = jsonObj.right.map(_.toMap)
-        val m2: Either[DecodingFailure, Either[DecodingFailure, Anomaly.Parameters]] = m.right.map {
-          (e: Map[String, Json]) =>
-            val potentialFailures = e.map { p =>
-              p._2.as[Anomaly.Parameter].right.map(s => (p._1, s))
-            }.toList
+        val m       = jsonObj.map(_.toMap)
+        val m2: Either[DecodingFailure, Either[DecodingFailure, Anomaly.Parameters]] = m.map { (e: Map[String, Json]) =>
+          val potentialFailures = e.map { p =>
+            p._2.as[Anomaly.Parameter].map(s => (p._1, s))
+          }.toList
 
-            if (potentialFailures.nonEmpty) {
-              val first: Either[DecodingFailure, List[(String, Anomaly.Parameter)]] =
-                potentialFailures.head.right.map(e => List(e))
-              val rest = potentialFailures.tail
-              val r: Either[DecodingFailure, List[(String, Anomaly.Parameter)]] = rest.foldRight(first) { (v, acc) =>
-                for {
-                  prevAcc <- acc.right
-                  newVal  <- v.right
-                } yield prevAcc :+ newVal
-              }
-              r.right.map(l => Anomaly.Parameters(l: _*))
+          if (potentialFailures.nonEmpty) {
+            val first: Either[DecodingFailure, List[(String, Anomaly.Parameter)]] =
+              potentialFailures.head.map(e => List(e))
+            val rest = potentialFailures.tail
+            val r: Either[DecodingFailure, List[(String, Anomaly.Parameter)]] = rest.foldRight(first) { (v, acc) =>
+              for {
+                prevAcc <- acc
+                newVal  <- v
+              } yield prevAcc :+ newVal
             }
-            else {
-              Right[DecodingFailure, Anomaly.Parameters](Anomaly.Parameters.empty)
-            }
+            r.map(l => Anomaly.Parameters(l: _*))
+          }
+          else {
+            Right[DecodingFailure, Anomaly.Parameters](Anomaly.Parameters.empty)
+          }
         }
-        m2.right.flatMap(x => identity(x))
+        m2.flatMap(x => identity(x))
       }
 
       override def apply(a: Anomaly.Parameters): Json = {
@@ -140,12 +139,12 @@ trait AnomalyJsonCodec {
 
     override def apply(c: HCursor): DecoderResult[Anomalies] = {
       for {
-        fm   <- c.as[Anomaly].right
-        msgs <- c.get[Seq[Anomaly]](CoreJsonConstants.messages).right
+        fm   <- c.as[Anomaly]
+        msgs <- c.get[Seq[Anomaly]](CoreJsonConstants.messages)
         _ <- (if (msgs.isEmpty)
                 Left(DecodingFailure("Anomalies.message needs to be non empty array", c.history))
               else
-                Right.apply(())).right
+                Right.apply(()))
       } yield Anomalies.apply(fm.id, fm.message, msgs.head, msgs.tail: _*)
     }
   }

@@ -2875,7 +2875,7 @@ final class FutureEffectsAsyncTest extends AnyFunSpec {
                 startedFlag.isEmpty,
                 s"started flag should have been empty at the start of each future but was: $startedFlag",
               )
-              previouslyProcessed foreach { previous =>
+              previouslyProcessed.foreach { previous =>
                 assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
                   actual = previous,
                 )
@@ -2920,7 +2920,7 @@ final class FutureEffectsAsyncTest extends AnyFunSpec {
                 startedFlag.isEmpty,
                 s"started flag should have been empty at the start of each future but was: $startedFlag",
               )
-              previouslyProcessed foreach { previous =>
+              previouslyProcessed.foreach { previous =>
                 assertResult(expected = i - 1, "... the futures were not executed in the correct order.")(
                   actual = previous,
                 )

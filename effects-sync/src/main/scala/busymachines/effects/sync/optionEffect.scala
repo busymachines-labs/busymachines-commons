@@ -19,7 +19,7 @@ package busymachines.effects.sync
 
 import busymachines.core.Anomaly
 
-import scala.collection.generic.CanBuildFrom
+import scala.collection.compat._
 
 /**
   *
@@ -256,9 +256,9 @@ object OptionSyntax {
       *   }
       * }}}
       */
-    @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+    @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Option[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
     ): Option[C[B]] = OptionOps.traverse(col)(fn)
 
     /**
@@ -277,9 +277,9 @@ object OptionSyntax {
       *   }
       * }}}
       */
-    @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+    @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Option[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
     ): Option[Unit] = OptionOps.traverse_(col)(fn)
 
     /**
@@ -295,9 +295,9 @@ object OptionSyntax {
       *   val fileNames:       Option[List[String]] = Option.sequence(fileNamesOption)
       * }}}
       */
-    @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+    @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[Option[A]])(
       implicit
-      cbf: CanBuildFrom[M[Option[A]], A, M[A]],
+      cbf: BuildFrom[M[Option[A]], A, M[A]],
     ): Option[M[A]] = OptionOps.sequence(in)
 
     /**
@@ -315,9 +315,9 @@ object OptionSyntax {
       *   val fileNames:       Option[Unit] = Option.sequence_(fileNamesOption)
       * }}}
       */
-    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+    @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Option[A]])(
       implicit
-      cbf: CanBuildFrom[M[Option[A]], A, M[A]],
+      cbf: BuildFrom[M[Option[A]], A, M[A]],
     ): Option[Unit] = OptionOps.sequence_(in)
 
   }
@@ -642,32 +642,32 @@ object OptionOps {
     *   }
     * }}}
     */
-  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+  @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Option[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): Option[C[B]] = {
     import scala.collection.mutable
-    if (col.isEmpty) {
-      OptionOps.pure(cbf.apply().result())
+    if (col.iterator.isEmpty) {
+      OptionOps.pure(cbf.newBuilder(col).result())
     }
     else {
-      val seq  = col.toSeq
+      val seq  = col.iterator.toSeq
       val head = seq.head
       val tail = seq.tail
-      val builder: mutable.Builder[B, C[B]] = cbf.apply()
-      val firstBuilder = fn(head) map { z =>
+      val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)
+      val firstBuilder = fn(head).map { z =>
         builder.+=(z)
       }
       val eventualBuilder: Option[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
         (serializedBuilder: Option[mutable.Builder[B, C[B]]], element: A) =>
-          serializedBuilder flatMap [mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
-            val f: Option[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
+          serializedBuilder.flatMap[mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
+            val f: Option[mutable.Builder[B, C[B]]] = fn(element).map { newElement =>
               result.+=(newElement)
             }
             f
           }
       }
-      eventualBuilder map { b =>
+      eventualBuilder.map { b =>
         b.result()
       }
     }
@@ -689,9 +689,9 @@ object OptionOps {
     *   }
     * }}}
     */
-  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Option[B])(
+  @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Option[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): Option[Unit] = OptionOps.discardContent(OptionOps.traverse(col)(fn))
 
   /**
@@ -707,9 +707,9 @@ object OptionOps {
     *   val fileNames:       Option[List[String]] = Option.sequence(fileNamesOption)
     * }}}
     */
-  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+  @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[Option[A]])(
     implicit
-    cbf: CanBuildFrom[M[Option[A]], A, M[A]],
+    cbf: BuildFrom[M[Option[A]], A, M[A]],
   ): Option[M[A]] = OptionOps.traverse(in)(identity)
 
   /**
@@ -728,9 +728,9 @@ object OptionOps {
     *   val fileNames:       Option[Unit] = Option.sequence_(fileNamesOption)
     * }}}
     */
-  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Option[A]])(
+  @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Option[A]])(
     implicit
-    cbf: CanBuildFrom[M[Option[A]], A, M[A]],
+    cbf: BuildFrom[M[Option[A]], A, M[A]],
   ): Option[Unit] = OptionOps.discardContent(OptionOps.sequence(in))
 
 }

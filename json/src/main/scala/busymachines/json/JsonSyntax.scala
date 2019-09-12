@@ -65,11 +65,11 @@ object JsonSyntax {
       JsonDecoding.decodeAs[A](js)
     }
 
-    def noSpacesNoNulls: String = js.pretty(PrettyJson.noSpacesNoNulls)
+    def noSpacesNoNulls: String = js.printWith(PrettyJson.noSpacesNoNulls)
 
-    def spaces2NoNulls: String = js.pretty(PrettyJson.spaces2NoNulls)
+    def spaces2NoNulls: String = js.printWith(PrettyJson.spaces2NoNulls)
 
-    def spaces4NoNulls: String = js.pretty(PrettyJson.spaces4NoNulls)
+    def spaces4NoNulls: String = js.printWith(PrettyJson.spaces4NoNulls)
   }
 
 }

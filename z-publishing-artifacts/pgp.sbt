@@ -24,4 +24,6 @@ com.typesafe.sbt.pgp.PgpKeys.pgpPublicRing := file("~/.gnupg/pubring.kbx")
 
 //for easy copy pasting just run this in your sbt scala REPL (invoked by > console):
 // """thepasswordofthekey""".map(c => s""" '$c' """).mkString(",")
-com.typesafe.sbt.pgp.PgpKeys.pgpPassphrase := Some(Array('t', 'h', 'e', 'p', 'a', 's', 'w', 'o', 'r', 'd', 'o', 'f', 't', 'h', 'e', 'k', 'e', 'y'))
+com.typesafe.sbt.pgp.PgpKeys.pgpPassphrase := Some(
+  Array('t', 'h', 'e', 'p', 'a', 's', 'w', 'o', 'r', 'd', 'o', 'f', 't', 'h', 'e', 'k', 'e', 'y'),
+)

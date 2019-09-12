@@ -19,21 +19,20 @@ import sbt._
 
 object Dependencies {
 
-  lazy val `scala_2.12`:            String      = "2.12.8"
+  lazy val `scala_2.12`:            String      = "2.12.10"
   lazy val `scala_2.13`:            String      = "2.13.0"
-  lazy val mainScalaVersion:        String      = `scala_2.12`
+  lazy val mainScalaVersion:        String      = `scala_2.13`
   lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`, `scala_2.13`)
 
-  lazy val scalaCompatVersion:   String = "2.0.0"        //https://github.com/scala/scala-collection-compat/releases
-  lazy val shapelessVersion:     String = "2.3.3"        //https://github.com/milessabin/shapeless/releases
-  lazy val catsVersion:          String = "2.0.0-M4"     //https://github.com/typelevel/cats/releases
-  lazy val catsEffectVersion:    String = "2.0.0-M4"     //https://github.com/typelevel/cats-effect/releases
-  lazy val circeVersion:         String = "0.12.0-M3"    //https://github.com/circe/circe/releases
-  lazy val attoCoreVersion:      String = "0.6.5"        //https://github.com/tpolecat/atto/releases
-  lazy val akkaVersion:          String = "2.5.23"       //https://github.com/akka/akka/releases
-  lazy val akkaHttpVersion:      String = "10.1.8"       //https://github.com/akka/akka-http/releases
-  lazy val akkaHttpCirceVersion: String = "1.26.0"       //https://github.com/hseeberger/akka-http-json/releases
-  lazy val scalaTestVersion:     String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
+  lazy val scalaCompatVersion: String = "2.0.0"        //https://github.com/scala/scala-collection-compat/releases
+  lazy val shapelessVersion:   String = "2.3.3"        //https://github.com/milessabin/shapeless/releases
+  lazy val catsVersion:        String = "2.0.0"        //https://github.com/typelevel/cats/releases
+  lazy val catsEffectVersion:  String = "2.0.0"        //https://github.com/typelevel/cats-effect/releases
+  lazy val circeVersion:       String = "0.12.1"       //https://github.com/circe/circe/releases
+  lazy val attoCoreVersion:    String = "0.7.0"        //https://github.com/tpolecat/atto/releases
+  lazy val akkaVersion:        String = "2.5.23"       //https://github.com/akka/akka/releases
+  lazy val akkaHttpVersion:    String = "10.1.9"       //https://github.com/akka/akka-http/releases
+  lazy val scalaTestVersion:   String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
   //============================================================================================
   //====================================== Scala things ========================================
   //============================================================================================
@@ -79,11 +78,6 @@ object Dependencies {
   lazy val akkaStream: ModuleID = "com.typesafe.akka" %% "akka-stream" % akkaVersion
 
   lazy val akkaHttp: ModuleID = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
-
-  /**
-    * https://github.com/hseeberger/akka-http-json
-    */
-  lazy val akkaHttpCirceIntegration: ModuleID = "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCirceVersion
 
   //============================================================================================
   //=========================================  testing =========================================

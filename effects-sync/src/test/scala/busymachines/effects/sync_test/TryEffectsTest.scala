@@ -915,7 +915,7 @@ final class TryEffectsTest extends AnyFunSpec {
           val expected = nrs.map(_.toString)
 
           val result: Try[Seq[String]] = Try.sequence {
-            input map { tr =>
+            input.map { tr =>
               tr.map(i => i.toString)
             }
           }
@@ -937,7 +937,7 @@ final class TryEffectsTest extends AnyFunSpec {
           val input: Seq[Try[Int]] = (1 to 100).toList.map(Try.pure)
 
           val result: Try[Unit] = Try.sequence_ {
-            input map { tr =>
+            input.map { tr =>
               tr.map(i => i.toString)
             }
           }

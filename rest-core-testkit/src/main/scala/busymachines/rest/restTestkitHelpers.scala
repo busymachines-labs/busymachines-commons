@@ -172,7 +172,7 @@ private[rest] object RequestDebugging {
         val responseCode = response.status.intValue().toString
         val headers      = response.headers.map(h => s"${h.name()}: ${h.value()}").mkString("\n").trim
         val entity       = entityToString(response.entity, printingTimeoutDuration)(transformEntity).trim
-        val sb           = StringBuilder.newBuilder
+        val sb           = new StringBuilder()
         sb.append(s"----> Response <----")
         sb.append("\n")
         sb.append(s"Status: $responseCode")
@@ -186,7 +186,7 @@ private[rest] object RequestDebugging {
 
       case Rejected(rejections) =>
         val rejs = rejections.mkString("\n")
-        val sb   = StringBuilder.newBuilder
+        val sb   = new StringBuilder()
         sb.append(s"----> Response <----")
         sb.append(rejs)
         sb.append(s"\n$delimiter\n")
@@ -208,7 +208,7 @@ private[rest] object RequestDebugging {
     val methodUri = s"${request.method.value} ${request.uri}"
     val headers   = request.headers.map(h => s"${h.name()}: ${h.value()}").mkString("\n").trim
     val entity    = entityToString(request.entity, printingTimeoutDuration)(transformEntity).trim
-    val sb        = StringBuilder.newBuilder
+    val sb        = new StringBuilder()
     sb.append(methodUri)
     if (headers.nonEmpty) {
       sb.append(s"\n--\n$headers--")

@@ -78,7 +78,7 @@ object RestAPIAuthentications {
   trait Basic extends RestAPIAuthentication[String] {
 
     override lazy val authentication: Directive1[String] =
-      optionalHeaderValueByName(AuthorizationS) flatMap {
+      optionalHeaderValueByName(AuthorizationS).flatMap {
         case None => reject(MissingBasicCredentials)
         case Some(encodedCredentials) =>
           if (!encodedCredentials.contains(BasicS))
@@ -111,7 +111,7 @@ object RestAPIAuthentications {
     */
   trait TokenBearer extends RestAPIAuthentication[String] {
     override lazy val authentication: Directive1[String] =
-      optionalHeaderValueByName(AuthorizationS) flatMap {
+      optionalHeaderValueByName(AuthorizationS).flatMap {
         case None => reject(MissingBasicCredentials)
         case Some(tokenWithBearer) =>
           if (!tokenWithBearer.contains(BearerS))

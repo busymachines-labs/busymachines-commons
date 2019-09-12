@@ -6,7 +6,7 @@ import busymachines.effects.sync.validated._
 import busymachines.duration.FiniteDuration
 import cats.effect.ContextShift
 
-import scala.collection.generic.CanBuildFrom
+import scala.collection.compat._
 import scala.util.control.NonFatal
 import scala.{concurrent => sc}
 
@@ -514,7 +514,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    @inline def asIO[T](value: Future[T]): IO[T] =
+    @inline def asIO[T](value: Future[T])(implicit cs: ContextShift[IO]): IO[T] =
       FutureOps.asIO(value)
 
     /**
@@ -832,10 +832,8 @@ object FutureSyntax {
       *
       * @see [[scala.concurrent.Future.traverse]]
       */
-    @inline def traverse_[A, B, M[X] <: TraversableOnce[X]](in: M[A])(fn: A => Future[B])(
-      implicit
-      cbf: CanBuildFrom[M[A], B, M[B]],
-      ec:  ExecutionContext,
+    @inline def traverse_[A, B, M[X] <: IterableOnce[X]](in: M[A])(fn: A => Future[B])(
+      implicit ec:                                           ExecutionContext,
     ): Future[Unit] = FutureOps.traverse_(in)(fn)
 
     /**
@@ -845,10 +843,8 @@ object FutureSyntax {
       *
       * @see [[scala.concurrent.Future.sequence]]
       */
-    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Future[A]])(
-      implicit
-      cbf: CanBuildFrom[M[Future[A]], A, M[A]],
-      ec:  ExecutionContext,
+    @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Future[A]])(
+      implicit ec:                                        ExecutionContext,
     ): Future[Unit] = FutureOps.sequence_(in)
 
     /**
@@ -878,9 +874,9 @@ object FutureSyntax {
       *
       *
       */
-    @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
+    @inline def serialize[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Future[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
       ec:  ExecutionContext,
     ): Future[C[B]] = FutureOps.serialize(col)(fn)
 
@@ -890,9 +886,9 @@ object FutureSyntax {
       * Similar to [[serialize]], but discards all content. i.e. used only
       * for the combined effects.
       */
-    @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
+    @inline def serialize_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Future[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
       ec:  ExecutionContext,
     ): Future[Unit] = FutureOps.serialize_(col)(fn)
   }
@@ -919,7 +915,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    @inline def asIO: IO[T] =
+    @inline def asIO(implicit cs: ContextShift[IO]): IO[T] =
       FutureOps.asIO(value)
 
     /**
@@ -1799,7 +1795,7 @@ object FutureOps {
     * Having to care about such val/def distinctions shows why Future is an
     * imperative programming mess.
     */
-  @inline def asIO[T](value: Future[T]): IO[T] =
+  @inline def asIO[T](value: Future[T])(implicit cs: ContextShift[IO]): IO[T] =
     IOOps.fromFuturePure(value)
 
   /**
@@ -2134,12 +2130,10 @@ object FutureOps {
     *
     * @see [[scala.concurrent.Future.traverse]]
     */
-  @inline def traverse_[A, B, M[X] <: TraversableOnce[X]](in: M[A])(fn: A => Future[B])(
-    implicit
-    cbf: CanBuildFrom[M[A], B, M[B]],
-    ec:  ExecutionContext,
+  @inline def traverse_[A, B, M[X] <: IterableOnce[X]](in: M[A])(fn: A => Future[B])(
+    implicit ec:                                           ExecutionContext,
   ): Future[Unit] =
-    FutureOps.discardContent(Future.traverse(in)(fn))
+    FutureOps.discardContent(Future.traverse(in.iterator)(fn))
 
   /**
     *
@@ -2148,11 +2142,9 @@ object FutureOps {
     *
     * @see [[scala.concurrent.Future.sequence]]
     */
-  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Future[A]])(
-    implicit
-    cbf: CanBuildFrom[M[Future[A]], A, M[A]],
-    ec:  ExecutionContext,
-  ): Future[Unit] = FutureOps.discardContent(Future.sequence(in))
+  @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Future[A]])(
+    implicit ec:                                        ExecutionContext,
+  ): Future[Unit] = FutureOps.discardContent(Future.sequence(in.iterator))
 
   /**
     *
@@ -2181,33 +2173,33 @@ object FutureOps {
     *
     *
     */
-  @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
+  @inline def serialize[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Future[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
     ec:  ExecutionContext,
   ): Future[C[B]] = {
     import scala.collection.mutable
-    if (col.isEmpty) {
-      Future.successful(cbf.apply().result())
+    if (col.iterator.isEmpty) {
+      Future.successful(cbf.newBuilder(col).result())
     }
     else {
-      val seq  = col.toSeq
+      val seq  = col.iterator.toSeq
       val head = seq.head
       val tail = seq.tail
-      val builder: mutable.Builder[B, C[B]] = cbf.apply()
-      val firstBuilder = fn(head) map { z =>
+      val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)
+      val firstBuilder = fn(head).map { z =>
         builder.+=(z)
       }
       val eventualBuilder: Future[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
         (serializedBuilder: Future[mutable.Builder[B, C[B]]], element: A) =>
-          serializedBuilder flatMap [mutable.Builder[B, C[B]]] { result: mutable.Builder[B, C[B]] =>
-            val f: Future[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
+          serializedBuilder.flatMap[mutable.Builder[B, C[B]]] { result: mutable.Builder[B, C[B]] =>
+            val f: Future[mutable.Builder[B, C[B]]] = fn(element).map { newElement =>
               result.+=(newElement)
             }
             f
           }
       }
-      eventualBuilder map { b =>
+      eventualBuilder.map { b =>
         b.result()
       }
     }
@@ -2219,9 +2211,9 @@ object FutureOps {
     * Similar to [[serialize]], but discards all content. i.e. used only
     * for the combined effects.
     */
-  @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Future[B])(
+  @inline def serialize_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Future[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
     ec:  ExecutionContext,
   ): Future[Unit] = FutureOps.discardContent(Future.serialize(col)(fn))
 }

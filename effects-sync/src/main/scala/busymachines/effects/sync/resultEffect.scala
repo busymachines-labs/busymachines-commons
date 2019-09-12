@@ -19,7 +19,7 @@ package busymachines.effects.sync
 
 import busymachines.core._
 
-import scala.collection.generic.CanBuildFrom
+import scala.collection.compat._
 import scala.util._
 import scala.util.control.NonFatal
 
@@ -522,7 +522,7 @@ object Result {
     * happy path.
     */
   @inline def bimap[T, R](value: Result[T], good: T => R, bad: Anomaly => Anomaly): Result[R] =
-    value.right.map(good).left.map(bad)
+    value.map(good).left.map(bad)
 
   /**
     *
@@ -591,32 +591,32 @@ object Result {
     *   }
     * }}}
     */
-  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
+  @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Result[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): Result[C[B]] = {
     import scala.collection.mutable
-    if (col.isEmpty) {
-      Result.pure(cbf.apply().result())
+    if (col.iterator.isEmpty) {
+      Result.pure(cbf.newBuilder(col).result())
     }
     else {
-      val seq  = col.toSeq
+      val seq  = col.iterator.toSeq
       val head = seq.head
       val tail = seq.tail
-      val builder: mutable.Builder[B, C[B]] = cbf.apply()
-      val firstBuilder = fn(head) map { z =>
+      val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)
+      val firstBuilder = fn(head).map { z =>
         builder.+=(z)
       }
       val eventualBuilder: Result[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
         (serializedBuilder: Result[mutable.Builder[B, C[B]]], element: A) =>
-          serializedBuilder flatMap [Anomaly, mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
-            val f: Result[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
+          serializedBuilder.flatMap[Anomaly, mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
+            val f: Result[mutable.Builder[B, C[B]]] = fn(element).map { newElement =>
               result.+=(newElement)
             }
             f
           }
       }
-      eventualBuilder map { b =>
+      eventualBuilder.map { b =>
         b.result()
       }
     }
@@ -636,9 +636,9 @@ object Result {
     *   val result: Result[Unit] = Result.traverse_(fileIndex)(indexExists)
     * }}}
     */
-  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
+  @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Result[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): Result[Unit] = Result.discardContent(Result.traverse(col)(fn))
 
   //=========================================================================
@@ -658,9 +658,9 @@ object Result {
     *   val fileNames:       Result[List[String]] = Result.sequence(fileNamesTry)
     * }}}
     */
-  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
+  @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[Result[A]])(
     implicit
-    cbf: CanBuildFrom[M[Result[A]], A, M[A]],
+    cbf: BuildFrom[M[Result[A]], A, M[A]],
   ): Result[M[A]] = Result.traverse(in)(identity)
 
   /**
@@ -679,9 +679,9 @@ object Result {
     *   val fileNames:       Result[Unit] = Result.sequence_(fileNamesTry)
     * }}}
     */
-  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
+  @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Result[A]])(
     implicit
-    cbf: CanBuildFrom[M[Result[A]], A, M[A]],
+    cbf: BuildFrom[M[Result[A]], A, M[A]],
   ): Result[Unit] = Result.discardContent(Result.sequence(in))
 }
 

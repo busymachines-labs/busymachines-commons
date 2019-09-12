@@ -19,7 +19,7 @@ package busymachines.effects.sync
 
 import busymachines.core.Anomaly
 
-import scala.collection.generic.CanBuildFrom
+import scala.collection.compat._
 import scala.util.{Failure, Success}
 
 /**
@@ -414,9 +414,9 @@ object TrySyntax {
       *   }
       * }}}
       */
-    @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+    @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Try[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
     ): Try[C[B]] = TryOps.traverse(col)(fn)
 
     /**
@@ -437,9 +437,9 @@ object TrySyntax {
       *   }
       * }}}
       */
-    @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+    @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Try[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
     ): Try[Unit] = TryOps.traverse_(col)(fn)
 
     /**
@@ -455,9 +455,9 @@ object TrySyntax {
       *   val fileNames:    Try[List[String]] = Try.sequence(fileNamesTry)
       * }}}
       */
-    @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+    @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[Try[A]])(
       implicit
-      cbf: CanBuildFrom[M[Try[A]], A, M[A]],
+      cbf: BuildFrom[M[Try[A]], A, M[A]],
     ): Try[M[A]] = TryOps.sequence(in)
 
     /**
@@ -477,9 +477,9 @@ object TrySyntax {
       *   val fileNames:    Try[Unit]         = Try.sequence_(fileNamesTry)
       * }}}
       */
-    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+    @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Try[A]])(
       implicit
-      cbf: CanBuildFrom[M[Try[A]], A, M[A]],
+      cbf: BuildFrom[M[Try[A]], A, M[A]],
     ): Try[Unit] = TryOps.sequence_(in)
 
   }
@@ -1153,32 +1153,32 @@ object TryOps {
     *   }
     * }}}
     */
-  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+  @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Try[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): Try[C[B]] = {
     import scala.collection.mutable
-    if (col.isEmpty) {
-      TryOps.pure(cbf.apply().result())
+    if (col.iterator.isEmpty) {
+      TryOps.pure(cbf.newBuilder(col).result())
     }
     else {
-      val seq  = col.toSeq
+      val seq  = col.iterator.toSeq
       val head = seq.head
       val tail = seq.tail
-      val builder: mutable.Builder[B, C[B]] = cbf.apply()
-      val firstBuilder = fn(head) map { z =>
+      val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)
+      val firstBuilder = fn(head).map { z =>
         builder.+=(z)
       }
       val eventualBuilder: Try[mutable.Builder[B, C[B]]] = tail.foldLeft(firstBuilder) {
         (serializedBuilder: Try[mutable.Builder[B, C[B]]], element: A) =>
-          serializedBuilder flatMap [mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
-            val f: Try[mutable.Builder[B, C[B]]] = fn(element) map { newElement =>
+          serializedBuilder.flatMap[mutable.Builder[B, C[B]]] { (result: mutable.Builder[B, C[B]]) =>
+            val f: Try[mutable.Builder[B, C[B]]] = fn(element).map { newElement =>
               result.+=(newElement)
             }
             f
           }
       }
-      eventualBuilder map { b =>
+      eventualBuilder.map { b =>
         b.result()
       }
     }
@@ -1202,9 +1202,9 @@ object TryOps {
     *   }
     * }}}
     */
-  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Try[B])(
+  @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Try[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): Try[Unit] = TryOps.discardContent(TryOps.traverse(col)(fn))
 
   /**
@@ -1220,9 +1220,9 @@ object TryOps {
     *   val fileNames:    Try[List[String]] = Try.sequence(fileNamesTry)
     * }}}
     */
-  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+  @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[Try[A]])(
     implicit
-    cbf: CanBuildFrom[M[Try[A]], A, M[A]],
+    cbf: BuildFrom[M[Try[A]], A, M[A]],
   ): Try[M[A]] = TryOps.traverse(in)(identity)
 
   /**
@@ -1242,8 +1242,8 @@ object TryOps {
     *   val fileNames:    Try[Unit]         = Try.sequence_(fileNamesTry)
     * }}}
     */
-  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Try[A]])(
+  @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Try[A]])(
     implicit
-    cbf: CanBuildFrom[M[Try[A]], A, M[A]],
+    cbf: BuildFrom[M[Try[A]], A, M[A]],
   ): Try[Unit] = TryOps.discardContent(TryOps.sequence(in))
 }

@@ -17,8 +17,6 @@
   */
 package busymachines
 
-import scala.language.implicitConversions
-
 /**
   *
   * @author Lorand Szakacs, lsz@lorandszakacs.com, lorand.szakacs@busymachines.com

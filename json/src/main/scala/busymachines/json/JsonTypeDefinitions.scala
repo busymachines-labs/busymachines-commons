@@ -25,16 +25,16 @@ package busymachines.json
   */
 trait JsonTypeDefinitions {
   final type Encoder[A]       = io.circe.Encoder[A]
-  final type ObjectEncoder[A] = io.circe.ObjectEncoder[A]
+  final type ObjectEncoder[A] = io.circe.Encoder.AsObject[A]
 
-  @inline final def Encoder:       io.circe.Encoder.type       = io.circe.Encoder
-  @inline final def ObjectEncoder: io.circe.ObjectEncoder.type = io.circe.ObjectEncoder
+  @inline final def Encoder:       io.circe.Encoder.type          = io.circe.Encoder
+  @inline final def ObjectEncoder: io.circe.Encoder.AsObject.type = io.circe.Encoder.AsObject
 
   final type Decoder[A]       = io.circe.Decoder[A]
-  final type ObjectDecoder[A] = io.circe.ObjectEncoder[A]
+  final type ObjectDecoder[A] = io.circe.Encoder.AsObject[A]
 
-  @inline final def Decoder:       io.circe.Decoder.type       = io.circe.Decoder
-  @inline final def ObjectDecoder: io.circe.ObjectEncoder.type = io.circe.ObjectEncoder
+  @inline final def Decoder:       io.circe.Decoder.type          = io.circe.Decoder
+  @inline final def ObjectDecoder: io.circe.Encoder.AsObject.type = io.circe.Encoder.AsObject
 
   final type Configuration = io.circe.generic.extras.Configuration
   @inline final def Configuration: io.circe.generic.extras.Configuration.type = io.circe.generic.extras.Configuration
