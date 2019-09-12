@@ -59,6 +59,7 @@ object HttpServer {
     logErrorIO:  LogIO = sysErrConsoleOutput,
   )(
     implicit
+    cs: ContextShift[IO],
     as: ActorSystem,
     ec: ExecutionContext,
     am: ActorMaterializer,
@@ -109,6 +110,7 @@ final class HttpServer private (
 )(
   implicit
   private val actorSystem:       ActorSystem,
+  private val contextShift:      ContextShift[IO],
   private val execContext:       ExecutionContext,
   private val actorMaterializer: ActorMaterializer,
 ) {

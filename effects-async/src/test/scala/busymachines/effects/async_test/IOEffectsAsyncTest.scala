@@ -16,6 +16,7 @@ import org.scalatest.funspec.AnyFunSpec
   */
 final class IOEffectsAsyncTest extends AnyFunSpec {
   implicit val ec: ExecutionContext = ExecutionContext.global
+  implicit val cs: ContextShift[IO] = IO.contextShift(ec)
   //prevents atrocious English
   private def test: ItWord = it
 

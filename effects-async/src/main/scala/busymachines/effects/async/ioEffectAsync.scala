@@ -279,7 +279,7 @@ object IOSyntax {
       * If you are certain that this [[Future]] is pure, then you can use
       * this method to lift it into [[IO]].
       */
-    @inline def fromFuturePure[T](future: Future[T]): IO[T] =
+    @inline def fromFuturePure[T](future: Future[T])(implicit cs: ContextShift[IO]): IO[T] =
       IOOps.fromFuturePure(future)
 
     /**
@@ -308,7 +308,7 @@ object IOSyntax {
       * }}}
       *
       */
-    @inline def suspendFuture[T](result: => Future[T]): IO[T] =
+    @inline def suspendFuture[T](result: => Future[T])(implicit cs: ContextShift[IO]): IO[T] =
       IOOps.suspendFuture(result)
 
     /**
@@ -1500,7 +1500,7 @@ object IOOps {
     * If you are certain that this [[Future]] is pure, then you can use
     * this method to lift it into [[IO]].
     */
-  @inline def fromFuturePure[T](value: Future[T]): IO[T] =
+  @inline def fromFuturePure[T](value: Future[T])(implicit cs: ContextShift[IO]): IO[T] =
     IO.fromFuture(IO(value))
 
   /**
@@ -1529,7 +1529,7 @@ object IOOps {
     * }}}
     *
     */
-  @inline def suspendFuture[T](value: => Future[T]): IO[T] =
+  @inline def suspendFuture[T](value: => Future[T])(implicit cs: ContextShift[IO]): IO[T] =
     IO.fromFuture(IO(value))
 
   /**

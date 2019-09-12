@@ -513,7 +513,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    @inline def asIO[T](value: Future[T]): IO[T] =
+    @inline def asIO[T](value: Future[T])(implicit cs: ContextShift[IO]): IO[T] =
       FutureOps.asIO(value)
 
     /**
@@ -558,7 +558,7 @@ object FutureSyntax {
       * }}}
       *
       */
-    @inline def suspendInIO[T](value: => Future[T]): IO[T] =
+    @inline def suspendInIO[T](value: => Future[T])(implicit cs: ContextShift[IO]): IO[T] =
       FutureOps.suspendInIO(value)
 
     /**
@@ -967,7 +967,7 @@ object FutureSyntax {
       * Having to care about such val/def distinctions shows why Future is an
       * imperative programming mess.
       */
-    @inline def asIO: IO[T] =
+    @inline def asIO(implicit cs: ContextShift[IO]): IO[T] =
       FutureOps.asIO(value)
 
     /**
@@ -1092,7 +1092,7 @@ object FutureSyntax {
       * }}}
       *
       */
-    @inline def suspendInIO: IO[T] =
+    @inline def suspendInIO(implicit cs: ContextShift[IO]): IO[T] =
       FutureOps.suspendInIO(value)
 
     /**
@@ -1900,7 +1900,7 @@ object FutureOps {
     * Having to care about such val/def distinctions shows why Future is an
     * imperative programming mess.
     */
-  @inline def asIO[T](value: Future[T]): IO[T] =
+  @inline def asIO[T](value: Future[T])(implicit cs: ContextShift[IO]): IO[T] =
     IOOps.fromFuturePure(value)
 
   /**
@@ -1945,7 +1945,7 @@ object FutureOps {
     * }}}
     *
     */
-  @inline def suspendInIO[T](value: => Future[T]): IO[T] =
+  @inline def suspendInIO[T](value: => Future[T])(implicit cs: ContextShift[IO]): IO[T] =
     IOOps.suspendFuture(value)
 
   /**
