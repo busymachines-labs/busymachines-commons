@@ -6,7 +6,7 @@ import busymachines.effects.sync.validated._
 import cats.effect.ContextShift
 import cats.{effect => ce}
 
-import scala.collection.generic.CanBuildFrom
+import scala.collection.compat._
 import scala.util.control.NonFatal
 
 /**
@@ -738,9 +738,9 @@ object IOSyntax {
       *   }
       * }}}
       */
-    @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => IO[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
     ): IO[C[B]] = IOOps.traverse(col)(fn)
 
     /**
@@ -750,9 +750,9 @@ object IOSyntax {
       * @see [[traverse]]
       *
       */
-    @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => IO[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
     ): IO[Unit] = IOOps.traverse_(col)(fn)
 
     /**
@@ -768,9 +768,9 @@ object IOSyntax {
       *   val fileNames: IO[List[String]] = IO.sequence(fileNamesIO)
       * }}}
       */
-    @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+    @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[IO[A]])(
       implicit
-      cbf: CanBuildFrom[M[IO[A]], A, M[A]],
+      cbf: BuildFrom[M[IO[A]], A, M[A]],
     ): IO[M[A]] = IOOps.sequence(in)
 
     /**
@@ -780,9 +780,9 @@ object IOSyntax {
       * @see [[sequence]]
       *
       */
-    @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+    @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[IO[A]])(
       implicit
-      cbf: CanBuildFrom[M[IO[A]], A, M[A]],
+      cbf: BuildFrom[M[IO[A]], A, M[A]],
     ): IO[Unit] = IOOps.sequence_(in)
 
     /**
@@ -807,9 +807,9 @@ object IOSyntax {
       *
       *
       */
-    @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    @inline def serialize[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => IO[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
     ): IO[C[B]] = IOOps.serialize(col)(fn)
 
     /**
@@ -819,9 +819,9 @@ object IOSyntax {
       * @see [[serialize]]
       *
       */
-    @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+    @inline def serialize_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => IO[B])(
       implicit
-      cbf: CanBuildFrom[C[A], B, C[B]],
+      cbf: BuildFrom[C[A], B, C[B]],
     ): IO[Unit] = IOOps.serialize_(col)(fn)
 
   }
@@ -1946,21 +1946,21 @@ object IOOps {
     *   }
     * }}}
     */
-  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+  @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => IO[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): IO[C[B]] = {
     import cats.instances.list._
     import cats.syntax.traverse._
     import scala.collection.mutable
 
-    if (col.isEmpty) {
-      IO.pure(cbf.apply().result())
+    if (col.iterator.isEmpty) {
+      IO.pure(cbf.apply(col).result())
     }
     else {
       //OK, super inneficient, need a better implementation
       val result:  IO[List[B]]              = col.toList.traverse(fn)
-      val builder: mutable.Builder[B, C[B]] = cbf.apply()
+      val builder: mutable.Builder[B, C[B]] = cbf.apply(col)
       result.map(_.foreach(e => builder.+=(e))).map(_ => builder.result())
     }
   }
@@ -1972,9 +1972,9 @@ object IOOps {
     * @see [[traverse]]
     *
     */
-  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+  @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => IO[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): IO[Unit] = IOOps.discardContent(IOOps.traverse(col)(fn))
 
   /**
@@ -1990,9 +1990,9 @@ object IOOps {
     *   val fileNames: IO[List[String]] = IO.sequence(fileNamesIO)
     * }}}
     */
-  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+  @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[IO[A]])(
     implicit
-    cbf: CanBuildFrom[M[IO[A]], A, M[A]],
+    cbf: BuildFrom[M[IO[A]], A, M[A]],
   ): IO[M[A]] = IOOps.traverse(in)(identity)
 
   /**
@@ -2002,9 +2002,9 @@ object IOOps {
     * @see [[sequence]]
     *
     */
-  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[IO[A]])(
+  @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[IO[A]])(
     implicit
-    cbf: CanBuildFrom[M[IO[A]], A, M[A]],
+    cbf: BuildFrom[M[IO[A]], A, M[A]],
   ): IO[Unit] = IOOps.discardContent(IOOps.sequence(in))
 
   /**
@@ -2029,9 +2029,9 @@ object IOOps {
     *
     *
     */
-  @inline def serialize[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+  @inline def serialize[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => IO[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): IO[C[B]] = IOOps.traverse(col)(fn)(cbf)
 
   /**
@@ -2041,8 +2041,8 @@ object IOOps {
     * @see [[serialize]]
     *
     */
-  @inline def serialize_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => IO[B])(
+  @inline def serialize_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => IO[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): IO[Unit] = IOOps.discardContent(IOOps.serialize(col)(fn))
 }

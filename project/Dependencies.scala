@@ -21,7 +21,7 @@ object Dependencies {
 
   lazy val `scala_2.12`:            String      = "2.12.10"
   lazy val `scala_2.13`:            String      = "2.13.0"
-  lazy val mainScalaVersion:        String      = `scala_2.12`
+  lazy val mainScalaVersion:        String      = `scala_2.13`
   lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`, `scala_2.13`)
 
   lazy val scalaCompatVersion: String = "2.0.0"        //https://github.com/scala/scala-collection-compat/releases

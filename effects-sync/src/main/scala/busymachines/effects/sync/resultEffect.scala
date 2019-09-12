@@ -19,7 +19,7 @@ package busymachines.effects.sync
 
 import busymachines.core._
 
-import scala.collection.generic.CanBuildFrom
+import scala.collection.compat._
 import scala.util._
 import scala.util.control.NonFatal
 
@@ -591,19 +591,19 @@ object Result {
     *   }
     * }}}
     */
-  @inline def traverse[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
+  @inline def traverse[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Result[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): Result[C[B]] = {
     import scala.collection.mutable
-    if (col.isEmpty) {
-      Result.pure(cbf.apply().result())
+    if (col.iterator.isEmpty) {
+      Result.pure(cbf.apply(col).result())
     }
     else {
       val seq  = col.toSeq
       val head = seq.head
       val tail = seq.tail
-      val builder: mutable.Builder[B, C[B]] = cbf.apply()
+      val builder: mutable.Builder[B, C[B]] = cbf.apply(col)
       val firstBuilder = fn(head).map { z =>
         builder.+=(z)
       }
@@ -636,9 +636,9 @@ object Result {
     *   val result: Result[Unit] = Result.traverse_(fileIndex)(indexExists)
     * }}}
     */
-  @inline def traverse_[A, B, C[X] <: TraversableOnce[X]](col: C[A])(fn: A => Result[B])(
+  @inline def traverse_[A, B, C[X] <: IterableOnce[X]](col: C[A])(fn: A => Result[B])(
     implicit
-    cbf: CanBuildFrom[C[A], B, C[B]],
+    cbf: BuildFrom[C[A], B, C[B]],
   ): Result[Unit] = Result.discardContent(Result.traverse(col)(fn))
 
   //=========================================================================
@@ -658,9 +658,9 @@ object Result {
     *   val fileNames:       Result[List[String]] = Result.sequence(fileNamesTry)
     * }}}
     */
-  @inline def sequence[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
+  @inline def sequence[A, M[X] <: IterableOnce[X]](in: M[Result[A]])(
     implicit
-    cbf: CanBuildFrom[M[Result[A]], A, M[A]],
+    cbf: BuildFrom[M[Result[A]], A, M[A]],
   ): Result[M[A]] = Result.traverse(in)(identity)
 
   /**
@@ -679,9 +679,9 @@ object Result {
     *   val fileNames:       Result[Unit] = Result.sequence_(fileNamesTry)
     * }}}
     */
-  @inline def sequence_[A, M[X] <: TraversableOnce[X]](in: M[Result[A]])(
+  @inline def sequence_[A, M[X] <: IterableOnce[X]](in: M[Result[A]])(
     implicit
-    cbf: CanBuildFrom[M[Result[A]], A, M[A]],
+    cbf: BuildFrom[M[Result[A]], A, M[A]],
   ): Result[Unit] = Result.discardContent(Result.sequence(in))
 }
 
