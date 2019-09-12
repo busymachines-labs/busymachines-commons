@@ -1959,7 +1959,7 @@ object IOOps {
     }
     else {
       //OK, super inneficient, need a better implementation
-      val result:  IO[List[B]]              = col.toList.traverse(fn)
+      val result:  IO[List[B]]              = col.iterator.toList.traverse(fn)
       val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)
       result.map(_.foreach(e => builder.+=(e))).map(_ => builder.result())
     }

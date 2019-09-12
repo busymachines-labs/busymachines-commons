@@ -1162,7 +1162,7 @@ object TryOps {
       TryOps.pure(cbf.newBuilder(col).result())
     }
     else {
-      val seq  = col.toSeq
+      val seq  = col.iterator.toSeq
       val head = seq.head
       val tail = seq.tail
       val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)

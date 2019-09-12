@@ -634,7 +634,7 @@ object ValidatedOps {
     }
     else {
       //OK, super inneficient, need a better implementation
-      val result:  Validated[List[B]]       = col.toList.traverse(fn)
+      val result:  Validated[List[B]]       = col.iterator.toList.traverse(fn)
       val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)
       result.map(_.foreach(e => builder.+=(e))).map(_ => builder.result())
     }
@@ -650,7 +650,7 @@ object ValidatedOps {
       Validated.unit
     }
     else {
-      col.toList.traverse_(fn)
+      col.iterator.toList.traverse_(fn)
     }
   }
 
