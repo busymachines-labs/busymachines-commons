@@ -1955,12 +1955,12 @@ object IOOps {
     import scala.collection.mutable
 
     if (col.iterator.isEmpty) {
-      IO.pure(cbf.apply(col).result())
+      IO.pure(cbf.newBuilder(col).result())
     }
     else {
       //OK, super inneficient, need a better implementation
       val result:  IO[List[B]]              = col.toList.traverse(fn)
-      val builder: mutable.Builder[B, C[B]] = cbf.apply(col)
+      val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)
       result.map(_.foreach(e => builder.+=(e))).map(_ => builder.result())
     }
   }

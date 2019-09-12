@@ -630,12 +630,12 @@ object ValidatedOps {
     import scala.collection.mutable
 
     if (col.iterator.isEmpty) {
-      Validated.pure(cbf.apply(col).result())
+      Validated.pure(cbf.newBuilder(col).result())
     }
     else {
       //OK, super inneficient, need a better implementation
       val result:  Validated[List[B]]       = col.toList.traverse(fn)
-      val builder: mutable.Builder[B, C[B]] = cbf.apply(col)
+      val builder: mutable.Builder[B, C[B]] = cbf.newBuilder(col)
       result.map(_.foreach(e => builder.+=(e))).map(_ => builder.result())
     }
   }
