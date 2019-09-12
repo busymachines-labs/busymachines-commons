@@ -24,7 +24,7 @@
   *
   * https://github.com/xerial/sbt-sonatype
   */
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.4")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.7")
 
 /**
   *
@@ -78,7 +78,7 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.4")
   *
   * https://github.com/47deg/sbt-microsites
   */
-addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.18")
+addSbtPlugin("com.47deg" % "sbt-microsites" % "0.9.4")
 
 /**
   *
@@ -86,9 +86,9 @@ addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.18")
   *
   * https://github.com/sbt/sbt-ghpages
   */
-addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
+addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.3")
 
 /**
   * https://github.com/scoverage/sbt-scoverage
   */
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.0")
