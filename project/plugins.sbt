@@ -24,7 +24,15 @@
   *
   * https://github.com/xerial/sbt-sonatype
   */
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.7")
+/**
+  * Helps us publish the artifacts to sonatype, which in turn
+  * pushes to maven central. Please follow instructions of setting
+  * up as described in:
+  * http://busymachines.github.io/busymachines-commons/docs/publishing-artifacts.html
+  *
+  * https://github.com/xerial/sbt-sonatype/releases
+  */
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.8") //https://github.com/xerial/sbt-sonatype/releases
 
 /**
   *
@@ -33,23 +41,25 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.7")
   * Do not forget to include this in your global plugins as described in:
   * http://busymachines.github.io/busymachines-commons/docs/publishing-artifacts.html
   *
-  * https://github.com/sbt/sbt-pgp
+  * https://github.com/sbt/sbt-pgp/releases
   */
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.0-M2")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.0") //https://github.com/sbt/sbt-pgp/releases
 
 /**
   * build configured in ``project/ReleaseProcess``
   *
-  * https://github.com/sbt/sbt-release
+  * https://github.com/sbt/sbt-release/releases
   */
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.11")
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.11") //https://github.com/sbt/sbt-release/releases
 
 /**
   * The best thing since sliced bread.
   *
-  * https://github.com/scalameta/scalafmt
+  * https://github.com/scalameta/sbt-scalafmt/releases
+  *
   */
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.4")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.6") //https://github.com/scalameta/sbt-scalafmt/releases
+
 
 /**
   * Refactoring/linting tool for scala.
