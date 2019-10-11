@@ -40,4 +40,5 @@ object syntax extends JsonSyntax.Implicits
 
 object derive extends SemiAutoDerivation
 
+@scala.deprecated("Prefer using semiauto derivation. AutoDerivation support will be dropped. Use the one from circe directly if you need it", "0.4.0")
 object autoderive extends io.circe.generic.extras.AutoDerivation
