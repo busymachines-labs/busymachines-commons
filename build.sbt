@@ -18,7 +18,7 @@
 import sbt._
 import Keys._
 
-lazy val currentSnapshotVersion = "0.3.0-SNAPSHOT"
+lazy val currentSnapshotVersion = "0.4.0"
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
 addCommandAlias("recompile", ";clean;update;compile")

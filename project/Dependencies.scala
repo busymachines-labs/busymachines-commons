@@ -24,14 +24,14 @@ object Dependencies {
   lazy val mainScalaVersion:        String      = `scala_2.13`
   lazy val seqOfCrossScalaVersions: Seq[String] = Seq(`scala_2.12`, `scala_2.13`)
 
-  lazy val scalaCompatVersion: String = "2.0.0"        //https://github.com/scala/scala-collection-compat/releases
+  lazy val scalaCompatVersion: String = "2.1.2"        //https://github.com/scala/scala-collection-compat/releases
   lazy val shapelessVersion:   String = "2.3.3"        //https://github.com/milessabin/shapeless/releases
   lazy val catsVersion:        String = "2.0.0"        //https://github.com/typelevel/cats/releases
   lazy val catsEffectVersion:  String = "2.0.0"        //https://github.com/typelevel/cats-effect/releases
-  lazy val circeVersion:       String = "0.12.1"       //https://github.com/circe/circe/releases
-  lazy val attoCoreVersion:    String = "0.7.0"        //https://github.com/tpolecat/atto/releases
+  lazy val circeVersion:       String = "0.12.2"       //https://github.com/circe/circe/releases
+  lazy val attoCoreVersion:    String = "0.7.1"        //https://github.com/tpolecat/atto/releases
   lazy val akkaVersion:        String = "2.5.23"       //https://github.com/akka/akka/releases
-  lazy val akkaHttpVersion:    String = "10.1.9"       //https://github.com/akka/akka-http/releases
+  lazy val akkaHttpVersion:    String = "10.1.10"       //https://github.com/akka/akka-http/releases
   lazy val scalaTestVersion:   String = "3.1.0-SNAP13" //https://github.com/scalatest/scalatest/releases
   //============================================================================================
   //====================================== Scala things ========================================
