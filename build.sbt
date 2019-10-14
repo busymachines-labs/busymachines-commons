@@ -18,7 +18,7 @@
 import sbt._
 import Keys._
 
-lazy val currentSnapshotVersion = "0.3.0-SNAPSHOT"
+lazy val currentSnapshotVersion = "0.4.0-SNAPSHOT"
 addCommandAlias("setSnapshotVersion", s"""set version in ThisBuild := "$currentSnapshotVersion"""")
 
 addCommandAlias("recompile", ";clean;update;compile")
@@ -55,8 +55,8 @@ addCommandAlias("doSnapshotRelease", ";ci;setSnapshotVersion;publishSigned")
   * ``z-publishing-artifcats/README.md``.
   */
 addCommandAlias("cleanPublishSigned", ";recompile;publishSigned")
-addCommandAlias("do212Release", ";++2.12.10;sonatypeBundleRelease")
-addCommandAlias("do213Release", ";++2.13.0;sonatypeBundleRelease")
+addCommandAlias("do212Release", ";++2.12.10;cleanPublishSigned;sonatypeBundleRelease")
+addCommandAlias("do213Release", ";++2.13.0;cleanPublishSigned;sonatypeBundleRelease")
 //we do this like this, because sonatypeBundleRelease cannot parallelize 2.12, and 2.13 releases
 addCommandAlias("doRelease", ";+cleanPublishSigned;do212Release;do213Release")
 

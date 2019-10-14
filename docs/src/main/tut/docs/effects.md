@@ -7,19 +7,19 @@ title: effects
 # busymachines-commons-effects
 
 * stable: `N/A`
-* latest: `0.3.0-RC10`
+* latest: `0.4.0`
 
 ```scala
-"com.busymachines" %% "busymachines-commons-effects"            % "0.3.0-RC10"
+"com.busymachines" %% "busymachines-commons-effects"            % "0.4.0"
 //the above module is actually a composite of the following three modules
-"com.busymachines" %% "busymachines-commons-effects-sync"       % "0.3.0-RC10"
-"com.busymachines" %% "busymachines-commons-effects-sync-cats"  % "0.3.0-RC10"
-"com.busymachines" %% "busymachines-commons-effects-async"      % "0.3.0-RC10"
+"com.busymachines" %% "busymachines-commons-effects-sync"       % "0.4.0"
+"com.busymachines" %% "busymachines-commons-effects-sync-cats"  % "0.4.0"
+"com.busymachines" %% "busymachines-commons-effects-async"      % "0.4.0"
 ```
 
 ## Recommended usage
 ```
-libraryDependencies += "com.busymachines" %% "busymachines-commons-effects" % "0.3.0-RC10"
+libraryDependencies += "com.busymachines" %% "busymachines-commons-effects" % "0.4.0"
 ```
 
 ```scala

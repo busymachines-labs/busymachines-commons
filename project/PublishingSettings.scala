@@ -17,9 +17,7 @@
   */
 import sbt._
 import Keys._
-import com.typesafe.sbt.SbtPgp.autoImportImpl._
 import xerial.sbt.Sonatype.SonatypeKeys._
-import xerial.sbt.Sonatype._
 
 /**
   * All instructions for publishing to sonatype can be found on the sbt-plugin page:
@@ -47,7 +45,6 @@ import xerial.sbt.Sonatype._
 object PublishingSettings {
 
   def sonatypeSettings: Seq[Setting[_]] = Seq(
-    useGpg                     := true,
     sonatypeProfileName        := Settings.organizationName,
     publishArtifact in Compile := true,
     publishArtifact in Test    := false,
@@ -72,7 +69,7 @@ object PublishingSettings {
     ),
   )
 
-  def noPublishSettings = Seq(
+  def noPublishSettings: Seq[Setting[_]] = Seq(
     publish              := {},
     publishLocal         := {},
     skip in publishLocal := true,
